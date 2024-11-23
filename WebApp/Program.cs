@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using WebApp.Components;
 using WebApp.Components.Account;
 using WebApp.Data;
 using WebApp.ServiceDefaults;
+using WebApp.Services.TestData;
 using WebApp.SetUp;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,14 +31,23 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
+builder.Services.AddDbContextFactory<ApplicationDbContext>();
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+builder.Services.AddRadzenComponents();
+builder.Services.AddHostedService<RoleSeeder>();
+builder.Services.AddHostedService<ProjectDataSeeder>();
+builder.Services.AddHostedService<IntegrationDataSeeder>();
+
 
 var app = builder.Build();
 
