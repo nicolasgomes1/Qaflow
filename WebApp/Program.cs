@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApp.Components;
 using WebApp.Components.Account;
 using WebApp.Data;
+using WebApp.ServiceDefaults;
 using WebApp.SetUp;
 
 var builder = WebApplication.CreateBuilder(args);
