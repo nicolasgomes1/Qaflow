@@ -44,9 +44,12 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 builder.Services.AddRadzenComponents();
-builder.Services.AddHostedService<RoleSeeder>();
-builder.Services.AddHostedService<ProjectDataSeeder>();
-builder.Services.AddHostedService<IntegrationDataSeeder>();
+
+// Add seeding services to the container.
+builder.Services.AddSeedingServices();
+
+//add additional services
+builder.Services.AddAppServices();
 
 
 var app = builder.Build();
