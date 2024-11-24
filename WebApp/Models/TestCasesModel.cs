@@ -1,0 +1,279 @@
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.EntityFrameworkCore;
+using WebApp.Api.Jira;
+using WebApp.Data;
+using WebApp.Services;
+
+namespace WebApp.Models;
+
+public class TestCasesModel(
+    IDbContextFactory<ApplicationDbContext> dbContextFactory,
+    UserService userService,
+    ProjectStateService projectStateService,
+    TestCasesFilesModel testCasesFilesModel)
+{
+    private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
+
+    /// <summary>
+    /// List of jira tickets to be displayed in the UI that  are fetched with the Jira API
+    /// </summary>
+    public List<JiraTask> JiraIntegrations = [];
+
+    /// <summary>
+    /// List of selected Jira tickets to be associated with the test case
+    /// </summary>
+    public List<string> SelectedJiraTicketIds { get; set; } = [];
+
+    public TestCases TestCases { get; set; } = new();
+
+    public List<TestCases> TestCasesList { get; set; } = [];
+
+    public List<TestSteps> TestStepsList { get; set; } = [];
+
+    public List<int> SelectedRequirementIds { get; set; } = [];
+
+    public IEnumerable<TestCases>? testcases;
+    public IList<TestCases> selectedTestCases = new List<TestCases>();
+
+    public async Task DisplayTestCasesIndexPage()
+    {
+        testcases = await _dbContext.TestCases.Where(tc => tc.TcProjectId == projectStateService.ProjectId)
+            .Include(tc => tc.Requirements).ToListAsync();
+
+        var selection = testcases.FirstOrDefault();
+        if (selection == null)
+        {
+            return;
+        }
+
+        selectedTestCases = new List<TestCases>() { selection };
+    }
+
+
+    /// <returns>Get All Test Cases</returns>
+    public async Task GetAllTestCases()
+    {
+        TestCasesList = await _dbContext.TestCases
+            .Where(tc => tc.TcProjectId == projectStateService.ProjectId)
+            .ToListAsync();
+    }
+
+    public async Task<List<TestCases>> GetAllTestCases1()
+    {
+        return await _dbContext.TestCases
+            .Include(tc => tc.TestPlans)
+            .Where(tc => tc.TcProjectId == projectStateService.ProjectId)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="testCaseId"></param>
+    /// <returns>TestCase with TestSteps and Requirements</returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<TestCases> GetTestCaseData(int testCaseId)
+    {
+        var testCase = await _dbContext.TestCases
+            .AsSplitQuery()
+            .Include(tc => tc.TestSteps)
+            .Include(tc => tc.Requirements)
+            .FirstOrDefaultAsync(tc => tc.Id == testCaseId);
+
+        return testCase ?? throw new Exception("Test case not found.");
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>A list of associated requirements witht the TestCase</returns>
+    /// <exception cref="Exception"></exception>
+    public async Task GetAssociatedRequirements(TestCases testCase)
+    {
+        var requirement = await _dbContext.TestCases
+            .Include(tc => tc.Requirements)
+            .FirstOrDefaultAsync(tc => tc.Id == testCase.Id);
+
+        if (requirement is { Requirements: not null })
+        {
+            SelectedRequirementIds = requirement.Requirements.Select(r => r.Id).ToList();
+        }
+        else
+        {
+            throw new Exception("Error.");
+        }
+    }
+
+
+    public async Task<TestCases> CreateTestCases(TestCases testcase, List<IBrowserFile>? files)
+    {
+        //First create the test case
+        _dbContext.TestCases.Add(testcase);
+        testcase.TcProjectId = projectStateService.ProjectId;
+
+        testcase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+
+        // Assign test steps to TestCases before saving
+        testcase.TestSteps = TestStepsList;
+        foreach (var step in TestStepsList)
+        {
+            step.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        }
+
+
+        foreach (var requirement in SelectedRequirementIds)
+        {
+            var loadedRequirement = await _dbContext.Requirements.FindAsync(requirement);
+
+            if (loadedRequirement == null) throw new Exception("Requirement not found");
+
+            if (testcase.Requirements == null) throw new Exception("TestCases.Requirements is null");
+
+            testcase.Requirements.Add(loadedRequirement);
+        }
+
+        await _dbContext.SaveChangesAsync();
+
+
+        await StoreJiraTickets(testcase);
+
+        // Process files
+        if (files != null && files.Count != 0)
+        {
+            await testCasesFilesModel.SaveFilesToDb(files, testcase.Id);
+        }
+
+        return testcase;
+    }
+
+    public async Task UpdateTestCase(TestCases testCases, List<IBrowserFile>? files)
+    {
+        _dbContext.Update(testCases);
+
+
+        testCases.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        testCases.ModifiedAt = DateTime.Now;
+
+        var existingTestCase = await _dbContext.TestCases
+            .AsSplitQuery()
+            .Include(tc => tc.Requirements)
+            .Include(testCases => testCases.TestSteps)
+            .FirstOrDefaultAsync(tc => tc.Id == testCases.Id);
+
+        if (existingTestCase == null) throw new Exception("Test case not found.");
+
+        // Update the navigation property directly
+        existingTestCase.Requirements = await _dbContext.Requirements
+            .Where(r => SelectedRequirementIds.Contains(r.Id))
+            .ToListAsync();
+
+
+        // Update the ModifiedBy property for each test step
+        foreach (var step in existingTestCase.TestSteps)
+        {
+            if (step.ModifiedBy == null)
+            {
+                step.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+            }
+            else
+            {
+                step.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+            }
+        }
+
+        await _dbContext.SaveChangesAsync();
+
+        await UpdateJiraTickets(testCases);
+
+        // If there are files, attempt to save them
+        if (files != null && files.Count != 0)
+        {
+            await testCasesFilesModel.SaveFilesToDb(files, testCases.Id);
+        }
+    }
+
+
+    public async Task<List<TestSteps>> GetTestStepsForTestCase(int testCaseId)
+    {
+        var testCase = await _dbContext.TestCases
+            .Include(tc => tc.TestSteps)
+            .FirstOrDefaultAsync(tc => tc.Id == testCaseId);
+
+        if (testCase == null)
+        {
+            throw new Exception($"Test case with ID {testCaseId} was not found.");
+        }
+
+        return testCase.TestSteps.OrderBy(s => s.Number).ToList();
+    }
+
+
+    /// <summary>
+    /// TestCase Jira Tickets that accepts a TestCases object and stores the selected Jira tickets
+    /// </summary>
+    /// <param name="testcase"></param>
+    private async Task StoreJiraTickets(TestCases testcase)
+    {
+        var selectedJiraTickets = JiraIntegrations
+            .Where(jira => SelectedJiraTicketIds.Contains(jira.Id.ToString()))
+            .Select(jira => jira.Key)
+            .ToList();
+
+        foreach (var testCaseJira in selectedJiraTickets.Select(jiraKey => new TestCasesJira
+                 {
+                     TestCasesJiraId = testcase.Id,
+                     Key = jiraKey,
+                     JiraId = Convert.ToInt32(JiraIntegrations.First(jira => jira.Key == jiraKey).Id.ToString())
+                 }))
+        {
+            _dbContext.TestCasesJira.Add(testCaseJira);
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+
+    /// <summary>
+    /// Updates the Jira tickets associated with a TestCases object
+    /// </summary>
+    /// <param name="testcase"></param>
+    private async Task UpdateJiraTickets(TestCases testcase)
+    {
+        // Retrieve existing Jira ticket associations for the given TestCase
+        var existingJiraTickets = await _dbContext.TestCasesJira
+            .Where(tcj => tcj.TestCasesJiraId == testcase.Id)
+            .ToListAsync();
+
+        // Get the selected Jira ticket keys to associate with the TestCase
+        var selectedJiraKeys = JiraIntegrations
+            .Where(jira => SelectedJiraTicketIds.Contains(jira.Id.ToString()))
+            .ToDictionary(jira => jira.Key, jira => Convert.ToInt32(jira.Id.ToString()));
+
+        // Extract existing Jira keys from database records
+        var existingJiraKeys = existingJiraTickets
+            .ToDictionary(tcj => tcj.Key, tcj => tcj);
+
+        // Determine which Jira tickets need to be added
+        var ticketsToAdd = selectedJiraKeys
+            .Where(jira => !existingJiraKeys.ContainsKey(jira.Key))
+            .Select(jira => new TestCasesJira
+            {
+                TestCasesJiraId = testcase.Id,
+                Key = jira.Key,
+                JiraId = jira.Value
+            });
+
+        // Determine which Jira tickets need to be removed
+        var ticketsToRemove = existingJiraTickets
+            .Where(tcj => !selectedJiraKeys.ContainsKey(tcj.Key));
+
+        // Add new Jira tickets to the context
+        _dbContext.TestCasesJira.AddRange(ticketsToAdd);
+
+        // Remove obsolete Jira tickets from the context
+        _dbContext.TestCasesJira.RemoveRange(ticketsToRemove);
+
+        // Save changes to the database
+        await _dbContext.SaveChangesAsync();
+    }
+}

@@ -1,3 +1,4 @@
+using WebApp.Models;
 using WebApp.Services;
 using WebApp.Services.TestData;
 
@@ -27,5 +28,25 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<RoleSeeder>();
         services.AddHostedService<ProjectDataSeeder>();
         services.AddHostedService<IntegrationDataSeeder>();
+    }
+
+    /// <summary>
+    /// Entity Models
+    /// </summary>
+    /// <param name="services"></param>
+    public static void AddModels(this IServiceCollection services)
+    {
+        services.AddScoped<BugsFilesModel>();
+        services.AddScoped<BugsModel>();
+        services.AddScoped<IntegrationsModel>();
+        services.AddScoped<ProjectModel>();
+        services.AddScoped<ReportsModel>();
+        services.AddScoped<RequirementsFilesModel>();
+        services.AddScoped<RequirementsModel>();
+        services.AddScoped<TestCasesFilesModel>();
+        services.AddScoped<TestCasesModel>();
+        services.AddScoped<TestExecutionModel>();
+        services.AddScoped<TestPlansFilesModel>();
+        services.AddScoped<TestPlansModel>();
     }
 }

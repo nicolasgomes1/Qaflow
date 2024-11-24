@@ -1,0 +1,15 @@
+/* Base styling for input fields */
+.input-style {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da; /* Neutral border color */
+    border-radius: 5px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+/* Focus styling: blue border and shadow effect */
+.input-style:focus {
+    border-color: #007bff !important; /* Blue border color on focus */
+    box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5) !important; /* Soft blue shadow */
+    outline: none; /* Remove default outline */
+}

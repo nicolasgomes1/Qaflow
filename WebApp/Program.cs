@@ -2,12 +2,16 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
+using WebApp.Api.Jira;
 using WebApp.Components;
 using WebApp.Components.Account;
 using WebApp.Data;
 using WebApp.ServiceDefaults;
 using WebApp.Services.TestData;
 using WebApp.SetUp;
+using Scalar.AspNetCore;
+using WebApp.Api;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +34,6 @@ builder.Services.AddAuthentication(options =>
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
-
 #endregion
 
 
@@ -57,6 +60,18 @@ builder.Services.AddSeedingServices();
 //add additional services
 builder.Services.AddAppServices();
 
+// Add models to the container.
+builder.Services.AddModels();
+
+builder.Services.AddLocalization();
+builder.Services.AddControllers();
+builder.Services.AddOpenApi();
+
+builder.Services.Configure<JiraApiOptions>(builder.Configuration.GetSection("JiraApi"));
+// Register JiraService with HttpClient for dependency injection
+builder.Services.AddHttpClient<JiraService>();
+builder.Services.AddHttpClient<JiraServiceFromDb>();
+
 
 var app = builder.Build();
 
@@ -64,9 +79,17 @@ app.MapDefaultEndpoints();
 
 await app.ConfigureDatabaseAsync();
 
+
+#region Api
+app.MapOwnAppApiEndpoints();
+app.MapJiraApiEndpoints();
+#endregion
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.MapScalarApiReference();
     app.UseMigrationsEndPoint();
 }
 else
