@@ -15,5 +15,19 @@
       <jdbc-url>Server=127.0.0.1,51214;User ID=sa;Password=Admin123!;TrustServerCertificate=true</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="qa" uuid="5fa40598-9650-4ab4-a2ae-b40fe9866f7f">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,60120;User ID=sa;Password=Admin123!;TrustServerCertificate=true;Database=qa</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="sql" uuid="90f5e432-0859-4aca-b635-f1c616a335db">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,60120;User ID=sa;Password=Admin123!;TrustServerCertificate=true</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

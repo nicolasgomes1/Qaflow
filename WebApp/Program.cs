@@ -85,6 +85,8 @@ app.UseRequestLocalization(localizationOptions);
 app.MapDefaultEndpoints();
 
 await app.ConfigureDatabaseAsync();
+
+
 app.MapControllers();
 
 #region Api
@@ -98,6 +100,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapScalarApiReference();
     app.UseMigrationsEndPoint();
+    app.MapOpenApi();
 }
 else
 {
@@ -108,6 +111,9 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseStaticFiles();
 
 app.UseAntiforgery();
 
