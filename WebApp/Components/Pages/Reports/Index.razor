@@ -1,4 +1,5 @@
 ﻿@page "/project/{ProjectId:int}/reports"
+@inject ILogger<Index> Logger
 @rendermode InteractiveServer
 
 <RadzenStack Style="width: 100vw; height: 100vh; max-width: 100%; max-height: 100%; box-sizing: border-box;">
@@ -25,5 +26,11 @@
 @code {
     [Parameter]
     public int ProjectId { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await UserService.GetCurrentUserNameAsync();
+        Logger.LogInformation($"{user} is viewing the reports for project {ProjectId}");
+    }
 
 }

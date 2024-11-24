@@ -15,6 +15,12 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
 
         return (userName, userId);
     }
+    
+    public async Task<string?> GetCurrentUserNameAsync()
+    {
+        var userInfo = await GetCurrentUserInfoAsync();
+        return userInfo.UserName;
+    }
 }
 
 
