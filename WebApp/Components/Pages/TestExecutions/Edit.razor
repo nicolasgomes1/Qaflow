@@ -1,0 +1,103 @@
+﻿@page "/project/{ProjectId:int}/testexecution/edit/{Id:int}"
+@rendermode InteractiveServer
+
+@if (_isLoading)
+{
+    <ProgressBar />
+}
+else
+{
+    <h3 class="text-center text-primary mb-4">Edit Test Execution</h3>
+
+    <RadzenTemplateForm Data="@_testExecution" TItem="TestExecution" Submit="UpdateTestCaseExecution">
+        <div class="form-group mb-4">
+            <RadzenLabel Text="Name" />
+            <RadzenTextBox id="name" 
+                @bind-Value="@_testExecution.Name"
+                class="input-style"
+                Name="name" />
+            <RadzenRequiredValidator Component="name" Text="Name is required" />
+        </div>
+
+        <div class="form-group mb-4">
+            <RadzenLabel Text="Description" />
+            <RadzenTextBox id="description" 
+                @bind-Value="@_testExecution.Description"
+                class="input-style" 
+                Name="description" />
+            <RadzenRequiredValidator Component="description" Text="Description is recommended" />
+        </div>
+
+        <div class="form-group mb-4">
+            <RadzenLabel Text="Test Plan" />
+            <RadzenDropDown id="testplan"
+                            Data="@_testPlansList"
+                            @bind-Value="@TestExecutionModel.TestPlanId"
+                            TextProperty="Name"
+                            ValueProperty="Id"
+                            class="input-style"
+                            Name="testplan" />
+            <RadzenRequiredValidator Component="testplan" Text="Test Plan is required" />
+        </div>
+
+        <!-- Priority Field -->
+        <div class="form-group mb-4">
+            <RadzenLabel Text="Priority" />
+            <RadzenDropDown id="priority" 
+                    @bind-Value="_testExecution.Priority" 
+                    Data="EnumService.GetEnumValues<Priority>()"
+                    class="input-style" 
+                    Name="priority" />
+            <RadzenRequiredValidator Component="priority" Text="Priority is required" />
+        </div>
+
+        <CreateEditActions EntityName="testexecution" CreateEdit="Update" />
+    </RadzenTemplateForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    
+    [Parameter]
+    public int ProjectId { get; set; }
+
+    private List<TestPlans> _testPlansList = [];
+    
+    private bool _isLoading = true;
+
+    private TestExecution _testExecution = new();
+    private string CancelUrl()
+    {
+        return $"project/{ProjectStateService.ProjectId}/testexecution";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _testPlansList = await TestPlansModel.GetallTestPlans();
+        
+      //  await TestPlansModel.GetallTestPlans();
+
+        _testExecution = await TestExecutionModel.GetTestExecutionData(Id);
+
+
+        if (!_testExecution.IsActive)
+        {
+            NavigationManager.NavigateTo(CancelUrl(), true);
+        }
+
+        _isLoading = false;
+    }
+
+    private async Task UpdateTestCaseExecution()
+    {
+        await TestExecutionModel.UpdateTestExecution(Id, _testExecution);
+
+        NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testexecution", true);
+    }
+
+}
+
+
+
+

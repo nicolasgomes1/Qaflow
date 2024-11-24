@@ -1,0 +1,135 @@
+﻿@page "/Account/Manage/ChangeRole"
+@attribute [Authorize(Roles = "Admin")]
+
+@rendermode InteractiveServer
+@inject ILogger<ChangeRole> Logger
+
+<PageTitle>Change role</PageTitle>
+
+<RadzenCard>
+    <h4>Current role</h4>
+    @if (userRole != null && userRole.Any())
+    {
+        foreach (var role in userRole)
+        {
+            <p>@role</p>
+        }
+    }
+    else
+    {
+        <p>No roles assigned.</p>
+    }
+</RadzenCard>
+
+
+
+<h4>Change role</h4>
+
+<RadzenTemplateForm Data="@Input"
+                    TItem="InputModel"
+                    Submit="@OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="text-danger" role="alert" />
+
+    <div class="form-floating mb-3">
+        <RadzenLabel Text="New role" />
+        <RadzenDropDown @bind-Value="Input.NewRole"
+                        Data="@allRoles"
+                        Style="width:50%"
+                        Placeholder="Please select a new role" />
+        <ValidationMessage For="() => Input.NewRole" class="text-danger" />
+    </div>
+
+    <RadzenButton ButtonType="ButtonType.Submit" Text="Update role" Style="margin-top: 10px; width: 100%;" />
+</RadzenTemplateForm>
+
+
+<RadzenNotification />
+
+@code {
+    private string? message;
+    private ApplicationUser user = default!;
+    private List<string> userRole = new();
+    private List<string> allRoles = new();
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUserAndRolesAsync();
+    }
+
+    // Fetch user roles and available roles
+    private async Task LoadUserAndRolesAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        var applicationUser = await UserManager.GetUserAsync(authState.User);
+
+        if (applicationUser == null) throw new Exception("User not found.");
+
+        user = applicationUser;
+
+        if (user != null)
+        {
+            // Get the user's current role(s)
+            userRole = (List<string>)await UserManager.GetRolesAsync(user);
+
+            var roles = await RoleManager.Roles.ToListAsync();
+            allRoles = roles.Select(r => r.Name!).ToList();
+
+            // Show the user's current role in the dropdown as selected value (choose the first role if multiple)
+            if (userRole.Any())
+            {
+                Input.NewRole = userRole.FirstOrDefault() ?? "";
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("Account/Login");
+        }
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        // Remove the user from their current role(s)
+        foreach (var role in userRole)
+        {
+            var removeRoleResult = await UserManager.RemoveFromRoleAsync(user, role);
+            if (!removeRoleResult.Succeeded)
+            {
+                message = $"Error: {string.Join(",", removeRoleResult.Errors.Select(error => error.Description))}";
+                await FormNotification.NotifyError(message);
+                return;
+            }
+        }
+
+        // Add the user to the new role
+        var addRoleResult = await UserManager.AddToRoleAsync(user, Input.NewRole);
+        if (!addRoleResult.Succeeded)
+        {
+            message = $"Error: {string.Join(",", addRoleResult.Errors.Select(error => error.Description))}";
+            await InvokeAsync(StateHasChanged);
+            await FormNotification.NotifyError(message);
+
+            return;
+        }
+
+        await FormNotification.NotifySuccess("Your role has been successfully changed.");
+        await InvokeAsync(StateHasChanged);
+
+        // Reload the roles and refresh the UI
+        await LoadUserAndRolesAsync(); // Fetch the updated roles
+        StateHasChanged(); // Trigger UI refresh
+
+        Logger.LogInformation("User changed their role successfully.");
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+        [Display(Name = "New role")]
+        public string NewRole { get; set; } = "";
+    }
+}

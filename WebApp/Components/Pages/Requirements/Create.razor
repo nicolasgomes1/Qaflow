@@ -1,0 +1,70 @@
+﻿@page "/project/{ProjectId:int}/requirements/create"
+@rendermode InteractiveServer
+
+<h3 class="text-center text-primary mb-4">Create Requirement</h3>
+
+<RadzenTemplateForm Data="@_requirements" TItem="Requirements" Submit="CreateNewRequirement">
+    <ValidationSummary class="alert alert-danger"/>
+
+    <RadzenTabs RenderMode="TabRenderMode.Client" @bind-SelectedIndex="@_selectedIndex">
+        <Tabs>
+            <RadzenTabsItem Text="Requirement">
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Name"/>
+                    <RadzenTextBox id="name"
+                                   @bind-Value="_requirements.Name"
+                                   class="input-style"
+                                   Name="name"/>
+                    <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Description"/>
+                    <RadzenTextArea id="description"
+                                    @bind-Value="_requirements.Description"
+                                    class="input-style"
+                                    Name="description"/>
+                    <RadzenRequiredValidator Component="description" Text="Description is required"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Priority"/>
+                    <RadzenDropDown id="priority"
+                                    @bind-Value="_requirements.Priority"
+                                    Data="EnumService.GetEnumValues<Priority>()"
+                                    class="input-style"
+                                    Name="priority"/>
+                    <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                </div>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Files">
+                <FileUpload UploadedFiles="_uploadedFiles"/>
+            </RadzenTabsItem>
+
+        </Tabs>
+    </RadzenTabs>
+
+    <CreateEditActions EntityName="requirements" CreateEdit="Create"/>
+</RadzenTemplateForm>
+
+@code {
+    [Parameter] public int ProjectId { get; set; }
+
+    int _selectedIndex;
+
+    private Requirements _requirements = new();
+
+    private readonly List<IBrowserFile>? _uploadedFiles = [];
+
+
+    private async Task CreateNewRequirement()
+    {
+        _requirements = await RequirementsModel.CreateRequirement(_requirements, _uploadedFiles);
+
+        NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements");
+
+        StateHasChanged();
+        await FormNotificationService.NotifySuccess($"Requirement with Id {_requirements.Id} Created Successfully");
+    }
+
+}

@@ -1,0 +1,88 @@
+@page "/chatgptchat"
+@using System.Text.Json.Nodes
+@using Newtonsoft.Json.Linq
+@using System.Text.Json
+@inject HttpClient Http
+@rendermode InteractiveServer
+@inject IConfiguration Configuration
+
+
+<RadzenStack Orientation="Orientation.Vertical">
+
+
+    <RadzenTextArea @bind-Value="_request" Placeholder="Enter your request"
+                    Style="width: 50%; height: 150px; margin-bottom: 10px;"/>
+
+    <RadzenStack Orientation="Orientation.Horizontal">
+        <RadzenButton Text="Send Request" Click="SendRequest" Style="margin-bottom: 10px;"/>
+    </RadzenStack>
+
+
+</RadzenStack>
+
+<RadzenLabel Text="@_response" Style="display: block; margin-top: 10px;"/>
+
+@code{
+
+    //  private const string ApiKey = "Bearer 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";
+    private string _request = "";
+    private string? _response = "";
+    private const string Endpoint = "https://api.openai.com/v1/chat/completions";
+
+}
+
+@code {
+
+    private string? _apiKey = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        // Retrieve the API Key from configuration
+        _apiKey = Configuration["OpenApi:ApiKey"];
+    }
+
+    private async Task SendRequest()
+    {
+        // Prepare the messages as a list
+        var messages = new[]
+        {
+            new { role = "user", content = _request }
+        };
+
+        // Prepare the request payload
+        var data = new
+        {
+            model = "gpt-3.5-turbo",
+            messages = messages,
+            temperature = 0.7,
+        };
+
+        // Serialize the data to a JSON string
+        string jsonString = JsonSerializer.Serialize(data);
+
+        // Set the content type for the request body
+        var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+
+        HttpClient client = new HttpClient();
+
+
+        // Add the authorization header
+        client.DefaultRequestHeaders.Add("Authorization", _apiKey); // Make sure to replace with your key
+
+        var response2 = await client.PostAsync(Endpoint, content);
+
+        string responseContent = await response2.Content.ReadAsStringAsync();
+        // Parse the response JSON
+        var jsonResponse = JObject.Parse(responseContent);
+
+        _response = (jsonResponse["choices"]?[0]?["message"]?["content"] ?? "No value").Value<string>();
+
+        Console.WriteLine(_response);
+
+        StateHasChanged();
+    }
+
+}
+
+

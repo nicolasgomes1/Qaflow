@@ -1,0 +1,131 @@
+﻿@rendermode InteractiveServer
+
+<RadzenTree Style="height: 100%; overflow: auto;" Data="@_projects">
+    @foreach (var project in _projects)
+    {
+        <RadzenTreeItem Text="@project.Name">
+            <ChildContent>
+                <!-- Requirements Folder -->
+                <RadzenTreeItem Text="Requirements">
+                    <ChildContent>
+                        @foreach (var requirement in project.Requirements)
+                        {
+                            <RadzenTreeItem Text="@requirement.Name">
+                                <ChildContent>
+                                    @if (requirement.TestCases != null)
+                                    {
+                                        foreach (var testCase in requirement.TestCases)
+                                        {
+                                            <RadzenTreeItem Text="@testCase.Name"/>
+                                        }
+                                    }
+                                </ChildContent>
+                            </RadzenTreeItem>
+                        }
+                    </ChildContent>
+                </RadzenTreeItem>
+
+                <!-- Test Plans Folder -->
+                <RadzenTreeItem Text="Test Plans">
+                    <ChildContent>
+                        @foreach (var testPlan in project.TestPlans)
+                        {
+                            <RadzenTreeItem Text="@testPlan.Name">
+                                <ChildContent>
+                                    @foreach (var testCase in testPlan.TestCases)
+                                    {
+                                        <RadzenTreeItem Text="@testCase.Name"/>
+                                    }
+                                </ChildContent>
+                            </RadzenTreeItem>
+                        }
+                    </ChildContent>
+                </RadzenTreeItem>
+                
+                @{
+                }
+
+                <RadzenTreeItem Text="@_testCasesCount" Data="_testCases">
+                    <RadzenTreeItem Text="Test Cases With Test Plans">
+                        <ChildContent>
+                            @foreach (var testCase in _testCases.Where(tc => tc.TestPlans.Count > 0))
+                            {
+                                <RadzenTreeItem Text="@testCase.Name">
+                                </RadzenTreeItem>
+                            }
+                        </ChildContent>
+                    </RadzenTreeItem>
+                    <RadzenTreeItem Text="Test Cases Without Test Plans">
+                        <ChildContent>
+                            @foreach (var testCase in _testCases.Where(tc => tc.TestPlans.Count == 0))
+                            {
+                                <RadzenTreeItem Text="@testCase.Name">
+                                </RadzenTreeItem>
+                            }
+                        </ChildContent>
+                    </RadzenTreeItem>
+                </RadzenTreeItem>
+
+                <RadzenTreeItem Text="Test Plans" Data="_testPlans">
+                    <RadzenTreeItem Text="Test Plans With Test Cases">
+                        <ChildContent>
+                            @foreach (var testPlan in _testPlans.Where(tc => tc.TestCases.Count > 0))
+                            {
+                                <RadzenTreeItem Text="@testPlan.Name">
+                                </RadzenTreeItem>
+                            }
+                        </ChildContent>
+                    </RadzenTreeItem>
+                    <RadzenTreeItem Text="Test Without Test Cases">
+                        <ChildContent>
+                            @foreach (var testPlan in _testPlans.Where(tc => tc.TestCases.Count == 0))
+                            {
+                                <RadzenTreeItem Text="@testPlan.Name">
+                                </RadzenTreeItem>
+                            }
+                        </ChildContent>
+                    </RadzenTreeItem>
+                </RadzenTreeItem>
+
+            </ChildContent>
+        </RadzenTreeItem>
+    }
+</RadzenTree>
+
+@code {
+
+
+    private IEnumerable<Projects> _projects = new List<Projects>();
+    private IEnumerable<TestCases> _testCases = new List<TestCases>();
+    private IEnumerable<TestPlans> _testPlans = new List<TestPlans>();
+    private string _testCasesCount => $"Test Cases {_testCases.Count()}";
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        _projects = await ProjectModel.GetProjectsData(); // Ensure this fetches both Requirements and TestPlans
+        _testCases = await GetTestCases(); // Ensure this fetches both TestCases and TestPlans
+        _testPlans = await GetTestPlans(); // Ensure this fetches both TestPlans and TestCases
+    }
+
+    private async Task<List<TestCases>> GetTestCases()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.TestCases
+            .Include(tc => tc.TestPlans)
+            .Where(p => p.TcProjectId == ProjectStateService.ProjectId)
+            .ToListAsync();
+    }
+
+    private async Task<List<TestPlans>> GetTestPlans()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.TestPlans
+            .Include(tp => tp.TestCases)
+            .Where(p => p.TPProjectId == ProjectStateService.ProjectId)
+            .ToListAsync();
+    }
+
+
+}
+

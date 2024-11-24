@@ -1,0 +1,68 @@
+﻿@inject ILogger<DeleteallDataForModel> Logger
+
+<RadzenButton Icon="delete_forever"
+              Click="@(DeleteAllModelData)"
+              Size="ButtonSize.Medium"
+              ButtonStyle="ButtonStyle.Danger"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Delete All", TooltipPosition.Bottom))"
+              MouseLeave="@AppTooltipService.HideTooltip"/>
+
+
+@inject ProjectStateService ProjectStateService
+@inject TooltipService TooltipService
+
+@code {
+
+    [Parameter] public string EntityName { get; set; } = string.Empty;
+
+    [Parameter] public IEnumerable<object> EntityList { get; set; } = new List<object>();
+
+
+    private async Task DeleteAllModelData()
+    {
+        var entityName = EntityName.ToLower();
+        var project = ProjectStateService.ProjectId;
+
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        var confirmed = await DialogService.Confirm($"Are you sure you want to delete all {EntityName}?", $"Delete All {EntityName}");
+        if (confirmed == true)
+        {
+            db.RemoveRange(EntityList);
+
+
+            switch (entityName)
+            {
+                // Check if the entity being deleted is 'Requirement'
+                case "requirements":
+                {
+                    Logger.LogInformation($"{UserInfo} deleted all Requirements on Time: {DateTime.Now}");
+
+                    break;
+                }
+                case "testcases":
+                {
+                    Logger.LogInformation($"{UserInfo} deleted all TestCases on Time: {DateTime.Now}");
+                    break;
+                }
+                case "tesplans":
+                {
+                    Logger.LogInformation($"{UserInfo} deleted all TestPlans on Time: {DateTime.Now}");
+                    break;
+                }
+
+                case "bugs":
+                {
+                    Logger.LogInformation($"{UserInfo} deleted all Bugs on Time: {DateTime.Now}");
+                    break;
+                }
+            }
+
+            await db.SaveChangesAsync();
+            NavigationManager.NavigateTo($"/project/{project}/{entityName}", true);
+        }
+    }
+
+    private string UserInfo => $"{UserService.GetCurrentUserInfoAsync().Result.UserName}";
+
+}

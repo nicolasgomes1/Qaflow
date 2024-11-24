@@ -1,0 +1,143 @@
+﻿@page "/project/{ProjectId:int}/testcases/create"
+@rendermode InteractiveServer
+
+<h3 class="text-center text-primary mb-4">Create Test Case</h3>
+
+<RadzenTemplateForm Data="@_testCases" TItem="TestCases" Submit="CreateTestCase">
+    <ValidationSummary class="alert alert-danger"/>
+
+    <RadzenTabs RenderMode="TabRenderMode.Client" @bind-SelectedIndex="@_selectedIndex">
+        <Tabs>
+            <RadzenTabsItem Text="Test Case">
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Name"/>
+                    <RadzenTextBox id="name"
+                                   @bind-Value="_testCases.Name"
+                                   class="input-style"
+                                   Name="name"/>
+                    <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Description"/>
+                    <RadzenTextArea id="description"
+                                    @bind-Value="_testCases.Description"
+                                    class="input-style"
+                                    Name="description"/>
+                    <RadzenRequiredValidator Component="description" Text="Description is recommended"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Estimated Time (in minutes)"/>
+                    <RadzenTextBox id="estimatedTime"
+                                   @bind-Value="_estimatedTimeInput"
+                                   Placeholder="Enter time in minutes"
+                                   class="input-style"
+                                   Name="estimatedTime"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Priority"/>
+                    <RadzenDropDown id="priority" @bind-Value="_testCases.Priority"
+                                    Data="EnumService.GetEnumValues<Priority>()"
+                                    class="input-style"
+                                    Name="priority"/>
+                    <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Test Type"/>
+                    <RadzenDropDown id="test_type" @bind-Value="_testCases.TestType"
+                                    Data="EnumService.GetEnumValues<TestTypes>()"
+                                    class="input-style"
+                                    Name="test_type"/>
+                    <RadzenRequiredValidator Component="test_type" Text="Test Type is required"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Test Scope"/>
+                    <RadzenDropDown id="test_scope" @bind-Value="_testCases.TestScope"
+                                    Data="EnumService.GetEnumValues<TestScope>()"
+                                    class="input-style"
+                                    Name="test_scope"/>
+                    <RadzenRequiredValidator Component="test_scope" Text="Test Scope is required"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Requirements"/>
+                    <RadzenDropDown id="requirements"
+                                    Data="@_requirementsList"
+                                    @bind-Value="TestCasesModel.SelectedRequirementIds"
+                                    TextProperty="Name"
+                                    ValueProperty="Id"
+                                    Multiple="true"
+                                    AllowFiltering="true"
+                                    AllowVirtualization="true"
+                                    class="input-style"
+                                    Name="requirements"/>
+                </div>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Test Steps">
+                <!-- Test Step Form -->
+                <CreateEditTestSteps TestSteps="@TestCasesModel.TestStepsList"/>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Files">
+                <FileUpload UploadedFiles="_uploadedFiles"/>
+            </RadzenTabsItem>
+
+            <RadzenTabsItem Text="Integration">
+                <RadzenLabel Text="External Jira Id"/>
+                <RadzenDropDown id="integration"
+                                AllowFiltering="true"
+                                AllowVirtualization="true"
+                                Placeholder="Select Jira Ticket"
+                                Data="@TestCasesModel.JiraIntegrations"
+                                @bind-Value="TestCasesModel.SelectedJiraTicketIds"
+                                TextProperty="key"
+                                ValueProperty="Id"
+                                Multiple="true"
+                                class="input-style"
+                                Name="integration"/>
+
+            </RadzenTabsItem>
+
+        </Tabs>
+    </RadzenTabs>
+
+
+    <CreateEditActions EntityName="testcases" CreateEdit="Create"/>
+
+</RadzenTemplateForm>
+
+
+@code {
+    [Parameter] public int ProjectId { get; set; }
+
+    int _selectedIndex;
+    private readonly List<IBrowserFile>? _uploadedFiles = [];
+
+    private readonly TestCases _testCases = new();
+
+    private List<Requirements> _requirementsList = [];
+
+    private string _estimatedTimeInput = string.Empty;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _requirementsList = await RequirementsModel.GetallRequirements();
+        // TestCasesModel.JiraIntegrations = await JiraService.GetProjectIssuesAsync("MFLP");
+        TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync("Jira-01", "MFLP");
+    }
+
+    private async Task CreateTestCase()
+    {
+        _testCases.EstimatedTime = TimeSpan.FromMinutes(int.TryParse(_estimatedTimeInput, out var minutes) ? minutes : 0);
+
+        await TestCasesModel.CreateTestCases(_testCases, _uploadedFiles);
+        NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testcases");
+        StateHasChanged();
+        await FormNotificationService.NotifySuccess($"Test Case with Id {_testCases.Id} Created Successfully");
+    }
+
+}

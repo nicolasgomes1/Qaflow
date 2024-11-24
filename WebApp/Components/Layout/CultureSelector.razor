@@ -1,0 +1,69 @@
+<div style="position: relative;">
+    <RadzenButton Icon="language" 
+                  Click="ToggleDropdown" Style="background-color: initial" />
+
+    @if (_isDropdownVisible)
+    {
+        <div style="position: absolute; top: 40px; right: 0; z-index: 1000;">
+            <RadzenDropDown 
+                @bind-Value="_selectedCulture" 
+                TValue="CultureInfo" 
+                Data="_culturesWithDisplayNames"
+                TextProperty="DisplayName" 
+                ValueProperty="Culture" 
+                Change="ApplySelectedCultureAndClose"
+                OpenPopupOnFocus="true" 
+                Style="width: 150px;" />
+        </div>
+    }
+</div>
+
+@code
+{
+    private class CultureDisplay
+    {
+        public required CultureInfo Culture { get; set; }
+        public required string DisplayName { get; set; }
+    }
+
+    private CultureDisplay[] _culturesWithDisplayNames = new[]
+    {
+        new CultureDisplay { Culture = new CultureInfo("en-US"), DisplayName = "English" },
+        new CultureDisplay { Culture = new CultureInfo("fr-BE"), DisplayName = "French" },
+        new CultureDisplay { Culture = new CultureInfo("nl-BE"), DisplayName = "Dutch" },
+    };
+
+    private CultureInfo? _selectedCulture;
+    private bool _isDropdownVisible = false;
+
+    protected override void OnInitialized()
+    {
+        _selectedCulture = CultureInfo.CurrentCulture;
+    }
+
+    private void ToggleDropdown()
+    {
+        _isDropdownVisible = !_isDropdownVisible;
+    }
+
+    private async Task ApplySelectedCultureAndClose(object value)
+    {
+        if (value is CultureInfo culture && CultureInfo.CurrentCulture != culture)
+        {
+            _selectedCulture = culture;
+            var uri = new Uri(NavigationManager.Uri)
+                .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+            var cultureEscaped = Uri.EscapeDataString(_selectedCulture.Name);
+            var uriEscaped = Uri.EscapeDataString(uri);
+
+            NavigationManager.NavigateTo(
+                $"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}",
+                forceLoad: true);
+        }
+
+        // Close dropdown after selection
+        _isDropdownVisible = false;
+
+        await Task.CompletedTask;
+    }
+}

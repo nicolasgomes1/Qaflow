@@ -1,0 +1,91 @@
+@page "/project/{ProjectId:int}/bugs/view/{Id:int}"
+@rendermode InteractiveServer
+
+<RadzenSteps CanChange="@CanChange">
+    <Steps>
+        <RadzenStepsItem Text="Bug Details">
+            <RadzenRow>
+                <RadzenCard Style="width: 50%; padding: 20px; margin-bottom:20px">
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
+
+                        <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_bug.Id.ToString()"/>
+
+                        <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_bug.Name"/>
+
+                        <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_bug.Description"/>
+
+                        <RadzenLabel Text="Priority:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_bug.Priority.ToString()"/>
+
+                        <RadzenLabel Text="Severity:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_bug.Severity.ToString()"/>
+
+                        <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_bug.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
+
+                        <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_bug.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
+
+                        <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_bug.CreatedBy"/>
+
+                        <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_bug.ModifiedBy"/>
+
+                        <RadzenLabel Text="Associated Test Case Execution:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_bug.TestCaseExecutionId.ToString()"/>
+                    </div>
+                </RadzenCard>
+            </RadzenRow>
+        </RadzenStepsItem>
+
+        <RadzenStepsItem Text="@ContextFilesTitle()" Disabled="@BugsHasNoFiles">
+            <FileViewer Files="Files"
+                        EntityName="@nameof(BugsFiles)"/>
+        </RadzenStepsItem>
+
+        <RadzenStepsItem Text="Comments">
+            <Comments Id="Id"/>
+        </RadzenStepsItem>
+
+    </Steps>
+</RadzenSteps>
+
+
+
+@code{
+    [Parameter] public int ProjectId { get; set; }
+    [Parameter] public int Id { get; set; }
+
+    private List<BugsFiles>? Files { get; set; }
+
+    private Bugs _bug = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _bug = await BugsModel.GetBugByIdAsync(Id);
+        Files = await BugsFilesModel.GetBugFilesById(Id);
+    }
+
+    private bool BugsHasNoFiles => !BugsFilesModel.ExistingFiles.Any();
+
+    private string ContextFilesTitle()
+    {
+        return BugsHasNoFiles ? Loc["files.nofiles"] : Loc["files.existingfiles"];
+    }
+
+
+    private static Task CanChange(StepsCanChangeEventArgs args)
+    {
+        return args.SelectedIndex switch
+        {
+            0 or 1 => Task.CompletedTask,
+            _ => Task.CompletedTask
+        };
+    }
+
+}

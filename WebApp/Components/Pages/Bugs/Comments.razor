@@ -1,0 +1,99 @@
+<RadzenButton Text="Comment" Icon="add" IconColor="red" Shade="Shade.Light" Variant="Variant.Outlined"
+              ButtonStyle="ButtonStyle.Primary" Click="@ShowInlineDialog"/>
+
+<RadzenDataList AllowVirtualization="true"
+                WrapItems="true" AllowPaging="true"
+                Data="@_comments" TItem="BugsComments" PageSize="5" PagerHorizontalAlign="HorizontalAlign.Left"
+                ShowPagingSummary="true" @ref="_listgrid">
+    <Template Context="product">
+        <RadzenCard Style="width: 100%; border: none; padding: 10px 0; border-bottom: 1px solid #ddd;">
+            <RadzenRow>
+                <!-- User Information -->
+                <RadzenColumn Size="6">
+                    <RadzenLabel Text="Created By:" Style="font-weight: bold; margin-right: 5px;" />
+                    <RadzenText TextStyle="TextStyle.Body2">
+                        @(product.CreatedBy)
+                    </RadzenText>
+                </RadzenColumn>
+
+                <!-- Comment Content -->
+                <RadzenColumn Size="6" Style="word-wrap: break-word; white-space: normal;">
+                    <RadzenLabel Text="Comment:" Style="font-weight: bold; margin-right: 5px;" />
+                    <RadzenText TextStyle="TextStyle.Body2">
+                        @(product.Comment)
+                    </RadzenText>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenCard>
+    </Template>
+</RadzenDataList>
+
+
+
+@code {
+
+    [Parameter] public int Id { get; set; }
+
+    RadzenDataList<BugsComments> _listgrid = new();
+
+    IEnumerable<BugsComments> _comments = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadComments();
+    }
+
+    private async Task LoadComments()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        _comments = await db.BugsComments
+            .Where(c => c.BugId == Id)
+            .ToListAsync();
+
+        StateHasChanged(); // Ensure UI reflects the updated data
+    }
+
+    private BugsComments _comment = new BugsComments();
+
+    private async Task CreateNewComment()
+    {
+        _comment.BugId = Id;
+        var currentUser = await UserService.GetCurrentUserInfoAsync();
+        _comment.CreatedBy = currentUser.UserName;
+        _comment.CreatedAt = DateTime.Now;
+
+        await using var db = await DbContext.CreateDbContextAsync();
+        await db.BugsComments.AddAsync(_comment);
+        await db.SaveChangesAsync();
+
+        DialogService.Close();
+
+        // Reload comments list
+        await LoadComments();
+    }
+
+    async Task ShowInlineDialog()
+    {
+        _comment = new BugsComments(); // Replace BugsComments with the appropriate model initialization if needed
+
+        await DialogService.OpenAsync("Create Bug", ds =>
+            @<RadzenStack Gap="1.5rem" Style="height: 600px;">
+                <RadzenTemplateForm Data="_comment" TItem="BugsComments" Submit="@CreateNewComment">
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Comment"/>
+                        <RadzenTextBox id="comment"
+                                       @bind-Value="_comment.Comment"
+                                       class="input-style"
+                                       Name="comment"/>
+                        <RadzenRequiredValidator Component="comment" Text="Comment is required"/>
+                    </div>
+
+                    <!-- Submit button inside the form -->
+                    <RadzenButton Text="Create Comment" ButtonStyle="ButtonStyle.Secondary"
+                                  ButtonType="ButtonType.Submit"
+                                  Style="margin-bottom: 10px;"/>
+                </RadzenTemplateForm>
+            </RadzenStack>);
+    }
+
+}

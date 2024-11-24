@@ -1,0 +1,50 @@
+﻿<RadzenStack Style="flex: 1; padding: 10px; overflow: visible">
+    @if (_chartData.Count > 0)
+    {
+        <RadzenChart>
+            <RadzenPieSeries Data="@_chartData" Title="Requirements" CategoryProperty="Category" ValueProperty="Value">
+                <RadzenSeriesDataLabels Visible="true" />
+            </RadzenPieSeries>
+        </RadzenChart>
+    }
+    else
+    {
+        <h1>No Data available</h1>
+    }
+</RadzenStack>
+
+
+@code {
+    private List<ChartData> _chartData = [];
+
+    public class ChartData
+    {
+        public string Category { get; set; } = string.Empty;
+        public double Value { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the test case percentages
+        var (testCasesWithRequirementsPercentage, testCasesWithoutRequirementsPercentage) =
+            await ReportsModel.GetTestCasePercentagesAsync();
+
+        if (testCasesWithRequirementsPercentage > 0)
+        {
+            _chartData.Add(new ChartData
+                {
+                    Category = "Test Cases with Requirements",
+                    Value = testCasesWithRequirementsPercentage
+                });
+        }
+
+        if (testCasesWithoutRequirementsPercentage > 0)
+        {
+            _chartData.Add(new ChartData
+                {
+                    Category = "Test Cases without Requirements",
+                    Value = testCasesWithoutRequirementsPercentage
+                });
+        }
+    }
+}

@@ -1,0 +1,89 @@
+<RadzenDataGrid TItem="Projects" Data="_projectsList">
+
+    <HeaderTemplate>
+        <RadzenButton Click="CreateProject"
+                      Size="ButtonSize.Medium"
+                      Icon="add"
+                      Text="@Loc["create.project"]"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, @Loc["create.project.tooltip"], TooltipPosition.Bottom))"
+                      MouseLeave="@AppTooltipService.HideTooltip"
+                      Style="margin-bottom: 20px"/>
+    </HeaderTemplate>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(_projects.Id)" Title="Id" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(_projects.Name)" Title="Name" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(_projects.Description)" Title="Description" Width="auto"/>
+        <RadzenDataGridColumn Title="Actions">
+            <Template Context="item">
+                <div class="btn-group" style="display: flex; gap: 5px;">
+                    <RadzenButton Icon="visibility"
+                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "View Project"))"
+                                  MouseLeave="@AppTooltipService.HideTooltip"
+                                  Click="@(() => ViewProject(item.Id))" Size="ButtonSize.ExtraSmall"/>
+                    <RadzenButton Icon="edit"
+                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Edit Project"))"
+                                  MouseLeave="AppTooltipService.HideTooltip"
+                                  Click="@(() => EditProject(item.Id))" Size="ButtonSize.ExtraSmall"/>
+                    <RadzenButton Icon="delete"
+                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Delete Project"))"
+                                  MouseLeave="@AppTooltipService.HideTooltip"
+                                  Click="@(() => DeleteData(item.Id))"
+                                  Size="ButtonSize.ExtraSmall"/>
+                    <RadzenButton Icon="launch"
+                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Go To {item.Name}"))"
+                                  MouseLeave="@AppTooltipService.HideTooltip"
+                                  Click="@(() => GoToProject(item.Id))"
+                                  Size="ButtonSize.ExtraSmall"/>
+                </div>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+
+@code {
+    Projects _projects = new();
+    IEnumerable<Projects>? _projectsList;
+
+    private async Task DeleteData(int projectId)
+    {
+        var confirmed = await DialogService.Confirm($"Are you sure you want to delete the Project {_projects.Name}?", "All underlying Data will be lost");
+        if (confirmed == true)
+        {
+            await ProjectModel.RemoveProject(projectId);
+        }
+
+        NavigationManager.NavigateTo("/", true);
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _projectsList = await ProjectModel.GetProjects();
+
+        ProjectStateService.SetProjectId(0);
+    }
+
+
+    private void CreateProject()
+    {
+        NavigationManager.NavigateTo("/projects/create", true);
+    }
+
+    void GoToProject(int projectId)
+    {
+        NavigationManager.NavigateTo($"/project/{projectId}", true);
+        ProjectStateService.SetProjectId(projectId);
+    }
+
+    void EditProject(int projectId)
+    {
+        NavigationManager.NavigateTo($"/projects/edit/{projectId}", true);
+    }
+
+    void ViewProject(int projectId)
+    {
+        NavigationManager.NavigateTo($"/projects/view/{projectId}", true);
+    }
+
+}

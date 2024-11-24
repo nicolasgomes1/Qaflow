@@ -1,0 +1,73 @@
+@page "/project/{ProjectId:int}/bugs"
+@rendermode InteractiveServer
+
+<RadzenDataGrid TItem="Bugs"
+                Data="_bugs"
+                @ref="_dataGrid">
+    <HeaderTemplate>
+        <RadzenButton Text="Bug"
+                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs/create", true)'
+                      Size="ButtonSize.Medium"
+                      Icon="add"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create new Bug", TooltipPosition.Bottom))"
+                      MouseLeave="@AppTooltipService.HideTooltip"/>
+        <RadzenButton Icon="autorenew"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All", TooltipPosition.Bottom))"
+                      MouseLeave="@AppTooltipService.HideTooltip"
+                      Size="ButtonSize.Medium"
+                      Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
+        <DeleteallDataForModel EntityName="@(nameof(BugsModel.Bugs))"
+                               EntityList="_bugs"/>
+        <ExportGridDataCsv Grid="@_dataGrid"/>
+    </HeaderTemplate>
+
+
+    <Columns>
+        <RadzenDataGridColumn TItem="Bugs" Property="@nameof(Bugs.Id)" Title="ID"/>
+        <RadzenDataGridColumn TItem="Bugs" Property="@nameof(Bugs.Name)" Title="Name"/>
+        <RadzenDataGridColumn TItem="Bugs" Property="@nameof(Bugs.Description)" Title="Description"/>
+        <RadzenDataGridColumn TItem="Bugs" Property="@nameof(Bugs.Priority)" Title="Priority">
+            <Template Context="ctx">
+                <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(ctx.Priority)">
+                    @ctx.Priority
+                </RadzenBadge>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Bugs" Property="@nameof(Bugs.Severity)" Title="Severity">
+            <Template Context="ctx">
+                <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleSeverity(ctx.Severity)">
+                    @ctx.Severity
+                </RadzenBadge>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Bugs" Property="@nameof(Bugs.BugStatus)" Title="Status">
+            <Template Context="ctx">
+                <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleBugStatus(ctx.BugStatus)">
+                    @ctx.BugStatus
+                </RadzenBadge>
+            </Template>
+        </RadzenDataGridColumn>
+
+        <!-- Action Buttons column -->
+        <IndexActions TItem="Bugs" EntityName="@nameof(Bugs)"/>
+    </Columns>
+
+</RadzenDataGrid>
+
+
+
+
+@code {
+    [Parameter] public int ProjectId { get; set; }
+
+    private RadzenDataGrid<Bugs> _dataGrid = new();
+
+    private IEnumerable<Bugs> _bugs = new List<Bugs>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _bugs = await BugsModel.GetBugsAsync();
+    }
+
+
+}

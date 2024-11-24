@@ -1,0 +1,13 @@
+﻿@page "/sendemail"
+
+
+<h3>Send an Email</h3>
+
+<button class="btn btn-primary" @onclick="SendEmailToMe">Send Email</button>
+
+@code {
+    private async Task SendEmailToMe()
+    {
+        await EmailService.SendEmailAsync("nicolasdiasgomes@gmail.com", "Test Email", "This is a test email sent from Blazor Server.");
+    }
+}

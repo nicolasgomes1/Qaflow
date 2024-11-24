@@ -1,0 +1,16 @@
+﻿<RadzenStack Orientation="Orientation.Horizontal"
+             AlignItems="AlignItems.Center"
+             JustifyContent="JustifyContent.Center"
+             Wrap="FlexWrap.Wrap"
+             class="rz-m-12" Gap="2rem">
+    <RadzenProgressBarCircular ShowValue="true" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+        <Template>
+            <span style="white-space: nowrap;">@Template</span>
+        </Template>
+    </RadzenProgressBarCircular>
+</RadzenStack>
+
+
+@code{
+    [Parameter] public string Template { get; set; } = "Loading";
+}

@@ -1,0 +1,137 @@
+﻿@rendermode InteractiveServer
+@inject ContextMenuService ContextMenuService
+
+<RadzenTree Style="height: 100%; overflow: auto;" Data=@_projects ItemContextMenu="ItemContextMenu">
+    <!-- Project level -->
+    <RadzenTreeLevel TextProperty="@nameof(Projects.Name)"
+                     HasChildren="@(project => true)"
+                     ChildrenProperty="TestPlans"
+                     Template="@ProjectTemplate" />
+
+    <!-- Requirements level (children of the project) -->
+    <RadzenTreeLevel TextProperty="@nameof(TestPlans.Name)"
+                     HasChildren="@(testplans => true)"
+                     ChildrenProperty="TestCases"
+                     Template="@TestPlansTemplate" />
+
+    <!-- TestCases level (children of the requirement) -->
+    <RadzenTreeLevel TextProperty="@nameof(TestCases.Name)"
+                     HasChildren="@(testCase => false)"
+                     Template="@TestCaseTemplate" />
+</RadzenTree>
+
+@code {
+    private IEnumerable<Projects> _projects = new List<Projects>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _projects = await ProjectModel.GetProjectsTestplansTestCases();
+    }
+
+
+
+    // Handle the context menu for each tree item
+    void ItemContextMenu(TreeItemContextMenuEventArgs args)
+    {
+        var menuItems = new List<ContextMenuItem>();
+
+        switch (args.Value)
+        {
+            case Projects project:
+                // Add View and Edit options for Project
+                menuItems.Add(new ContextMenuItem { Text = $"View Project {project.Id}", Value = $"projects/view/{project.Id}", Icon = "visibility" });
+                menuItems.Add(new ContextMenuItem { Text = $"Edit Project {project.Id}", Value = $"projects/edit/{project.Id}", Icon = "edit" });
+                break;
+            case TestPlans testplans:
+                // Add View and Edit options for Requirements
+                menuItems.Add(new ContextMenuItem { Text = $"View Test Plan {testplans.Id}", Value = $"project/{testplans.TPProjectId}/testplans/view/{testplans.Id}", Icon = "visibility" });
+                menuItems.Add(new ContextMenuItem { Text = $"Edit Test Plan {testplans.Id}", Value = $"project/{testplans.TPProjectId}/testplans/edit/{testplans.Id}", Icon = "edit" });
+                break;
+            case TestCases testCase:
+                // Add View and Edit options for TestCases
+                menuItems.Add(new ContextMenuItem { Text = $"View TestCase {testCase.Id}", Value = $"project/{testCase.TcProjectId}/testcases/view/{testCase.Id}", Icon = "visibility" });
+                menuItems.Add(new ContextMenuItem { Text = $"Edit TestCase {testCase.Id}", Value = $"project/{testCase.TcProjectId}/testcases/edit/{testCase.Id}", Icon = "edit" });
+                break;
+        }
+
+        ContextMenuService.Open(args, menuItems, (e) =>
+        {
+
+            var uri = e.Value.ToString();
+
+            if (uri == null) throw new InvalidOperationException("URI is not set.");
+
+            NavigationManager.NavigateTo(uri, true);
+
+        });
+    }
+
+    // Custom templates for each level
+
+    RenderFragment<RadzenTreeItem> ProjectTemplate = (context) => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "style", "display: flex; align-items: center;"); // Flex for alignment
+
+        // Add the project icon
+        builder.OpenComponent<RadzenIcon>(2);
+        builder.AddAttribute(3, nameof(RadzenIcon.Icon), "folder"); // Icon for Projects
+        builder.AddAttribute(4, nameof(RadzenIcon.Style), "margin-right: 5px;"); // Add some margin for spacing
+        builder.CloseComponent();
+
+        // Add the project name
+        builder.AddContent(5, context.Text); // Project Name
+        builder.CloseElement();
+    };
+
+    RenderFragment<RadzenTreeItem> TestPlansTemplate = (context) => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "style", "display: flex; align-items: center;"); // Flex for alignment
+
+        // Add the requirement icon
+        builder.OpenComponent<RadzenIcon>(2);
+        builder.AddAttribute(3, nameof(RadzenIcon.Icon), "book"); // Icon for Requirements
+        builder.AddAttribute(4, nameof(RadzenIcon.Style), "margin-right: 5px;"); // Add some margin for spacing
+        builder.CloseComponent();
+
+        // Add the requirement name within a span
+        builder.OpenElement(5, "span");
+
+        // Check if context is a Requirements object and there are no test cases
+        if (context.Value is TestPlans testplans && testplans.TestCases.Count == 0)
+        {
+            builder.AddAttribute(6, "style", "color: red;"); // Set text color to red if no test cases
+        }
+
+        // Render the text from context (requirement name)
+        builder.AddContent(7, context.Text);
+
+        // Close the span
+        builder.CloseElement(); // span
+
+        // Close the outer div
+        builder.CloseElement(); // div
+    };
+
+    RenderFragment<RadzenTreeItem> TestCaseTemplate = (context) => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "style", "display: flex; align-items: center;"); // Flex for alignment
+
+        // Add the test case icon
+        builder.OpenComponent<RadzenIcon>(2);
+        builder.AddAttribute(3, nameof(RadzenIcon.Icon), "list"); // Icon for Test Cases
+        builder.AddAttribute(4, nameof(RadzenIcon.Style), "margin-right: 5px;"); // Add some margin for spacing
+        builder.CloseComponent();
+
+        // Accessing the requirement object
+        var testCase = context.Value as TestCases; // Assuming TestCases is your data type
+
+        if (testCase == null) throw new InvalidOperationException("Test Case is not set.");
+        // Add the test case name
+        builder.AddContent(5, $"{testCase.Id} - {context.Text}"); // Display ID before Name
+        builder.CloseElement();
+    };
+}

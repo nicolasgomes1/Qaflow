@@ -1,0 +1,48 @@
+﻿@page "/projects/view/{Id:int}"
+@rendermode InteractiveServer
+
+<RadzenCard Style="width: 50%; padding: 20px; margin-bottom:20px">
+    <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
+        <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_project.Id.ToString()"/>
+
+        <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_project.Name"/>
+
+        <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_project.Description"/>
+
+        <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_project.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
+
+        <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_project.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
+
+        <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_project.CreatedBy"/>
+
+        <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_project.ModifiedBy"/>
+
+        <RadzenLabel Text="Archived Status:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_project.ArchivedStatus.ToString()"/>
+    </div>
+</RadzenCard>
+
+<div style="margin-top: 10px;">
+    <RadzenButton Text="Edit" Click='() => NavigationManager.NavigateTo($"projects/edit/{_project.Id}")'/>
+    <RadzenButton Text="Back" Click='() => NavigationManager.NavigateTo("/")'/>
+</div>
+
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Projects _project = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _project = await ProjectModel.GetProjectById(Id);
+    }
+
+}

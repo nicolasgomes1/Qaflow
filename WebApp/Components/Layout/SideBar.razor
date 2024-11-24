@@ -1,0 +1,68 @@
+﻿@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+@if (_isAuthenticated && ProjectStateService.ProjectId != 0)
+{
+    <!-- Top left floating Radzen button -->
+    @*<div style="position: fixed; top: 10px; left: 10px; z-index: 1000;">
+        <RadzenButton Icon="menu" @onmouseover="OnMouseOver" />
+    </div>*@
+
+    <!-- RadzenSidebar with dynamic width -->
+    <RadzenSidebar @onmouseover="OnMouseOver"
+                   @onmouseout="OnMouseOut"
+                   Style="@GetSidebarStyle()">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="@Loc["Home"]" Icon="dashboard" data-testid="sidebar_dashboard"
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}", true))"/>
+            <RadzenPanelMenuItem Text="@Loc["Requirements"]" Icon="description" data-testid="sidebar_requirements"
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements", true))"/>
+            <RadzenPanelMenuItem Text="@Loc["TestCases"]" Icon="assignment" data-testid="sidebar_testcases"
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases", true))"/>
+            <RadzenPanelMenuItem Text="@Loc["TestPlans"]" Icon="description" data-testid="sidebar_testplans"
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testplans", true))"/>
+            <RadzenPanelMenuItem Text="@Loc["TestExecutions"]" Icon="description" data-testid="sidebar_testexecutions"
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution", true))"/>
+            <RadzenPanelMenuItem Text="@Loc["Bugs"]" Icon="bug_report" data-testid="sidebar_bugs"
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs", true))"/>
+            <RadzenPanelMenuItem Text="@Loc["Reports"]" Icon="analytics" data-testid="sidebar_reports"
+                                 Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/reports", true))"/>
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+}
+
+@code {
+    private bool _isAuthenticated;
+    private string _sidebarWidth = "0px"; // Initially collapsed
+
+    [Parameter] public int ProjectId { get; set; } // Capture projectId from the URL
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _isAuthenticated = authState.User.Identity?.IsAuthenticated ?? false;
+        ProjectId = ProjectStateService.ProjectId;
+    }
+
+    // Expand sidebar when mouse hovers over the indicator or sidebar
+    private void OnMouseOver()
+    {
+        _sidebarWidth = "250px"; // Expand to full width
+    }
+
+    // Collapse sidebar when mouse leaves
+    private void OnMouseOut()
+    {
+        _sidebarWidth = "0px"; // Collapse to hidden
+    }
+
+    // Build the dynamic style for the sidebar
+    private string GetSidebarStyle()
+    {
+        return $"width: {_sidebarWidth}; transition: width 0.3s ease;";
+    }
+
+}

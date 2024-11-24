@@ -1,0 +1,133 @@
+﻿@page "/project/{ProjectId:int}/testplans/edit/{Id:int}"
+@rendermode InteractiveServer
+
+@if (_isLoading)
+{
+    <ProgressBar />
+}
+else
+{
+    <h3 class="text-center text-primary mb-4">Edit Test Plan</h3>
+
+    <RadzenTemplateForm Data="@_testPlans" TItem="TestPlans" Submit="UpdateTestPlan">
+        <ValidationSummary class="alert alert-danger"/>
+        <RadzenTabs RenderMode="TabRenderMode.Client" bind-SelectedIndex="_selectedIndex">
+            <Tabs>
+                <RadzenTabsItem Text="Test Plans">
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Name"/>
+                        <RadzenTextBox id="name"
+                                       @bind-Value="_testPlans.Name"
+                                       class="input-style"
+                                       Name="name"/>
+                        <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Description"/>
+                        <RadzenTextBox id="description"
+                                       @bind-Value="_testPlans.Description"
+                                       class="input-style"
+                                       Name="description"/>
+                        <RadzenRequiredValidator Component="description" Text="Description is recommended"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Priority"/>
+                        <RadzenDropDown id="priority"
+                                        @bind-Value="_testPlans.Priority"
+                                        Data="EnumService.GetEnumValues<Priority>()"
+                                        class="input-style"
+                                        Name="priority"/>
+                        <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                    </div>
+
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Test Cases"/>
+                        <RadzenDropDown id="testcases"
+                                        Data="@TestCasesModel.TestCasesList"
+                                        @bind-Value="TestPlansModel.SelectedTestCasesIds"
+                                        TextProperty="Name"
+                                        ValueProperty="Id"
+                                        Multiple="true"
+                                        class="input-style"
+                                        Name="testcases"/>
+                    </div>
+                </RadzenTabsItem>
+                <RadzenTabsItem Text="Files">
+                    <FileUploadEdit ExistingFiles="TestPlansFilesModel.ExistingFiles"
+                                    EntityName="@nameof(TestPlansFile)"
+                                    UploadedFiles="@_uploadedFiles"/>
+                </RadzenTabsItem>
+                
+            </Tabs>
+        </RadzenTabs>
+        
+        <CreateEditActions EntityName="testplans" CreateEdit="Update"/>
+
+    </RadzenTemplateForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public int ProjectId { get; set; }
+
+    private readonly List<IBrowserFile>? _uploadedFiles = [];
+
+    private bool _isLoading = true;
+
+    int _selectedIndex;
+    private TestPlans _testPlans = new();
+   
+    protected override async Task OnInitializedAsync()
+    {
+        await TestCasesModel.GetAllTestCases();
+        _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
+        await TestPlansModel.GetAssociatedTestCases(Id);
+        await TestPlansFilesModel.GetFilesByTestPlanId(Id);
+
+        _isLoading = false;
+    }
+
+    private async Task UpdateTestPlan()
+    {
+        await TestPlansModel.UpdateTestPlan2(_testPlans, _uploadedFiles);
+        NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testplans");
+        StateHasChanged();
+        await FormNotificationService.NotifySuccess($"Test Plan with Id {_testPlans.Id} Updated Successfully");
+    }
+    
+    
+
+    private void HandleFileSelected(UploadChangeEventArgs args)
+    {
+        if (_uploadedFiles == null) return;
+        _uploadedFiles.Clear();
+        foreach (var file in args.Files)
+        {
+            _uploadedFiles.Add(file);
+        }
+    }
+
+    private async Task DeleteFile(TestPlansFile file)
+    {
+        // Remove the file from the database
+        await using var db = await DbContext.CreateDbContextAsync();
+        db.TestPlansFiles.Remove(file);
+        await db.SaveChangesAsync();
+
+        // Update the list of existing files
+        TestPlansFilesModel.ExistingFiles.Remove(file);
+        StateHasChanged(); // Refresh the UI
+    }
+
+    static void OnProgress(UploadProgressArgs args)
+    {
+        Console.WriteLine($"{args.Progress}% - {args.Loaded}/{args.Total} bytes");
+    }
+
+}

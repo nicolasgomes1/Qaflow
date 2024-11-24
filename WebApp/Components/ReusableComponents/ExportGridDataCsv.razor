@@ -1,0 +1,74 @@
+﻿@typeparam TItem
+
+<RadzenButton Icon="wrap_text"
+              Click="GenerateCsv"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Export Table to CSV", TooltipPosition.Bottom))"
+              MouseLeave="@AppTooltipService.HideTooltip"/>
+
+@if (!string.IsNullOrEmpty(DownloadUrl))
+{
+    <a href="@DownloadUrl" download="@FileName" style="text-decoration: none; color: inherit;">
+        <RadzenButton Icon="download" Style="margin-left: 10px;"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Download Data", TooltipPosition.Bottom))"
+                      MouseLeave="@AppTooltipService.HideTooltip"
+                      Click="() => ExportFile()"
+                      Visible="@_isFileNotExported"/>
+    </a>
+}
+
+
+@code {
+    [Parameter] [Required] public RadzenDataGrid<TItem>? Grid { get; set; }
+
+    [Required] private string? DownloadUrl { get; set; }
+
+
+    bool _isFileNotExported = true;
+
+    void ExportFile()
+    {
+        _isFileNotExported = false;
+        FormNotificationService.NotifySuccess("File Downloaded Successfully");
+    }
+
+    private string FileName => $"{typeof(TItem).Name}.csv";
+
+    private async Task GenerateCsv()
+    {
+        var csv = new StringBuilder();
+
+        if (Grid == null) throw new InvalidOperationException("Grid is not set.");
+        // Write headers
+        foreach (var column in Grid.ColumnsCollection)
+        {
+            csv.Append($"{column.Title},");
+        }
+
+        csv.AppendLine();
+
+        // Write data rows for all columns
+        foreach (var item in Grid.View)
+        {
+            foreach (var column in Grid.ColumnsCollection)
+            {
+                var value = column.GetValue(item)?.ToString();
+                csv.Append($"{value},");
+            }
+
+            csv.AppendLine();
+        }
+
+        // Convert CSV content to a Base64 string
+        var csvBytes = Encoding.UTF8.GetBytes(csv.ToString());
+        var csvBase64 = Convert.ToBase64String(csvBytes);
+
+        // Generate a Data URI for the CSV content
+        DownloadUrl = $"data:text/csv;base64,{csvBase64}";
+
+        await Task.CompletedTask;
+
+        await FormNotificationService.NotifySuccess("File Generated Successfully");
+        _isFileNotExported = true;
+    }
+
+}

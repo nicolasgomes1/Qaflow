@@ -1,0 +1,48 @@
+@page "/integrations/view/{Id:int}"
+
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject ILogger<View> Logger
+@attribute [Authorize(Roles = "Admin")]
+
+<RadzenCard Style="width: 50%; padding: 20px; margin-bottom:20px">
+    <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
+
+        <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@Integrations.Id.ToString()"/>
+
+        <RadzenLabel Text="Integration Type:" Style="font-weight: bold;"/>
+        <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@Integrations.IntegrationType.ToString()"/>
+
+        <RadzenLabel Text="Base Url:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@Integrations.BaseUrl"/>
+
+        <RadzenLabel Text="username:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@Integrations.Username"/>
+
+        <RadzenLabel Text="Api Key" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@Integrations.ApiKey"/>
+
+        <RadzenLabel Text="Unique Identifier Key"/>
+        <RadzenLabel Text="@Integrations.UniqueKey"/>
+    </div>
+</RadzenCard>
+
+<div style="margin-top: 10px;">
+    <RadzenButton Text="Edit" Click='() => NavigationManager.NavigateTo($"/integrations/edit/{Id}")'/>
+    <RadzenButton Text="Back" Click='() => NavigationManager.NavigateTo("/integrations")'/>
+</div>
+
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Integrations Integrations { get; set; } = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Integrations = await IntegrationsModel.GetIntegrationById(Id);
+    }
+
+}

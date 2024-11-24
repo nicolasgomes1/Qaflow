@@ -1,0 +1,126 @@
+﻿@page "/Users/Create"
+@attribute [Authorize]
+@inject ILogger<Create> Logger
+
+@rendermode InteractiveServer
+
+<PageTitle>Create User</PageTitle>
+
+<RadzenTemplateForm Data="@Input" TItem="InputModel" Submit="@HandleValidSubmit">
+
+    <h3 class="text-center text-primary mb-4">Create User</h3>
+
+    <DataAnnotationsValidator/>
+    <ValidationSummary class="alert alert-danger"/>
+
+    <RadzenLabel Text="Username"/>
+    <div class="form-floating mb-3">
+        <RadzenTextBox id="username" @bind-Value="Input.UserName" Placeholder="Username"/>
+        <ValidationMessage For="() => Input.UserName" class="text-danger"/>
+    </div>
+
+    <RadzenLabel Text="Password"/>
+    <div class="form-floating mb-3">
+        <RadzenTextBox id="password" @bind-Value="Input.Password" Type="password" Placeholder="Password"/>
+        <ValidationMessage For="() => Input.Password" class="text-danger"/>
+    </div>
+
+    <RadzenLabel Text="Email"/>
+    <div class="form-floating mb-3">
+        <RadzenTextBox id="email" @bind-Value="Input.Email" Placeholder="Email"/>
+        <ValidationMessage For="() => Input.Email" class="text-danger"/>
+    </div>
+
+    <RadzenLabel Text="Role"/>
+    <div class="form-floating mb-3">
+        <RadzenDropDown id="role" @bind-Value="Input.Role" Data="@_allRoles"/>
+        <ValidationMessage For="() => Input.Role" class="text-danger"/>
+    </div>
+
+    <RadzenLabel Text="Confirmed Email?"/>
+    <div class="form-floating mb-3">
+        <RadzenCheckBox @bind-Value="Input.EmailConfirmed"/>
+    </div>
+
+    <CreateEditActions CreateEdit="Create"/>
+
+</RadzenTemplateForm>
+
+@code {
+    private List<string?> _allRoles = [];
+    private InputModel Input { get; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allRoles = await RoleManager.Roles.Select(r => r.Name).ToListAsync();
+    }
+
+
+    private static string CancelUrl()
+    {
+        return "/Users/Index";
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var user = new ApplicationUser
+        {
+            UserName = Input.UserName,
+            Email = Input.Email,
+            EmailConfirmed = Input.EmailConfirmed
+        };
+
+        var result = await UserManager.CreateAsync(user, Input.Password);
+        if (result.Succeeded)
+        {
+            if (!Input.EmailConfirmed)
+            {
+                var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
+                var callbackUrl = NavigationManager.GetUriWithQueryParameters(
+                    NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
+                    new Dictionary<string, object?> { ["userId"] = user.Id, ["code"] = code });
+
+                await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
+            }
+
+            if (!string.IsNullOrEmpty(Input.Role))
+            {
+                var roleResult = await UserManager.AddToRoleAsync(user, Input.Role);
+                if (!roleResult.Succeeded)
+                {
+                    Logger.LogError("Error adding user to role: {Errors}", string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                }
+            }
+
+            Logger.LogInformation("User created successfully.");
+            NavigationManager.NavigateTo("/Users/Index");
+            await UserNotification.NotifySuccess("User was created Sucessefully");
+        }
+        else
+        {
+            foreach (var error in result.Errors)
+            {
+                Logger.LogError("Error creating user: {Error}", error.Description);
+            }
+        }
+    }
+
+    private class InputModel
+    {
+        [Required(ErrorMessage = "The Username field is required.")]
+        public string UserName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "The Password field is required.")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "The Email field is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "The Role field is required.")]
+        public string Role { get; set; } = string.Empty;
+
+        public bool EmailConfirmed { get; set; }
+    }
+
+}

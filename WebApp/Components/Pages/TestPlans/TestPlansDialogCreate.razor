@@ -1,0 +1,100 @@
+@inject DialogService DialogService
+
+
+<RadzenButton Text="@Title" Icon="description" IconColor="red" Shade="Shade.Light" Variant="Variant.Outlined"
+              Disabled="@IsDisabled"
+              ButtonStyle="ButtonStyle.Primary" Click="@ShowInlineDialog"/>
+
+@code {
+    private TestPlans _testPlans = new TestPlans();
+    private readonly List<IBrowserFile>? _uploadedFiles = new();
+
+    [Parameter] public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Default value is false
+    /// </summary>
+    [Parameter]
+    public bool IsDisabled { get; set; } = false;
+
+    [Parameter] public int ProjectId { get; set; }
+
+
+    private async Task CreateNewTestPlan()
+    {
+        // CreateBug should handle adding the bug and return a result
+        var result = await TestPlansModel.CreateTestPlan1(_testPlans, _uploadedFiles);
+
+        DialogService.Close(result);
+        StateHasChanged();
+        await FormNotificationService.NotifySuccess($"Test Plan created successfully with id {_testPlans.Id}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await TestCasesModel.GetAllTestCases();
+    }
+
+
+    async Task ShowInlineDialog()
+    {
+        _testPlans = new TestPlans();
+
+        var result = await DialogService.OpenAsync("Create Test Plan", ds =>
+            @<RadzenStack Gap="1.5rem" Style="height: 600px;">
+                <RadzenTemplateForm Data="_testPlans" TItem="TestPlans" Submit="@CreateNewTestPlan">
+                    <ValidationSummary class="alert alert-danger"/>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Name"/>
+                        <RadzenTextBox id="name"
+                                       @bind-Value="_testPlans.Name"
+                                       class="input-style"
+                                       Name="name"/>
+                        <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Description"/>
+                        <RadzenTextArea id="description"
+                                        @bind-Value="_testPlans.Description"
+                                        class="input-style"
+                                        Name="description"/>
+                        <RadzenRequiredValidator Component="description" Text="Description is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Priority"/>
+                        <RadzenDropDown id="priority"
+                                        @bind-Value="_testPlans.Priority"
+                                        Data="EnumService.GetEnumValues<Priority>()"
+                                        class="input-style"
+                                        Name="priority"/>
+                        <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Test Cases"/>
+                        <RadzenDropDown id="testcases"
+                                        Data="@TestCasesModel.TestCasesList"
+                                        @bind-Value="@TestPlansModel.SelectedTestCasesIds"
+                                        AllowFiltering="true"
+                                        TextProperty="Name"
+                                        ValueProperty="Id"
+                                        Multiple="true"
+                                        class="input-style"
+                                        Name="Test Cases"/>
+                    </div>
+
+                    <FileUpload UploadedFiles="_uploadedFiles"/>
+
+                    <!-- Submit button inside the form -->
+                    <RadzenButton Text="Create Test Plan" ButtonStyle="ButtonStyle.Secondary"
+                                  ButtonType="ButtonType.Submit"
+                                  Style="margin-bottom: 10px;"/>
+                </RadzenTemplateForm>
+            </RadzenStack>
+        );
+    }
+
+}

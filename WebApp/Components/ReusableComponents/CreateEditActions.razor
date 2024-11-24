@@ -1,0 +1,50 @@
+﻿<div style="margin-top: 10px;">
+    <RadzenButton Text="@CreateEdit"
+                  ButtonType="ButtonType.Submit"/>
+    <RadzenButton Text="Cancel"
+                  Click="@CancelUrlLink"
+                  ButtonType="ButtonType.Button"/>
+</div>
+
+@code {
+
+    /// <summary>
+    ///     String Create or Update in the form
+    /// </summary>
+    [Parameter]
+    public string CreateEdit { get; set; } = string.Empty;
+
+
+    /// <summary>
+    ///     EntityName lowercase that is in the url such as testcases, testplans, etc.
+    ///     When the EntityName is null, it will redirect to the Users/Index page
+    ///     When the EntityName is projects, it will redirect to the root page
+    ///     When the EntityName is testcases, testplans, requirements, or testexecution, it will redirect to the project page
+    /// </summary>
+    [Parameter]
+    public required string EntityName { get; set; }
+
+
+    private void CancelUrlLink()
+    {
+        switch (EntityName)
+        {
+            case "testcases" or "testplans" or "requirements" or "testexecution" or "bugs":
+                NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/{EntityName}", true);
+                break;
+
+            case "projects":
+                NavigationManager.NavigateTo("/", true);
+                break;
+
+            case "integrations":
+                NavigationManager.NavigateTo("/integrations", true);
+                break;
+                
+            case null:
+                NavigationManager.NavigateTo("/Users/Index", true);
+                break;
+        }
+    }
+
+}

@@ -1,0 +1,14 @@
+﻿<RadzenDataGrid Data="@TestStepsData" TItem="TestSteps" Style="margin-top: 10px;">
+    <HeaderTemplate>
+        <h4 class="text-center text-primary mb-4">View Test Steps</h4>
+    </HeaderTemplate>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(TestSteps.Number)" Title="Step Number"/>
+        <RadzenDataGridColumn Property="@nameof(TestSteps.Description)" Title="Description"/>
+        <RadzenDataGridColumn Property="@nameof(TestSteps.ExpectedResult)" Title="Expected Result"/>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [Parameter] public IEnumerable<TestSteps>? TestStepsData { get; set; }
+}

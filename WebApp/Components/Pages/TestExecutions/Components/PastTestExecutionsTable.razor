@@ -1,0 +1,48 @@
+﻿<!-- Past Test Executions Table -->
+
+<RadzenCard Style="margin-top: 10px;" class="rz-shadow-10">
+
+    <h4 class="text-center text-primary mb-4">Past Execution Status</h4>
+
+    <RadzenDataGrid Data="@_testExecutionList" TItem="TestExecution" AllowPaging="false" AllowSorting="false" RowRender="@OnRowRender" AllowAlternatingRows="false">
+        <Columns>
+            <RadzenDataGridColumn Property="@nameof(TestExecution.Id)" Title="ID" Width="70px" />
+            <RadzenDataGridColumn Property="@nameof(TestExecution.Name)" Title="Name" Width="70px" />
+            <RadzenDataGridColumn Property="@nameof(TestExecution.Description)" Title="Description" Width="70px" />
+            <RadzenDataGridColumn Property="@nameof(TestExecution.ExecutionStatus)" Title="Status" />
+            <RadzenDataGridColumn Property="@nameof(TestExecution.Duration)" Title="Duration" />
+            <RadzenDataGridColumn Property="@nameof(TestExecution.Version)" Title="Version" />
+            <RadzenDataGridColumn Property="@nameof(TestExecution.IsActive)" Title="IsActive" />
+            <RadzenDataGridColumn>
+                <Template Context="testexecutions">
+                    <div class="btn-group">
+                        <RadzenButton Text="View" 
+                            Icon="visibility"
+                            Click="@( () => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution/view/{testexecutions.Id}", true))" 
+                            Size="ButtonSize.Small" />
+                    </div>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard> 
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private List<TestExecution> _testExecutionList = [];
+    
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _testExecutionList = await TestExecutionModel.GetPastTestExecutions(Id);
+    }
+
+    private void OnRowRender(RowRenderEventArgs<TestExecution> args)
+    {
+        StylesService.ApplyRowStyle(args, args.Data.ExecutionStatus);
+    }
+}
+

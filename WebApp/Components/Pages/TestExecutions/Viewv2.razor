@@ -1,0 +1,42 @@
+@page "/project/{ProjectId:int}/testexecution/viewv2/{Id:int}"
+@rendermode InteractiveServer
+
+<RadzenTabs @bind-SelectedIndex="@_selectedIndex">
+    <Tabs>
+        <RadzenTabsItem Text="Test Execution">
+            <ViewTestExecutionData Id="Id" />
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Past Test Execution">
+            <PastTestExecutionsTable Id="Id" />
+        </RadzenTabsItem>
+        
+        <RadzenTabsItem Text="Associated Test Cases">
+            <AssociatedTestCasesTable Id="Id" />
+        </RadzenTabsItem>
+        
+        
+        <RadzenTabsItem Text="Results">
+            <ViewTestCaseExecution Id="Id" />
+        </RadzenTabsItem>
+
+    </Tabs>
+</RadzenTabs>
+
+
+
+
+
+
+
+
+@code
+{
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public int ProjectId { get; set; }
+    
+    int _selectedIndex;
+
+}

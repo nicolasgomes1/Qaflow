@@ -1,0 +1,111 @@
+@page "/project/{ProjectId:int}/requirements/view/{Id:int}"
+@rendermode InteractiveServer
+<RadzenSteps CanChange="@CanChange">
+    <Steps>
+        <RadzenStepsItem Text="Requirement Details">
+            <RadzenRow>
+                <RadzenCard Style="width: 50%; padding: 20px; margin-bottom:20px">
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
+
+                        <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_requirements.Id.ToString()"/>
+
+                        <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_requirements.Name"/>
+
+                        <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_requirements.Description"/>
+
+                        <RadzenLabel Text="Priority:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_requirements.Priority.ToString()"/>
+
+                        <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_requirements.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
+
+                        <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_requirements.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
+
+                        <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_requirements.CreatedBy"/>
+
+                        <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_requirements.ModifiedBy"/>
+                    </div>
+                </RadzenCard>
+            </RadzenRow>
+        </RadzenStepsItem>
+        <RadzenStepsItem Text="@ContextFilesTitle()" Disabled="@RequirementHasNoFiles">
+            <FileViewer Files="Files"
+                        EntityName="@nameof(RequirementsFile)"/>
+        </RadzenStepsItem>
+        <RadzenStepsItem Text="@ContextTestsTitle()" Disabled="@RequirementsHasNoTests">
+            <RadzenRow>
+                <RadzenDataGrid TItem="TestCases" Data="@_requirements.TestCases" Style="margin-top: 10px;">
+
+                    <HeaderTemplate>
+                        <h4 class="text-left text-primary mb-4"> Linked Test Cases</h4>
+                    </HeaderTemplate>
+                    <Columns>
+                        <RadzenDataGridColumn Property="Id" Title="Id"/>
+                        <RadzenDataGridColumn Property="Name" Title="Name"/>
+                        <RadzenDataGridColumn Property="Description" Title="Description"/>
+                        <RadzenDataGridColumn>
+                            <Template Context="testcases">
+                                <div class="btn-group">
+                                    <RadzenButton Text="View"
+                                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases/view/{testcases.Id}", true))"
+                                                  Size="ButtonSize.Small"
+                                                  Icon="visibility"/>
+                                </div>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenRow>
+        </RadzenStepsItem>
+    </Steps>
+</RadzenSteps>
+
+<ViewEditActions EntityName="requirements" EntityId="_requirements.Id"/>
+
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    [Parameter] public int ProjectId { get; set; }
+
+    private List<RequirementsFile>? Files { get; set; }
+
+    private string ContextFilesTitle()
+    {
+        return RequirementHasNoFiles ? Loc["files.nofiles"] : Loc["files.existingfiles"];
+    }
+
+    private string ContextTestsTitle()
+    {
+        return RequirementsHasNoTests ? Loc["tests.notests"] : Loc["tests.existingtests"];
+        ;
+    }
+
+    private Requirements _requirements = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Files = await RequirementsFilesModel.GetFilesByRequirementId(Id);
+        _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
+    }
+
+    private bool RequirementHasNoFiles => !RequirementsFilesModel.ExistingFiles.Any();
+
+    private bool RequirementsHasNoTests => _requirements.TestCases != null && !_requirements.TestCases.Any();
+
+    private static Task CanChange(StepsCanChangeEventArgs args)
+    {
+        return args.SelectedIndex switch
+        {
+            0 or 1 or 2 => Task.CompletedTask,
+            _ => Task.CompletedTask
+        };
+    }
+
+}

@@ -75,10 +75,17 @@ builder.Services.AddHttpClient<JiraServiceFromDb>();
 
 var app = builder.Build();
 
+var supportedCultures = new[] { "en-US", "fr-BE", "nl-BE" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[0])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+app.UseRequestLocalization(localizationOptions);
+
 app.MapDefaultEndpoints();
 
 await app.ConfigureDatabaseAsync();
-
+app.MapControllers();
 
 #region Api
 app.MapOwnAppApiEndpoints();

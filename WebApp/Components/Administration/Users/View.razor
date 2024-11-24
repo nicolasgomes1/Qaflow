@@ -1,0 +1,57 @@
+﻿@page "/Users/View/{Id:guid}"
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+<PageTitle>View User</PageTitle>
+
+<h3>User Details</h3>
+
+<RadzenCard>
+    @if (_user != null)
+    {
+        <p>User ID: <strong>@_user.Id</strong></p>
+        <p>Username: <strong>@_user.UserName</strong></p>
+        <p>Email: <strong>@_user.Email</strong></p>
+        <p>Email Confirmed: <strong>@_user.EmailConfirmed.ToString()</strong></p>
+        <p>Phone Number: <strong>@_user.PhoneNumber</strong></p>
+        <p>Phone Number Confirmed: @_user.PhoneNumberConfirmed.ToString()</p>
+        <p>Roles: <strong>@_userRole</strong></p>
+
+        <div style="margin-top: 10px;">
+            <RadzenButton Text="Edit"
+                          ButtonType="ButtonType.Submit"
+                          Click='() => NavigationManager.NavigateTo($"/Users/Edit/{Id}")'
+                          Style="font-weight: bold; padding: 10px; border-radius: 50px;"/>
+            <RadzenButton Text="Cancel"
+                          Click='() => NavigationManager.NavigateTo("/", true)'
+                          ButtonType="ButtonType.Button"
+                          Style="font-weight: bold; padding: 10px; border-radius: 50px;"/>
+        </div>
+    }
+    else
+    {
+        <p>No User Found</p>
+    }
+</RadzenCard>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    [Required] private ApplicationUser? _user;
+    private string _userRole = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userid = await UserManager.FindByIdAsync(Id.ToString());
+        if (userid != null)
+        {
+            _user = userid;
+        }
+
+        if (_user == null) throw new ApplicationException($"Unable to load user with ID '{Id}'.");
+
+        var roles = await UserManager.GetRolesAsync(_user);
+        _userRole = roles.FirstOrDefault() ?? "No Role Assigned";
+    }
+
+}

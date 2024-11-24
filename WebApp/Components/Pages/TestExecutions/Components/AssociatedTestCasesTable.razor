@@ -1,0 +1,51 @@
+﻿  <!-- Test Cases Table -->
+@if (_testCases.Any())
+{
+    <RadzenCard Style="margin-top: 10px;" class="rz-shadow-10">
+        <h4 class="text-center text-primary mb-4">Associated Test Cases</h4>
+
+        <RadzenDataGrid Data="@_testCases" TItem="TestCases" PageSize="10" AllowPaging="true" AllowSorting="true">
+            <Columns>
+                <RadzenDataGridColumn Property="@nameof(TestCases.Id)" Title="ID" Width="70px" />
+                <RadzenDataGridColumn Property="@nameof(TestCases.Name)" Title="Name" />
+                <RadzenDataGridColumn Property="@nameof(TestCases.Description)" Title="Description" />
+                <RadzenDataGridColumn Property="@nameof(TestCases.Priority)" Title="Priority" />
+                <RadzenDataGridColumn Sortable="false">
+                    <Template Context="testcases">
+                        <div class="btn-group">
+                            <RadzenButton 
+                                Icon="visibility" 
+                                Click="@( () => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases/view/{testcases.Id}", true))" 
+                                Size="ButtonSize.Small" 
+                                MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "View Test Case"))"
+                                MouseLeave="@AppTooltipService.HideTooltip"/>
+                        </div>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenCard>
+}
+else
+{
+    <RadzenCard Style="margin-top: 10px;" class="rz-shadow-10">
+        <p>No test cases associated with this test plan.</p>
+    </RadzenCard>
+} 
+
+
+@code
+{
+    [Parameter]
+    public int Id { get; set; }
+
+    private List<TestCases> _testCases = [];
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _testCases = await TestExecutionModel.GetTestCasesForTestExecution(Id);
+    }
+}
+
+
+    

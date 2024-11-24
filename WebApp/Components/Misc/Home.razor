@@ -1,0 +1,58 @@
+﻿@page "/"
+@rendermode InteractiveServer
+<PageTitle>Home</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <div style="text-align: center; font-size: larger;">
+            <strong>@Loc["Welcome"], @UserService.GetCurrentUserInfoAsync().Result.UserName!</strong>
+        </div>
+        <div style="text-align: center; margin-top: 20px; margin-bottom: 10px;">
+            <RadzenButton Click="@GoToUserProfile"
+                          Size="ButtonSize.Large"
+                          Text="@Loc["ViewProfile"]"/>
+        </div>
+
+
+        <IndexProjects/>
+
+
+
+    </Authorized>
+    <NotAuthorized>
+        <div style="text-align: center; font-size: larger;">
+            <strong>Welcome, Guest User!</strong>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+@if (UserService.GetCurrentUserInfoAsync().Result.UserName == null)
+{
+    <br/>
+    <div style="text-align: center;">
+        <RadzenButton data-testid="login" Click="@GoToLogin" Size="ButtonSize.Large" Text="Login"></RadzenButton>
+        <RadzenButton data-testid="register" Click="@GoToRegister" Size="ButtonSize.Large" Text="Register"></RadzenButton>
+    </div>
+}
+
+@code {
+
+    void GoToLogin()
+    {
+        NavigationManager.NavigateTo("/Account/Login");
+    }
+
+    void GoToRegister()
+    {
+        NavigationManager.NavigateTo("/Account/Register");
+    }
+
+    void GoToUserProfile()
+    {
+        var user = UserService.GetCurrentUserInfoAsync().Result.UserId;
+
+        if (!string.IsNullOrEmpty(user))
+        {
+            NavigationManager.NavigateTo($"/Users/View/{user}");
+        }
+    }
+}

@@ -1,0 +1,174 @@
+﻿@page "/project/{ProjectId:int}/testcases/view/{Id:int}"
+@rendermode InteractiveServer
+
+@if (isloading)
+{
+<ProgressBar Template="Loading" />
+}
+else
+{
+    
+<RadzenSteps>
+    <Steps>
+        <RadzenStepsItem Text="Test Case Details">
+            <RadzenRow>
+                <RadzenCard Style="width: 50%; padding: 20px;">
+                    <h4 class="text-center text-primary mb-4">Test Case Details</h4>
+
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
+                        <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testCases.Id.ToString()"/>
+
+                        <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testCases.Name"/>
+
+                        <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testCases.Description"/>
+
+                        <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text=@_testCases.CreatedAt.ToString(CultureInfo.CurrentCulture)/>
+
+                        <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text=@_testCases.ModifiedAt.ToString(CultureInfo.CurrentCulture)/>
+
+                        <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testCases.CreatedBy"/>
+
+                        <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testCases.ModifiedBy"/>
+
+                        <RadzenLabel Text="Linked Requirements:" Style="font-weight: bold;"/>
+                        <div style="display: flex; flex-wrap: wrap;">
+                            @if (_testCases.Requirements != null && _testCases.Requirements.Any())
+                            {
+                                var requirementLinks = _testCases.Requirements
+                                    .Select(requirement => $"<a href=\"project/{ProjectStateService.ProjectId}/requirements/view/{requirement.Id}\">{requirement.Name}</a>")
+                                    .ToList();
+
+                                @((MarkupString)string.Join(", ", requirementLinks))
+                            }
+                            else
+                            {
+                                <span style="color:red;">No requirements</span>
+                            }
+                        </div>
+
+                        <RadzenLabel Text="Test Type:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testCases.TestType.GetDisplayName()"/>
+
+                        <RadzenLabel Text="Test Scope:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testCases.TestScope.GetDisplayName()"/>
+
+
+                        <RadzenLabel Text="Estimated Time:" Style="font-weight: bold;"/>
+                        <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
+                            <RadzenBadge Text="@_testCases.EstimatedTime.ToString()" BadgeStyle="BadgeStyle.Success"/>
+                        </RadzenStack>
+
+
+                    </div>
+                </RadzenCard>
+            </RadzenRow>
+        </RadzenStepsItem>
+
+        <RadzenStepsItem Text="@ContextFilesTitle()" Disabled="@TestCasesHasNoFiles">
+            <FileViewer Files="Files" EntityName="@nameof(TestCasesFile)"/>
+        </RadzenStepsItem>
+
+        <RadzenStepsItem Text="@ContextTestStepsTitle()" Disabled="@IsTestStepsEmpty">
+            <RadzenRow>
+                <TestStepsViewer TestStepsData="@_testCases.TestSteps"/>
+            </RadzenRow>
+        </RadzenStepsItem>
+
+        <RadzenStepsItem Text="@ContextExternalReferencesTitle()" Disabled="@TestCasesHasNoExternalReferences">
+            <RadzenRow>
+                <RadzenDataList Data="@_testCasesJira" TItem="TestCasesJira">
+                    <Template Context="testCasesJira">
+                        <RadzenRow>
+                            <RadzenColumn Style="width: 100px;">
+                                <RadzenLabel Text="@testCasesJira.Key"/>
+                            </RadzenColumn>
+                            <RadzenColumn Style="width: 100px">
+                                <RadzenLink Path=@GetJiraLink(testCasesJira.Key) Text="Link" Target="_blank"/>
+
+                                @code{
+
+                                    private static string GetJiraLink(string key)
+                                    {
+                                        return $"https://qawebmaster.atlassian.net/browse/{key}";
+                                    }
+
+                                }
+
+
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </Template>
+                </RadzenDataList>
+            </RadzenRow>
+        </RadzenStepsItem>
+    </Steps>
+</RadzenSteps>
+
+
+<ViewEditActions EntityName="testcases" EntityId="_testCases.Id"/>
+}
+
+
+
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    [Parameter] public int ProjectId { get; set; }
+
+    private TestCases _testCases = new();
+    private bool isloading = true;
+
+    private bool TestCasesHasNoFiles => !TestCasesFilesModel.ExistingFiles.Any();
+
+    private bool TestCasesHasNoExternalReferences => !_testCasesJira.Any();
+
+    private List<TestCasesFile>? Files { get; set; }
+
+    private string ContextFilesTitle()
+    {
+        return TestCasesHasNoFiles ? "No Files" : "Existing Files";
+    }
+
+    private string ContextTestStepsTitle()
+    {
+        return IsTestStepsEmpty ? "No Test Steps" : "Test Steps";
+    }
+
+    private string ContextExternalReferencesTitle()
+    {
+        return TestCasesHasNoExternalReferences ? "No External References" : "External References";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _testCases = await TestCasesModel.GetTestCaseData(Id);
+        await TestCasesModel.GetTestStepsForTestCase(Id);
+
+        Files = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
+        _testCasesJira = await GetTestCasesJira();
+        isloading = false;
+    }
+
+
+    private bool IsTestStepsEmpty => !_testCases.TestSteps.Any();
+
+    private List<TestCasesJira> _testCasesJira = [];
+
+
+    private async Task<List<TestCasesJira>> GetTestCasesJira()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.TestCasesJira
+            .Where(tcj => tcj.TestCasesJiraId == _testCases.Id)
+            .ToListAsync();
+    }
+
+}

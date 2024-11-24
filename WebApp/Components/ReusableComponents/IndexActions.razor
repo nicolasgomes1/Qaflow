@@ -1,0 +1,67 @@
+﻿@typeparam TItem
+@inject TooltipService TooltipService
+
+<div style="display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: nowrap;">
+    <RadzenDataGridColumn TItem="TItem" Sortable="false" Filterable="false" Resizable="false" Width="100px" Reorderable="false">
+        <Template Context="item">
+            <div style="display: flex; gap: 5px;">
+                <RadzenButton Icon="visibility" ButtonStyle="ButtonStyle.Light" Style="color: blue;"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"View {EntityName}"))"
+                              MouseLeave="@AppTooltipService.HideTooltip"
+                              Click="@(() => ViewItem(item))"
+                              Size="ButtonSize.ExtraSmall"/>
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Style="color: green;"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Edit {EntityName}"))"
+                              MouseLeave="@AppTooltipService.HideTooltip"
+                              Click="@(() => EditItem(item))"
+                              Size="ButtonSize.ExtraSmall"/>
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: lightcoral;"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Delete {EntityName}"))"
+                              MouseLeave="@AppTooltipService.HideTooltip"
+                              Click="@(() => DeleteItem(item))"
+                              Size="ButtonSize.ExtraSmall"/>
+            </div>
+        </Template>
+    </RadzenDataGridColumn>
+</div>
+
+
+
+@code {
+    [Parameter] public string EntityName { get; set; } = string.Empty;
+
+
+    private void ViewItem(TItem item)
+    {
+        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}/view/{GetId(item)}");
+    }
+
+    private void EditItem(TItem item)
+    {
+        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}/edit/{GetId(item)}");
+    }
+
+    private async Task DeleteItem(TItem item)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        var confirmed = await DialogService.Confirm($"Are you sure you want to delete this {EntityName}?", $"Delete {EntityName}");
+
+        if (confirmed == true)
+        {
+            if (item == null) throw new Exception($"{item} is null");
+            db.Remove(item);
+            await db.SaveChangesAsync();
+        }
+
+        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}", true);
+    }
+
+    private int GetId(TItem item)
+    {
+        var prop = typeof(TItem).GetProperty("Id");
+        if (prop == null) throw new InvalidOperationException("The item does not have an 'Id' property.");
+        return (int)(prop.GetValue(item) ?? 0);
+    }
+
+}

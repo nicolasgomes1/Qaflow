@@ -1,0 +1,53 @@
+
+@rendermode InteractiveServer
+
+@inject DialogService DialogService
+
+<RadzenMenuItem Text="Release Notes" Icon="new_releases"
+                Click=@ShowCloseableFromOverlayDialog/>
+
+
+@code {
+
+    async Task ShowCloseableFromOverlayDialog()
+    {
+        await DialogService.OpenAsync("Release Notes", ds =>
+            @<div>
+                <RadzenTimeline>
+                    <Items>
+                        <RadzenTimelineItem PointStyle="PointStyle.Primary">
+                            <LabelContent>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-m-0">AUG 2024</RadzenText>
+                            </LabelContent>
+                            <ChildContent>
+                                Starting the project
+                            </ChildContent>
+                        </RadzenTimelineItem>
+
+                        <RadzenTimelineItem PointStyle="PointStyle.Secondary">
+                            <LabelContent>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-m-0">NOV 2024</RadzenText>
+                            </LabelContent>
+                            <ChildContent>
+                                Integration of the new features:
+                                <ul>
+                                    <li>Integration with Jira Api</li>
+                                    <li>Accurate Time tracking</li>
+                                </ul>
+                            </ChildContent>
+                        </RadzenTimelineItem>
+
+                        <RadzenTimelineItem PointStyle="PointStyle.Secondary">
+                            <LabelContent>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-m-0">2025</RadzenText>
+                            </LabelContent>
+                            <ChildContent>
+                                Product is ready for release
+                            </ChildContent>
+                        </RadzenTimelineItem>
+                    </Items>
+                </RadzenTimeline>
+            </div>, new DialogOptions() { CloseDialogOnOverlayClick = true });
+    }
+
+}

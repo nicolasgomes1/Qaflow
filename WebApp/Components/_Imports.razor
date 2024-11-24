@@ -1,11 +1,80 @@
-﻿@using System.Net.Http
-@using System.Net.Http.Json
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.Forms
-@using Microsoft.AspNetCore.Components.Routing
+﻿@using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.EntityFrameworkCore
 @using Microsoft.JSInterop
 @using WebApp
 @using WebApp.Components
+@using WebApp.Data
+@using WebApp.Models
+@using WebApp.Services
+@using Radzen
+@using Radzen.Blazor
+@using System.Security.Claims
+@using System.Globalization
+@using System.Text
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Localization
+@using WebApp.Api.Jira
+@using WebApp.Data.enums
+@using WebApp.Components.ReusableComponents
+@using WebApp.Components.Pages.Reports.Components
+@using WebApp.Components.Pages.TestExecutions.Components
+@using WebApp.Locales
+@using Microsoft.AspNetCore.Components.Forms
+@using WebApp.Locales
+@using WebApp.Components.Pages.Bugs
+@using WebApp.Components.Pages.Requirements
+@using WebApp.Components.Pages.TestPlans
+@using WebApp.Components.Pages.TestExecutions
+@using WebApp.Components.Pages.TestCases
+@using WebApp.Components.Layout
+
+@inject NavigationManager NavigationManager
+@inject StylesService StyleService
+@inject EnumService EnumService
+@inject TestCaseExecutionTimerService TestCaseTimerService
+@inject TestExecutionTimerService TestExecutionTimerServiceold
+@inject TestExecutionTimerServicev2 TestExecutionTimerService
+@inject TestStepsExecutionTimerService TestStepsExecutionTimerService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IDbContextFactory<ApplicationDbContext> DbContext
+@inject ProjectStateService ProjectStateService
+@inject FormNotificationService FormNotificationService
+@inject ProjectModel ProjectModel
+@inject UserService UserService
+@inject DialogService DialogService
+@inject IEmailService EmailService
+@inject RequirementsModel RequirementsModel
+@inject IServiceProvider ServiceProvider
+@inject IJSRuntime JS
+
+@inject DataGridSettingsService DataGridSettingsService
+@inject TooltipService TooltipService
+
+@inject AppTooltipService AppTooltipService
+@inject TestExecutionModel TestExecutionModel
+@inject TestPlansModel TestPlansModel
+@inject TestCasesModel TestCasesModel
+@inject ContextMenuService ContextMenuService
+@inject TestCasesFilesModel TestCasesFilesModel
+
+@inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+@inject IEmailSender<ApplicationUser> EmailSender
+@inject FormNotificationService UserNotification
+@inject RequirementsFilesModel RequirementsFilesModel
+@inject ReportsModel ReportsModel
+@inject TestPlansFilesModel TestPlansFilesModel
+@inject IStringLocalizer<Resources> Loc
+@inject JiraService JiraService
+@inject IntegrationsModel IntegrationsModel
+@inject JiraServiceFromDb JiraServiceFromDb
+
+@inject BugsModel BugsModel
+@inject BugsFilesModel BugsFilesModel

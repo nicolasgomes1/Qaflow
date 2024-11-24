@@ -1,6 +1,7 @@
 ﻿@page "/Account/Manage/PersonalData"
 
 @inject IdentityUserAccessor UserAccessor
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Personal Data</PageTitle>
 

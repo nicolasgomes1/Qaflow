@@ -1,0 +1,84 @@
+﻿<RadzenDataGrid AllowFiltering="true"
+                AllowColumnResize="true"
+                AllowAlternatingRows="false"
+                FilterMode="FilterMode.Advanced"
+                AllowSorting="true"
+                PageSize="10"
+                AllowPaging="true"
+                PagerHorizontalAlign="HorizontalAlign.Left"
+                ShowPagingSummary="true"
+                Data="@TestExecutionModel.testexecution"
+                ColumnWidth="300px"
+                LogicalFilterOperator="LogicalFilterOperator.Or"
+                SelectionMode="DataGridSelectionMode.Single"
+                @bind-Value=@TestExecutionModel.selectedExecution
+                @ref="_dataGrid">
+
+    <HeaderTemplate>
+        <RadzenButton Text="Test Execution"
+                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution/create")'
+                      Size="ButtonSize.Medium"
+                      Icon="add"/>
+        <DeleteallDataForModel EntityName="@(nameof(TestExecutionModel.TestExecution))"
+                               EntityList="TestExecutionModel.testexecution"/>
+        <ExportGridDataCsv Grid="_dataGrid"/>
+    </HeaderTemplate>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(TestExecution.Id)" Filterable="false" Title="ID" Frozen="true"
+                              Width="80px" TextAlign="TextAlign.Center"/>
+        <RadzenDataGridColumn Property="@nameof(TestExecution.Name)" Title="Name" Frozen="true" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(TestExecution.Description)" Title="Description" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(TestExecution.Version)" Title="Version" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(TestExecution.Priority)" Title="Priority" Width="auto">
+            <Template Context="ctx">
+                <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(ctx.Priority)">
+                    @ctx.Priority
+                </RadzenBadge>
+            </Template>
+        </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn Property="@nameof(TestExecution.TestPlan.Name)" Title="Test Plan" Width="auto">
+            <Template Context="testExecution">
+                @if (testExecution.TestPlan != null)
+                {
+                    <RadzenLabel Text="@testExecution.TestPlan.Name"/>
+                }
+                else
+                {
+                    <RadzenLabel Text="Not linked to any test plan"/>
+                }
+            </Template>
+        </RadzenDataGridColumn>
+
+
+        <RadzenDataGridColumn Property="@nameof(TestExecution.ExecutionStatus)" Title="Status" Width="auto">
+            <Template Context="context">
+                <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleExecution(context.ExecutionStatus)">
+                    @context.ExecutionStatus
+                </RadzenBadge>
+            </Template>
+        </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn Property="@nameof(TestExecution.ModifiedAt)" Title="Modified At" Width="auto"/>
+        <IndexActions TItem="TestExecution" EntityName="TestExecution"/>
+
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [Parameter] public Func<Task>? OnInitializedMethod { get; set; }
+
+    //   private BadgeStyle _badgeStyle = new();
+
+    private RadzenDataGrid<TestExecution> _dataGrid = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (OnInitializedMethod != null)
+        {
+            await OnInitializedMethod();
+        }
+    }
+
+}

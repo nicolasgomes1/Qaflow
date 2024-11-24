@@ -1,0 +1,44 @@
+﻿@page "/projects/edit/{Id:int}"
+@rendermode InteractiveServer
+
+<RadzenTemplateForm Data="@_projects" TItem="Projects" Submit="UpdateProject">
+    <h3 class="text-center text-primary mb-4">Edit Project</h3>
+
+    <div class="form-group mb-4">
+        <RadzenLabel Text="Name"/>
+        <RadzenTextBox @bind-Value="@_projects.Name"
+                       class="input-style"
+                       Name="name"/>
+        <RadzenRequiredValidator Component="name" Text="Name is required"/>
+    </div>
+
+    <div class="form-group mb-4">
+        <RadzenLabel Text="Description"/>
+        <RadzenTextBox @bind-Value="@_projects.Description"
+                       class="input-style"
+                       Name="Description"/>
+        <RadzenRequiredValidator Component="Description" Text="Description is required"/>
+    </div>
+    <CreateEditActions EntityName="projects" CreateEdit="Update"/>
+</RadzenTemplateForm>
+
+@code
+{
+    [Parameter] public int Id { get; set; }
+
+
+    Projects _projects = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _projects = await ProjectModel.GetProjectById(Id);
+    }
+
+    private async Task UpdateProject()
+    {
+        await ProjectModel.UpdateProject(Id);
+        NavigationManager.NavigateTo("/");
+        StateHasChanged();
+        await FormNotificationService.NotifySuccess("Project Updated Successfully");
+    }
+}

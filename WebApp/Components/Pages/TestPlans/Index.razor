@@ -1,0 +1,121 @@
+﻿@page "/project/{ProjectId:int}/testplans"
+@rendermode InteractiveServer
+
+@if (_isLoading)
+{
+    <ProgressBar/>
+}
+else
+{
+    <RadzenDataGrid AllowFiltering="true"
+                    AllowColumnResize="true"
+                    AllowAlternatingRows="false"
+                    FilterMode="FilterMode.Advanced"
+                    AllowSorting="true"
+                    PageSize="@_pageSizeFilter"
+                    AllowPaging="true"
+                    AllowColumnPicking="true"
+                    PagerHorizontalAlign="HorizontalAlign.Left"
+                    ShowPagingSummary="true"
+                    Data="@TestPlansModel.testplans"
+                    ColumnWidth="300px"
+                    LogicalFilterOperator="LogicalFilterOperator.Or"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    @bind-Value=@TestPlansModel.selectedTestPlans
+                                         @bind-Settings="@DataGridSettingsService.Settings"
+                    @ref="_dataGrid">
+
+        <HeaderTemplate>
+            <RadzenButton Text="Test Plan"
+                          Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testplans/create", true)'
+                          Size="ButtonSize.Medium"
+                          Icon="add"/>
+            <RadzenButton Icon="autorenew"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All"))"
+                          MouseLeave="@AppTooltipService.HideTooltip"
+                          Size="ButtonSize.Medium" Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
+
+            <DeleteallDataForModel EntityName="@(nameof(TestPlansModel.TestPlans))" EntityList="TestPlansModel.testplans"/>
+            <ExportGridDataCsv Grid="_dataGrid"/>
+        </HeaderTemplate>
+        <Columns>
+            <RadzenDataGridColumn Property="@nameof(TestPlans.Id)" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center"/>
+            <RadzenDataGridColumn Property="@nameof(TestPlans.Name)" Title="Name" Frozen="true" Width="auto"/>
+            <RadzenDataGridColumn Property="@nameof(TestPlans.Description)" Title="Description" Width="auto"/>
+            <RadzenDataGridColumn Property="@nameof(TestPlans.Priority)" Title="Priority" Width="auto">
+                <Template Context="ctx">
+                    <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(ctx.Priority)">
+                        @ctx.Priority
+                    </RadzenBadge>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="@nameof(TestPlans.CreatedAt)" Title="Created At" Width="auto"/>
+            <RadzenDataGridColumn Property="@nameof(TestPlans.ModifiedAt)" Title="Modified At" Width="auto"/>
+            <RadzenDataGridColumn Property="@nameof(TestPlans.CreatedBy)" Title="Created By" Width="auto"/>
+            <RadzenDataGridColumn Property="@nameof(TestPlans.ModifiedBy)" Title="Modified By" Width="auto"/>
+            <RadzenDataGridColumn Title="Test Cases" Width="auto">
+                <Template Context="testplan">
+                    @if (testplan.TestCases.Any())
+                    {
+                        var testcasesLinks = testplan.TestCases
+                            .Select(testcase => $"<a href=\"project/{testplan.TPProjectId}/testcases/view/{testcase.Id}\">{testcase.Name}</a>")
+                            .ToList();
+
+                        @((MarkupString)string.Join(", ", testcasesLinks))
+                    }
+                    else
+                    {
+                        <span style="color: red;">No Test cases</span>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <IndexActions TItem="TestPlans" EntityName="TestPlans"/>
+
+        </Columns>
+
+        <FooterTemplate>
+            <RadzenGridRow>
+                <PageSizeSelector PageSizeChanged="OnPageSizeChanged"/>
+            </RadzenGridRow>
+        </FooterTemplate>
+    </RadzenDataGrid>
+}
+
+
+@code {
+    [Parameter] public int ProjectId { get; set; }
+
+
+    private readonly string _gridId = "testplans"; // Unique identifier for this grid
+
+    private bool _isLoading = true;
+    int _pageSizeFilter = 5;
+
+    private RadzenDataGrid<TestPlans> _dataGrid = new();
+
+    private async Task OnPageSizeChanged(int newSize)
+    {
+        _pageSizeFilter = newSize;
+        await Task.Delay(1);
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        DataGridSettingsService.SetCurrentGridId(_gridId);
+
+        await TestPlansModel.DisplayTestPlansIndexPage();
+        _isLoading = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await DataGridSettingsService.LoadSettingsAsync();
+            _isLoading = false; // Stop showing the loading spinner after settings are applied
+            StateHasChanged(); // Re-render with updated settings
+        }
+    }
+
+}

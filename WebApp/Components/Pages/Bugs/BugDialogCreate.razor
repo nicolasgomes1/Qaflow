@@ -1,0 +1,108 @@
+@inject DialogService DialogService
+
+@*<div class="rz-p-12 rz-text-align-center">
+    <RadzenButton Text="@Title" Icon="bug_report" IconColor="red" Shade="Shade.Light" Variant="Variant.Outlined"
+                  ButtonStyle="ButtonStyle.Primary" Click="@ShowInlineDialog"/>
+</div>*@
+
+<RadzenButton Text="@Title" Icon="bug_report" IconColor="red" Shade="Shade.Light" Variant="Variant.Outlined"
+              Disabled="@IsDisabled"
+              ButtonStyle="ButtonStyle.Primary" Click="@ShowInlineDialog"/>
+
+@code {
+    private Bugs _bugs = new Bugs();
+    private readonly List<IBrowserFile>? _uploadedFiles = new();
+
+    [Parameter] public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Default value is false
+    /// </summary>
+    [Parameter]
+    public bool IsDisabled { get; set; } = false;
+
+    [Parameter] public int ProjectId { get; set; }
+
+    [Parameter] public int? TestCaseExecutionId { get; set; } = null;
+
+    private async Task CreateNewBug()
+    {
+        _bugs.TestCaseExecutionId = TestCaseExecutionId;
+        // CreateBug should handle adding the bug and return a result
+        var result = await BugsModel.CreateBug(_bugs, _uploadedFiles);
+
+
+        // Close the dialog with the result
+        DialogService.Close(result);
+        //   NavigationManager.NavigateTo($"/project/{ProjectId}");
+        StateHasChanged();
+        await FormNotificationService.NotifySuccess($"Bug created successfully with id {_bugs.Id}");
+    }
+
+
+    async Task ShowInlineDialog()
+    {
+        _bugs = new Bugs();
+
+        var result = await DialogService.OpenAsync("Create Bug", ds =>
+            @<RadzenStack Gap="1.5rem" Style="height: 600px;">
+                <RadzenTemplateForm Data="_bugs" TItem="Bugs" Submit="@CreateNewBug">
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Name"/>
+                        <RadzenTextBox id="name"
+                                       @bind-Value="_bugs.Name"
+                                       class="input-style"
+                                       Name="name"/>
+                        <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Description"/>
+                        <RadzenTextArea id="description"
+                                        @bind-Value="_bugs.Description"
+                                        class="input-style"
+                                        Name="description"/>
+                        <RadzenRequiredValidator Component="description" Text="Description is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Priority"/>
+                        <RadzenDropDown id="priority"
+                                        @bind-Value="_bugs.Priority"
+                                        Data="EnumService.GetEnumValues<Priority>()"
+                                        class="input-style"
+                                        Name="priority"/>
+                        <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Severity"/>
+                        <RadzenDropDown id="severity"
+                                        @bind-Value="_bugs.Severity"
+                                        Data="EnumService.GetEnumValues<Severity>()"
+                                        class="input-style"
+                                        Name="severity"/>
+                        <RadzenRequiredValidator Component="severity" Text="Severity is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Bug Status"/>
+                        <RadzenDropDown id="bug_status"
+                                        @bind-Value="_bugs.BugStatus"
+                                        Data="EnumService.GetEnumValues<BugStatus>()"
+                                        class="input-style"
+                                        Name="bug_status"/>
+                        <RadzenRequiredValidator Component="bug_status" Text="Bug Status is required"/>
+                    </div>
+
+                    <FileUpload UploadedFiles="_uploadedFiles"/>
+
+                    <!-- Submit button inside the form -->
+                    <RadzenButton Text="Create Bug" ButtonStyle="ButtonStyle.Secondary" ButtonType="ButtonType.Submit"
+                                  Style="margin-bottom: 10px;"/>
+                </RadzenTemplateForm>
+            </RadzenStack>);
+    }
+
+}
+

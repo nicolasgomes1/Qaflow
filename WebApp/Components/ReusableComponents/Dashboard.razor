@@ -1,0 +1,76 @@
+﻿<div style="display: flex; justify-content: center; align-items: center;">
+    <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
+        <RadzenRow>
+            <RadzenButton Text="@Loc["Requirements"]"
+                          Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements", true))"/>
+        </RadzenRow>
+        <RadzenRow Style="margin-top: 10px;">
+            <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_requirementsCount" class="rz-ms-2"/>
+        </RadzenRow>
+    </RadzenCard>
+
+    <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
+        <RadzenRow>
+            <RadzenButton Text="@Loc["TestCases"]"
+                          Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testcases", true))"/>
+        </RadzenRow>
+        <RadzenRow Style="margin-top: 10px;">
+            <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_testCasesCount" class="rz-ms-2"/>
+        </RadzenRow>
+    </RadzenCard>
+
+    <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
+        <RadzenRow>
+            <RadzenButton Text="@Loc["TestPlans"]"
+                          Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testplans", true))"/>
+        </RadzenRow>
+        <RadzenRow Style="margin-top: 10px;">
+            <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_testPlansCount" class="rz-ms-2"/>
+        </RadzenRow>
+    </RadzenCard>
+    <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
+        <RadzenRow>
+            <RadzenButton Text="@Loc["TestExecutions"]"
+                          Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testexecution", true))"/>
+        </RadzenRow>
+        <RadzenRow Style="margin-top: 10px;">
+            <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_testExecutionsCount" class="rz-ms-2"/>
+        </RadzenRow>
+    </RadzenCard>
+
+    <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
+        <RadzenRow>
+            <RadzenButton Text="@Loc["Bugs"]"
+                          Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/bugs", true))"/>
+        </RadzenRow>
+        <RadzenRow Style="margin-top: 10px;">
+            <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_bugsCount" class="rz-ms-2"/>
+        </RadzenRow>
+    </RadzenCard>
+
+    <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
+        <RadzenRow>
+            <RadzenButton Text="@Loc["Reports"]"
+                          Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/reports", true))"/>
+        </RadzenRow>
+    </RadzenCard>
+</div>
+
+
+@code {
+    private string _requirementsCount = string.Empty;
+    private string _testCasesCount = string.Empty;
+    private string _testPlansCount = string.Empty;
+    private string _testExecutionsCount = string.Empty;
+    private string _bugsCount = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _requirementsCount = ReportsModel.LoadTotalRequirements();
+        _testCasesCount = ReportsModel.LoadTotalTestCases();
+        _testPlansCount = ReportsModel.LoadTotalTestPlans();
+        _testExecutionsCount = ReportsModel.LoadTotalTestExecutions();
+        _bugsCount = ReportsModel.LoadTotalBugs();
+    }
+
+}

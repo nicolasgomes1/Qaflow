@@ -1,0 +1,55 @@
+﻿@page "/project/{ProjectId:int}"
+
+
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin, User, Manager")]
+
+<PageTitle>Home</PageTitle>
+<AuthorizeView>
+    <Authorized>
+        <div style="text-align: center; font-size: larger;">
+            <strong>
+                @Loc["Welcome"], @UserService.GetCurrentUserInfoAsync().Result.UserName!
+            </strong>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <RadzenButton Click="@GoToUserProfile" Size="ButtonSize.Large" Text="@Loc["ViewProfile"]"></RadzenButton>
+            <RadzenButton Click="@GoToProjects" Size="ButtonSize.Large" Text="@Loc["Projects"]"></RadzenButton>
+        </div>
+
+        <div>
+            <Dashboard/>
+
+            <ProjectTree/>
+        </div>
+
+
+        <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap" JustifyContent="JustifyContent.Center"
+                     AlignItems="AlignItems.Center">
+            <RequirementsDialogCreate Title="@Loc["create.requirements"]"/>
+            <TestCasesDialogCreate Title="@Loc["create.testcases"]"/>
+            <TestPlansDialogCreate Title="@Loc["create.testplans"]"/>
+            <TestExecutionDialogCreate Title="@Loc["create.testexecution"]"/>
+            <BugDialogCreate Title="@Loc["create.bug"]"/>
+        </RadzenStack>
+
+
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+    [Parameter] public int ProjectId { get; set; }
+
+    void GoToProjects()
+    {
+        ProjectStateService.ClearProjectId();
+        NavigationManager.NavigateTo("/", true);
+    }
+
+    void GoToUserProfile()
+    {
+        NavigationManager.NavigateTo($"/Users/View/{UserService.GetCurrentUserInfoAsync().Result.UserId}");
+    }
+
+}

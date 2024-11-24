@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace QAwebApp.Locales {
+namespace WebApp.Locales {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace QAwebApp.Locales {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("QAwebApp.Locales.Resources.fr-BE", typeof(Resources_fr_BE).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WebApp.Locales.Resources.fr-BE", typeof(Resources_fr_BE).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

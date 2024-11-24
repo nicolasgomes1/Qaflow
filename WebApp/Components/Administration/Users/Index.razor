@@ -1,0 +1,111 @@
+﻿@page "/Users/Index"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject ILogger<Index> Logger
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Users</PageTitle>
+
+<h3>Users and Their Roles</h3>
+
+<RadzenButton ButtonType="ButtonType.Submit"
+              Click="CreateUser"
+              Text="Create User"
+              Style="margin-bottom: 10px;"/>
+
+<RadzenDataGrid AllowFiltering="true"
+                AllowColumnResize="true"
+                AllowSorting="true"
+                PageSize="10"
+                AllowPaging="true"
+                Data="@_users"
+                ColumnWidth="300px">
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(ApplicationUser.UserName)"
+                              Title="Name"
+                              Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(ApplicationUser.Email)"
+                              Title="Email"
+                              Width="auto"/>
+
+        <RadzenDataGridColumn Property="@nameof(ApplicationUser.EmailConfirmed)"
+                              Title="Email Confirmed"
+                              Width="auto"/>
+
+        <RadzenDataGridColumn Title="Roles" Width="auto">
+            <Template Context="user">
+                @if (_userRoles.TryGetValue(user.Id, out var roles))
+                {
+                    @string.Join(", ", roles)
+                }
+                else
+                {
+                    <span>No roles assigned</span>
+                }
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Title="Edit" Width="auto">
+            <Template Context="user">
+                <RadzenButton Text="Edit" Click="@(() => EditUser(user.Id))" Size="ButtonSize.ExtraSmall"/>
+                <RadzenButton Text="View" Click="@(() => ViewUser(user.Id))" Size="ButtonSize.ExtraSmall"/>
+                <RadzenButton Text="Delete" Click="@(() => DeleteUser(user))" Size="ButtonSize.ExtraSmall"/>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    private List<ApplicationUser> _users = [];
+    private readonly Dictionary<string, List<string>> _userRoles = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        var currentUser = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var currentUserId = currentUser.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        _users = await UserManager.Users.Where(u => u.Id != currentUserId).ToListAsync();
+
+        foreach (var user in _users)
+        {
+            var roles = await UserManager.GetRolesAsync(user);
+            _userRoles[user.Id] = roles.ToList();
+        }
+    }
+
+    private void EditUser(string userId)
+    {
+        NavigationManager.NavigateTo($"/Users/Edit/{userId}");
+    }
+
+    private void ViewUser(string userId)
+    {
+        NavigationManager.NavigateTo($"/Users/View/{userId}");
+    }
+
+    private async Task DeleteUser(ApplicationUser user)
+    {
+        try
+        {
+            await UserManager.DeleteAsync(user);
+            Logger.LogInformation($"User '{user.UserName}' deleted successfully.");
+            await UserNotification.NotifySuccess($"User '{user.UserName}' was deleted sucessefully");
+            await LoadUsers();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, $"Error deleting user '{user.UserName}'.");
+        }
+    }
+
+    private void CreateUser()
+    {
+        NavigationManager.NavigateTo("/Users/Create", true);
+    }
+
+}

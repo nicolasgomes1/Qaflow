@@ -1,0 +1,22 @@
+@inject DialogService DialogService
+
+<div class="rz-p-12 rz-text-align-center">
+    <RadzenButton Text="Open Side Panel" ButtonStyle="ButtonStyle.Secondary" Click="@OpenSideDialog"/>
+</div>
+
+@code {
+
+    async Task OpenSideDialog()
+    {
+        // Hardcoding options for right position, mask enabled, and close on overlay click
+        await DialogService.OpenSideAsync<ProjectTreeOverview>(
+            "Side Panel",
+            options: new SideDialogOptions
+            {
+                CloseDialogOnOverlayClick = true,
+                Position = DialogPosition.Right,
+                ShowMask = true
+            });
+    }
+
+}

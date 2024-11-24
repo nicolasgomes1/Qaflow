@@ -1,0 +1,42 @@
+@implements IDisposable
+<div>@_time.ToString(@"hh\:mm\:ss")</div>
+
+@code {
+    private TimeSpan _time;
+    private bool _isRunning;
+    private PeriodicTimer? _timer;
+
+    protected override void OnInitialized()
+    {
+        _time = DateTime.Now.TimeOfDay;
+        _isRunning = true;
+        
+        // Start updating the clock asynchronously using PeriodicTimer
+        _ = UpdateClock();
+    }
+
+    private async Task UpdateClock()
+    {
+        // Initialize the timer with a 1-second interval
+        _timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+        try
+        {
+            while (_isRunning && await _timer.WaitForNextTickAsync())
+            {
+                _time = DateTime.Now.TimeOfDay;
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        finally
+        {
+            _timer?.Dispose();
+        }
+    }
+    
+    void IDisposable.Dispose()
+    {
+        _isRunning = false;
+        _timer?.Dispose();
+    }
+}

@@ -1,0 +1,102 @@
+@using Microsoft.AspNetCore.Components.Forms
+@typeparam TEntity
+<div class="form-group mb-4">
+    <RadzenLabel Text="Upload Files"/>
+    <RadzenUpload Multiple="true" Change="HandleFileSelected" Progress="OnProgress" Style="width: 100%"/>
+</div>
+
+<!-- Display existing files with delete option -->
+<div class="form-group mb-4">
+    <RadzenLabel Text="@Loc["files.existingfiles"]"/>
+    @if (ExistingFiles.Any())
+    {
+        <ul class="list-group">
+            @foreach (var file in ExistingFiles)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    @((string)(typeof(TEntity).GetProperty("FileName")?.GetValue(file, null) ?? string.Empty))
+
+                    <RadzenButton Icon="delete"
+                                  Click="@(() => DeleteFile(file))"
+                                  Style="margin-left: 10px;"
+                                  ButtonStyle="ButtonStyle.Danger"
+                                  Size="ButtonSize.Small"/>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>@Loc["files.notexistingfiles"]</p>
+    }
+</div>
+
+@code {
+
+    /// <summary>
+    ///     List of files uploaded by the user to be used in Edit mode.
+    /// </summary>
+    [Parameter]
+    public List<IBrowserFile>? UploadedFiles { get; set; }
+
+    /// <summary>
+    ///     Entity name to determine which entity to use for file handling.
+    /// </summary>
+    [Parameter]
+    public string EntityName { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     List of existing files to be displayed, with a generic type for flexibility.
+    /// </summary>
+    [Parameter]
+    public List<TEntity> ExistingFiles { get; set; } = new();
+
+    private void HandleFileSelected(UploadChangeEventArgs args)
+    {
+        if (UploadedFiles == null) return;
+        UploadedFiles.Clear();
+        foreach (var file in args.Files)
+        {
+            UploadedFiles.Add(file);
+        }
+    }
+
+    private async Task DeleteFile(TEntity file)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        switch (file)
+        {
+            case RequirementsFile reqFile when EntityName == nameof(RequirementsFile):
+                db.RequirementsFiles.Remove(reqFile);
+                break;
+
+            case TestCasesFile testFile when EntityName == nameof(TestCasesFile):
+                db.TestCasesFiles.Remove(testFile);
+                break;
+
+            case TestPlansFile testFile when EntityName == nameof(TestPlansFile):
+                db.TestPlansFiles.Remove(testFile);
+                break;
+
+            case BugsFiles bugFile when EntityName == nameof(BugsFiles):
+                db.BugsFiles.Remove(bugFile);
+                break;
+
+
+            default:
+                Console.WriteLine("Unsupported file type.");
+                return;
+        }
+
+        await db.SaveChangesAsync();
+        ExistingFiles.Remove(file);
+        StateHasChanged(); // Refresh the UI
+    }
+
+    static void OnProgress(UploadProgressArgs args)
+    {
+        Console.WriteLine($"{args.Progress}% - {args.Loaded}/{args.Total} bytes");
+    }
+
+}

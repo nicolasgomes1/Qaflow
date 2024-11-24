@@ -1,0 +1,117 @@
+﻿@rendermode InteractiveServer
+@implements IDisposable
+<RadzenMenu Style="display: flex; justify-content: flex-end; align-items: center; width: 100%;">
+    @if (!_isAuthenticated)
+    {
+        <RadzenStack Orientation="Orientation.Horizontal" Style="margin-right: 10px;" AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.Center">
+            <RadzenMenuItem data-testid="login_top" Text="Login" Click=GotoLogin></RadzenMenuItem>
+            <RadzenMenuItem data-testid="register_top" Text="Register" Click=GotoRegister></RadzenMenuItem>
+        </RadzenStack>
+    }
+
+    @code{
+
+        void ReturnToHome()
+        {
+            NavigationManager.NavigateTo("/");
+            FormNotificationService.NotifyInfo("Returning to Home Page");
+        }
+
+    }
+
+
+    @if (_isAuthenticated)
+    {
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     Style="margin: 10px 0 10px 10px; width: calc(100% - 20px); justify-content: flex-start; align-items: center; gap: 10px;">
+            <div style="max-height: 50px; display: flex; align-items: center;" @onclick="ReturnToHome">
+                <Image/>
+            </div>
+        </RadzenStack>
+
+        <article class="bottom-row px-4">
+            <CultureSelector @rendermode="InteractiveServer"/>
+        </article>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+            @if (_isAdmin)
+            {
+                <RadzenMenu>
+                    <RadzenMenuItem Text="General" Icon="badge">
+                        <RadzenMenuItem Text="Manage Account" Icon="account_circle" Path="/Account/Manage"/>
+                        <RadzenMenuItem Text="Manage Users" Icon="account_circle" Path="/Users/Index"/>
+                        <RadzenMenuItem Text="Grid Settings" Icon="display_settings" Path="/Gridsettings"/>
+                        <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
+                        <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank"></RadzenMenuItem>
+                        <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"/>
+                        <Timeline/>
+                    </RadzenMenuItem>
+                </RadzenMenu>
+            }
+
+
+            <RadzenMenuItem Click=GoToProjects Text="@ProjectStateService.ProjectId.ToString()" Icon="assignment"/>
+
+            <RealTimeClock/>
+
+            <div class="nav-item px-3">
+                <form action="/Account/Logout" method="post" style="display:inline;">
+                    <AntiforgeryToken/>
+                    <input type="hidden" name="ReturnUrl"/>
+                    <RadzenButton Icon="logout" ButtonType="ButtonType.Submit"/>
+                </form>
+            </div>
+
+        </div>
+    }
+</RadzenMenu>
+
+@code {
+    private bool _isAuthenticated;
+    private bool _isAdmin; // Flag to check if the user is an Admin
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateAuthenticationState();
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    void GoToProjects()
+    {
+        ProjectStateService.ClearProjectId();
+        NavigationManager.NavigateTo("/", true);
+    }
+
+    private async Task UpdateAuthenticationState()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        _isAuthenticated = user.Identity is { IsAuthenticated: true };
+
+        // Check if the user is in the Admin role
+        _isAdmin = user.IsInRole("Admin");
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private void GotoLogin()
+    {
+        NavigationManager.NavigateTo("/Account/Login", forceLoad: true);
+    }
+
+    private void GotoRegister()
+    {
+        NavigationManager.NavigateTo("/Account/Register", forceLoad: true);
+    }
+
+    void IDisposable.Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+
+}

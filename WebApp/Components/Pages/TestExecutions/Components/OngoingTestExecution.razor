@@ -1,0 +1,342 @@
+﻿
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private TestExecution _testExecution = new();
+
+    private List<TestCaseExecution> AssociatedTestCasesExecution { get; set; } = [];
+
+    private List<TestStepsExecution> AssociatedTestStepsExecution { get; set; } = [];
+
+
+    private bool ExecutionInProgress => TestExecutionTimerService.IsExecutionInProgress();
+
+    // Track grids for both test cases and test steps
+    RadzenDataGrid<TestCaseExecution> _testCaseGrid = new();
+    RadzenDataGrid<TestStepsExecution> _testStepsGrid = new();
+
+
+    private async Task<TestExecution> GetTestExecution(int testExecutionId)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.TestExecution.FindAsync(testExecutionId) ?? throw new Exception("Test Execution Not Found");
+    }
+
+
+    private async Task GetExecutionData()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+
+
+        _testExecution = await GetTestExecution(Id);
+
+
+        AssociatedTestCasesExecution = await db.TestCaseExecution
+            .Include(tse => tse.TestStepsExecution)
+            .Where(tce => tce.TestExecutionId == _testExecution.Id)
+            .ToListAsync();
+
+        AssociatedTestStepsExecution = await db.TestStepsExecution
+            .Where(tse => tse.TestCaseExecution.TestExecutionId == _testExecution.Id)
+            .Include(ts => ts.TestSteps)
+            .ToListAsync();
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetExecutionData();
+        TestCaseTimerService.OnTestCaseDurationUpdated += UpdateTestCaseDuration;
+        TestStepsExecutionTimerService.OnTestStepDurationUpdated += UpdateTestStepDuration; // Subscribe to TestSteps timer events
+    }
+
+    // Start test case execution and begin inline editing for the row
+    private async Task StartTestCase(TestCaseExecution testCaseExecution)
+    {
+        await TestCaseTimerService.StartTestCaseExecution(testCaseExecution.TestCaseId);
+        await _testCaseGrid.EditRow(testCaseExecution); // Start inline editing
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task PauseTestCaseExecution(TestCaseExecution testCaseExecution)
+    {
+        await TestCaseTimerService.PauseTestCaseExecution(testCaseExecution.TestCaseId);
+        await _testCaseGrid.UpdateRow(testCaseExecution); // End inline editing
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ResumeTestCaseExecution(TestCaseExecution testCaseExecution)
+    {
+        await TestCaseTimerService.ResumeTestCaseExecution(testCaseExecution.TestCaseId);
+        await _testCaseGrid.EditRow(testCaseExecution); // Start inline editing
+        await InvokeAsync(StateHasChanged);
+    }
+
+    // End test case execution and save the inline edits
+    private async Task EndTestCase(TestCaseExecution testCaseExecution)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        testCaseExecution.IsActive = false;
+        testCaseExecution.ModifiedAt = DateTime.UtcNow;
+
+        await TestCaseTimerService.EndTestCaseExecution(testCaseExecution.TestCaseId);
+        await _testCaseGrid.UpdateRow(testCaseExecution); // End inline editing
+        db.TestCaseExecution.Update(testCaseExecution); // Mark the entity as modified
+        await db.SaveChangesAsync(); // Save the changes to the database
+        await InvokeAsync(StateHasChanged);
+    }
+
+    // Start test step execution and begin inline editing for the row
+    private async Task StartTestStep(TestStepsExecution testStepExecution)
+    {
+        await TestStepsExecutionTimerService.StartTestStepExecution(testStepExecution.TestStepsId);
+        await _testStepsGrid.EditRow(testStepExecution); // Start inline editing
+        await InvokeAsync(StateHasChanged);
+    }
+
+    // End test step execution and save the inline edits
+    private async Task EndTestStep(TestStepsExecution testStepExecution)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        // Update TestStepsExecution details
+        testStepExecution.IsActive = false;
+        testStepExecution.ModifiedAt = DateTime.UtcNow;
+
+        // End Test Step Execution through your service
+        await TestStepsExecutionTimerService.EndTestStepExecution(testStepExecution.TestStepsId);
+
+        // Mark the entity as modified and save
+        db.TestStepsExecution.Update(testStepExecution);
+        await db.SaveChangesAsync(); // Save the changes to the database
+
+        // Fetch and reload the TestStepsExecutionFile content from the database
+        var testStepExecutionFile = await db.TestStepsExecutionFiles
+            .Where(tsef => tsef.TestStepExecutionId == testStepExecution.Id)
+            .FirstOrDefaultAsync();
+
+        // If a file exists, update it in the current context
+        if (testStepExecutionFile != null)
+        {
+            testStepExecution.TestStepsExecutionFile = testStepExecutionFile;
+        }
+
+        // Update the grid row and refresh the component's state
+        await _testStepsGrid.UpdateRow(testStepExecution);
+        await InvokeAsync(StateHasChanged);
+    }
+
+
+    private void UpdateTestCaseDuration(int testCaseId, TimeSpan duration)
+    {
+        var testCaseExecution = AssociatedTestCasesExecution.FirstOrDefault(tce => tce.TestCaseId == testCaseId);
+        if (testCaseExecution == null) return;
+        testCaseExecution.Duration = duration;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void UpdateTestStepDuration(int testStepId, TimeSpan duration)
+    {
+        // Find the corresponding test step and update its duration
+        foreach (var testCaseExecution in AssociatedTestCasesExecution)
+        {
+            if (testCaseExecution.TestStepsExecution == null) throw new Exception("Test Step Cannot be null");
+
+            var testStepExecution = testCaseExecution.TestStepsExecution.FirstOrDefault(ts => ts.TestStepsId == testStepId);
+            if (testStepExecution == null) continue;
+            testStepExecution.Duration = duration;
+            InvokeAsync(StateHasChanged);
+            break;
+        }
+    }
+
+    public void Dispose()
+    {
+        TestCaseTimerService.OnTestCaseDurationUpdated -= UpdateTestCaseDuration;
+        TestStepsExecutionTimerService.OnTestStepDurationUpdated -= UpdateTestStepDuration;
+    }
+
+
+    private void OnRowRender(RowRenderEventArgs<TestCaseExecution> args)
+    {
+        // Disable expand/collapse if the test case doesn't have any test steps
+        if (args.Data.TestStepsExecution == null || args.Data.TestStepsExecution.Count == 0)
+        {
+            args.Expandable = false;
+        }
+    }
+
+}
+
+<!-- UI for displaying the test cases and handling start/end actions -->
+<RadzenDataGrid @ref="_testCaseGrid" Data="@AssociatedTestCasesExecution" TItem="TestCaseExecution" PageSize="10"
+                AllowPaging="true" AllowSorting="true" Style="margin-top: 10px"
+                RowRender="@OnRowRender">
+    <!-- Event for row rendering -->
+    <Columns>
+        <RadzenDataGridColumn TItem="TestCaseExecution" Property="TestExecutionId" Title="TestExecutionId"
+                              Width="70px"/>
+        <RadzenDataGridColumn TItem="TestCaseExecution" Property="TestCaseId" Title="TestCaseId" Width="100px"/>
+        <RadzenDataGridColumn TItem="TestCaseExecution" Property="Duration" Title="Duration" Width="200px">
+            <Template Context="testCaseExecution">
+                <strong> @testCaseExecution.Duration.ToString(@"hh\:mm\:ss") </strong>
+            </Template>
+        </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn TItem="TestCaseExecution" Property="ExecutionStatus" Title="Status" Width="150px">
+            <Template Context="context">
+                <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleExecution(context.ExecutionStatus)">
+                    @context.ExecutionStatus
+                </RadzenBadge>
+            </Template>
+            <EditTemplate Context="testCaseExecution">
+                <RadzenDropDown @bind-Value="testCaseExecution.ExecutionStatus"
+                                Data="@(EnumService.GetEnumFilteredValues<ExecutionStatus>(ExecutionStatus.NotRun))"
+                                Style="width: 100%;"/>
+            </EditTemplate>
+        </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn TItem="TestCaseExecution" Property="ExecutionNotes" Title="Execution Notes" Width="auto">
+            <EditTemplate Context="testCaseExecution">
+                <RadzenTextArea @bind-Value="testCaseExecution.ExecutionNotes" Style="width: 100%;"/>
+            </EditTemplate>
+        </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn TItem="TestCaseExecution" Title="Actions">
+            <Template Context="testCaseExecution">
+                <!-- Start Test Execution Button -->
+
+
+                @code{
+
+                    bool IsTestCaseNotRunning(int testCaseId)
+                    {
+                        return !TestCaseTimerService.IsTestCaseRunning(testCaseId);
+                    }
+
+                    bool IsTestCasePausedOrNotRunning(int testCaseId)
+                    {
+                        return !TestCaseTimerService.IsTestCaseRunning(testCaseId) || TestCaseTimerService.IsTestCasePaused(testCaseId);
+                    }
+
+                    bool IsTestCasePaused(int testCaseId)
+                    {
+                        return !TestCaseTimerService.IsTestCasePaused(testCaseId);
+                    }
+
+                }
+
+                <RadzenButton Icon="timer_play"
+                              Click="@(() => StartTestCase(testCaseExecution))"
+                              Disabled="TestCaseTimerService.IsTestCaseRunning(testCaseExecution.TestCaseId)"/>
+
+                <!-- Pause Test Execution Button -->
+                <RadzenButton Click="@(() => PauseTestCaseExecution(testCaseExecution))"
+                              Icon="pause"
+                              Disabled="IsTestCasePausedOrNotRunning(testCaseExecution.TestCaseId)"/>
+
+
+                <!-- Resume Test Execution Button -->
+                <RadzenButton Click="@(() => ResumeTestCaseExecution(testCaseExecution))"
+                              Icon="play_arrow"
+                              Disabled="IsTestCasePaused(testCaseExecution.TestCaseId)"/>
+
+                <!-- End Test Execution Button -->
+                <RadzenButton Icon="timer_off"
+                              Click="@(() => EndTestCase(testCaseExecution))"
+                              Disabled="@IsTestCaseNotRunning(testCaseExecution.TestCaseId)"/>
+
+                <BugDialogCreate TestCaseExecutionId="@testCaseExecution.Id"
+                                 IsDisabled="@IsTestCaseNotRunning(testCaseExecution.TestCaseId)"/>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+
+    <!-- Only render the template and nested grid when TestSteps exist -->
+    <Template Context="testCaseExecution">
+        @if (testCaseExecution.TestStepsExecution is { Count: > 0 })
+        {
+            <RadzenDataGrid @ref="_testStepsGrid" Data="@testCaseExecution.TestStepsExecution"
+                            TItem="TestStepsExecution" AllowPaging="false" AllowSorting="false">
+                <Columns>
+                    <RadzenDataGridColumn TItem="TestStepsExecution" Property="@nameof(TestStepsExecution.TestStepsId)"
+                                          Title="Step Id" Width="100px"/>
+                    <RadzenDataGridColumn TItem="TestStepsExecution" Property="Duration" Title="Duration" Width="200px">
+                        <Template Context="testStepExecution">
+                            @testStepExecution.Duration.ToString(@"hh\:mm\:ss")
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="TestStepsExecution"
+                                          Property="@nameof(TestStepsExecution.ExecutionStatus)" Title="Status"
+                                          Width="150px">
+                        <EditTemplate Context="testStepExecution">
+                            <RadzenDropDown @bind-Value="testStepExecution.ExecutionStatus"
+                                            Data="@(EnumService.GetEnumFilteredValues<ExecutionStatus>(ExecutionStatus.NotRun))"
+                                            Style="width: 100px;"/>
+                        </EditTemplate>
+
+                        <Template Context="testStepExecution">
+                            <RadzenBadge
+                                BadgeStyle="@StylesService.GetBadgeStyleExecution(testStepExecution.ExecutionStatus)">
+                                @testStepExecution.ExecutionStatus
+                            </RadzenBadge>
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn TItem="TestStepsExecution" Title="Expected result" Width="200px">
+                        <Template Context="testStepExecution">
+                            @testStepExecution.TestSteps.ExpectedResult
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn TItem="TestStepsExecution" Title="Actual result" Width="200px">
+                        <EditTemplate Context="testStepExecution">
+                            <RadzenTextBox @bind-Value="testStepExecution.ActualResult" Style="width: 100%;"/>
+                        </EditTemplate>
+
+                        <Template Context="testStepExecution">
+                            @testStepExecution.ActualResult
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn TItem="TestStepsExecution"
+                                          Property="@nameof(TestStepsExecution.ExecutionNotes)" Title="Notes"
+                                          Width="auto">
+                        <EditTemplate Context="testStepExecution">
+                            <RadzenTextArea @bind-Value="testStepExecution.ExecutionNotes" Style="width: 100%;"/>
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn TItem="TestStepsExecution" Title="Upload File" Width="auto">
+                        <EditTemplate Context="ctx">
+                            <AddTestStepExecutionFile TestStepExecutionId="ctx.Id"/>
+                        </EditTemplate>
+
+                        <Template Context="ctx">
+                            @if (ctx.TestStepsExecutionFile != null)
+                            {
+                                <RadzenImage
+                                    Path="@($"data:image/jpeg;base64,{Convert.ToBase64String(ctx.TestStepsExecutionFile.FileContent)}")"
+                                    AlternateText="Uploaded image"
+                                    Style="max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; padding: 5px;"/>
+                            }
+                        </Template>
+
+
+                    </RadzenDataGridColumn>
+
+                    <!-- Start/End buttons for each test step -->
+                    <RadzenDataGridColumn TItem="TestStepsExecution" Title="Actions">
+                        <Template Context="testStepExecution">
+                            <RadzenButton Icon="timer_play" Click="@(() => StartTestStep(testStepExecution))"
+                                          Disabled="@(ExecutionInProgress == false)"/>
+                            <RadzenButton Icon="timer_off" Click="@(() => EndTestStep(testStepExecution))"
+                                          Disabled="@(ExecutionInProgress == false)"/>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        }
+    </Template>
+</RadzenDataGrid>

@@ -1,0 +1,218 @@
+﻿<RadzenDataGrid @ref="_dataGrid" Data="@TestSteps" TItem="TestSteps" Style="margin-bottom: 10px"
+                Density="Density.Default">
+
+    <HeaderTemplate>
+        <h4 class="text-center text-primary mb-4">Test Steps</h4>
+    </HeaderTemplate>
+
+    <Columns>
+        <RadzenDataGridColumn Property="Number" Title="Step Number"/>
+        <RadzenDataGridColumn Property="Description" Title="Description"/>
+        <RadzenDataGridColumn Property="ExpectedResult" Title="Expected Result"/>
+        <RadzenDataGridColumn Title="Actions">
+            <Template Context="teststep">
+                <RadzenButton Icon="edit"
+                              Click="() => EditTestStep(teststep)"
+                              Size="ButtonSize.ExtraSmall"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Edit Step"))"
+                              MouseLeave="@AppTooltipService.HideTooltip"/>
+                <RadzenButton Icon="delete"
+                              Click="() => RemoveTestStep(teststep)"
+                              Size="ButtonSize.ExtraSmall"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Delete Step"))"
+                              MouseLeave="@AppTooltipService.HideTooltip"/>
+                @if (TestSteps.IndexOf(teststep) > 0)
+                {
+                    <RadzenButton Icon="arrow_upward"
+                                  Click="() => MoveStep(teststep, -1)"
+                                  Size="ButtonSize.ExtraSmall"
+                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Move Up"))"
+                                  MouseLeave="@AppTooltipService.HideTooltip"/>
+                }
+                else
+                {
+                    <RadzenButton Icon="arrow_upward"
+                                  Disabled="true"
+                                  Size="ButtonSize.ExtraSmall"/>
+                }
+
+                @if (TestSteps.IndexOf(teststep) < TestSteps.Count - 1)
+                {
+                    <RadzenButton Icon="arrow_downward"
+                                  Click="() => MoveStep(teststep, 1)"
+                                  Size="ButtonSize.ExtraSmall"
+                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Move Down"))"
+                                  MouseLeave="@AppTooltipService.HideTooltip"/>
+                }
+                else
+                {
+                    <RadzenButton Icon="arrow_downward" Disabled="true" Size="ButtonSize.ExtraSmall"/>
+                }
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+    @if (_isEditing)
+    {
+        <h4 class="text-center text-primary mb-4">Update Test Step</h4>
+    }
+    else
+    {
+        <h4 class="text-center text-primary mb-4">Add Test Step</h4>
+    }
+</RadzenStack>
+
+
+<RadzenStack Orientation="Orientation.Horizontal">
+    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.Center">
+        <RadzenLabel Text="@_newTestStep.Number.ToString()" Style="font-weight: bold;"/>
+    </RadzenStack>
+    <RadzenStack Orientation="Orientation.Vertical">
+        <RadzenLabel Text="Description"/>
+        <InputTextArea @bind-Value="_newTestStep.Description"
+                       @oninput="@(args => _maxLengthValueDescription = $"{args.Value}")"
+                       MaxLength="@_maxLength"
+                       Style="min-width: 500px; max-width: 500px; border: 1px solid #ced4da; border-radius: 5px; resize: both; min-height: 150px"
+                       Name="stepDescription"/>
+        <span style="font-style: italic;">@($"{_maxLengthValueDescription.Length}/{_maxLength}")</span>
+    </RadzenStack>
+    <RadzenStack Orientation="Orientation.Vertical">
+        <RadzenLabel Text="Expected Result"/>
+        <InputTextArea @bind-Value="_newTestStep.ExpectedResult"
+                       @oninput="@(args => _maxLengthValueExpectedResult = $"{args.Value}")"
+                       MaxLength="@_maxLength"
+                       Style="min-width: 500px; max-width: 500px; border: 1px solid #ced4da; border-radius: 5px; resize: both; min-height: 150px"
+                       Name="expectedResult"/>
+        <span style="font-style: italic;">@($"{_maxLengthValueExpectedResult.Length}/{_maxLength}")</span>
+    </RadzenStack>
+    <RadzenStack Orientation="Orientation.Vertical"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.Center"
+                 Style="min-height: 150px;">
+        <RadzenButton Text="@(_isEditing ? "Update Step" : "Add Step")"
+                      Click="AddTestStep"/>
+    </RadzenStack>
+</RadzenStack>
+
+
+
+
+
+
+
+@code{
+    string _maxLengthValueDescription = "";
+
+    string _maxLengthValueExpectedResult = "";
+
+    //   string _maxLengthValue = "";
+    int _maxLength = 250;
+
+    string? _value;
+
+    void OnChange(string value, string name)
+    {
+        Console.WriteLine($"{name} value changed to {value}");
+    }
+
+    void ResetMaxLenghtValue()
+    {
+        _maxLengthValueDescription = "";
+        _maxLengthValueExpectedResult = "";
+    }
+
+}
+
+
+
+@code {
+    [Parameter] public List<TestSteps> TestSteps { get; set; } = [];
+
+    private RadzenDataGrid<TestSteps> _dataGrid = new();
+    private TestSteps _newTestStep = new();
+    private bool _isEditing = false;
+
+    private void AddTestStep()
+    {
+        if (string.IsNullOrEmpty(_newTestStep.Description) || string.IsNullOrEmpty(_newTestStep.ExpectedResult)) return;
+        if (_isEditing)
+        {
+            UpdateTestStep(); // Update the existing step
+        }
+        else
+        {
+            _newTestStep.Number = TestSteps.Count + 1;
+            TestSteps.Add(_newTestStep); // Add a new step
+        }
+
+        _newTestStep = new TestSteps(); // Clear the form for new entries
+        _isEditing = false;
+        _dataGrid.Reload(); // Refresh the DataGrid
+        ResetMaxLenghtValue();
+    }
+
+    private void EditTestStep(TestSteps step)
+    {
+        // Pre-fill the form with the selected step's details
+        _newTestStep = new TestSteps
+        {
+            Number = step.Number,
+            Description = step.Description,
+            ExpectedResult = step.ExpectedResult
+        };
+
+        _isEditing = true; // Set the state to editing
+    }
+
+    private void UpdateTestStep()
+    {
+        // Find the step to update based on the step number
+        var stepToUpdate = TestSteps.FirstOrDefault(s => s.Number == _newTestStep.Number);
+        if (stepToUpdate == null) return;
+        // Update the step's details
+        stepToUpdate.Description = _newTestStep.Description;
+        stepToUpdate.ExpectedResult = _newTestStep.ExpectedResult;
+    }
+
+    private async Task RemoveTestStep(TestSteps step)
+    {
+        var confirmed = await DialogService.Confirm("Are you sure you want to delete this test step?", "Delete Test Step");
+
+        if (confirmed == true)
+        {
+            TestSteps.Remove(step); // Remove the step
+            RenumberTestSteps(); // Renumber the remaining steps
+            await _dataGrid.Reload(); // Refresh the DataGrid
+        }
+
+        ResetMaxLenghtValue();
+    }
+
+    private void MoveStep(TestSteps step, int direction)
+    {
+        var index = TestSteps.IndexOf(step);
+        if (index < 0 || (direction == -1 && index == 0) || (direction == 1 && index == TestSteps.Count - 1)) return;
+
+        var newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= TestSteps.Count) return;
+
+        // Swap steps
+        (TestSteps[index], TestSteps[newIndex]) = (TestSteps[newIndex], TestSteps[index]);
+
+        RenumberTestSteps(); // Renumber the steps
+        _dataGrid.Reload(); // Refresh the DataGrid
+    }
+
+    private void RenumberTestSteps()
+    {
+        for (var i = 0; i < TestSteps.Count; i++)
+        {
+            TestSteps[i].Number = i + 1; // Renumber each step sequentially
+        }
+    }
+
+}

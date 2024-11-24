@@ -1,0 +1,109 @@
+@page "/integrations"
+
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject ILogger<Index> Logger
+@attribute [Authorize(Roles = "Admin")]
+
+
+<RadzenDataGrid TItem="Integrations" Data="_integrations">
+    <HeaderTemplate>
+        <RadzenButton Click="CreateIntegration"
+                      Size="ButtonSize.Medium"
+                      Icon="add"
+                      Text="Create"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create Integration", TooltipPosition.Bottom))"
+                      MouseLeave="@AppTooltipService.HideTooltip"
+                      Style="margin-bottom: 20px"/>
+    </HeaderTemplate>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(Integrations.Id)"
+                              Title="Id"
+                              Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(Integrations.IntegrationType)"
+                              Title="Integration Type"
+                              Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(Integrations.Username)"
+                              Title="Username"
+                              Width="auto"/>
+
+        <RadzenDataGridColumn Property="@nameof(Integrations.BaseUrl)" Title="BaseUrl" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(Integrations.ApiKey)"
+                              Title="Api Key"
+                              Width="auto"/>
+
+        <RadzenDataGridColumn Title="Actions">
+            <Template Context="item">
+                <div class="btn-group" style="display: flex; gap: 5px;">
+                    <RadzenButton Icon="visibility"
+                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "View Integration"))"
+                                  MouseLeave="@AppTooltipService.HideTooltip"
+                                  Click="@(() => ViewIntegration(item.Id))" Size="ButtonSize.ExtraSmall"/>
+                    <RadzenButton Icon="edit"
+                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Edit Project"))"
+                                  MouseLeave="AppTooltipService.HideTooltip"
+                                  Click="@(() => EditIntegration(item.Id))" Size="ButtonSize.ExtraSmall"/>
+                    <RadzenButton Icon="delete"
+                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Delete Project"))"
+                                  MouseLeave="@AppTooltipService.HideTooltip"
+                                  Click="@(() => DeleteData(item.Id))"
+                                  Size="ButtonSize.ExtraSmall"/>
+                </div>
+            </Template>
+        </RadzenDataGridColumn>
+
+    </Columns>
+</RadzenDataGrid>
+
+
+@code {
+    IEnumerable<Integrations>? _integrations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _integrations = await LoadIntegrations();
+        Logger.LogInformation("Integrations Loaded");
+    }
+
+
+    private async Task<List<Integrations>> LoadIntegrations()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.Integrations.ToListAsync();
+    }
+
+    private void CreateIntegration()
+    {
+        NavigationManager.NavigateTo("/integrations/create");
+    }
+
+    private void ViewIntegration(int integrationId)
+    {
+        NavigationManager.NavigateTo($"/integrations/view/{integrationId}", true);
+    }
+
+    private async Task DeleteData(int integrationId)
+    {
+        var confirmed = await DialogService.Confirm($"Are you sure you want to delete the Integration?", "All underlying Data will be lost");
+        if (confirmed == true)
+        {
+            await RemoveIntegration(integrationId);
+        }
+
+        NavigationManager.NavigateTo("/integrations", true);
+    }
+
+    private void EditIntegration(int integrationId)
+    {
+        NavigationManager.NavigateTo($"/integrations/edit/{integrationId}", true);
+    }
+
+    private async Task RemoveIntegration(int integrationId)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        var integration = await db.Integrations.FindAsync(integrationId) ?? throw new Exception("Integration is Null");
+        db.Integrations.Remove(integration);
+        await db.SaveChangesAsync();
+    }
+
+}

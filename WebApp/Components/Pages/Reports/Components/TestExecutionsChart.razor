@@ -1,0 +1,65 @@
+﻿<RadzenStack Style="flex: 1; padding: 10px; overflow: visible">
+    @if (_chartData.Count > 0)
+    {
+        <RadzenChart>
+            <RadzenPieSeries Data="@_chartData" Title="Test Executions" CategoryProperty="Category" ValueProperty="Value" Fills="@_fills">
+                <RadzenSeriesDataLabels Visible="true" />
+            </RadzenPieSeries>
+        </RadzenChart>
+    }
+    else
+    {
+        <h1>No Data available</h1>
+    }
+</RadzenStack>
+
+@code {
+    private List<ChartData> _chartData = [];
+    private List<string> _fills = []; // Create a list to store the colors
+
+    public class ChartData
+    {
+        public string Category { get; set; } = string.Empty;
+        public double Value { get; set; }
+        public string Color { get; set; } = Colors.Primary; // Default to Colors.Primary
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var (testExecutionsPassedPercentage, testExecutionsFailedPercentage, testExecutionNotRunPercentage) =
+            await ReportsModel.GetTestExecutionsPercentagesAsync();
+
+        if (testExecutionsPassedPercentage > 0)
+        {
+            _chartData.Add(new ChartData
+                {
+                    Category = "Test Executions Passed",
+                    Value = testExecutionsPassedPercentage,
+                    Color = Colors.Primary // Set color for passed tests
+                });
+            _fills.Add(Colors.Primary); // Add color to the fills list
+        }
+
+        if (testExecutionsFailedPercentage > 0)
+        {
+            _chartData.Add(new ChartData
+                {
+                    Category = "Test Executions Failed",
+                    Value = testExecutionsFailedPercentage,
+                    Color = Colors.Danger // Set color for failed tests
+                });
+            _fills.Add(Colors.Danger); // Add color to the fills list
+        }
+
+        if (testExecutionNotRunPercentage > 0)
+        {
+            _chartData.Add(new ChartData
+                {
+                    Category = "Test Executions Not Run",
+                    Value = testExecutionNotRunPercentage,
+                    Color = Colors.Warning // Set color for not run tests
+                });
+            _fills.Add(Colors.Warning); // Add color to the fills list
+        }
+    }
+}

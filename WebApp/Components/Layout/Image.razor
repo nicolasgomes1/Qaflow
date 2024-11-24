@@ -1,0 +1,107 @@
+<div class="logo-container">
+    <div class="logo-icon">
+        <div class="document">
+            <div class="checkmark">✓</div>
+            <div class="checkmark second-check">✓</div>
+        </div>
+        <div class="bar-chart">
+            <div class="bar"></div>
+            <div class="bar taller-bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="circle-outline"></div>
+    </div>
+    <div class="logo-text">TestMaster</div>
+</div>
+
+<style>
+    /* Main container for logo */
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: Arial, sans-serif;
+        color: inherit;
+        height: 100%; /* Max height adapts to container */
+        max-height: 50px; /* Ensures height fits top bar */
+    }
+
+    /* Square icon with gradient background and adaptable sizing */
+    .logo-icon {
+        position: relative;
+        width: 40px; /* Scales proportionally in smaller top bar */
+        height: 40px;
+        background: linear-gradient(135deg, #42A5F5, #1E88E5);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Document icon for test cases */
+    .document {
+        width: 60%; /* Responsive scaling within the icon */
+        height: 65%;
+        background-color: #ffffff;
+        border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Checkmarks for test execution */
+    .checkmark {
+        font-size: 0.8em;
+        color: #4CAF50;
+        font-weight: bold;
+    }
+
+    .second-check {
+        position: absolute;
+        bottom: 2px;
+    }
+
+    /* Circle outline around the icon */
+    .circle-outline {
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        width: 100%;
+        height: 100%;
+        border: 1.5px solid #1E88E5;
+        border-radius: 50%;
+        z-index: -1;
+    }
+
+    /* Bar chart for reports */
+    .bar-chart {
+        display: flex;
+        gap: 1.5px;
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+    }
+
+    .bar {
+        width: 3px;
+        height: 8px;
+        background-color: #FF7043;
+        border-radius: 1px;
+    }
+
+    .taller-bar {
+        height: 12px;
+    }
+
+    /* Responsive logo text for adaptability */
+    .logo-text {
+        font-size: 1em; /* Scales with top bar height */
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        color: inherit;
+    }
+</style>

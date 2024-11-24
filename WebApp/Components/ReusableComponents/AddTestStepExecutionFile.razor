@@ -1,0 +1,103 @@
+@using Microsoft.AspNetCore.Components.Forms
+<RadzenCard Variant="Variant.Outlined">
+    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Upload a file for Test Step Execution</RadzenText>
+    <RadzenUpload id="singleFileUpload" @ref="_uploadSingle" ChooseText="Click to choose a file" Auto="false" Multiple="false"
+                  Change="@(args => OnChange(args, "Uploading file"))" Style="width: 100%"/>
+
+    @if (_fileBytes != null)
+    {
+        <RadzenStack Orientation="Orientation.Vertical">
+
+            <RadzenImage Path="@($"data:image/jpeg;base64,{Convert.ToBase64String(_fileBytes)}")"
+                         AlternateText="Uploaded image"
+                         Style="max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; padding: 5px;"/>
+        </RadzenStack>
+    }
+
+    <RadzenStack Orientation="Orientation.Vertical">
+        <RadzenButton Text="Upload" Click="@(() => UploadFileToDatabase(TestStepExecutionId))" class="rz-mt-4"/>
+    </RadzenStack>
+</RadzenCard>
+
+
+@code {
+    RadzenUpload? _uploadSingle;
+    IBrowserFile? _selectedFile;
+    byte[]? _fileBytes;
+
+    [Parameter] public int TestStepExecutionId { get; set; }
+
+
+    void OnChange(UploadChangeEventArgs args, string name)
+    {
+        if (args.Files.Count() != 1) return;
+        _selectedFile = args.Files.First(); // Get the selected file
+        Console.WriteLine($"{name} file selected: {_selectedFile.Name}, {_selectedFile.Size} bytes");
+    }
+
+    async Task UploadFileToDatabase(int teststepexecutionId)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        if (_selectedFile != null)
+        {
+            try
+            {
+// Read the file into a MemoryStream
+                using var stream = new MemoryStream();
+                await _selectedFile.OpenReadStream().CopyToAsync(stream);
+                _fileBytes = stream.ToArray();
+
+// Retrieve the corresponding TestStepExecution entity from the database
+                var testStepExecution = await db.TestStepsExecution.FindAsync(teststepexecutionId);
+                if (testStepExecution != null)
+                {
+// Check if an existing file entry is associated with the TestStepExecutionId
+                    var existingFile = await db.TestStepsExecutionFiles
+                        .FirstOrDefaultAsync(file => file.TestStepExecutionId == teststepexecutionId);
+
+                    if (existingFile != null)
+                    {
+// Update the existing file
+                        existingFile.FileContent = _fileBytes;
+                        existingFile.FileName = _selectedFile.Name;
+                        existingFile.UploadedAt = DateTime.Now; // Update the upload time if needed
+                        existingFile.UploadedAt = DateTime.Now;
+                        existingFile.TSEFProjectId = ProjectStateService.ProjectId;
+                        Console.WriteLine("Existing file updated in the database.");
+                    }
+                    else
+                    {
+// Add a new file entry if none exists
+                        var testStepExecutionFile = new TestStepsExecutionFile
+                        {
+                            FileContent = _fileBytes,
+                            FileName = _selectedFile.Name,
+                            TestStepExecutionId = teststepexecutionId,
+                            UploadedAt = DateTime.Now,
+                            CreatedAt = DateTime.Now,
+                            TSEFProjectId = ProjectStateService.ProjectId
+                        };
+                        db.TestStepsExecutionFiles.Add(testStepExecutionFile);
+                        Console.WriteLine("New file uploaded and saved to the database.");
+                    }
+
+                    await db.SaveChangesAsync(); // Save changes to the database
+                }
+                else
+                {
+                    Console.WriteLine("Test Step Execution not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error uploading file: {ex.Message}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("No file selected for upload.");
+        }
+    }
+
+}

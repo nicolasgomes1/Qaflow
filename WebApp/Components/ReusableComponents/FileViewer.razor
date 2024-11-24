@@ -1,0 +1,48 @@
+@typeparam TItem
+
+<RadzenDataList TItem="TItem" Data="Files">
+    <Template Context="file">
+        <RadzenRow>
+            <RadzenColumn>
+                @((string)(typeof(TItem).GetProperty("FileName")?.GetValue(file, null) ?? string.Empty))
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenButton Text="Download"
+                              Click="@(async () => await DownloadFile(file))"
+                              Size="ButtonSize.Small"/>
+            </RadzenColumn>
+        </RadzenRow>
+    </Template>
+</RadzenDataList>
+
+@code {
+    /// <summary>
+    /// List of files to display, using a generic type.
+    /// </summary>
+    [Parameter]
+    public List<TItem>? Files { get; set; }
+
+    /// <summary>
+    /// Name of the entity type for additional display or logic.
+    /// </summary>
+    [Parameter]
+    public string EntityName { get; set; } = string.Empty;
+    
+    private async Task DownloadFile(TItem file)
+    {
+        // Accessing properties via reflection to avoid type constraints
+        var fileName = typeof(TItem).GetProperty("FileName")?.GetValue(file, null)?.ToString();
+        var fileContent = typeof(TItem).GetProperty("FileContent")?.GetValue(file, null) as byte[];
+
+        if (fileContent == null)
+        {
+            return; // Handle the case where FileContent is null
+        }
+
+        const string mimeType = "application/octet-stream"; // Default MIME type
+        var fileBase64 = Convert.ToBase64String(fileContent);
+        var fileDataUrl = $"data:{mimeType};base64,{fileBase64}";
+
+        await JS.InvokeVoidAsync("saveAsFile", fileName, fileDataUrl);
+    }
+}

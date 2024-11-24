@@ -1,0 +1,148 @@
+﻿@page "/project/{ProjectId:int}/testcases/edit/{Id:int}"
+@rendermode InteractiveServer
+@if (_isLoading)
+{
+    <ProgressBar/>
+}
+else
+{
+    <h3 class="text-center text-primary mb-4">Edit Test Case</h3>
+
+    <RadzenTemplateForm Data="@_testCases" TItem="TestCases" Submit="UpdateTestCase">
+        <ValidationSummary class="alert alert-danger"/>
+        <RadzenTabs RenderMode="TabRenderMode.Client" @bind-SelectedIndex="@_selectedIndex">
+            <Tabs>
+                <RadzenTabsItem Text="Test Case">
+                    <!-- Name Field -->
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Name"/>
+                        <RadzenTextBox id="name" @bind-Value="_testCases.Name" class="input-style" Name="name"/>
+                        <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                    </div>
+
+                    <!-- Description Field -->
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Description"/>
+                        <RadzenTextBox id="description" @bind-Value="_testCases.Description" class="input-style"
+                                       Name="description"/>
+                    </div>
+
+                    <!-- Priority Field -->
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Priority"/>
+                        <RadzenDropDown id="priority" @bind-Value="_testCases.Priority"
+                                        Data="EnumService.GetEnumValues<Priority>()" class="input-style"
+                                        Name="priority"/>
+                        <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                    </div>
+
+                    <!-- Test Type Field -->
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Test Type"/>
+                        <RadzenDropDown id="test_type" @bind-Value="_testCases.TestType"
+                                        Data="EnumService.GetEnumValues<TestTypes>()" class="input-style"
+                                        Name="test_type"/>
+                        <RadzenRequiredValidator Component="test_type" Text="Test Type is required"/>
+                    </div>
+
+                    <!-- Test Scope Field -->
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Test Scope"/>
+                        <RadzenDropDown id="test_scope" @bind-Value="_testCases.TestScope"
+                                        Data="EnumService.GetEnumValues<TestScope>()" class="input-style"
+                                        Name="test_scope"/>
+                        <RadzenRequiredValidator Component="test_scope" Text="Test Scope is required"/>
+                    </div>
+
+                    <!-- Requirements Field -->
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Requirements"/>
+                        <RadzenDropDown id="requirements"
+                                        Data="@_requirementsList"
+                                        @bind-Value="TestCasesModel.SelectedRequirementIds"
+                                        TextProperty="Name"
+                                        ValueProperty="Id"
+                                        Multiple="true"
+                                        class="input-style"
+                                        Name="requirements"
+                                        AllowFiltering="true"
+                                        AllowVirtualization="true"
+                                        FilterPlaceholder="Type to search"/>
+                    </div>
+                </RadzenTabsItem>
+                <RadzenTabsItem Text="Test Steps">
+                    <CreateEditTestSteps TestSteps="@_testCases.TestSteps"/>
+                </RadzenTabsItem>
+                <RadzenTabsItem Text="Files">
+                    <FileUploadEdit EntityName="@nameof(TestCasesFile)"
+                                    UploadedFiles="_uploadedFiles"
+                                    ExistingFiles="TestCasesFilesModel.ExistingFiles"/>
+                </RadzenTabsItem>
+                <RadzenTabsItem Text="Integration">
+                    <RadzenLabel Text="External Jira Id"/>
+                    <RadzenDropDown id="integration"
+                                    AllowFiltering="true"
+                                    AllowVirtualization="true"
+                                    Placeholder="Select Jira Ticket"
+                                    Data="@TestCasesModel.JiraIntegrations"
+                                    @bind-Value="TestCasesModel.SelectedJiraTicketIds"
+                                    TextProperty="key"
+                                    ValueProperty="Id"
+                                    Multiple="true"
+                                    class="input-style"
+                                    Name="integration"/>
+                </RadzenTabsItem>
+            </Tabs>
+        </RadzenTabs>
+
+        <CreateEditActions EntityName="testcases" CreateEdit="Update"/>
+    </RadzenTemplateForm>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    [Parameter] public int ProjectId { get; set; }
+
+    private bool _isLoading = true;
+
+    private TestCases _testCases = new();
+
+    int _selectedIndex;
+    private readonly List<IBrowserFile>? _uploadedFiles = [];
+
+    private List<Requirements> _requirementsList = [];
+
+    private List<TestCasesJira> _currentjiraIntegrations = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _requirementsList = await RequirementsModel.GetallRequirements();
+        _testCases = await TestCasesModel.GetTestCaseData(Id);
+
+        await TestCasesModel.GetAssociatedRequirements(_testCases);
+        await TestCasesFilesModel.GetFilesByTestCaseId(Id);
+        //  TestCasesModel.JiraIntegrations = await JiraService.GetProjectIssuesAsync("MFLP");
+        TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync("Jira-01", "MFLP");
+
+        _currentjiraIntegrations = await GetSelectedJiraTickets();
+        TestCasesModel.SelectedJiraTicketIds = _currentjiraIntegrations.Select(j => j.JiraId.ToString()).ToList();
+        _isLoading = false;
+    }
+
+    private async Task UpdateTestCase()
+    {
+        await TestCasesModel.UpdateTestCase(_testCases, _uploadedFiles);
+        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases");
+
+        StateHasChanged();
+        await FormNotificationService.NotifySuccess($"Test Case with Id {_testCases.Id} Updated Successfully");
+    }
+
+    private async Task<List<TestCasesJira>> GetSelectedJiraTickets()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.TestCasesJira.Where(x => x.TestCasesJiraId == Id).ToListAsync();
+    }
+
+}

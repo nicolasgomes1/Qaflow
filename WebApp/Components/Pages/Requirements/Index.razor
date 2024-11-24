@@ -1,0 +1,156 @@
+﻿@page "/project/{ProjectId:int}/requirements"
+@rendermode InteractiveServer
+
+@if (_isLoading)
+{
+    <ProgressBar/>
+}
+else
+{
+    <RadzenDataGrid AllowFiltering=_gridSettings.IsFilterEnabled
+                    AllowColumnResize="true"
+                    AllowAlternatingRows="true"
+                    AllowSorting="true"
+                    AllowPaging="true"
+                    AllowColumnPicking="true"
+                    PageSize="@_pageSizeFilter"
+                    PagerHorizontalAlign="HorizontalAlign.Left"
+                    ShowPagingSummary="true"
+                    Data="@RequirementsModel.requirements"
+                    ColumnWidth="auto"
+                    LogicalFilterOperator="LogicalFilterOperator.Or"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    @bind-Value="@RequirementsModel.selectedRequirements"
+                    @bind-Settings="@DataGridSettingsService.Settings"
+                    @ref="_dataGrid"
+                    AllowVirtualization="true"
+                    Density="_gridDensity">
+
+        <HeaderTemplate>
+            <RadzenButton Text="Requirement"
+                          Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/requirements/create", true)'
+                          Size="ButtonSize.Medium"
+                          Icon="add"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create new Project"))"
+                          MouseLeave="@AppTooltipService.HideTooltip"/>
+            <RadzenButton Icon="autorenew"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All"))"
+                          MouseLeave="@AppTooltipService.HideTooltip"
+                          Size="ButtonSize.Medium"
+                          Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
+            <DeleteallDataForModel EntityName="@(nameof(RequirementsModel.Requirements))"
+                                   EntityList="RequirementsModel.requirements"/>
+            <ExportGridDataCsv Grid="@_dataGrid"/>
+            <RadzenButton Icon="view_compact" Click="ToggleGridDensity"/>
+        </HeaderTemplate>
+        <Columns>
+            <RadzenDataGridColumn Property="@nameof(Requirements.Id)" Filterable="false" Title="ID" Frozen="true"
+                                  Width="80px" TextAlign="TextAlign.Center"/>
+            <RadzenDataGridColumn Property="@nameof(Requirements.Name)" Title="Name" Frozen="true" Width="auto"/>
+            <RadzenDataGridColumn Property="@nameof(Requirements.Description)" Title="Description" Width="auto"/>
+            <RadzenDataGridColumn Property="@nameof(Requirements.Priority)" Title="Priority" Width="auto">
+                <Template Context="requirement">
+                    <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(requirement.Priority)">
+                        @requirement.Priority
+                    </RadzenBadge>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Title="Has Test Cases" Width="auto">
+                <Template Context="requirement">
+                    @if (requirement.TestCases != null && requirement.TestCases.Any())
+                    {
+                        <span>Yes</span>
+                    }
+                    else
+                    {
+                        <span style="color: red;">No</span>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="@nameof(Requirements.CreatedBy)" Title="Created By" Width="auto"/>
+            <RadzenDataGridColumn Property="@nameof(Requirements.ModifiedBy)" Title="Modified By" Width="auto"/>
+            <RadzenDataGridColumn Property="@nameof(Requirements.CreatedAt)" Title="Created At" Width="auto"/>
+            <RadzenDataGridColumn Property="@nameof(Requirements.ModifiedAt)" Title="Modified At" Width="auto"/>
+
+            <!-- Action Buttons column -->
+            <IndexActions TItem="Requirements" EntityName="Requirements"/>
+        </Columns>
+
+        <!-- Footer Template for the Totals Row -->
+        <FooterTemplate>
+            <RadzenGridRow>
+                <PageSizeSelector PageSizeChanged="OnPageSizeChanged"/>
+            </RadzenGridRow>
+        </FooterTemplate>
+    </RadzenDataGrid>
+}
+
+@code {
+    [Parameter] public int ProjectId { get; set; }
+
+    private RadzenDataGrid<Requirements> _dataGrid = new();
+    private Density _gridDensity = Density.Compact;
+
+    private bool _isLoading = true; // Initially true to hide grid until everything is loaded
+    private const string GridId = "requirements"; // Unique identifier for this grid
+
+    int _pageSizeFilter = 10;
+
+    private GridSettings _gridSettings = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        DataGridSettingsService.SetCurrentGridId(GridId);
+
+        await RequirementsModel.DisplayRequirementsIndexPage();
+        _gridSettings = await GetCUrrentGridUserSettings("Requirements");
+        _isLoading = false;
+    }
+
+    private void ToggleGridDensity()
+    {
+        _gridDensity = _gridDensity == Density.Compact ? Density.Default : Density.Compact;
+    }
+
+    // Ensure JavaScript interop calls are made after the component is rendered
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await DataGridSettingsService.LoadSettingsAsync();
+            _isLoading = false; // Stop showing the loading spinner after settings are applied
+            StateHasChanged(); // Re-render with updated settings
+        }
+    }
+
+    private async Task OnPageSizeChanged(int newSize)
+    {
+        _pageSizeFilter = newSize;
+        await Task.Delay(1);
+        StateHasChanged();
+    }
+
+
+    private async Task<GridSettings> GetCUrrentGridUserSettings(string gridName)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        var user = UserService.GetCurrentUserInfoAsync().Result.UserName;
+        if (user == null) throw new Exception("User not found");
+
+        var gridSetting = await db.GridSettings
+            .Where(x => x.UserName == user && x.GridName == gridName)
+            .FirstOrDefaultAsync();
+
+        if (gridSetting != null) return gridSetting;
+        gridSetting = new GridSettings
+        {
+            UserName = user,
+            GridName = gridName,
+        };
+        db.GridSettings.Add(gridSetting);
+        await db.SaveChangesAsync();
+
+        return gridSetting;
+    }
+
+}

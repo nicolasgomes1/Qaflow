@@ -1,0 +1,33 @@
+<div style="margin-top: 10px;">
+    <RadzenButton Text="Edit" Click="EditUrl"/>
+    <RadzenButton Text="Back" Click="CancelUrl"/>
+</div>
+
+
+@code{
+
+    /// <summary>
+    ///     Entity name as string (e.g. testplans, testcases, etc.)
+    /// </summary>
+    [Parameter]
+    public required string EntityName { get; set; }
+
+    /// <summary>
+    ///     Entity Id as integer
+    /// </summary>
+    [Parameter]
+    public int EntityId { get; set; }
+
+    private void CancelUrl()
+    {
+        var url = $"project/{ProjectStateService.ProjectId}/{EntityName}";
+        NavigationManager.NavigateTo(url, true);
+    }
+
+    private void EditUrl()
+    {
+        var url = $"project/{ProjectStateService.ProjectId}/{EntityName}/edit/{EntityId}";
+        NavigationManager.NavigateTo(url, true);
+    }
+
+}

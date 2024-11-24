@@ -1,0 +1,152 @@
+﻿@page "/Users/Edit/{Id:guid}"
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+@inject ILogger<Edit> Logger
+
+<PageTitle>Edit User</PageTitle>
+
+<h3>Edit User</h3>
+
+<p>User ID: <strong>@Id</strong></p>
+
+<RadzenTemplateForm Data="@Input" TItem="InputModel" Submit="@HandleValidSubmit">
+    <DataAnnotationsValidator/>
+    <ValidationSummary class="text-danger"/>
+
+    <RadzenLabel Text="Username"/>
+    <div class="form-floating mb-3">
+        <RadzenTextBox id="username" @bind-Value="Input.UserName" Placeholder="Username"/>
+        <ValidationMessage For="() => Input.UserName" class="text-danger"/>
+    </div>
+
+    <RadzenLabel Text="Password"/>
+    <div class="form-floating mb-3">
+        <RadzenTextBox id="password" @bind-Value="Input.Password" Type="password" Placeholder="Password"/>
+        <ValidationMessage For="() => Input.Password" class="text-danger"/>
+    </div>
+
+    <RadzenLabel Text="Email"/>
+    <div class="form-floating mb-3">
+        <RadzenTextBox id="email" @bind-Value="Input.Email" Placeholder="Email"/>
+        <ValidationMessage For="() => Input.Email" class="text-danger"/>
+    </div>
+
+    <RadzenLabel Text="Role"/>
+    <div class="form-floating mb-3">
+        <RadzenDropDown id="role" @bind-Value="Input.Role" Placeholder="Select a role" Data="@_allRoles">
+            <RadzenDropDownItem TValue="string"/>
+        </RadzenDropDown>
+        <ValidationMessage For="() => Input.Role" class="text-danger"/>
+    </div>
+
+    <RadzenLabel Text="Confirmed Email?"/>
+    <div class="form-floating mb-3">
+        <RadzenCheckBox @bind-Value="Input.EmailConfirmed"/>
+    </div>
+
+    <RadzenButton Text="Update User" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary"/>
+    <RadzenButton Text="Cancel" Click='() => NavigationManager.NavigateTo("/Users/Index", true)' ButtonType="ButtonType.Reset" ButtonStyle="ButtonStyle.Secondary"/>
+
+</RadzenTemplateForm>
+
+@code {
+    [Parameter] public Guid Id { get; set; } // Change type to Guid for UUID support
+    private List<string?> _allRoles = [];
+
+    // Ensure Input is correctly initialized
+    private InputModel Input { get; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load the user by ID
+        var user = await UserManager.FindByIdAsync(Id.ToString());
+        if (user is { UserName: not null, Email: not null })
+        {
+            // Populate Input with existing user data
+            Input.UserName = user.UserName;
+            Input.Email = user.Email;
+            Input.Role = (await UserManager.GetRolesAsync(user)).FirstOrDefault() ?? string.Empty; // Get the user's role(s)
+            Input.EmailConfirmed = user.EmailConfirmed;
+        }
+
+        // Load all roles for selection
+        _allRoles = await RoleManager.Roles.Select(r => r.Name).ToListAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        // Find the user
+        var user = await UserManager.FindByIdAsync(Id.ToString());
+        if (user == null)
+        {
+            Logger.LogError("User not found.");
+            return;
+        }
+
+        // Update the user object with the input data
+        user.UserName = Input.UserName;
+        user.Email = Input.Email;
+        user.EmailConfirmed = Input.EmailConfirmed;
+        // Update the user's password if provided
+        if (!string.IsNullOrWhiteSpace(Input.Password))
+        {
+            var token = await UserManager.GeneratePasswordResetTokenAsync(user);
+            var result = await UserManager.ResetPasswordAsync(user, token, Input.Password);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    Logger.LogError("Error resetting password: {Error}", error.Description);
+                }
+            }
+        }
+
+        // Update the user's role
+        var currentRoles = await UserManager.GetRolesAsync(user);
+        var roleResult = await UserManager.RemoveFromRolesAsync(user, currentRoles);
+        if (roleResult.Succeeded && !string.IsNullOrEmpty(Input.Role))
+        {
+            roleResult = await UserManager.AddToRoleAsync(user, Input.Role);
+            if (!roleResult.Succeeded)
+            {
+                Logger.LogError("Error adding user to role: {Errors}", string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+            }
+        }
+
+        // Save the updated user
+        var updateResult = await UserManager.UpdateAsync(user);
+        if (updateResult.Succeeded)
+        {
+            Logger.LogInformation("User updated successfully.");
+            NavigationManager.NavigateTo("/Users/Index");
+            await UserNotification.NotifySuccess("User was updated Sucessefully");
+        }
+        else
+        {
+            // Log update errors
+            foreach (var error in updateResult.Errors)
+            {
+                Logger.LogError("Error updating user: {Error}", error.Description);
+            }
+        }
+    }
+
+    private class InputModel
+    {
+        [Required(ErrorMessage = "The Username field is required.")]
+        public string UserName { get; set; } = string.Empty;
+
+        public string Password { get; set; } = string.Empty; // Password can be optional for updates
+
+        [Required(ErrorMessage = "The Email field is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "The Role field is required.")]
+        public string Role { get; set; } = string.Empty;
+
+        public bool EmailConfirmed { get; set; }
+    }
+
+}
