@@ -145,7 +145,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<TestStepsExecution>()
             .HasOne(tse => tse.TestCaseExecution)
             .WithMany()
-            .HasForeignKey(tse => tse.TestCaseExecutionId)
+            .HasForeignKey(tse => tse.TestCaseExecutionIdFk)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TestStepsExecution>()

@@ -8,7 +8,7 @@ public class TestStepsExecution
     public int Id { get; set; }
 
     // Foreign key reference to TestExecution
-    public int TestCaseExecutionId { get; set; }
+    public int TestCaseExecutionIdFk { get; set; }
     public TestCaseExecution? TestCaseExecution { get; set; } // Navigation property to TestExecution
 
     public int TestStepsId { get; init; } // Foreign key reference to TestSteps
