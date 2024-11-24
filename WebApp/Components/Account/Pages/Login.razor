@@ -1,5 +1,5 @@
 ﻿@page "/Account/Login"
-
+@using Radzen
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
@@ -9,27 +9,29 @@
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
-
+@inject UserManager<ApplicationUser> UserManager
 <PageTitle>Log in</PageTitle>
 
 <h1>Log in</h1>
 <div class="row">
-    <div class="col-lg-6">
+    <div class="col-md-4">
         <section>
             <StatusMessage Message="@errorMessage" />
+
             <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+
                 <DataAnnotationsValidator />
                 <h2>Use a local account to log in.</h2>
                 <hr />
                 <ValidationSummary class="text-danger" role="alert" />
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label for="Input.Email" class="form-label">Email</label>
+                    <InputText data-testid="login_emailform" @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                    <label for="email" class="form-label">Email</label>
                     <ValidationMessage For="() => Input.Email" class="text-danger" />
                 </div>
                 <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label for="Input.Password" class="form-label">Password</label>
+                    <InputText data-testid="login_passwordform" type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <label for="password" class="form-label">Password</label>
                     <ValidationMessage For="() => Input.Password" class="text-danger" />
                 </div>
                 <div class="checkbox mb-3">
@@ -39,7 +41,7 @@
                     </label>
                 </div>
                 <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                    <RadzenButton data-testid="login_submitform" ButtonType="ButtonType.Submit" Text="Login" />
                 </div>
                 <div>
                     <p>
@@ -55,13 +57,13 @@
             </EditForm>
         </section>
     </div>
-    <div class="col-lg-4 col-lg-offset-2">
+@*     <div class="col-md-6 col-md-offset-2">
         <section>
             <h3>Use another service to log in.</h3>
             <hr />
             <ExternalLoginPicker />
         </section>
-    </div>
+    </div> *@
 </div>
 
 @code {
@@ -87,9 +89,27 @@
 
     public async Task LoginUser()
     {
-        // This doesn't count login failures towards account lockout
-        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        // Find the user by their email
+        var user = await UserManager.FindByEmailAsync(Input.Email);
+        if (user == null)
+        {
+            // If user is not found, set an appropriate error message
+            errorMessage = "Error: No user found with this email.";
+            return;
+        }
+
+        // Check if the user's email is confirmed
+        if (!await UserManager.IsEmailConfirmedAsync(user))
+        {
+            errorMessage = "Error: Your email is not confirmed. Please check your inbox for a confirmation link.";
+            return;
+        }
+
+        // Attempt to sign in the user with the provided password
+
+        if (user.UserName == null) throw new Exception("User name is null");
+
+        var result = await SignInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
@@ -108,9 +128,14 @@
         }
         else
         {
-            errorMessage = "Error: Invalid login attempt.";
+            // Log the error for debugging purposes
+            Logger.LogWarning("Invalid login attempt for user {Email}", Input.Email);
+
+            // Detailed error message for UI
+            errorMessage = "Error: Invalid login attempt. Please check your username and password and try again.";
         }
     }
+
 
     private sealed class InputModel
     {
