@@ -3,7 +3,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 var sqlPassword = builder.AddParameter("sql-password", secret: true);
 
 // Configure SQL Server and ensure it returns an IResourceBuilder
-var sql = builder.AddSqlServer("sql", password: sqlPassword) // Use the overload that takes the name and password
+var sql = builder.AddSqlServer("sql", password: sqlPassword, port: 1400) // Use the overload that takes the name and password
     .WithDataVolume("data")
     .WithLifetime(ContainerLifetime.Persistent);
 

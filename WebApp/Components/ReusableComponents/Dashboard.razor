@@ -1,58 +1,82 @@
 ﻿<div style="display: flex; justify-content: center; align-items: center;">
     <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
-        <RadzenRow>
-            <RadzenButton Text="@Loc["Requirements"]"
-                          Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements", true))"/>
-        </RadzenRow>
-        <RadzenRow Style="margin-top: 10px;">
-            <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_requirementsCount" class="rz-ms-2"/>
-        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+                <RadzenButton Text="@Loc["Requirements"]"
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements", true))"/>    
+            </RadzenStack>
+            
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+                <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_requirementsCount" class="rz-ms-2"/>    
+            </RadzenStack>
+        </RadzenStack>
     </RadzenCard>
 
     <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
-        <RadzenRow>
-            <RadzenButton Text="@Loc["TestCases"]"
-                          Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testcases", true))"/>
-        </RadzenRow>
-        <RadzenRow Style="margin-top: 10px;">
-            <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_testCasesCount" class="rz-ms-2"/>
-        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+                <RadzenButton Text="@Loc["TestCases"]"
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testcases", true))"/>
+            </RadzenStack>
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+                <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_testCasesCount" class="rz-ms-2"/>
+            </RadzenStack>
+        </RadzenStack>
     </RadzenCard>
 
     <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
-        <RadzenRow>
-            <RadzenButton Text="@Loc["TestPlans"]"
-                          Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testplans", true))"/>
-        </RadzenRow>
-        <RadzenRow Style="margin-top: 10px;">
-            <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_testPlansCount" class="rz-ms-2"/>
-        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+                <RadzenButton Text="@Loc["TestPlans"]"
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testplans", true))"/>
+            </RadzenStack>
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+                <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_testPlansCount" class="rz-ms-2"/>
+            </RadzenStack>
+        </RadzenStack>
+
+ 
     </RadzenCard>
+
+
     <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
-        <RadzenRow>
+
+    <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+        <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
             <RadzenButton Text="@Loc["TestExecutions"]"
                           Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testexecution", true))"/>
-        </RadzenRow>
-        <RadzenRow Style="margin-top: 10px;">
+        </RadzenStack>
+        <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
             <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_testExecutionsCount" class="rz-ms-2"/>
-        </RadzenRow>
+        </RadzenStack>
+    </RadzenStack>
+    </RadzenCard>
+
+
+
+
+    <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
+        <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+                <RadzenButton Text="@Loc["Bugs"]"
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/bugs", true))"/>
+            </RadzenStack>
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+                <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_bugsCount" class="rz-ms-2"/>
+            </RadzenStack>  
+            </RadzenStack>
     </RadzenCard>
 
     <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
-        <RadzenRow>
-            <RadzenButton Text="@Loc["Bugs"]"
-                          Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/bugs", true))"/>
-        </RadzenRow>
-        <RadzenRow Style="margin-top: 10px;">
-            <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_bugsCount" class="rz-ms-2"/>
-        </RadzenRow>
-    </RadzenCard>
-
-    <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
-        <RadzenRow>
-            <RadzenButton Text="@Loc["Reports"]"
-                          Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/reports", true))"/>
-        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+            <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
+                <RadzenButton Text="@Loc["Reports"]"
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/reports", true))"/>
+            </RadzenStack>
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+                <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="Reports: 3" class="rz-ms-2"/>
+            </RadzenStack>
+        </RadzenStack>
     </RadzenCard>
 </div>
 
