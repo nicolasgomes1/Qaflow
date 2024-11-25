@@ -32,20 +32,18 @@ public class IntegrationDataSeeder(IServiceProvider serviceProvider) : IHostedSe
     {
         var integration =
             await dbContext.Integrations.FirstOrDefaultAsync(p => p.IntegrationType == IntegrationType.Jira);
-        if (integration == null)
+        if (integration != null) return integration;
+        integration = new Integrations
         {
-            integration = new Integrations
-            {
-                IntegrationType = IntegrationType.Jira,
-                Username = "nicolasdiasgomes@gmail.com",
-                BaseUrl = "https://qawebmaster.atlassian.net",
-                ApiKey =
-                    "ATATT3xFfGF0wVSvi8EeTnlFjtFO0fTILF54Vz4rCtHgxFEofpOARSWh_MaH_qSJTD5hi5fP8ubZv2w301lnf66Jx-llk0NnppHr6LRzh6RSZdS3yaDzsNATd3_h9-yWbrCfApgiuK9eHYna0bw4VRjT9ITC7J-3fFeD7wngx6mw57cKzuBhYqA=7F44A4CE",
-                UniqueKey = "Jira-01"
-            };
-            dbContext.Integrations.Add(integration);
-            await dbContext.SaveChangesAsync();
-        }
+            IntegrationType = IntegrationType.Jira,
+            Username = "nicolasdiasgomes@gmail.com",
+            BaseUrl = "https://qawebmaster.atlassian.net",
+            ApiKey =
+                "ATATT3xFfGF0wVSvi8EeTnlFjtFO0fTILF54Vz4rCtHgxFEofpOARSWh_MaH_qSJTD5hi5fP8ubZv2w301lnf66Jx-llk0NnppHr6LRzh6RSZdS3yaDzsNATd3_h9-yWbrCfApgiuK9eHYna0bw4VRjT9ITC7J-3fFeD7wngx6mw57cKzuBhYqA=7F44A4CE",
+            UniqueKey = "Jira-01"
+        };
+        dbContext.Integrations.Add(integration);
+        await dbContext.SaveChangesAsync();
 
         return integration;
     }
