@@ -75,12 +75,15 @@
         <value>Create Bug</value>
     </data>
     <data name="create.requirements" xml:space="preserve">
-        <value>Create new Requirement</value>
+        <value>Create Requirement</value>
     </data>
     <data name="create.testplans" xml:space="preserve">
-        <value>Create new Test Plan</value>
+        <value>Create Test Plan</value>
     </data>
     <data name="create.testexecution" xml:space="preserve">
-        <value>Create new Test Execution</value>
+        <value>Create Test Execution</value>
+    </data>
+    <data name="create.testcases" xml:space="preserve">
+        <value>Create Test Case</value>
     </data>
 </root>
