@@ -41,6 +41,11 @@ public class TestCases
     public int TcProjectId { get; set; }
 
     public Projects? Projects { get; set; }
+    
+    public WorkflowStatus WorkflowStatus { get; set; }
+    
+    [MaxLength(50)]
+    public string AssignedTo { get; set; } = string.Empty;
 
     public ICollection<TestCasesJira> TestCasesJira { get; set; } = new List<TestCasesJira>();
 

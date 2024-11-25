@@ -111,6 +111,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithOne(r => r.Projects)
             .HasForeignKey(r => r.TEProjectId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<Projects>()
+            .HasMany(p => p.Bugs)
+            .WithOne(r => r.Projects)
+            .HasForeignKey(r => r.BProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<TestCases>()
             .HasMany<TestCasesJira>()

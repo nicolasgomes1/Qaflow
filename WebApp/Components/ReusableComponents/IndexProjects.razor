@@ -17,19 +17,24 @@
             <Template Context="item">
                 <div class="btn-group" style="display: flex; gap: 5px;">
                     <RadzenButton Icon="visibility"
+                                  ButtonStyle="ButtonStyle.Light"
+                                  Style="color: blue;"
                                   MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "View Project"))"
                                   MouseLeave="@AppTooltipService.HideTooltip"
                                   Click="@(() => ViewProject(item.Id))" Size="ButtonSize.ExtraSmall"/>
                     <RadzenButton Icon="edit"
+                                  ButtonStyle="ButtonStyle.Light" Style="color: green;"
                                   MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Edit Project"))"
                                   MouseLeave="AppTooltipService.HideTooltip"
                                   Click="@(() => EditProject(item.Id))" Size="ButtonSize.ExtraSmall"/>
                     <RadzenButton Icon="delete"
+                                  ButtonStyle="ButtonStyle.Light" Style="color: red;"
                                   MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Delete Project"))"
                                   MouseLeave="@AppTooltipService.HideTooltip"
                                   Click="@(() => DeleteData(item.Id))"
                                   Size="ButtonSize.ExtraSmall"/>
                     <RadzenButton Icon="launch"
+                                  ButtonStyle="ButtonStyle.Light" Style="color: cornflowerblue;"
                                   MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Go To {item.Name}"))"
                                   MouseLeave="@AppTooltipService.HideTooltip"
                                   Click="@(() => GoToProject(item.Id))"

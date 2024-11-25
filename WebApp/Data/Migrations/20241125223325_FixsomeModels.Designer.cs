@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApp.Data;
 
@@ -11,9 +12,11 @@ using WebApp.Data;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241125223325_FixsomeModels")]
+    partial class FixsomeModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -520,11 +523,6 @@ namespace WebApp.Migrations
                     b.Property<int>("ArchivedStatus")
                         .HasColumnType("int");
 
-                    b.Property<string>("AssignedTo")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -552,9 +550,6 @@ namespace WebApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("RProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkflowStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -677,11 +672,6 @@ namespace WebApp.Migrations
                     b.Property<int>("ArchivedStatus")
                         .HasColumnType("int");
 
-                    b.Property<string>("AssignedTo")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -718,9 +708,6 @@ namespace WebApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TestType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkflowStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -814,15 +801,13 @@ namespace WebApp.Migrations
 
                     b.Property<string>("AssignedTo")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -847,8 +832,7 @@ namespace WebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -890,11 +874,6 @@ namespace WebApp.Migrations
                     b.Property<int>("ArchivedStatus")
                         .HasColumnType("int");
 
-                    b.Property<string>("AssignedTo")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -922,9 +901,6 @@ namespace WebApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TPProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkflowStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

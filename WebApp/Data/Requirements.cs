@@ -30,4 +30,10 @@ public class Requirements
     public Projects? Projects { get; init; }
 
     public ICollection<RequirementsFile> RequirementsFiles { get; set; } = new List<RequirementsFile>();
+    
+    public WorkflowStatus WorkflowStatus { get; set; }
+    
+    [MaxLength(50)]
+    public string AssignedTo { get; set; } = string.Empty;
+
 }

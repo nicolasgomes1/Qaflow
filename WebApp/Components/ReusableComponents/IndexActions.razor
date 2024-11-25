@@ -15,7 +15,7 @@
                               MouseLeave="@AppTooltipService.HideTooltip"
                               Click="@(() => EditItem(item))"
                               Size="ButtonSize.ExtraSmall"/>
-                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: lightcoral;"
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: red;"
                               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Delete {EntityName}"))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               Click="@(() => DeleteItem(item))"

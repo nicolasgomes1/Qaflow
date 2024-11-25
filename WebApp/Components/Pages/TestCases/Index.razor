@@ -32,10 +32,12 @@ else
         <HeaderTemplate>
             <RadzenButton Text="Test Case"
                           Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases/create", true)'
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create Test Case",TooltipPosition.Bottom))"
+                          MouseLeave="@AppTooltipService.HideTooltip"
                           Size="ButtonSize.Medium"
                           Icon="add"/>
             <RadzenButton Icon="autorenew"
-                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All"))"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Size="ButtonSize.Medium" Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
             <DeleteallDataForModel EntityName="@(nameof(TestCasesModel.TestCases))" EntityList="TestCasesModel.testcases"/>
@@ -97,7 +99,7 @@ else
 
 
     private bool _isLoading = true;
-    int _pageSizeFilter = 5;
+    int _pageSizeFilter = 10;
     private const string GridId = "testcases"; // Unique identifier for this grid
     private RadzenDataGrid<TestCases> _dataGrid = new();
 

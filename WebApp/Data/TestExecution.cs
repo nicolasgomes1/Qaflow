@@ -44,10 +44,13 @@ public class TestExecution
 
     public ArchivedStatus ArchivedStatus { get; set; } = ArchivedStatus.Active;
 
+    [MaxLength(50)]
     public string? CreatedBy { get; set; }
 
+    [MaxLength(50)]
     public string? ModifiedBy { get; set; }
 
+    [MaxLength(50)]
     public string AssignedTo { get; set; } = string.Empty;
 
     public int TEProjectId { get; set; }

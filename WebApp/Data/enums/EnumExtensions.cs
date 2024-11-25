@@ -14,7 +14,7 @@ public static class EnumExtensions
         if (enumMember != null)
         {
             var displayAttribute = enumMember.GetCustomAttribute<DisplayAttribute>();
-            if (displayAttribute != null && displayAttribute.Name != null) return displayAttribute.Name;
+            if (displayAttribute is { Name: not null }) return displayAttribute.Name;
         }
 
         // Fallback to enum name if no Display attribute is found
