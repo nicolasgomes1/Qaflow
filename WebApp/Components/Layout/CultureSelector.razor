@@ -26,12 +26,12 @@
         public required string DisplayName { get; set; }
     }
 
-    private CultureDisplay[] _culturesWithDisplayNames = new[]
-    {
+    private CultureDisplay[] _culturesWithDisplayNames =
+    [
         new CultureDisplay { Culture = new CultureInfo("en-US"), DisplayName = "English" },
         new CultureDisplay { Culture = new CultureInfo("fr-BE"), DisplayName = "French" },
-        new CultureDisplay { Culture = new CultureInfo("nl-BE"), DisplayName = "Dutch" },
-    };
+        new CultureDisplay { Culture = new CultureInfo("nl-BE"), DisplayName = "Dutch" }
+    ];
 
     private CultureInfo? _selectedCulture;
     private bool _isDropdownVisible = false;
