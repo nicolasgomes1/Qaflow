@@ -36,6 +36,30 @@
                                     Name="priority"/>
                     <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
                 </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Status"/>
+                    <RadzenDropDown id="status"
+                                    @bind-Value="_requirements.WorkflowStatus"
+                                    Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                                    class="input-style"
+                                    Name="status"/>
+                    <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Assigned To"/>
+                    <RadzenDropDown id="assignedto"
+                                    Data="@_usersList"
+                                    @bind-Value="_requirements.AssignedTo"
+                                    TextProperty="UserName"
+                                    ValueProperty="Id"
+                                    class="input-style"
+                                    Name="assignedto"/>
+                    <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                </div>
+                
+                
             </RadzenTabsItem>
             <RadzenTabsItem Text="Files">
                 <FileUpload UploadedFiles="_uploadedFiles"/>
@@ -48,6 +72,9 @@
 </RadzenTemplateForm>
 
 @code {
+    private List<ApplicationUser> _usersList = [];
+
+    
     [Parameter] public int ProjectId { get; set; }
 
     int _selectedIndex;
@@ -56,11 +83,17 @@
 
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
+    protected override async Task OnInitializedAsync()
+    {
+        _usersList = await UserManager.Users.ToListAsync(); // Fetch all users
+    }
+    
+    private UserManager<ApplicationUser> _userManager;
 
     private async Task CreateNewRequirement()
     {
         _requirements = await RequirementsModel.CreateRequirement(_requirements, _uploadedFiles);
-
+        
         NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements");
 
         StateHasChanged();

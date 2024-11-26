@@ -75,6 +75,13 @@ else
                     }
                 </Template>
             </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="@nameof(Requirements.WorkflowStatus)" Title="Status" Width="auto">
+                <Template Context="requirement">
+                    <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleWorkflowStatus(requirement.WorkflowStatus)">
+                        @requirement.WorkflowStatus
+                    </RadzenBadge>
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn Property="@nameof(Requirements.CreatedBy)" Title="Created By" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(Requirements.ModifiedBy)" Title="Modified By" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(Requirements.CreatedAt)" Title="Created At" Width="auto"/>

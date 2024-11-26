@@ -48,6 +48,17 @@ public class StylesService
             _ => BadgeStyle.Secondary
         };
     }
+    
+    public static BadgeStyle GetBadgeStyleWorkflowStatus(WorkflowStatus status)
+    {
+        return status switch
+        {
+            WorkflowStatus.New => BadgeStyle.Info,
+            WorkflowStatus.InReview => BadgeStyle.Warning,
+            WorkflowStatus.Completed => BadgeStyle.Success,
+            _ => BadgeStyle.Danger
+        };
+    }
 
     public static BadgeStyle GetBadgeStyleSeverity(Severity severity)
     {
