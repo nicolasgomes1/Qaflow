@@ -4,6 +4,9 @@
 
 <h3>Manage Requirements</h3>
 
+<RadzenButton Text="My Assignments" Click="RefreshAssignedRequirements" />
+<RadzenButton Text="All Requirements" Click="RefreshAllRequirements" />
+
 <RadzenDropZoneContainer TItem="Requirements" Data="requirementsData"
                              ItemSelector="@ItemSelector"
                              ItemRender="@OnItemRender"
@@ -79,6 +82,32 @@
     {
         await using var db = await DbContext.CreateDbContextAsync();
         requirementsData = await db.Requirements.Where(rp => rp.RProjectId == ProjectId).ToListAsync(); 
+    }
+    
+    private async Task<List<Requirements>> GetRequirementsAssignedToAll()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.Requirements.Where(rp => rp.RProjectId == ProjectId).ToListAsync();
+    }
+    
+    
+    
+    private async Task<List<Requirements>> GetRequirementsAssignedToCurrentUser()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.Requirements.Where(rp => rp.RProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserNameAsync().Result).ToListAsync();
+    }
+    
+    private async Task RefreshAssignedRequirements()
+    {
+        requirementsData = await GetRequirementsAssignedToCurrentUser();
+        StateHasChanged();
+    }
+    
+    private async Task RefreshAllRequirements()
+    {
+        requirementsData = await GetRequirementsAssignedToAll();
+        StateHasChanged();
     }
 
   
