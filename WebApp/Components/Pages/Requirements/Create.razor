@@ -1,4 +1,5 @@
 ﻿@page "/project/{ProjectId:int}/requirements/create"
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
 @rendermode InteractiveServer
 
 <h3 class="text-center text-primary mb-4">Create Requirement</h3>
@@ -87,11 +88,11 @@
     {
         _usersList = await UserManager.Users.ToListAsync(); // Fetch all users
     }
-    
-    private UserManager<ApplicationUser> _userManager;
 
     private async Task CreateNewRequirement()
     {
+
+        _requirements.AssignedTo = UserService.GetUserName(_requirements.AssignedTo, _usersList);
         _requirements = await RequirementsModel.CreateRequirement(_requirements, _uploadedFiles);
         
         NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements");
