@@ -7,6 +7,14 @@ using WebApp.Data;
 namespace WebApp.Services;
 public class UserService(AuthenticationStateProvider authenticationStateProvider, UserManager<ApplicationUser> userManager)
 {
+    
+    /// <summary>
+    /// Retrieves the current user's information including their username and user ID.
+    /// </summary>
+    /// <returns>
+    /// A tuple containing the username and user ID of the current user.
+    /// If the user is not authenticated, both values will be null.
+    /// </returns>
     public async Task<(string? UserName, string? UserId)> GetCurrentUserInfoAsync()
     {
         var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
@@ -19,6 +27,12 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
         return (userName, userId);
     }
     
+    /// <summary>
+    /// Retrieves the current user's username.
+    /// </summary>
+    /// <returns>
+    /// The username of the current user, or null if the user is not authenticated.
+    /// </returns>
     public async Task<string?> GetCurrentUserNameAsync()
     {
         var userInfo = await GetCurrentUserInfoAsync();
@@ -38,12 +52,20 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
     }
     
     
-    
+ /// <summary>
+ /// Get the user name from the user id
+ /// </summary>
+ /// <param name="id"></param>
+ /// <returns></returns>
     public string GetUserNameFromUserId(string id)
     {
         return userManager.Users.FirstOrDefault(x => x.Id == id)?.UserName ?? string.Empty;
     }
     
+ /// <summary>
+ /// Retrieve the list of users based on roles other than admin
+ /// </summary>
+ /// <returns></returns>
     public async Task<List<ApplicationUser>> GetUsersList()
     {
         // Get all users
