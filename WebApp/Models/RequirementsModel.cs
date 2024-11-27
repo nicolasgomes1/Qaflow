@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using System.Linq.Dynamic.Core;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
+using WebApp.Data.enums;
 using WebApp.Services;
 
 namespace WebApp.Models;
@@ -49,6 +51,7 @@ public class RequirementsModel(
     {
         return await _dbContext.Requirements
             .Where(r => r.RProjectId == projectSateService.ProjectId)
+            .Where(r =>r.WorkflowStatus == WorkflowStatus.Completed)
             .ToListAsync();
     }
 
@@ -74,39 +77,39 @@ public class RequirementsModel(
         return requirement;
     }
 
-    public async Task<Requirements> CreateRequirement(Requirements requirements, List<IBrowserFile>? files)
+    public async Task<Requirements> CreateRequirement(Requirements requirement, List<IBrowserFile>? files)
     {
         // First, create the requirement
-        _dbContext.Requirements.Add(requirements);
-        requirements.RProjectId = projectSateService.ProjectId;
+        _dbContext.Requirements.Add(requirement);
+        requirement.RProjectId = projectSateService.ProjectId;
 
-        requirements.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         
         await _dbContext.SaveChangesAsync();
 
         // If there are files, attempt to save them
         if (files != null && files.Count != 0)
         {
-            await requirementsFilesModel.SaveFilesToDb(files, requirements.Id);
+            await requirementsFilesModel.SaveFilesToDb(files, requirement.Id);
         }
 
 
-        return requirements;
+        return requirement;
     }
 
-    public async Task UpdateRequirement(Requirements requirements, List<IBrowserFile>? files)
+    public async Task UpdateRequirement(Requirements requirement, List<IBrowserFile>? files)
     {
         // First, update the requirement
-        _dbContext.Requirements.Update(requirements);
-        requirements.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        _dbContext.Requirements.Update(requirement);
+        requirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
-        requirements.ModifiedAt = DateTime.Now;
+        requirement.ModifiedAt = DateTime.Now;
         await _dbContext.SaveChangesAsync();
 
         // If there are files, attempt to save them
         if (files != null && files.Count != 0)
         {
-            await requirementsFilesModel.SaveFilesToDb(files, requirements.Id);
+            await requirementsFilesModel.SaveFilesToDb(files, requirement.Id);
         }
     }
 }

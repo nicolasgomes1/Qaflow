@@ -85,8 +85,8 @@
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
     protected override async Task OnInitializedAsync()
-    {
-            _usersList = await UserService.GetUsersList();
+    {   
+        _usersList = await UserService.GetUsersList();
     }
     
     private async Task CreateNewRequirement()
