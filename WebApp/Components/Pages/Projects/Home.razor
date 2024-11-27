@@ -33,10 +33,11 @@
             <BugDialogCreate Title="@Loc["create.bug"]"/>
         </RadzenStack>
         
-        <RadzenStack Orientation="Orientation.Horizontal">
-            <RadzenButton Icon="category" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")'></RadzenButton>
-            <RadzenButton Icon="category" ButtonStyle="ButtonStyle.Success" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'></RadzenButton>
-            <RadzenButton Icon="category" ButtonStyle="ButtonStyle.Danger" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")'></RadzenButton>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="margin-top: 20px;" Wrap="FlexWrap.Wrap">
+            <RadzenButton Icon="category" Text="Requirements" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")'></RadzenButton>
+            <RadzenButton Icon="category" Text="Test Cases" ButtonStyle="ButtonStyle.Success" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'></RadzenButton>
+            <RadzenButton Icon="category" Text="Test Plans" ButtonStyle="ButtonStyle.Danger" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")'></RadzenButton>
+            <RadzenButton Icon="category" Text="Bugs" ButtonStyle="ButtonStyle.Base" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs/manage")'></RadzenButton>
 
         </RadzenStack>
 

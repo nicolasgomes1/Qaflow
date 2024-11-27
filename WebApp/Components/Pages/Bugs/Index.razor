@@ -47,6 +47,18 @@
                 </RadzenBadge>
             </Template>
         </RadzenDataGridColumn>
+        <RadzenDataGridColumn Property="@nameof(Bugs.WorkflowStatus)" Title="Status" Width="auto">
+            <Template Context="bugs">
+                <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleWorkflowStatus(bugs.WorkflowStatus)">
+                    @bugs.WorkflowStatus
+                </RadzenBadge>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Property="@nameof(Bugs.AssignedTo)" Title="Assigned To" Width="auto">
+            <Template Context="bugs">
+                @UserService.GetUserNameFromUserId(bugs.AssignedTo)
+            </Template>
+        </RadzenDataGridColumn>
 
         <!-- Action Buttons column -->
         <IndexActions TItem="Bugs" EntityName="@nameof(Bugs)"/>

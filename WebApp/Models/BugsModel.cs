@@ -18,7 +18,7 @@ public class BugsModel(
 
     public async Task<List<Bugs>> GetBugsAsync()
     {
-        return await _dbContext.Bugs.ToListAsync();
+        return await _dbContext.Bugs.Where(bp => bp.BProjectId == projectSateService.ProjectId).ToListAsync();
     }
 
     public async Task<Bugs> GetBugByIdAsync(int id)

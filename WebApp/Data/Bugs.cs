@@ -36,4 +36,9 @@ public class Bugs
     public ICollection<BugsFiles>? BugFiles { get; set; }
 
     public ICollection<BugsComments>? BugComments { get; set; }
+    
+    public WorkflowStatus WorkflowStatus { get; set; }
+    
+    [MaxLength(50)]
+    public string AssignedTo { get; set; } = string.Empty;
 }
