@@ -59,23 +59,23 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
         // Create or get test cases
         var testCase1 =
-            await GetOrCreateTestCaseAsync(dbContext, project.Id, "Test Case 1", "Sample test case 1", null);
+            await GetOrCreateTestCaseAsync(dbContext, project.Id, "Test Case 1", "Sample test case 1", USER, null);
         var testCase2 =
-            await GetOrCreateTestCaseAsync(dbContext, project.Id, "Test Case 2", "Sample test case 2", null);
-        await GetOrCreateTestCaseAsync(dbContext, project.Id, "Test Case 3", "Sample test case ", requirement);
+            await GetOrCreateTestCaseAsync(dbContext, project.Id, "Test Case 2", "Sample test case 2", MANAGER, null);
+        await GetOrCreateTestCaseAsync(dbContext, project.Id, "Test Case 3", "Sample test case ", USER, requirement);
 
         for (var i = 1; i <= 100; i++)
         {
-            await GetOrCreateTestCaseAsync(dbContext, project.Id, $"Test Case {i}.", $"Test Case number is {i}.", null);
+            await GetOrCreateTestCaseAsync(dbContext, project.Id, $"Test Case {i}.", $"Test Case number is {i}.", USER, null);
         }
 
         await GetOrCreateTestCaseWithStepsAsync(dbContext, project.Id, "Test Case 4", "Sample test case 4", null,
             testSteps);
 
         // Create or get test plans associated with the test cases
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", testCase1);
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", testCase2);
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Beta", null);
+        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", USER, testCase1);
+        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", MANAGER, testCase2);
+        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Beta", USER, null);
 
         await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 1", "Bug 1 Description", USER);
         await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 2", "Bug 2 Description", USER, BugStatus.Closed);
@@ -174,16 +174,8 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
     private static async Task<Bugs> GetOrCreateBugsAsync(ApplicationDbContext dbContext, int projectId, string name,
         string description, string assignedUserName, BugStatus status = BugStatus.Open)
     {
-        // Retrieve the user Id for the assigned user
-        var assignedUser = await dbContext.Users
-            .FirstOrDefaultAsync(u => u.UserName == assignedUserName);
+        var assignedUserId = await AssignedUserId(dbContext, assignedUserName);
 
-        if (assignedUser == null)
-        {
-            throw new InvalidOperationException($"User with UserName '{assignedUserName}' not found.");
-        }
-
-        var assignedUserId = assignedUser.Id;
         
         var existingBug = await dbContext.Bugs
             .FirstOrDefaultAsync(b => b.BProjectId == projectId && b.Name == name);
@@ -210,8 +202,10 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
 
     private static async Task<TestCases> GetOrCreateTestCaseAsync(ApplicationDbContext dbContext, int projectId,
-        string name, string description, Requirements? requirements)
+        string name, string description, string assignedUserName, Requirements? requirements)
     {
+        var assignedUserId = await AssignedUserId(dbContext, assignedUserName);
+
         // Check if the test case already exists
         var existingTestCase = await dbContext.TestCases
             .Include(tc => tc.Requirements) // Include Requirements to avoid lazy loading
@@ -228,7 +222,9 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             Name = name,
             Description = description,
             TcProjectId = projectId,
-            CreatedBy = USER
+            CreatedBy = USER,
+            AssignedTo = assignedUserId
+
         };
 
         if (requirements != null)
@@ -303,13 +299,17 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
     }
 
 
-    private static async Task GetOrCreateTestPlanAsync(ApplicationDbContext dbContext, int projectId, string name,
+    private static async Task GetOrCreateTestPlanAsync(ApplicationDbContext dbContext, int projectId, string name, string assignedUserName,
         TestCases? testCase)
     {
+        
         // Check if a test plan already exists
         var existingTestPlan = await dbContext.TestPlans
             .Include(tp => tp.TestCases) // Include test cases to avoid lazy loading
             .FirstOrDefaultAsync(tp => tp.TPProjectId == projectId && tp.Name == name);
+        
+        var assignedUserId = await AssignedUserId(dbContext, assignedUserName);
+
 
         if (existingTestPlan != null)
         {
@@ -321,7 +321,8 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
                 {
                     Name = name,
                     TPProjectId = projectId,
-                    CreatedBy = USER
+                    CreatedBy = USER,
+                    AssignedTo = assignedUserId
                 };
 
                 await dbContext.TestPlans.AddAsync(newTestPlan);
@@ -347,7 +348,8 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         {
             Name = name,
             TPProjectId = projectId,
-            CreatedBy = USER
+            CreatedBy = USER,
+            AssignedTo = assignedUserId
         };
 
         await dbContext.TestPlans.AddAsync(newTestPlanForCreation);
