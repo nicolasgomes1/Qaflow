@@ -44,6 +44,18 @@ else
                         <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
                     </div>
 
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Assigned To"/>
+                        <RadzenDropDown id="assignedto"
+                                        Data="@_usersList"
+                                        @bind-Value="_requirements.AssignedTo"
+                                        TextProperty="UserName"
+                                        ValueProperty="Id"
+                                        class="input-style"
+                                        Name="assignedto"/>
+                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                    </div>
+
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Files">
                     <FileUploadEdit UploadedFiles="_uploadedFiles"
@@ -62,6 +74,7 @@ else
     [Parameter] public int Id { get; set; }
 
     [Parameter] public int ProjectId { get; set; }
+    private List<ApplicationUser> _usersList = [];
 
 
     int _selectedIndex;
@@ -72,6 +85,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        _usersList = await UserManager.Users.ToListAsync(); // Fetch all users
+
         _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
 
         await RequirementsFilesModel.GetFilesByRequirementId(Id);
@@ -81,7 +96,9 @@ else
 
     private async Task UpdateRequirement()
     {
+        _requirements.AssignedTo = UserService.GetUserName(_requirements.AssignedTo, _usersList);
         await RequirementsModel.UpdateRequirement(_requirements, _uploadedFiles);
+        
         NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/requirements");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Requirement with Id {_requirements.Id} Updated Successfully");

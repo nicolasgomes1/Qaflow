@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 
 namespace WebApp.Services;
@@ -22,7 +24,6 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
         var userInfo = await GetCurrentUserInfoAsync();
         return userInfo.UserName;
     }
-    
     
     /// <summary>
     /// Returns the name of the user with the given id. To be used in the dropdowns
