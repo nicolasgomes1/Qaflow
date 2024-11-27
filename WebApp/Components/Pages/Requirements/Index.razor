@@ -86,7 +86,11 @@ else
             <RadzenDataGridColumn Property="@nameof(Requirements.ModifiedBy)" Title="Modified By" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(Requirements.CreatedAt)" Title="Created At" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(Requirements.ModifiedAt)" Title="Modified At" Width="auto"/>
-            <RadzenDataGridColumn Property="@nameof(Requirements.AssignedTo)" Title="Assigned To" Width="auto"/>
+            <RadzenDataGridColumn Property="@nameof(Requirements.AssignedTo)" Title="Assigned To" Width="auto">
+                <Template Context="requirement">
+                    @UserService.GetUserNameFromUserId(requirement.AssignedTo)
+                </Template>
+            </RadzenDataGridColumn>
 
             <!-- Action Buttons column -->
             <IndexActions TItem="Requirements" EntityName="Requirements"/>
@@ -103,7 +107,7 @@ else
 
 @code {
     [Parameter] public int ProjectId { get; set; }
-
+    
     private RadzenDataGrid<Requirements> _dataGrid = new();
 
     private bool _isLoading = true; // Initially true to hide grid until everything is loaded

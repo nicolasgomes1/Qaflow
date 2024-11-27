@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 
 namespace WebApp.Services;
-public class UserService(AuthenticationStateProvider authenticationStateProvider)
+public class UserService(AuthenticationStateProvider authenticationStateProvider, UserManager<ApplicationUser> userManager)
 {
     public async Task<(string? UserName, string? UserId)> GetCurrentUserInfoAsync()
     {
@@ -36,6 +36,16 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
         var user = userList.FirstOrDefault(user => user.Id == userId);
         return user?.UserName ?? "Unassigned";
     }
+    
+    
+    
+    public string GetUserNameFromUserId(string id)
+    {
+        return userManager.Users.FirstOrDefault(x => x.Id == id)?.UserName ?? string.Empty;
+    }
+    
+    
+    
 }
 
 

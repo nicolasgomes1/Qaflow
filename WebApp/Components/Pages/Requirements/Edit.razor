@@ -85,7 +85,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _usersList = await UserManager.Users.ToListAsync(); // Fetch all users
+        _usersList = await GetUsersList();
 
         _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
 
@@ -93,10 +93,32 @@ else
 
         _isLoading = false;
     }
+    
+    
+    private async Task<List<ApplicationUser>> GetUsersList()
+    {
+        // Get all users
+        var users = await UserManager.Users.ToListAsync();
+
+        // Filter out users with the "Admin" role
+        var nonAdminUsers = new List<ApplicationUser>();
+        foreach (var user in users)
+        {
+            if (!await UserManager.IsInRoleAsync(user, "Admin"))
+            {
+                nonAdminUsers.Add(user);
+            }
+        }
+
+        return nonAdminUsers;
+    }
+
+
+    
 
     private async Task UpdateRequirement()
     {
-        _requirements.AssignedTo = UserService.GetUserName(_requirements.AssignedTo, _usersList);
+    //    _requirements.AssignedTo = UserService.GetUserName(_requirements.AssignedTo, _usersList);
         await RequirementsModel.UpdateRequirement(_requirements, _uploadedFiles);
         
         NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/requirements");

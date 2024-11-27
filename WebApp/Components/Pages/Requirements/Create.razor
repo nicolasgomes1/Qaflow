@@ -92,7 +92,7 @@
     private async Task CreateNewRequirement()
     {
 
-        _requirements.AssignedTo = UserService.GetUserName(_requirements.AssignedTo, _usersList);
+     //   _requirements.AssignedTo = UserService.GetUserName(_requirements.AssignedTo, _usersList);
         _requirements = await RequirementsModel.CreateRequirement(_requirements, _uploadedFiles);
         
         NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements");
