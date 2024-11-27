@@ -105,7 +105,7 @@
     private async Task<List<Requirements>> GetRequirementsAssignedToCurrentUser()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.Requirements.Where(rp => rp.RProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserNameAsync().Result).ToListAsync();
+        return await db.Requirements.Where(rp => rp.RProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
     }
     
     private async Task RefreshAssignedRequirements()

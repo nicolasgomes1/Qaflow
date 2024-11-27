@@ -104,7 +104,7 @@
     private async Task<List<TestPlans>> GetTestPlansAssignedToCurrentUser()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestPlans.Where(rp => rp.TPProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserNameAsync().Result).ToListAsync();
+        return await db.TestPlans.Where(rp => rp.TPProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
     }
     
     private async Task RefreshAssignedTestPlans()
