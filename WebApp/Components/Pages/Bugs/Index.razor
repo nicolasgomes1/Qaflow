@@ -47,7 +47,7 @@
                 </RadzenBadge>
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn Property="@nameof(Bugs.WorkflowStatus)" Title="Status" Width="auto">
+        <RadzenDataGridColumn Property="@nameof(Bugs.WorkflowStatus)" Title="WorkFlow Status" Width="auto">
             <Template Context="bugs">
                 <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleWorkflowStatus(bugs.WorkflowStatus)">
                     @bugs.WorkflowStatus

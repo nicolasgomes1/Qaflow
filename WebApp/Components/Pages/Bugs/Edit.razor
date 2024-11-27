@@ -55,6 +55,20 @@
                                     Name="bug_status"/>
                     <RadzenRequiredValidator Component="bug_status" Text="Bug Status is required"/>
                 </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Assigned To"/>
+                    <RadzenDropDown id="assignedto"
+                                    Data="@_usersList"
+                                    @bind-Value="_bugs.AssignedTo"
+                                    TextProperty="UserName"
+                                    ValueProperty="Id"
+                                    class="input-style"
+                                    Name="assignedto"/>
+                    <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                </div>
+                
+                
             </RadzenTabsItem>
             <RadzenTabsItem Text="Files">
                 <FileUploadEdit UploadedFiles="_uploadedFiles"
@@ -72,6 +86,7 @@
 @code {
     [Parameter] public int ProjectId { get; set; }
     [Parameter] public int Id { get; set; }
+    private List<ApplicationUser> _usersList = [];
 
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
@@ -80,6 +95,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _usersList = await UserService.GetUsersList();
+
         _bugs = await BugsModel.GetBugByIdAsync(Id);
         await BugsFilesModel.GetBugFilesById(Id);
     }

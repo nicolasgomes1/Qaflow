@@ -55,6 +55,28 @@
                     <RadzenRequiredValidator Component="bug_status" Text="Bug Status is required"/>
                 </div>
 
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Status"/>
+                    <RadzenDropDown id="status"
+                                    @bind-Value="_bugs.WorkflowStatus"
+                                    Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                                    class="input-style"
+                                    Name="status"/>
+                    <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Assigned To"/>
+                    <RadzenDropDown id="assignedto"
+                                    Data="@_usersList"
+                                    @bind-Value="_bugs.AssignedTo"
+                                    TextProperty="UserName"
+                                    ValueProperty="Id"
+                                    class="input-style"
+                                    Name="assignedto"/>
+                    <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                </div>   
+
 
             </RadzenTabsItem>
 
@@ -77,10 +99,17 @@
 @code {
     [Parameter] public int ProjectId { get; set; }
     private readonly List<IBrowserFile>? _uploadedFiles = [];
+    private List<ApplicationUser> _usersList = [];
 
     int _selectedIndex;
     private readonly Bugs _bugs = new();
 
+    protected override async Task OnInitializedAsync()
+    {   
+        _usersList = await UserService.GetUsersList();
+    }
+    
+    
     private async Task CreateNewBug()
     {
         await BugsModel.CreateBug(_bugs, _uploadedFiles);
