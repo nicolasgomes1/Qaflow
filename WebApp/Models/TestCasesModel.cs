@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebApp.Api.Jira;
 using WebApp.Data;
+using WebApp.Data.enums;
 using WebApp.Services;
 
 namespace WebApp.Models;
@@ -49,22 +50,29 @@ public class TestCasesModel(
         selectedTestCases = new List<TestCases>() { selection };
     }
 
-
-    /// <returns>Get All Test Cases</returns>
+    
     public async Task GetAllTestCases()
     {
         TestCasesList = await _dbContext.TestCases
             .Where(tc => tc.TcProjectId == projectStateService.ProjectId)
             .ToListAsync();
     }
-
-    public async Task<List<TestCases>> GetAllTestCases1()
+    
+    public async Task<List<TestCases>> GetTestCasesWithStatusCompleted()
     {
         return await _dbContext.TestCases
-            .Include(tc => tc.TestPlans)
-            .Where(tc => tc.TcProjectId == projectStateService.ProjectId)
+            .Where(tc => tc.TcProjectId == projectStateService.ProjectId && tc.WorkflowStatus == WorkflowStatus.Completed)
             .ToListAsync();
     }
+    
+    
+    // public async Task<List<TestCases>> GetAllTestCases1()
+    // {
+    //     return await _dbContext.TestCases
+    //         .Include(tc => tc.TestPlans)
+    //         .Where(tc => tc.TcProjectId == projectStateService.ProjectId)
+    //         .ToListAsync();
+    // }
 
     /// <summary>
     /// 

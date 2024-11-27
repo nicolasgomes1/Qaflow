@@ -81,7 +81,18 @@ else
             <RadzenDataGridColumn Property="@nameof(TestCases.TestType)" Title="Test Type" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(TestCases.TestScope)" Title="Test Scope" Width="auto"/>
 
-
+            <RadzenDataGridColumn Property="@nameof(TestCases.WorkflowStatus)" Title="Status" Width="auto">
+                <Template Context="testcase">
+                    <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleWorkflowStatus(testcase.WorkflowStatus)">
+                        @testcase.WorkflowStatus
+                    </RadzenBadge>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="@nameof(TestCases.AssignedTo)" Title="Assigned To" Width="auto">
+                <Template Context="testcase">
+                    @UserService.GetUserNameFromUserId(testcase.AssignedTo)
+                </Template>
+            </RadzenDataGridColumn>
             <IndexActions TItem="TestCases" EntityName="TestCases"/>
 
         </Columns>

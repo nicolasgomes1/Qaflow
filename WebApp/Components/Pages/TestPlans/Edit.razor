@@ -46,13 +46,25 @@ else
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Test Cases"/>
                         <RadzenDropDown id="testcases"
-                                        Data="@TestCasesModel.TestCasesList"
+                                        Data="@_testCasesList"
                                         @bind-Value="TestPlansModel.SelectedTestCasesIds"
                                         TextProperty="Name"
                                         ValueProperty="Id"
                                         Multiple="true"
                                         class="input-style"
                                         Name="testcases"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Assigned To"/>
+                        <RadzenDropDown id="assignedto"
+                                        Data="@_usersList"
+                                        @bind-Value="_testPlans.AssignedTo"
+                                        TextProperty="UserName"
+                                        ValueProperty="Id"
+                                        class="input-style"
+                                        Name="assignedto"/>
+                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
                     </div>
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Files">
@@ -76,8 +88,12 @@ else
     [Parameter]
     public int ProjectId { get; set; }
 
+    private List<ApplicationUser> _usersList = [];
+
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
+    private List<TestCases> _testCasesList = [];
+    
     private bool _isLoading = true;
 
     int _selectedIndex;
@@ -85,7 +101,10 @@ else
    
     protected override async Task OnInitializedAsync()
     {
-        await TestCasesModel.GetAllTestCases();
+        _usersList = await UserService.GetUsersList();
+
+      //  await TestCasesModel.GetAllTestCases();
+        _testCasesList = await TestCasesModel.GetTestCasesWithStatusCompleted();
         _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
         await TestPlansModel.GetAssociatedTestCases(Id);
         await TestPlansFilesModel.GetFilesByTestPlanId(Id);

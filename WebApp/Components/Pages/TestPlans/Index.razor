@@ -69,6 +69,18 @@ else
                     }
                 </Template>
             </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="@nameof(TestPlans.WorkflowStatus)" Title="Status" Width="auto">
+                <Template Context="testplan">
+                    <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleWorkflowStatus(testplan.WorkflowStatus)">
+                        @testplan.WorkflowStatus
+                    </RadzenBadge>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="@nameof(TestPlans.AssignedTo)" Title="Assigned To" Width="auto">
+                <Template Context="testplan">
+                    @UserService.GetUserNameFromUserId(testplan.AssignedTo)
+                </Template>
+            </RadzenDataGridColumn>
             <IndexActions TItem="TestPlans" EntityName="TestPlans"/>
 
         </Columns>

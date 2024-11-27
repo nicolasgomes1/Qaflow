@@ -69,6 +69,19 @@ else
                                         AllowVirtualization="true"
                                         FilterPlaceholder="Type to search"/>
                     </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Assigned To"/>
+                        <RadzenDropDown id="assignedto"
+                                        Data="@_usersList"
+                                        @bind-Value="_testCases.AssignedTo"
+                                        TextProperty="UserName"
+                                        ValueProperty="Id"
+                                        class="input-style"
+                                        Name="assignedto"/>
+                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                    </div>
+                    
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Test Steps">
                     <CreateEditTestSteps TestSteps="@_testCases.TestSteps"/>
@@ -103,6 +116,7 @@ else
     [Parameter] public int Id { get; set; }
 
     [Parameter] public int ProjectId { get; set; }
+    private List<ApplicationUser> _usersList = [];
 
     private bool _isLoading = true;
 
@@ -117,6 +131,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        _usersList = await UserService.GetUsersList();
+
         _requirementsList = await RequirementsModel.GetallRequirements();
         _testCases = await TestCasesModel.GetTestCaseData(Id);
 

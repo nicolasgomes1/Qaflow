@@ -42,7 +42,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Test Cases"/>
                     <RadzenDropDown id="testcases"
-                                    Data="@TestCasesModel.TestCasesList"
+                                    Data="@_testCaseslist"
                                     @bind-Value="TestPlansModel.SelectedTestCasesIds"
                                     TextProperty="Name"
                                     ValueProperty="Id"
@@ -50,6 +50,30 @@
                                     class="input-style"
                                     Name="Test Cases"/>
                 </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Status"/>
+                    <RadzenDropDown id="status"
+                                    @bind-Value="_testPlans.WorkflowStatus"
+                                    Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                                    class="input-style"
+                                    Name="status"/>
+                    <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Assigned To"/>
+                    <RadzenDropDown id="assignedto"
+                                    Data="@_usersList"
+                                    @bind-Value="_testPlans.AssignedTo"
+                                    TextProperty="UserName"
+                                    ValueProperty="Id"
+                                    class="input-style"
+                                    Name="assignedto"/>
+                    <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                </div>
+                
+                
             </RadzenTabsItem>
             <RadzenTabsItem Text="Files">
                 <FileUpload UploadedFiles="_uploadedFiles"/>
@@ -64,15 +88,20 @@
 @code {
 
     [Parameter] public int ProjectId { get; set; }
+    private List<ApplicationUser> _usersList = [];
 
     int _selectedIndex;
     private readonly TestPlans _testPlans = new();
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
+    private List<TestCases> _testCaseslist = [];
 
     protected override async Task OnInitializedAsync()
     {
+        _usersList = await UserService.GetUsersList();
+
         await TestCasesModel.GetAllTestCases();
+        _testCaseslist = await TestCasesModel.GetTestCasesWithStatusCompleted();
     }
 
     private async Task CreateNewTestPlan()
