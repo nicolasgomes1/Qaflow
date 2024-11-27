@@ -50,14 +50,14 @@
       <jdbc-url>Server=127.0.0.1,1400;User ID=sa;Password=Admin123!;TrustServerCertificate=true;Database=qa</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="qa" uuid="3f7b11bd-4488-42f6-9a31-ad351feffa58">
+    <data-source source="LOCAL" name="qa" uuid="26e3ec4b-eccd-4fb2-acda-ca811d5b5316">
       <driver-ref>sqlserver.jb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
       <jdbc-url>Server=127.0.0.1,1400;User ID=sa;Password=Admin123!;TrustServerCertificate=true;Database=qa</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="sql" uuid="b289fc65-1d19-4555-83a9-d78b3fca13cc">
+    <data-source source="LOCAL" name="sql" uuid="bbee5fbc-490d-44a2-b067-b923f0c88ba6">
       <driver-ref>sqlserver.jb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>

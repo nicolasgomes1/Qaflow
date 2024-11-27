@@ -1,0 +1,123 @@
+@page "/project/{ProjectId:int}/testplans/manage"
+@rendermode InteractiveServer
+
+<h3>Manage Test Plans</h3>
+
+<RadzenButton Text="My Assignments" Click="RefreshAssignedTestPlans" />
+<RadzenButton Text="All Test Plans" Click="RefreshAllTestPlans" />
+
+<RadzenDropZoneContainer TItem="TestPlans" Data="testplansData"
+                             ItemSelector="@ItemSelector"
+                             ItemRender="@OnItemRender"
+                             CanDrop="@CanDrop"
+                             Drop="@OnDrop">
+        <ChildContent>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" Wrap="FlexWrap.Wrap" class="rz-p-12">
+                <RadzenDropZone Value="WorkflowStatus.New" class="rz-display-flex rz-flex-column rz-background-color-warning-lighter rz-border-warning-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
+                    <RadzenText Text="New" TextStyle="TextStyle.Subtitle2" />
+                </RadzenDropZone>
+
+                <RadzenDropZone Value="WorkflowStatus.InReview" class="rz-display-flex rz-flex-column rz-background-color-info-lighter rz-border-info-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
+                    <RadzenText Text="In Review" TextStyle="TextStyle.Subtitle2" />
+                </RadzenDropZone>
+
+                <RadzenDropZone Value="WorkflowStatus.Completed" class="rz-display-flex rz-flex-column rz-background-color-success-lighter rz-border-success-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
+                    <RadzenText Text="Completed" TextStyle="TextStyle.Subtitle2" />
+                </RadzenDropZone>
+
+                <RadzenDropZone Value="WorkflowStatus.Reopened" class="rz-display-flex rz-flex-column rz-background-color-danger-lighter rz-border-danger-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
+                    <RadzenText Text="Reopened" TextStyle="TextStyle.Subtitle2" />
+                </RadzenDropZone>
+            </RadzenStack>
+        </ChildContent>
+        <Template>
+            <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
+                <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
+                    <strong>@context.Name</strong>
+                    <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(context.Priority)">
+                        @context.Priority
+                    </RadzenBadge>
+                    <RadzenStack Orientation="Orientation.Vertical">
+                        <p>@UserService.GetUserNameFromUserId(context.AssignedTo)</p>    
+                    </RadzenStack>
+                    
+                </RadzenStack>
+            </RadzenStack>
+        </Template>
+    </RadzenDropZoneContainer>
+
+@code {
+    [Parameter] public int ProjectId { get; set; }
+    
+    
+    private IList<TestPlans>? testplansData = [];
+
+    Func<TestPlans, RadzenDropZone<TestPlans>, bool> ItemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
+
+    Func<RadzenDropZoneItemEventArgs<TestPlans>, bool> CanDrop = request =>
+    {
+        return request.FromZone == request.ToZone ||
+               Math.Abs((int)request.Item.WorkflowStatus - (int)request.ToZone.Value) == 1;
+    };
+
+    void OnItemRender(RadzenDropZoneItemRenderEventArgs<TestPlans> args)
+    {
+        args.Attributes["class"] = "rz-card rz-variant-filled rz-background-color-primary-light rz-color-on-primary-light";
+
+        if (args.Item.WorkflowStatus == WorkflowStatus.New)
+        {
+            args.Attributes["class"] += " rz-border-danger";
+        }
+    }
+
+    async void OnDrop(RadzenDropZoneItemEventArgs<TestPlans> args)
+    {
+        if (args.FromZone != args.ToZone)
+        {
+            args.Item.WorkflowStatus = (WorkflowStatus)args.ToZone.Value;
+
+            await using var db = await DbContext.CreateDbContextAsync();
+            args.Item.ModifiedBy = UserService.GetCurrentUserNameAsync().Result; 
+            db.TestPlans.Update(args.Item);
+            await db.SaveChangesAsync();
+        }
+
+        if (args.ToItem == null || args.ToItem == args.Item) return;
+        testplansData?.Remove(args.Item);
+        testplansData?.Insert(testplansData.IndexOf(args.ToItem), args.Item);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        testplansData = await db.TestPlans.Where(rp => rp.TPProjectId == ProjectId).ToListAsync(); 
+    }
+    
+    private async Task<List<TestPlans>> GetTestPlansAssignedToAll()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.TestPlans.Where(rp => rp.TPProjectId == ProjectId).ToListAsync();
+    }
+    
+    
+    
+    private async Task<List<TestPlans>> GetTestPlansAssignedToCurrentUser()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.TestPlans.Where(rp => rp.TPProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserNameAsync().Result).ToListAsync();
+    }
+    
+    private async Task RefreshAssignedTestPlans()
+    {
+        testplansData = await GetTestPlansAssignedToCurrentUser();
+        StateHasChanged();
+    }
+    
+    private async Task RefreshAllTestPlans()
+    {
+        testplansData = await GetTestPlansAssignedToAll();
+        StateHasChanged();
+    }
+
+  
+}

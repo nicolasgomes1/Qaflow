@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
+using WebApp.Data.enums;
 using WebApp.Services;
 
 namespace WebApp.Models;
@@ -63,6 +64,11 @@ public class TestPlansModel(
     public async Task<List<TestPlans>> GetallTestPlans()
     {
         return await _dbContext.TestPlans.Where(tp => tp.TPProjectId == projectStateService.ProjectId).ToListAsync();
+    }
+    
+    public async Task<List<TestPlans>> GetCompletedTestPlans()
+    {
+        return await _dbContext.TestPlans.Where(tp => tp.TPProjectId == projectStateService.ProjectId && tp.WorkflowStatus == WorkflowStatus.Completed).ToListAsync();
     }
 
 
