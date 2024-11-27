@@ -86,16 +86,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _usersList = await UserManager.Users.ToListAsync(); // Fetch all users
+            _usersList = await UserService.GetUsersList();
     }
-
+    
     private async Task CreateNewRequirement()
     {
-
-     //   _requirements.AssignedTo = UserService.GetUserName(_requirements.AssignedTo, _usersList);
         _requirements = await RequirementsModel.CreateRequirement(_requirements, _uploadedFiles);
         
-        NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements");
+        NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements", true);
 
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Requirement with Id {_requirements.Id} Created Successfully");

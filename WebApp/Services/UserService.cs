@@ -44,7 +44,23 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
         return userManager.Users.FirstOrDefault(x => x.Id == id)?.UserName ?? string.Empty;
     }
     
-    
+    public async Task<List<ApplicationUser>> GetUsersList()
+    {
+        // Get all users
+        var users = await userManager.Users.ToListAsync();
+
+        // Filter out users with the "Admin" role
+        var nonAdminUsers = new List<ApplicationUser>();
+        foreach (var user in users)
+        {
+            if (!await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                nonAdminUsers.Add(user);
+            }
+        }
+
+        return nonAdminUsers;
+    }
     
 }
 
