@@ -19,7 +19,7 @@ public class AppTooltipService
         {
             Position = position, // Automatically adjusts based on space
             Style =
-                "max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" // Prevent overflow
+                "overflow: hidden; text-overflow: ellipsis;" // Prevent overflow
         };
 
         _tooltipService.Open(elementReference, text, options);
