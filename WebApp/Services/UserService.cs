@@ -57,10 +57,11 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
  /// </summary>
  /// <param name="id"></param>
  /// <returns></returns>
-    public string GetUserNameFromUserId(string id)
-    {
-        return userManager.Users.FirstOrDefault(x => x.Id == id)?.UserName ?? string.Empty;
-    }
+ public string GetUserNameFromUserId(string id)
+ {
+     var users = userManager.Users.ToList();
+     return users.FirstOrDefault(x => x.Id == id)?.UserName ?? string.Empty;
+ }
  
  
  /// <summary>
