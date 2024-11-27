@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Data.enums;
 
@@ -6,6 +7,10 @@ namespace WebApp.Services.TestData;
 
 public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedService
 {
+    const string USER = "user@example.com";
+    const string MANAGER = "manager@example.com";
+    private const string ADMIN = "admin@example.com";
+    
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         using var scope = serviceProvider.CreateScope();
@@ -44,12 +49,12 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
 
         // Create or get requirement
-        var requirement = await GetOrCreateRequirementAsync(dbContext, project.Id, "Requirement A", "requirement is A");
-        await GetOrCreateRequirementAsync(dbContext, project.Id, "Requirement B", "requirement is B");
+        var requirement = await GetOrCreateRequirementAsync(dbContext, project.Id, "Requirement A", "requirement is A", USER);
+        await GetOrCreateRequirementAsync(dbContext, project.Id, "Requirement B", "requirement is B",MANAGER);
 
         for (var i = 1; i <= 100; i++)
         {
-            await GetOrCreateRequirementAsync(dbContext, project.Id, $"Requirement {i}", $"requirement number is {i}");
+            await GetOrCreateRequirementAsync(dbContext, project.Id, $"Requirement {i}", $"requirement number is {i}", MANAGER);
         }
 
         // Create or get test cases
@@ -72,11 +77,11 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", testCase2);
         await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Beta", null);
 
-        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 1", "Bug 1 Description");
-        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 2", "Bug 2 Description", BugStatus.Closed);
-        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 3", "Bug 3 Description", BugStatus.InProgress);
-        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 4", "Bug 4 Description", BugStatus.InReview);
-        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 5", "Bug 5 Description", BugStatus.Open);
+        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 1", "Bug 1 Description", USER);
+        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 2", "Bug 2 Description", USER, BugStatus.Closed);
+        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 3", "Bug 3 Description", USER, BugStatus.InProgress);
+        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 4", "Bug 4 Description", MANAGER, BugStatus.InReview);
+        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 5", "Bug 5 Description", MANAGER, BugStatus.Open);
     }
 
     private static async Task<Projects> GetOrCreateProjectAsync(ApplicationDbContext dbContext, string projectName)
@@ -92,7 +97,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         {
             Name = projectName,
             Description = "Project A Description",
-            CreatedBy = "user@example.com"
+            CreatedBy = USER
         };
 
         await dbContext.Projects.AddAsync(newProject);
@@ -101,19 +106,37 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
     }
 
     private static async Task<Requirements> GetOrCreateRequirementAsync(ApplicationDbContext dbContext, int projectId,
-        string name, string description)
+        string name, string description, string assignedUserName)
     {
+        var assignedUserId = await AssignedUserId(dbContext, assignedUserName);
+
+        // Check if the requirement already exists
         var existingRequirement = await dbContext.Requirements
             .FirstOrDefaultAsync(r => r.RProjectId == projectId && r.Name == name);
 
         if (existingRequirement != null)
         {
+            bool isModified = false;
+
+            // Update description if it has changed
             if (existingRequirement.Description != description)
             {
                 existingRequirement.Description = description;
+                isModified = true;
             }
 
-            await dbContext.SaveChangesAsync();
+            // Update AssignedTo if it has changed
+            if (existingRequirement.AssignedTo != assignedUserId)
+            {
+                existingRequirement.AssignedTo = assignedUserId;
+                isModified = true;
+            }
+
+            if (isModified)
+            {
+                await dbContext.SaveChangesAsync();
+            }
+
             return existingRequirement;
         }
 
@@ -123,7 +146,8 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             Name = name,
             Description = description,
             RProjectId = projectId,
-            CreatedBy = "user@example.com"
+            AssignedTo = assignedUserId,
+            CreatedBy = assignedUserName
         };
 
         await dbContext.Requirements.AddAsync(newRequirement);
@@ -131,10 +155,36 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         return newRequirement;
     }
 
+    private static async Task<string> AssignedUserId(ApplicationDbContext dbContext, string assignedUserName)
+    {
+        // Retrieve the user Id for the assigned user
+        var assignedUser = await dbContext.Users
+            .FirstOrDefaultAsync(u => u.UserName == assignedUserName);
+
+        if (assignedUser == null)
+        {
+            throw new InvalidOperationException($"User with UserName '{assignedUserName}' not found.");
+        }
+
+        var assignedUserId = assignedUser.Id;
+        return assignedUserId;
+    }
+
 
     private static async Task<Bugs> GetOrCreateBugsAsync(ApplicationDbContext dbContext, int projectId, string name,
-        string description, BugStatus status = BugStatus.Open)
+        string description, string assignedUserName, BugStatus status = BugStatus.Open)
     {
+        // Retrieve the user Id for the assigned user
+        var assignedUser = await dbContext.Users
+            .FirstOrDefaultAsync(u => u.UserName == assignedUserName);
+
+        if (assignedUser == null)
+        {
+            throw new InvalidOperationException($"User with UserName '{assignedUserName}' not found.");
+        }
+
+        var assignedUserId = assignedUser.Id;
+        
         var existingBug = await dbContext.Bugs
             .FirstOrDefaultAsync(b => b.BProjectId == projectId && b.Name == name);
 
@@ -148,8 +198,9 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             Name = name,
             Description = description,
             BProjectId = projectId,
-            CreatedBy = "user@example.com",
-            BugStatus = status
+            CreatedBy = USER,
+            BugStatus = status,
+            AssignedTo = assignedUserId
         };
 
         await dbContext.Bugs.AddAsync(newBug);
@@ -177,7 +228,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             Name = name,
             Description = description,
             TcProjectId = projectId,
-            CreatedBy = "user@example.com"
+            CreatedBy = USER
         };
 
         if (requirements != null)
@@ -220,7 +271,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             Name = name,
             Description = description,
             TcProjectId = projectId,
-            CreatedBy = "user@example.com"
+            CreatedBy = USER
         };
 
         // Add the requirement if it's provided
@@ -270,7 +321,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
                 {
                     Name = name,
                     TPProjectId = projectId,
-                    CreatedBy = "user@example.com"
+                    CreatedBy = USER
                 };
 
                 await dbContext.TestPlans.AddAsync(newTestPlan);
@@ -296,7 +347,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         {
             Name = name,
             TPProjectId = projectId,
-            CreatedBy = "user@example.com"
+            CreatedBy = USER
         };
 
         await dbContext.TestPlans.AddAsync(newTestPlanForCreation);
