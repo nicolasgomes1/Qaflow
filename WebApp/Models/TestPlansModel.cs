@@ -66,6 +66,11 @@ public class TestPlansModel(
         return await _dbContext.TestPlans.Where(tp => tp.TPProjectId == projectStateService.ProjectId).ToListAsync();
     }
     
+    public async Task<List<TestPlans>> GetallTestPlansWithStatusCompleted()
+    {
+        return await _dbContext.TestPlans.Where(tp => tp.TPProjectId == projectStateService.ProjectId && tp.WorkflowStatus == WorkflowStatus.Completed).ToListAsync();
+    }
+    
     public async Task<List<TestPlans>> GetCompletedTestPlans()
     {
         return await _dbContext.TestPlans.Where(tp => tp.TPProjectId == projectStateService.ProjectId && tp.WorkflowStatus == WorkflowStatus.Completed).ToListAsync();

@@ -35,7 +35,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _testPlansList = await TestPlansModel.GetallTestPlans();
+        _testPlansList = await TestPlansModel.GetallTestPlansWithStatusCompleted();
 
         _usersList = await UserManager.Users.ToListAsync(); // Fetch all users
     }
