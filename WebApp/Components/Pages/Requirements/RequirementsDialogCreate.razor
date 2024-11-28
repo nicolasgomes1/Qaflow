@@ -8,6 +8,7 @@
 @code {
     private Requirements _requirements = new();
     private readonly List<IBrowserFile>? _uploadedFiles = [];
+    private List<ApplicationUser> _usersList = [];
 
     [Parameter] public string Title { get; set; } = string.Empty;
 
@@ -33,6 +34,8 @@
 
     async Task ShowInlineDialog()
     {
+        _usersList = await UserService.GetUsersList();
+
         _requirements = new Requirements();
 
         var result = await DialogService.OpenAsync("Create Requirement", ds =>
@@ -66,6 +69,28 @@
                                         class="input-style"
                                         Name="priority"/>
                         <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Status"/>
+                        <RadzenDropDown id="status"
+                                        @bind-Value="_requirements.WorkflowStatus"
+                                        Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                                        class="input-style"
+                                        Name="status"/>
+                        <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Assigned To"/>
+                        <RadzenDropDown id="assignedto"
+                                        Data="@_usersList"
+                                        @bind-Value="_requirements.AssignedTo"
+                                        TextProperty="UserName"
+                                        ValueProperty="Id"
+                                        class="input-style"
+                                        Name="assignedto"/>
+                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
                     </div>
 
                     <FileUpload UploadedFiles="_uploadedFiles"/>

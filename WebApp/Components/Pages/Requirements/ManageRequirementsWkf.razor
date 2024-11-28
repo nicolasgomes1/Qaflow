@@ -7,6 +7,9 @@
 <RadzenButton Text="My Assignments" Click="RefreshAssignedRequirements" />
 <RadzenButton Text="All Requirements" Click="RefreshAllRequirements" />
 
+<RequirementsDialogCreate Title="@Loc["create.requirements"]"/>
+
+
 <RadzenDropZoneContainer TItem="Requirements" Data="requirementsData"
                              ItemSelector="@ItemSelector"
                              ItemRender="@OnItemRender"
