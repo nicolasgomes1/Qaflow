@@ -1,9 +1,9 @@
 @inject DialogService DialogService
 
 
-<RadzenButton Text="@Title" Icon="add" IconColor="red" Shade="Shade.Light" Variant="Variant.Outlined"
+<RadzenButton Text="@Title" Icon="add" IconColor="orange"
               Disabled="@IsDisabled"
-              ButtonStyle="ButtonStyle.Primary" Click="@ShowInlineDialog"/>
+              ButtonStyle="ButtonStyle.Warning" Click="@ShowInlineDialog"/>
 
 @code {
     private Requirements _requirements = new();
@@ -101,7 +101,7 @@
                     <FileUpload UploadedFiles="_uploadedFiles"/>
 
                     <!-- Submit button inside the form -->
-                    <RadzenButton Text="Create Requirement" ButtonStyle="ButtonStyle.Secondary"
+                    <RadzenButton Icon="add" Text="Requirement" ButtonStyle="ButtonStyle.Warning"
                                   ButtonType="ButtonType.Submit"
                                   Style="margin-bottom: 10px;"/>
                 </RadzenTemplateForm>

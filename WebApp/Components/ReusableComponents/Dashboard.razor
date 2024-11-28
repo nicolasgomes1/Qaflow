@@ -3,11 +3,12 @@
         <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenButton Text="@Loc["Requirements"]"
+                              ButtonStyle="ButtonStyle.Warning"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements", true))"/>    
             </RadzenStack>
             
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
-                <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_requirementsCount" class="rz-ms-2"/>    
+                <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_requirementsCount"/>    
             </RadzenStack>
         </RadzenStack>
     </RadzenCard>
