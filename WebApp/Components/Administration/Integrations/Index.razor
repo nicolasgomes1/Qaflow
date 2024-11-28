@@ -3,7 +3,7 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
 @inject ILogger<Index> Logger
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Roles = "Admin, Manager")]
 
 
 <RadzenDataGrid TItem="Integrations" Data="_integrations">

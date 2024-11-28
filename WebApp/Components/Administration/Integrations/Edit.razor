@@ -2,7 +2,7 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
 @inject ILogger<Edit> Logger
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Roles = "Admin , Manager")]
 
 <RadzenTemplateForm Data="_integrations" TItem="Integrations" Submit="UpdateIntegration">
     <h3 class="text-center text-primary mb-4">Edit Integration</h3>
@@ -12,7 +12,6 @@
         <RadzenLabel Text="Base Url"/>
         <RadzenTextBox id="base-url"
                        @bind-Value="_integrations.BaseUrl"
-                       class="input-style"
                        Name="name"/>
         <RadzenRequiredValidator Component="name" Text="Base URL is required"/>
     </div>
@@ -21,7 +20,6 @@
         <RadzenLabel Text="Username"/>
         <RadzenTextBox id="username"
                        @bind-Value="_integrations.Username"
-                       class="input-style"
                        Name="name"/>
         <RadzenRequiredValidator Component="name" Text="Base URL is required"/>
     </div>
@@ -30,7 +28,6 @@
         <RadzenLabel Text="Api Key"/>
         <RadzenTextBox id="apikey"
                        @bind-Value="_integrations.ApiKey"
-                       class="input-style"
                        Name="apikey"/>
         <RadzenRequiredValidator Component="apikey" Text="API KEY is required"/>
     </div>
@@ -40,7 +37,6 @@
         <RadzenDropDown id="integration-type"
                         @bind-Value="_integrations.IntegrationType"
                         Data="EnumService.GetEnumValues<IntegrationType>()"
-                        class="input-style"
                         Name="integration-type"/>
         <RadzenRequiredValidator Component="integration-type" Text="Integration Type is required"/>
     </div>
