@@ -1,13 +1,9 @@
 @inject DialogService DialogService
 
-@*<div class="rz-p-12 rz-text-align-center">
-    <RadzenButton Text="@Title" Icon="bug_report" IconColor="red" Shade="Shade.Light" Variant="Variant.Outlined"
-                  ButtonStyle="ButtonStyle.Primary" Click="@ShowInlineDialog"/>
-</div>*@
 
-<RadzenButton Text="@Title" Icon="add" IconColor="red" Shade="Shade.Light" Variant="Variant.Outlined"
+<RadzenButton Text="@Title" Icon="add"
               Disabled="@IsDisabled"
-              ButtonStyle="ButtonStyle.Primary" Click="@ShowInlineDialog"/>
+              ButtonStyle="ButtonStyle.Danger" Click="@ShowInlineDialog"/>
 
 @code {
     private Bugs _bugs = new Bugs();

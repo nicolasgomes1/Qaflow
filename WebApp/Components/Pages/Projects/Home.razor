@@ -30,10 +30,11 @@
         </RadzenStack>
         
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="margin-top: 20px;" Wrap="FlexWrap.Wrap">
-            <RadzenButton Icon="category" Text="Requirements" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")'></RadzenButton>
-            <RadzenButton Icon="category" Text="Test Cases" ButtonStyle="ButtonStyle.Success" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'></RadzenButton>
-            <RadzenButton Icon="category" Text="Test Plans" ButtonStyle="ButtonStyle.Danger" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")'></RadzenButton>
-            <RadzenButton Icon="category" Text="Bugs" ButtonStyle="ButtonStyle.Base" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs/manage")'></RadzenButton>
+            <RadzenButton ButtonStyle="ButtonStyle.Warning" Icon="category" Text="Requirements" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")'></RadzenButton>
+            <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="category" Text="Test Cases" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'></RadzenButton>
+            <RadzenButton Icon="category" Text="Test Plans" Shade="Shade.Light" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")'></RadzenButton>
+            <RadzenButton Icon="category" Text="Test Executions" ButtonStyle="ButtonStyle.Success" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecutions/manage")'></RadzenButton>
+            <RadzenButton Icon="category" Text="Bugs" ButtonStyle="ButtonStyle.Danger" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs/manage")'></RadzenButton>
 
         </RadzenStack>
 

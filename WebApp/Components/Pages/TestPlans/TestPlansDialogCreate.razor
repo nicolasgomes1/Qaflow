@@ -1,9 +1,9 @@
 @inject DialogService DialogService
 
 
-<RadzenButton Text="@Title" Icon="add" IconColor="red" Shade="Shade.Light" Variant="Variant.Outlined"
+<RadzenButton Text="@Title" Icon="add" Shade="Shade.Light"
               Disabled="@IsDisabled"
-              ButtonStyle="ButtonStyle.Primary" Click="@ShowInlineDialog"/>
+              Click="@ShowInlineDialog"/>
 
 @code {
     private TestPlans _testPlans = new TestPlans();
