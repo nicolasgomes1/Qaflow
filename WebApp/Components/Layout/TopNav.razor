@@ -146,13 +146,11 @@
     {
         var user = UserService.GetCurrentUserInfoAsync().Result.UserId;
 
-        switch (string.IsNullOrEmpty(user))
+        return string.IsNullOrEmpty(user) switch
         {
-            case false:
-                return $"/Users/View/{user}";
-            default:
-                throw new ArgumentOutOfRangeException("string.IsNullOrEmpty(user)");
-        }
+            false => $"/Users/View/{user}",
+            _ => throw new Exception("User not found")
+        };
     }
 
 }

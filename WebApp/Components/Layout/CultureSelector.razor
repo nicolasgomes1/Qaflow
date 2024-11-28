@@ -48,7 +48,7 @@
 
     private async Task ApplySelectedCultureAndClose(object value)
     {
-        if (value is CultureInfo culture && CultureInfo.CurrentCulture != culture)
+        if (value is CultureInfo culture)
         {
             _selectedCulture = culture;
             var uri = new Uri(NavigationManager.Uri)
