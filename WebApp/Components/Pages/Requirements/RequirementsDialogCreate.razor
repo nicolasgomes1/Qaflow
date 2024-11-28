@@ -10,6 +10,8 @@
     private readonly List<IBrowserFile>? _uploadedFiles = [];
     private List<ApplicationUser> _usersList = [];
 
+    [Parameter] public EventCallback OnRequirementCreated { get; set; }
+
     [Parameter] public string Title { get; set; } = string.Empty;
 
     /// <summary>
@@ -25,10 +27,14 @@
     {
         // CreateBug should handle adding the bug and return a result
         var result = await RequirementsModel.CreateRequirement(_requirements, _uploadedFiles);
-
         DialogService.Close(result);
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Requirement created successfully with id {_requirements.Id}");
+        // Notify the parent that the requirement was created
+        if (OnRequirementCreated.HasDelegate)
+        {
+            await OnRequirementCreated.InvokeAsync();
+        }
     }
 
 
