@@ -8,6 +8,9 @@
 @code {
     private TestCases _testCases = new();
     private readonly List<IBrowserFile>? _uploadedFiles = [];
+    private List<ApplicationUser> _usersList = [];
+
+    [Parameter] public EventCallback OnTestCaseCreated { get; set; }
 
     [Parameter] public string Title { get; set; } = string.Empty;
 
@@ -30,12 +33,19 @@
         DialogService.Close(result);
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Case created successfully with id {_testCases.Id}");
+        
+        if (OnTestCaseCreated.HasDelegate)
+        {
+            await OnTestCaseCreated.InvokeAsync();
+        }
     }
 
     private string _estimatedTimeInput = string.Empty;
 
     async Task ShowInlineDialog()
     {
+        _estimatedTimeInput = string.Empty;
+        _usersList = await UserService.GetUsersList();
         _testCases = new TestCases();
         const string createModel = "Create Test Case";
         var result = await DialogService.OpenAsync(createModel, ds =>
@@ -96,12 +106,34 @@
                                         Name="test_scope"/>
                         <RadzenRequiredValidator Component="test_scope" Text="Test Scope is required"/>
                     </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Status"/>
+                        <RadzenDropDown id="status"
+                                        @bind-Value="_testCases.WorkflowStatus"
+                                        Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                                        class="input-style"
+                                        Name="status"/>
+                        <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Assigned To"/>
+                        <RadzenDropDown id="assignedto"
+                                        Data="@_usersList"
+                                        @bind-Value="_testCases.AssignedTo"
+                                        TextProperty="UserName"
+                                        ValueProperty="Id"
+                                        class="input-style"
+                                        Name="assignedto"/>
+                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                    </div>
                     
                     <FileUpload UploadedFiles="_uploadedFiles"/>
 
 
                     <!-- Submit button inside the form -->
-                    <RadzenButton Text="@createModel" ButtonStyle="ButtonStyle.Secondary"
+                    <RadzenButton Text="@createModel" ButtonStyle="ButtonStyle.Primary"
                                   ButtonType="ButtonType.Submit"
                                   Style="margin-bottom: 10px;"/>
                 </RadzenTemplateForm>

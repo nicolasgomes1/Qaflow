@@ -41,7 +41,6 @@
     async Task ShowInlineDialog()
     {
         _usersList = await UserService.GetUsersList();
-
         _requirements = new Requirements();
 
         var result = await DialogService.OpenAsync("Create Requirement", ds =>

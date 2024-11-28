@@ -5,6 +5,7 @@
 
 <RadzenButton Text="My Assignments" Click="RefreshAssignedTestPlans" />
 <RadzenButton Text="All Test Plans" Click="RefreshAllTestPlans" />
+<TestPlansDialogCreate Title="@Loc["create.testplans"]" OnTestPlanCreated="RefreshAssignedTestPlansFromDialog"/>
 
 <RadzenDropZoneContainer TItem="TestPlans" Data="testplansData"
                              ItemSelector="@ItemSelector"
@@ -48,6 +49,13 @@
 
 @code {
     [Parameter] public int ProjectId { get; set; }
+    
+    
+    private async Task RefreshAssignedTestPlansFromDialog()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        testplansData = await db.TestPlans.Where(rp => rp.TPProjectId == ProjectId).ToListAsync(); 
+    }
     
     
     private IList<TestPlans>? testplansData = [];

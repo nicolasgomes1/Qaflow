@@ -8,9 +8,12 @@
 @code {
     private TestPlans _testPlans = new TestPlans();
     private readonly List<IBrowserFile>? _uploadedFiles = new();
+    private List<TestCases> _testCaseslist = [];
 
     [Parameter] public string Title { get; set; } = string.Empty;
 
+    [Parameter] public EventCallback OnTestPlanCreated { get; set; }
+    
     /// <summary>
     /// Default value is false
     /// </summary>
@@ -19,6 +22,7 @@
 
     [Parameter] public int ProjectId { get; set; }
 
+    private List<ApplicationUser> _usersList = [];
 
     private async Task CreateNewTestPlan()
     {
@@ -28,16 +32,22 @@
         DialogService.Close(result);
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Plan created successfully with id {_testPlans.Id}");
+        
+        if (OnTestPlanCreated.HasDelegate)
+        {
+            await OnTestPlanCreated.InvokeAsync();
+        }
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await TestCasesModel.GetAllTestCases();
+        _testCaseslist = await TestCasesModel.GetTestCasesWithStatusCompleted();
     }
 
 
     async Task ShowInlineDialog()
     {
+        _usersList = await UserService.GetUsersList();
         _testPlans = new TestPlans();
 
         var result = await DialogService.OpenAsync("Create Test Plan", ds =>
@@ -76,7 +86,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Test Cases"/>
                         <RadzenDropDown id="testcases"
-                                        Data="@TestCasesModel.TestCasesList"
+                                        Data="@_testCaseslist"
                                         @bind-Value="@TestPlansModel.SelectedTestCasesIds"
                                         AllowFiltering="true"
                                         TextProperty="Name"
@@ -84,6 +94,28 @@
                                         Multiple="true"
                                         class="input-style"
                                         Name="Test Cases"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Status"/>
+                        <RadzenDropDown id="status"
+                                        @bind-Value="_testPlans.WorkflowStatus"
+                                        Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                                        class="input-style"
+                                        Name="status"/>
+                        <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Assigned To"/>
+                        <RadzenDropDown id="assignedto"
+                                        Data="@_usersList"
+                                        @bind-Value="_testPlans.AssignedTo"
+                                        TextProperty="UserName"
+                                        ValueProperty="Id"
+                                        class="input-style"
+                                        Name="assignedto"/>
+                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
                     </div>
 
                     <FileUpload UploadedFiles="_uploadedFiles"/>
