@@ -7,13 +7,6 @@
         <div style="text-align: center; font-size: larger;">
             <strong>@Loc["Welcome"], @UserService.GetCurrentUserInfoAsync().Result.UserName!</strong>
         </div>
-        <div style="text-align: center; margin-top: 20px; margin-bottom: 10px;">
-            <RadzenButton Click="@GoToUserProfile"
-                          Size="ButtonSize.Large"
-                          Text="@Loc["ViewProfile"]"/>
-        </div>
-
-
         <IndexProjects/>
 
 
@@ -44,15 +37,5 @@
     void GoToRegister()
     {
         NavigationManager.NavigateTo("/Account/Register");
-    }
-
-    void GoToUserProfile()
-    {
-        var user = UserService.GetCurrentUserInfoAsync().Result.UserId;
-
-        if (!string.IsNullOrEmpty(user))
-        {
-            NavigationManager.NavigateTo($"/Users/View/{user}");
-        }
     }
 }

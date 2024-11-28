@@ -12,11 +12,7 @@
                 @Loc["Welcome"], @UserService.GetCurrentUserInfoAsync().Result.UserName!
             </strong>
         </div>
-        <div style="text-align: center; margin-top: 20px;">
-            <RadzenButton Click="@GoToUserProfile" Size="ButtonSize.Large" Text="@Loc["ViewProfile"]"></RadzenButton>
-            <RadzenButton Click="@GoToProjects" Size="ButtonSize.Large" Text="@Loc["Projects"]"></RadzenButton>
-        </div>
-
+   
         <div>
             <Dashboard/>
 
@@ -48,16 +44,5 @@
 
 @code {
     [Parameter] public int ProjectId { get; set; }
-
-    void GoToProjects()
-    {
-        ProjectStateService.ClearProjectId();
-        NavigationManager.NavigateTo("/", true);
-    }
-
-    void GoToUserProfile()
-    {
-        NavigationManager.NavigateTo($"/Users/View/{UserService.GetCurrentUserInfoAsync().Result.UserId}");
-    }
-
+    
 }

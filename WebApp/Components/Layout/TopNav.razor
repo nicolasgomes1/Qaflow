@@ -11,9 +11,9 @@
     }
 
     @code{
-
         void ReturnToHome()
         {
+            ProjectStateService.ClearProjectId();
             NavigationManager.NavigateTo("/");
             FormNotificationService.NotifyInfo("Returning to Home Page");
         }
@@ -45,13 +45,38 @@
                         <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
                         <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank"></RadzenMenuItem>
                         <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"/>
+                        <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
                         <Timeline/>
                     </RadzenMenuItem>
                 </RadzenMenu>
             }
-
-
-            <RadzenMenuItem Click=GoToProjects Text="@ProjectStateService.ProjectId.ToString()" Icon="assignment"/>
+            @if (_isUser)
+            {
+                <RadzenMenu>
+                    <RadzenMenuItem Text="General" Icon="badge">
+                        <RadzenMenuItem Text="Grid Settings" Icon="display_settings" Path="/Gridsettings"/>
+                        <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
+                        <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
+                        <Timeline/>
+                    </RadzenMenuItem>
+                </RadzenMenu>
+            }
+            @if (_isManager)
+            {
+                <RadzenMenu>
+                    <RadzenMenuItem Text="General" Icon="badge">
+                        <RadzenMenuItem Text="Grid Settings" Icon="display_settings" Path="/Gridsettings"/>
+                        <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
+                        <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank"></RadzenMenuItem>
+                        <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"/>
+                        <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
+                        <Timeline/>
+                    </RadzenMenuItem>
+                </RadzenMenu>
+            }
+            <RadzenMenuItem Click=GoToProjects Text="@ProjectStateService.ProjectId.ToString()" Icon="hub" IconColor="orange"
+                            MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Return to Hub", TooltipPosition.Bottom))"
+                            MouseLeave="@AppTooltipService.HideTooltip"/>
 
             <RealTimeClock/>
 
@@ -70,7 +95,8 @@
 @code {
     private bool _isAuthenticated;
     private bool _isAdmin; // Flag to check if the user is an Admin
-
+    private bool _isUser; // Flag to check if the user is a User
+    private bool _isManager; // Flag to check if the user is a Manager
     protected override async Task OnInitializedAsync()
     {
         await UpdateAuthenticationState();
@@ -92,6 +118,8 @@
 
         // Check if the user is in the Admin role
         _isAdmin = user.IsInRole("Admin");
+        _isUser = user.IsInRole("User");
+        _isManager = user.IsInRole("Manager");
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
@@ -112,6 +140,19 @@
     void IDisposable.Dispose()
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+    
+    string UserProfileUri()
+    {
+        var user = UserService.GetCurrentUserInfoAsync().Result.UserId;
+
+        switch (string.IsNullOrEmpty(user))
+        {
+            case false:
+                return $"/Users/View/{user}";
+            default:
+                throw new ArgumentOutOfRangeException("string.IsNullOrEmpty(user)");
+        }
     }
 
 }
