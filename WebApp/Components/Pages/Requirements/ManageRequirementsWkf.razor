@@ -10,10 +10,10 @@
 <RequirementsDialogCreate Title="@Loc["create.requirements"]" OnRequirementCreated="@RefreshAssignedRequirementsFromDialog"/>
 
 
-<RadzenDropZoneContainer TItem="Requirements" Data="requirementsData"
-                             ItemSelector="@ItemSelector"
+<RadzenDropZoneContainer TItem="Requirements" Data="_requirementsData"
+                             ItemSelector="@_itemSelector"
                              ItemRender="@OnItemRender"
-                             CanDrop="@CanDrop"
+                             CanDrop="@_canDrop"
                              Drop="@OnDrop">
         <ChildContent>
             <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" Wrap="FlexWrap.Wrap" class="rz-p-12">
@@ -54,11 +54,11 @@
     [Parameter] public int ProjectId { get; set; }
     
     
-    private IList<Requirements>? requirementsData = [];
+    private IList<Requirements>? _requirementsData = [];
 
-    Func<Requirements, RadzenDropZone<Requirements>, bool> ItemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
+    Func<Requirements, RadzenDropZone<Requirements>, bool> _itemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
 
-    Func<RadzenDropZoneItemEventArgs<Requirements>, bool> CanDrop = request =>
+    Func<RadzenDropZoneItemEventArgs<Requirements>, bool> _canDrop = request =>
     {
         return request.FromZone == request.ToZone ||
                Math.Abs((int)request.Item.WorkflowStatus - (int)request.ToZone.Value) == 1;
@@ -68,9 +68,22 @@
     {
         args.Attributes["class"] = "rz-card rz-variant-filled rz-background-color-primary-light rz-color-on-primary-light";
 
-        if (args.Item.WorkflowStatus == WorkflowStatus.New)
+        switch (args.Item.WorkflowStatus)
         {
-            args.Attributes["class"] += " rz-border-danger";
+            case WorkflowStatus.New:
+                args.Attributes["class"] += " rz-border-danger";
+                break;
+            case WorkflowStatus.InReview:
+                args.Attributes["class"] += " rz-border-warning";
+                break;
+            case WorkflowStatus.Completed:
+                args.Attributes["class"] += " rz-border-success";
+                break;
+            case WorkflowStatus.Reopened:
+                args.Attributes["class"] += " rz-border-primary";
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
@@ -96,20 +109,19 @@
         }
 
         if (args.ToItem == null || args.ToItem == args.Item) return;
-        requirementsData?.Remove(args.Item);
-        requirementsData?.Insert(requirementsData.IndexOf(args.ToItem), args.Item);
+        _requirementsData?.Remove(args.Item);
+        _requirementsData?.Insert(_requirementsData.IndexOf(args.ToItem), args.Item);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-        requirementsData = await db.Requirements.Where(rp => rp.RProjectId == ProjectId).ToListAsync(); 
+        _requirementsData = await GetRequirementsAssignedToAll(); 
     }
     
     private async Task RefreshAssignedRequirementsFromDialog()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        requirementsData = await db.Requirements.Where(rp => rp.RProjectId == ProjectId).ToListAsync();
+        _requirementsData = await db.Requirements.Where(rp => rp.RProjectId == ProjectId).ToListAsync();
         StateHasChanged();
     }
     
@@ -129,13 +141,13 @@
     
     private async Task RefreshAssignedRequirements()
     {
-        requirementsData = await GetRequirementsAssignedToCurrentUser();
+        _requirementsData = await GetRequirementsAssignedToCurrentUser();
         StateHasChanged();
     }
     
     private async Task RefreshAllRequirements()
     {
-        requirementsData = await GetRequirementsAssignedToAll();
+        _requirementsData = await GetRequirementsAssignedToAll();
         StateHasChanged();
     }
 
