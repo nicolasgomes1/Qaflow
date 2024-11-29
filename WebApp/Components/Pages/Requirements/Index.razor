@@ -51,7 +51,10 @@ else
             <DeleteallDataForModel EntityName="@(nameof(RequirementsModel.Requirements))"
                                    EntityList="RequirementsModel.requirements"/>
             <ExportGridDataCsv Grid="@_dataGrid"/>
-            <RadzenButton Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")' />
+            <RadzenButton Icon="assessment"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
+                          MouseLeave="@AppTooltipService.HideTooltip"
+                          Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")' />
         </HeaderTemplate>
         <Columns>
             <RadzenDataGridColumn Property="@nameof(Requirements.Id)" Filterable="false" Title="ID" Frozen="true"
