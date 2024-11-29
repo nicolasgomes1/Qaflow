@@ -92,6 +92,28 @@ else
                     @UserService.GetUserNameFromUserId(requirement.AssignedTo)
                 </Template>
             </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="@nameof(Requirements.ArchivedStatus)" Title="Is Archived" Width="auto">
+                <Template Context="ctx">
+                    <RadzenBadge BadgeStyle="@GetBadgeStyle(ctx.ArchivedStatus)">
+                        @ctx.ArchivedStatus
+                    </RadzenBadge>
+                    
+                    @code{
+
+                        BadgeStyle GetBadgeStyle(ArchivedStatus archivedStatus)
+                        {
+                            return archivedStatus switch
+                            {
+                                ArchivedStatus.Active => BadgeStyle.Success,
+                                ArchivedStatus.Archived => BadgeStyle.Danger,
+                                _ => BadgeStyle.Base
+                            };
+                        }
+
+                    }
+                    
+                </Template>
+            </RadzenDataGridColumn>
 
             <!-- Action Buttons column -->
             <IndexActions TItem="Requirements" EntityName="Requirements"/>

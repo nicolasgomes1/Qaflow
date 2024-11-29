@@ -17,7 +17,7 @@ public class Requirements
 
     public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
 
-    public ArchivedStatus ArchivedStatus { get; init; } = ArchivedStatus.Active;
+    public ArchivedStatus ArchivedStatus { get; set; } = ArchivedStatus.Active;
 
     public ICollection<TestCases>? TestCases { get; init; } = new List<TestCases>();
 
