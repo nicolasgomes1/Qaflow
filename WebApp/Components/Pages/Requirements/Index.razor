@@ -51,6 +51,7 @@ else
             <DeleteallDataForModel EntityName="@(nameof(RequirementsModel.Requirements))"
                                    EntityList="RequirementsModel.requirements"/>
             <ExportGridDataCsv Grid="@_dataGrid"/>
+            <RadzenButton Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")' />
         </HeaderTemplate>
         <Columns>
             <RadzenDataGridColumn Property="@nameof(Requirements.Id)" Filterable="false" Title="ID" Frozen="true"
