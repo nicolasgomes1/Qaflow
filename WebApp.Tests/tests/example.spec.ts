@@ -84,4 +84,16 @@ test('Submit Login as Manager', async ({ page }) => {
   await expect(heading).toBeVisible();
 });
 
+test('User Can Loggout', async ({ page }) => {
+  await page.goto(URL + '/Account/Login');
+  await page.getByTestId('login_emailform').fill('manager@example.com');
+  await page.getByTestId('login_passwordform').fill('Manager123!');
+  await page.getByTestId('login_submitform').click();
+  const heading = page.locator('strong', { hasText: 'Welcome, manager@example.com!'});
+  await expect(heading).toBeVisible();
+  await page.getByTestId('logout').click();
+  const guest_user = page.locator('strong', { hasText: 'Welcome, Guest User!'});
+  await expect(guest_user).toBeVisible();
+});
+
 
