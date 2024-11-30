@@ -6,6 +6,10 @@ namespace WebApp.SetUp;
 
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Include Services
+    /// </summary>
+    /// <param name="services"></param>
     public static void AddAppServices(this IServiceCollection services)
     {
         services.AddScoped<DataGridSettingsService>();
@@ -22,7 +26,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<UserService>();
     }
     
-    
+    /// <summary>
+    /// Data Seeding
+    /// </summary>
+    /// <param name="services"></param>
     public static void AddSeedingServices(this IServiceCollection services)
     {
         services.AddHostedService<RoleSeeder>();
