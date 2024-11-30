@@ -98,24 +98,9 @@ else
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Property="@nameof(Requirements.ArchivedStatus)" Title="Is Archived" Width="auto">
                 <Template Context="ctx">
-                    <RadzenBadge BadgeStyle="@GetBadgeStyle(ctx.ArchivedStatus)">
+                    <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleArchivedStatus(ctx.ArchivedStatus)">
                         @ctx.ArchivedStatus
                     </RadzenBadge>
-                    
-                    @code{
-
-                        BadgeStyle GetBadgeStyle(ArchivedStatus archivedStatus)
-                        {
-                            return archivedStatus switch
-                            {
-                                ArchivedStatus.Active => BadgeStyle.Success,
-                                ArchivedStatus.Archived => BadgeStyle.Base,
-                                _ => BadgeStyle.Base
-                            };
-                        }
-
-                    }
-                    
                 </Template>
             </RadzenDataGridColumn>
 

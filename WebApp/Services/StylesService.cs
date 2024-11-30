@@ -1,4 +1,6 @@
-﻿using Radzen;
+﻿using System.Reflection;
+using Radzen;
+using WebApp.Data;
 using WebApp.Data.enums;
 
 namespace WebApp.Services;
@@ -81,6 +83,21 @@ public class StylesService
             BugStatus.InProgress => BadgeStyle.Warning,
             BugStatus.Closed => BadgeStyle.Success,
             _ => BadgeStyle.Secondary
+        };
+    }
+    
+    /// <summary>
+    /// Sets the Badge style for the ArchivedStatus
+    /// </summary>
+    /// <param name="archivedStatus"></param>
+    /// <returns></returns>
+    public static BadgeStyle GetBadgeStyleArchivedStatus(ArchivedStatus archivedStatus)
+    {
+        return archivedStatus switch
+        {
+            ArchivedStatus.Active => BadgeStyle.Success,
+            ArchivedStatus.Archived => BadgeStyle.Base,
+            _ => BadgeStyle.Base
         };
     }
 }

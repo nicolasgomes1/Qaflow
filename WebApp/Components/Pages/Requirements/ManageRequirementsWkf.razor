@@ -6,7 +6,6 @@
 
 <RadzenButton Text="My Assignments" Click="RefreshAssignedRequirements" />
 <RadzenButton Text="All Requirements" Click="RefreshAllRequirements" />
-
 <RequirementsDialogCreate Title="@Loc["create.requirements"]" OnRequirementCreated="@RefreshAssignedRequirementsFromDialog"/>
 
 
@@ -44,7 +43,6 @@
                     <RadzenStack Orientation="Orientation.Vertical">
                         <p>@UserService.GetUserNameFromUserId(context.AssignedTo)</p>    
                     </RadzenStack>
-                    
                 </RadzenStack>
             </RadzenStack>
         </Template>
