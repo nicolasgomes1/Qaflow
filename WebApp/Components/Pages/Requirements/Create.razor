@@ -92,7 +92,7 @@
     {
         _requirements = await RequirementsModel.CreateRequirement(_requirements, _uploadedFiles);
         
-        NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements", true);
+        NavigationManager.NavigateTo($"project/{ProjectId}/requirements");
 
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Requirement with Id {_requirements.Id} Created Successfully");

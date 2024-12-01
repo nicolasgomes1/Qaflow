@@ -9,6 +9,10 @@
     <RadzenTabs RenderMode="TabRenderMode.Client" @bind-SelectedIndex="_selectedIndex">
         <Tabs>
             <RadzenTabsItem Text="Test Plans">
+
+                <RadzenFieldset Text="Test Plans Details">
+
+                
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Name"/>
                     <RadzenTextBox id="name"
@@ -72,8 +76,8 @@
                                     Name="assignedto"/>
                     <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
                 </div>
-                
-                
+                </RadzenFieldset>
+
             </RadzenTabsItem>
             <RadzenTabsItem Text="Files">
                 <FileUpload UploadedFiles="_uploadedFiles"/>

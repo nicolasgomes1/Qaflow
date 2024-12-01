@@ -2,6 +2,8 @@
 @rendermode InteractiveServer
 
 <RadzenCard Style="width: 50%; padding: 20px; margin-bottom:20px">
+    <RadzenFieldset Text="Project Details">
+
     <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
         <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
         <RadzenLabel Text="@_project.Id.ToString()"/>
@@ -27,6 +29,8 @@
         <RadzenLabel Text="Archived Status:" Style="font-weight: bold;"/>
         <RadzenLabel Text="@_project.ArchivedStatus.ToString()"/>
     </div>
+    </RadzenFieldset>
+
 </RadzenCard>
 
 <div style="margin-top: 10px;">

@@ -1,11 +1,22 @@
 @page "/project/{ProjectId:int}/testplans/manage"
 @rendermode InteractiveServer
 
-<h3>Manage Test Plans</h3>
+<RadzenText TextStyle="TextStyle.DisplayH4" TextAlign="TextAlign.Center">Manage Test Plans</RadzenText>
 
-<RadzenButton Text="My Assignments" Click="RefreshAssignedTestPlans" />
-<RadzenButton Text="All Test Plans" Click="RefreshAllTestPlans" />
-<TestPlansDialogCreate Title="@Loc["create.testplans"]" OnTestPlanCreated="RefreshAssignedTestPlansFromDialog"/>
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
+        <RadzenButton Icon="assignment_ind" Text="My Assignments" Click="RefreshAssignedTestPlans" />
+        <RadzenButton Icon="assignment" Text="All Test Plans" Click="RefreshAllTestPlans" />
+    </RadzenStack>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
+        <TestPlansDialogCreate Title="@Loc["create.testplans"]" OnTestPlanCreated="RefreshAssignedTestPlansFromDialog"/>
+        <RadzenButton Icon="list"
+                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testplans", true))'/>
+    </RadzenStack>
+
+    </RadzenStack>
+
+
 
 <RadzenDropZoneContainer TItem="TestPlans" Data="testplansData"
                              ItemSelector="@ItemSelector"
@@ -83,6 +94,15 @@
         if (args.FromZone != args.ToZone)
         {
             args.Item.WorkflowStatus = (WorkflowStatus)args.ToZone.Value;
+            
+            args.Item.ArchivedStatus = args.Item.WorkflowStatus switch
+            {
+                WorkflowStatus.Completed => ArchivedStatus.Archived,
+                WorkflowStatus.InReview => ArchivedStatus.Active,    
+                WorkflowStatus.Reopened => ArchivedStatus.Active,
+                WorkflowStatus.New => ArchivedStatus.Active,    
+                _ => args.Item.ArchivedStatus
+            };
 
             await using var db = await DbContext.CreateDbContextAsync();
             args.Item.ModifiedBy = UserService.GetCurrentUserNameAsync().Result; 

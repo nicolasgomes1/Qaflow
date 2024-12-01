@@ -14,6 +14,9 @@ else
         <RadzenTabs RenderMode="TabRenderMode.Client" bind-SelectedIndex="_selectedIndex">
             <Tabs>
                 <RadzenTabsItem Text="Test Plans">
+                    
+                    <RadzenFieldset Text="Test Plans Details">
+                    
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Name"/>
                         <RadzenTextBox id="name"
@@ -66,6 +69,7 @@ else
                                         Name="assignedto"/>
                         <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
                     </div>
+                    </RadzenFieldset>
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Files">
                     <FileUploadEdit ExistingFiles="TestPlansFilesModel.ExistingFiles"
@@ -108,6 +112,11 @@ else
         _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
         await TestPlansModel.GetAssociatedTestCases(Id);
         await TestPlansFilesModel.GetFilesByTestPlanId(Id);
+        
+        if (_testPlans.ArchivedStatus.Equals(ArchivedStatus.Archived))
+        {
+            NavigationManager.NavigateTo($"project/{ProjectId}/testplans", true);
+        }
 
         _isLoading = false;
     }

@@ -82,11 +82,6 @@ else
     private bool _isLoading = true;
 
     private readonly List<IBrowserFile>? _uploadedFiles = [];
-
-    private string CancelUrl()
-    {
-        return $"project/{ProjectId}/requirements";
-    }
     
     
     protected override async Task OnInitializedAsync()
@@ -97,7 +92,7 @@ else
 
         if (_requirements.ArchivedStatus.Equals(ArchivedStatus.Archived))
         {
-            NavigationManager.NavigateTo(CancelUrl(), true);
+            NavigationManager.NavigateTo($"project/{ProjectId}/requirements", true);
         }
         
         

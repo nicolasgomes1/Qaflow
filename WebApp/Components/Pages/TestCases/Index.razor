@@ -42,6 +42,10 @@ else
                           Size="ButtonSize.Medium" Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
             <DeleteallDataForModel EntityName="@(nameof(TestCasesModel.TestCases))" EntityList="TestCasesModel.testcases"/>
             <ExportGridDataCsv Grid="@_dataGrid"/>
+            <RadzenButton Icon="assessment"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
+                          MouseLeave="@AppTooltipService.HideTooltip"
+                          Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")' />
 
         </HeaderTemplate>
 
@@ -91,6 +95,13 @@ else
             <RadzenDataGridColumn Property="@nameof(TestCases.AssignedTo)" Title="Assigned To" Width="auto">
                 <Template Context="testcase">
                     @UserService.GetUserNameFromUserId(testcase.AssignedTo)
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="@nameof(TestCases.ArchivedStatus)" Title="Is Archived" Width="auto">
+                <Template Context="ctx">
+                    <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleArchivedStatus(ctx.ArchivedStatus)">
+                        @ctx.ArchivedStatus
+                    </RadzenBadge>
                 </Template>
             </RadzenDataGridColumn>
             <IndexActions TItem="TestCases" EntityName="TestCases"/>
