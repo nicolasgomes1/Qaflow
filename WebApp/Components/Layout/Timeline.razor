@@ -4,7 +4,7 @@
 @inject DialogService DialogService
 
 <RadzenMenuItem Text="Release Notes" Icon="new_releases"
-                Click=@ShowCloseableFromOverlayDialog/>
+                Click="@ShowCloseableFromOverlayDialog"/>
 
 
 @code {
@@ -47,7 +47,7 @@
                         </RadzenTimelineItem>
                     </Items>
                 </RadzenTimeline>
-            </div>, new DialogOptions() { CloseDialogOnOverlayClick = true });
+            </div>, new DialogOptions { CloseDialogOnOverlayClick = true });
     }
 
 }

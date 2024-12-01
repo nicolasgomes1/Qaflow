@@ -1,18 +1,16 @@
 ﻿@rendermode InteractiveServer
-@using WebApp.Components.Pages.Requirements
 <!-- Right Sidebar, positioned within the body -->
 
 <AuthorizeView>
     <Authorized>
         @if (ShouldRenderRightSidebarRequirements())
         {
-
             <div style="position: absolute; top: 60px; right: 0; bottom: 50px; z-index: 999; overflow-y: auto;">
 
 
                 <!-- Floating button to toggle the sidebar -->
                 <div style="position: fixed; bottom: 60px; right: 10px; z-index: 1000;">
-                    <RadzenButton Icon="menu" Click="@(() => OpenSideDialog())" />
+                    <RadzenButton Icon="menu" Click="@(() => OpenSideDialog())"/>
                 </div>
             </div>
         }
@@ -21,13 +19,13 @@
             <div style="position: absolute; top: 60px; right: 0; bottom: 50px; z-index: 999; overflow-y: auto;">
                 <RadzenSidebar Style="@GetSidebarStyle()">
                     <RadzenPanelMenu Style="background-color: #f0f0f0; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                        <TestPlansTree />
+                        <TestPlansTree/>
                     </RadzenPanelMenu>
                 </RadzenSidebar>
 
                 <!-- Floating button to toggle the sidebar -->
                 <div style="position: fixed; bottom: 60px; right: 10px; z-index: 1000;">
-                    <RadzenButton Icon="menu" Click="@(() => _rightSidebarExpanded = !_rightSidebarExpanded)" />
+                    <RadzenButton Icon="menu" Click="@(() => _rightSidebarExpanded = !_rightSidebarExpanded)"/>
                 </div>
             </div>
         }
@@ -66,7 +64,7 @@
         // Check if the URI contains "requirements"
         return uri.Contains("testplans", StringComparison.OrdinalIgnoreCase);
     }
-    
+
     async Task OpenSideDialog()
     {
         // Hardcoding options for right position, mask enabled, and close on overlay click
@@ -79,4 +77,5 @@
                 ShowMask = true
             });
     }
+
 }

@@ -11,6 +11,7 @@
     }
 
     @code{
+
         void ReturnToHome()
         {
             ProjectStateService.ClearProjectId();
@@ -74,7 +75,8 @@
                     </RadzenMenuItem>
                 </RadzenMenu>
             }
-            <RadzenMenuItem Click=GoToProjects Text="@ProjectStateService.ProjectId.ToString()" Icon="hub" IconColor="orange"
+            <RadzenMenuItem Click=GoToProjects Text="@ProjectStateService.ProjectId.ToString()" Icon="hub"
+                            IconColor="orange"
                             MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Return to Hub", TooltipPosition.Bottom))"
                             MouseLeave="@AppTooltipService.HideTooltip"/>
 
@@ -97,6 +99,7 @@
     private bool _isAdmin; // Flag to check if the user is an Admin
     private bool _isUser; // Flag to check if the user is a User
     private bool _isManager; // Flag to check if the user is a Manager
+
     protected override async Task OnInitializedAsync()
     {
         await UpdateAuthenticationState();
@@ -129,19 +132,19 @@
 
     private void GotoLogin()
     {
-        NavigationManager.NavigateTo("/Account/Login", forceLoad: true);
+        NavigationManager.NavigateTo("/Account/Login", true);
     }
 
     private void GotoRegister()
     {
-        NavigationManager.NavigateTo("/Account/Register", forceLoad: true);
+        NavigationManager.NavigateTo("/Account/Register", true);
     }
 
     void IDisposable.Dispose()
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
-    
+
     string UserProfileUri()
     {
         var user = UserService.GetCurrentUserInfoAsync().Result.UserId;

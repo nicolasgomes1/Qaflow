@@ -1,24 +1,25 @@
 <div style="position: relative;">
-    <RadzenButton Icon="language" 
-                  Click="ToggleDropdown" Style="background-color: initial" />
+    <RadzenButton Icon="language"
+                  Click="ToggleDropdown" Style="background-color: initial"/>
 
     @if (_isDropdownVisible)
     {
         <div style="position: absolute; top: 40px; right: 0; z-index: 1000;">
-            <RadzenDropDown 
-                @bind-Value="_selectedCulture" 
-                TValue="CultureInfo" 
+            <RadzenDropDown
+                @bind-Value="_selectedCulture"
+                TValue="CultureInfo"
                 Data="_culturesWithDisplayNames"
-                TextProperty="DisplayName" 
-                ValueProperty="Culture" 
+                TextProperty="DisplayName"
+                ValueProperty="Culture"
                 Change="ApplySelectedCultureAndClose"
-                OpenPopupOnFocus="true" 
-                Style="width: 150px;" />
+                OpenPopupOnFocus="true"
+                Style="width: 150px;"/>
         </div>
     }
 </div>
 
 @code
+
 {
     private class CultureDisplay
     {
@@ -28,9 +29,9 @@
 
     private CultureDisplay[] _culturesWithDisplayNames =
     [
-        new CultureDisplay { Culture = new CultureInfo("en-US"), DisplayName = "English" },
-        new CultureDisplay { Culture = new CultureInfo("fr-BE"), DisplayName = "French" },
-        new CultureDisplay { Culture = new CultureInfo("nl-BE"), DisplayName = "Dutch" }
+        new() { Culture = new CultureInfo("en-US"), DisplayName = "English" },
+        new() { Culture = new CultureInfo("fr-BE"), DisplayName = "French" },
+        new() { Culture = new CultureInfo("nl-BE"), DisplayName = "Dutch" }
     ];
 
     private CultureInfo? _selectedCulture;
@@ -58,7 +59,7 @@
 
             NavigationManager.NavigateTo(
                 $"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}",
-                forceLoad: true);
+                true);
         }
 
         // Close dropdown after selection
