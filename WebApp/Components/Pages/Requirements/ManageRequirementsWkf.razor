@@ -1,12 +1,21 @@
 @page "/project/{ProjectId:int}/requirements/manage"
 @rendermode InteractiveServer
 
+<RadzenText TextStyle="TextStyle.DisplayH4" TextAlign="TextAlign.Center">Manage Requirements</RadzenText>
 
-<h3>Manage Requirements</h3>
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
+        <RadzenButton Icon="assignment_ind" Text="My Assignments" Click="RefreshAssignedRequirements" />
+        <RadzenButton Icon="assignment" Text="All Requirements" Click="RefreshAllRequirements" />
+    </RadzenStack>
 
-<RadzenButton Text="My Assignments" Click="RefreshAssignedRequirements" />
-<RadzenButton Text="All Requirements" Click="RefreshAllRequirements" />
-<RequirementsDialogCreate Title="@Loc["create.requirements"]" OnRequirementCreated="@RefreshAssignedRequirementsFromDialog"/>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
+        <RequirementsDialogCreate Title="@Loc["create.requirements"]" OnRequirementCreated="@RefreshAssignedRequirementsFromDialog"/>
+        <RadzenButton Icon="list" Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements"))'/>
+    </RadzenStack>
+</RadzenStack>
+
+
 
 
 <RadzenDropZoneContainer TItem="Requirements" Data="_requirementsData"

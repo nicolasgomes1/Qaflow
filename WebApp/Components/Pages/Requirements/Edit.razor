@@ -83,12 +83,24 @@ else
 
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
+    private string CancelUrl()
+    {
+        return $"project/{ProjectId}/requirements";
+    }
+    
+    
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
 
         _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
 
+        if (_requirements.ArchivedStatus.Equals(ArchivedStatus.Archived))
+        {
+            NavigationManager.NavigateTo(CancelUrl(), true);
+        }
+        
+        
         await RequirementsFilesModel.GetFilesByRequirementId(Id);
 
         _isLoading = false;

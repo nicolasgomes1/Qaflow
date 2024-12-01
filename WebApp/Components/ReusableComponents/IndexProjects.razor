@@ -1,4 +1,14 @@
-<RadzenDataGrid TItem="Projects" Data="_projectsList">
+<RadzenDataGrid TItem="Projects" 
+                Data="_projectsList" 
+                Density="Density.Compact" 
+                AllowFiltering="true"
+                AllowPaging="true"
+                PageSize="10"
+                PagerHorizontalAlign="HorizontalAlign.Left"
+                AllowVirtualization="true"
+                ShowPagingSummary="true"
+                FilterMode="FilterMode.Advanced"
+                LogicalFilterOperator="LogicalFilterOperator.Or">
 
     <HeaderTemplate>
         <RadzenButton Click="CreateProject"
@@ -13,7 +23,7 @@
         <RadzenDataGridColumn Property="@nameof(_projects.Id)" Title="Id" Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(_projects.Name)" Title="Name" Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(_projects.Description)" Title="Description" Width="auto"/>
-        <RadzenDataGridColumn Title="Actions">
+        <RadzenDataGridColumn Title="Actions" Filterable="false" Sortable="false">
             <Template Context="item">
                 <div class="btn-group" style="display: flex; gap: 5px;">
                     <RadzenButton Icon="visibility"

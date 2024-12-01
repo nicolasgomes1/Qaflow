@@ -60,6 +60,9 @@
         </RadzenDataGridColumn>
 
         <RadzenDataGridColumn Property="@nameof(TestExecution.ModifiedAt)" Title="Modified At" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(TestExecution.IsActive)" Title="Is Active" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(TestExecution.ArchivedStatus)" Title="Archived Status" Width="auto"/>
+
         <IndexActions TItem="TestExecution" EntityName="TestExecution"/>
 
     </Columns>
