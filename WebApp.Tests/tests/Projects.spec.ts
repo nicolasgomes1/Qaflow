@@ -16,17 +16,26 @@ test.afterEach('Logout User',async ({ page }) => {
         await page.getByTestId('logout').click();
         const guest_user = page.locator('strong', { hasText: 'Welcome, Guest User!'});
         await expect(guest_user).toBeVisible();
-});  
-
-
-test('Create a new Project', async ({ page }) => {
-    await page.getByTestId('create_project').click();
-    const heading = page.locator('h3', { hasText: 'Create New Project' });
-    await expect(heading).toBeVisible();
-    
-    await page.getByTestId('project_name').fill('Test Project');
-    await page.getByTestId('project_description').fill('Test Project Description');
-    await page.getByTestId('submit').click();
-    const heading1 = page.locator('strong', { hasText: 'Welcome, admin@example.com!'});
-    await expect(heading1).toBeVisible();
 });
+
+
+test('test', async ({ page }) => {
+    await page.getByTestId('create_project').click();
+    await page.getByTestId('project_name').click();
+    await page.getByTestId('project_name').fill('Test Project Playwright');
+    await page.getByTestId('project_name').press('Tab');
+    await expect(page.getByTestId('project_name')).toHaveValue('Test Project Playwright');
+    await page.getByTestId('project_description').click();
+    await page.getByTestId('project_description').fill('Sample my description');
+    await page.getByTestId('project_description').press('Tab');
+    await expect(page.getByTestId('project_description')).toHaveValue('Sample my description');
+    await page.getByTestId('submit').click();
+    await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').click();
+    await page.getByLabel('Name filter value').click();
+    await page.getByLabel('Name filter value').fill('Test Project Playwright');
+    await page.getByRole('button', { name: 'Apply' }).click();
+    await page.getByRole('button', { name: 'delete' }).first().click();
+    await expect(page.locator('#rz-dialog-0-label')).toContainText('All underlying Data will be lost');
+    await page.getByRole('button', { name: 'Ok' }).click();
+});
+

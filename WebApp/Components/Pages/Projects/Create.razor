@@ -34,6 +34,6 @@
         await ProjectModel.AddProject(_projects);
         NavigationManager.NavigateTo("/");
         StateHasChanged();
-        await FormNotificationService.NotifySuccess("Project Created Successfully");
+        await FormNotificationService.NotifySuccess("Project Created Successfully!");
     }
 }
