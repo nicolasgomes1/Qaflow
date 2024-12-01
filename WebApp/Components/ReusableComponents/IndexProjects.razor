@@ -14,6 +14,7 @@
         <RadzenButton Click="CreateProject"
                       Size="ButtonSize.Medium"
                       Icon="add"
+                      data-testid="create_project"
                       Text="@Loc["create.project"]"
                       MouseEnter="@(args => AppTooltipService.ShowTooltip(args, @Loc["create.project.tooltip"], TooltipPosition.Bottom))"
                       MouseLeave="@AppTooltipService.HideTooltip"

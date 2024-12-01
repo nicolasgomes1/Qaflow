@@ -7,7 +7,7 @@
 
     <div class="form-group mb-4">
         <RadzenLabel Text="Name" />
-        <RadzenTextBox id="name"
+        <RadzenTextBox data-testid="project_name"
                        @bind-Value="_projects.Name"
                        class="input-style"
                        Name="name" />
@@ -16,7 +16,7 @@
 
         <div class="form-group mb-4">
         <RadzenLabel Text="Description" />
-        <RadzenTextBox id="description"
+        <RadzenTextBox data-testid="project_description"
                        @bind-Value="_projects.Description"
                        class="input-style"
                        Name="description" />

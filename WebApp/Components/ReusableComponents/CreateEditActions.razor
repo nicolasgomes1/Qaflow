@@ -1,9 +1,11 @@
 ﻿<div style="margin-top: 10px;">
     <RadzenButton Text="@CreateEdit"
-                  ButtonType="ButtonType.Submit"/>
+                  ButtonType="ButtonType.Submit"
+                  data-testid="submit"/>
     <RadzenButton Text="Cancel"
                   Click="@CancelUrlLink"
-                  ButtonType="ButtonType.Button"/>
+                  ButtonType="ButtonType.Button"
+                  data-testid="cancel"/>
 </div>
 
 @code {
