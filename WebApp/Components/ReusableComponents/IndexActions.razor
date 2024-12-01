@@ -2,7 +2,8 @@
 @inject TooltipService TooltipService
 
 <div style="display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: nowrap;">
-    <RadzenDataGridColumn TItem="TItem" Sortable="false" Filterable="false" Resizable="false" Width="100px" Reorderable="false">
+    <RadzenDataGridColumn TItem="TItem" Sortable="false" Filterable="false" Resizable="false" Width="100px"
+                          Reorderable="false">
         <Template Context="item">
             <div style="display: flex; gap: 5px;">
                 <RadzenButton Icon="visibility" ButtonStyle="ButtonStyle.Light" Style="color: blue;"
@@ -12,7 +13,10 @@
                               Size="ButtonSize.ExtraSmall"/>
                 <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Style="color: green;"
                               Disabled="@IsArchived(item)"
-                              MouseEnter="@(args => { if (!IsArchived(item)) AppTooltipService.ShowTooltip(args, $"Edit {EntityName}"); })"
+                              MouseEnter="@(args =>
+                                          {
+                                              if (!IsArchived(item)) AppTooltipService.ShowTooltip(args, $"Edit {EntityName}");
+                                          })"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               Click="@(() => EditItem(item))"
                               Size="ButtonSize.ExtraSmall"/>
@@ -64,7 +68,7 @@
         if (prop == null) throw new InvalidOperationException("The item does not have an 'Id' property.");
         return (int)(prop.GetValue(item) ?? 0);
     }
-    
+
     private bool IsArchived(TItem item)
     {
         var prop = typeof(TItem).GetProperty("ArchivedStatus");

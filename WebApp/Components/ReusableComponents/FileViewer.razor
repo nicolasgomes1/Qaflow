@@ -16,18 +16,19 @@
 </RadzenDataList>
 
 @code {
+
     /// <summary>
-    /// List of files to display, using a generic type.
+    ///     List of files to display, using a generic type.
     /// </summary>
     [Parameter]
     public List<TItem>? Files { get; set; }
 
     /// <summary>
-    /// Name of the entity type for additional display or logic.
+    ///     Name of the entity type for additional display or logic.
     /// </summary>
     [Parameter]
     public string EntityName { get; set; } = string.Empty;
-    
+
     private async Task DownloadFile(TItem file)
     {
         // Accessing properties via reflection to avoid type constraints
@@ -45,4 +46,5 @@
 
         await JS.InvokeVoidAsync("saveAsFile", fileName, fileDataUrl);
     }
+
 }

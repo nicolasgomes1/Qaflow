@@ -1,6 +1,6 @@
-<RadzenDataGrid TItem="Projects" 
-                Data="_projectsList" 
-                Density="Density.Compact" 
+<RadzenDataGrid TItem="Projects"
+                Data="_projectsList"
+                Density="Density.Compact"
                 AllowFiltering="true"
                 AllowPaging="true"
                 PageSize="10"
@@ -16,7 +16,7 @@
                       Icon="add"
                       data-testid="create_project"
                       Text="@Loc["create.project"]"
-                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, @Loc["create.project.tooltip"], TooltipPosition.Bottom))"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.project.tooltip"], TooltipPosition.Bottom))"
                       MouseLeave="@AppTooltipService.HideTooltip"
                       Style="margin-bottom: 20px"/>
     </HeaderTemplate>

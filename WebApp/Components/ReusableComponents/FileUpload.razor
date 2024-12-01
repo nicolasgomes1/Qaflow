@@ -1,4 +1,3 @@
-@using Microsoft.AspNetCore.Components.Forms
 <RadzenRow Gap="2rem" RowGap="2rem" class="rz-m-0 rz-m-md-12">
     <RadzenColumn Size="12" SizeMD="4">
         <RadzenCard Variant="Variant.Outlined">
@@ -9,11 +8,12 @@
 </RadzenRow>
 
 @code{
-    
+
     /// <summary>
-    /// List of uploaded files using IBrowserFile
+    ///     List of uploaded files using IBrowserFile
     /// </summary>
-    [Parameter] public List<IBrowserFile>? UploadedFiles { get; set; }
+    [Parameter]
+    public List<IBrowserFile>? UploadedFiles { get; set; }
 
     private void HandleFileSelected(UploadChangeEventArgs args)
     {
