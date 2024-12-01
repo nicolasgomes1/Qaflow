@@ -1,9 +1,5 @@
 ﻿@page "/Account/Login"
-@using Radzen
-@using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
-@using Microsoft.AspNetCore.Identity
-@using WebApp.Data
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<Login> Logger
@@ -16,39 +12,43 @@
 <div class="row">
     <div class="col-md-4">
         <section>
-            <StatusMessage Message="@errorMessage" />
+            <StatusMessage Message="@errorMessage"/>
 
             <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
 
-                <DataAnnotationsValidator />
+                <DataAnnotationsValidator/>
                 <h2>Use a local account to log in.</h2>
-                <hr />
-                <ValidationSummary class="text-danger" role="alert" />
+                <hr/>
+                <ValidationSummary class="text-danger" role="alert"/>
                 <div class="form-floating mb-3">
-                    <InputText data-testid="login_emailform" @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                    <InputText data-testid="login_emailform" @bind-Value="Input.Email" class="form-control"
+                               autocomplete="username" aria-required="true" placeholder="name@example.com"/>
                     <label for="email" class="form-label">Email</label>
-                    <ValidationMessage For="() => Input.Email" class="text-danger" />
+                    <ValidationMessage For="() => Input.Email" class="text-danger"/>
                 </div>
                 <div class="form-floating mb-3">
-                    <InputText data-testid="login_passwordform" type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <InputText data-testid="login_passwordform" type="password" @bind-Value="Input.Password"
+                               class="form-control" autocomplete="current-password" aria-required="true"
+                               placeholder="password"/>
                     <label for="password" class="form-label">Password</label>
-                    <ValidationMessage For="() => Input.Password" class="text-danger" />
+                    <ValidationMessage For="() => Input.Password" class="text-danger"/>
                 </div>
                 <div class="checkbox mb-3">
                     <label class="form-label">
-                        <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
+                        <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input"/>
                         Remember me
                     </label>
                 </div>
                 <div>
-                    <RadzenButton data-testid="login_submitform" ButtonType="ButtonType.Submit" Text="Login" />
+                    <RadzenButton data-testid="login_submitform" ButtonType="ButtonType.Submit" Text="Login"/>
                 </div>
                 <div>
                     <p>
                         <a href="Account/ForgotPassword">Forgot your password?</a>
                     </p>
                     <p>
-                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
+                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register
+                            as a new user</a>
                     </p>
                     <p>
                         <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
@@ -57,7 +57,7 @@
             </EditForm>
         </section>
     </div>
-@*     <div class="col-md-6 col-md-offset-2">
+    @*     <div class="col-md-6 col-md-offset-2">
         <section>
             <h3>Use another service to log in.</h3>
             <hr />
@@ -69,14 +69,11 @@
 @code {
     private string? errorMessage;
 
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
 
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    [SupplyParameterFromForm] private InputModel Input { get; } = new();
 
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,7 +106,7 @@
 
         if (user.UserName == null) throw new Exception("User name is null");
 
-        var result = await SignInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        var result = await SignInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, false);
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
@@ -119,7 +116,7 @@
         {
             RedirectManager.RedirectTo(
                 "Account/LoginWith2fa",
-                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+                new Dictionary<string, object?> { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
         }
         else if (result.IsLockedOut)
         {
@@ -139,15 +136,13 @@
 
     private sealed class InputModel
     {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = "";
+        [Required] [EmailAddress] public string Email { get; set; } = "";
 
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; } = "";
 
-        [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
+        [Display(Name = "Remember me?")] public bool RememberMe { get; set; }
     }
+
 }

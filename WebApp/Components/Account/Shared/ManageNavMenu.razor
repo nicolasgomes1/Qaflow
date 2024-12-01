@@ -1,7 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using WebApp.Data
-
-@inject SignInManager<ApplicationUser> SignInManager
+﻿@inject SignInManager<ApplicationUser> SignInManager
 
 <ul class="nav nav-pills flex-column">
     <li class="nav-item">
@@ -34,4 +31,5 @@
     {
         hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
     }
+
 }
