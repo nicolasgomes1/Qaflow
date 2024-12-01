@@ -84,7 +84,7 @@
 
     private async Task DeleteData(int integrationId)
     {
-        var confirmed = await DialogService.Confirm($"Are you sure you want to delete the Integration?", "All underlying Data will be lost");
+        var confirmed = await DialogService.Confirm("Are you sure you want to delete the Integration?", "All underlying Data will be lost");
         if (confirmed == true)
         {
             await RemoveIntegration(integrationId);

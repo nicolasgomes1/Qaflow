@@ -57,11 +57,11 @@
             </Template>
             <EditTemplate Context="gridSetting">
                 <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat"
-                              Size="ButtonSize.Medium" Click="@((args) => SaveRow(gridSetting))" aria-label="Save">
+                              Size="ButtonSize.Medium" Click="@(args => SaveRow(gridSetting))" aria-label="Save">
                 </RadzenButton>
                 <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat"
                               Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1"
-                              Click="@((args) => CancelEdit(gridSetting))" aria-label="Cancel">
+                              Click="@(args => CancelEdit(gridSetting))" aria-label="Cancel">
                 </RadzenButton>
                 <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat"
                               Shade="Shade.Lighter" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1"
@@ -75,9 +75,9 @@
 @code {
     RadzenDataGrid<GridSettings> _gridSettingsGrid;
     IEnumerable<GridSettings> _gridSettings = new List<GridSettings>(); // Use IEnumerable for compatibility
-    List<GridSettings> _gridSettingsToInsert = new(); // For tracking inserted rows
+    readonly List<GridSettings> _gridSettingsToInsert = new(); // For tracking inserted rows
 
-    DataGridEditMode _editMode = DataGridEditMode.Single;
+    readonly DataGridEditMode _editMode = DataGridEditMode.Single;
 
     protected override async Task OnInitializedAsync()
     {
