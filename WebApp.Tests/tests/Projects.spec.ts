@@ -34,6 +34,7 @@ test('test', async ({ page }) => {
     await page.getByLabel('Name filter value').click();
     await page.getByLabel('Name filter value').fill('Test Project Playwright');
     await page.getByRole('button', { name: 'Apply' }).click();
+    await expect(page.locator('tr', { hasText: 'Test Project Playwright' })).toBeVisible();
     await page.getByRole('button', { name: 'delete' }).first().click();
     await expect(page.locator('#rz-dialog-0-label')).toContainText('All underlying Data will be lost');
     await page.getByRole('button', { name: 'Ok' }).click();
