@@ -21,11 +21,10 @@
 
     </Tabs>
 </RadzenTabs>
-
-
-
-
-
+<div style="margin-top: 10px;">
+    <RadzenButton Text="Edit" Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/edit/{_testExecution.Id}")' Disabled="@(_testExecution.IsActive == false)" />
+    <RadzenButton Text="Back" Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution")'  />
+</div>
 
 
 
@@ -36,6 +35,15 @@
 
     [Parameter]
     public int ProjectId { get; set; }
+    
+    private TestExecution _testExecution =new();
+    
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _testExecution = await TestExecutionModel.GetTestExecutionbyIdAsync(Id);
+    }
+    
     
     int _selectedIndex;
 
