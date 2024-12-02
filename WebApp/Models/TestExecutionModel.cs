@@ -518,4 +518,15 @@ public class TestExecutionModel
             .Where(tce => tce.TestExecutionId == testExecution.Id)
             .ToListAsync();
     }
+    
+    public async Task<List<TestExecution>> GetActiveTestExecutionsAsync()
+    {
+        return await _dbContext.TestExecution
+            .Include(te => te.TestPlan)
+            .Where(te => te.IsActive)
+            .Where(te => te.TEProjectId == _projectSateService.ProjectId)
+            .ToListAsync();
+    }
+    
+    
 }

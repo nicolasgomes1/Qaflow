@@ -35,7 +35,10 @@
             <RadzenButton Icon="category" Text="Test Plans" Shade="Shade.Light" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")'></RadzenButton>
             <RadzenButton Icon="category" Text="Test Executions" ButtonStyle="ButtonStyle.Success" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecutions/manage")'></RadzenButton>
             <RadzenButton Icon="category" Text="Bugs" ButtonStyle="ButtonStyle.Danger" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs/manage")'></RadzenButton>
-
+        </RadzenStack>
+        
+        <RadzenStack Orientation="Orientation.Horizontal">
+            <RadzenButton IconColor="yellow" Icon="task" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution/active")'></RadzenButton>
         </RadzenStack>
 
 
