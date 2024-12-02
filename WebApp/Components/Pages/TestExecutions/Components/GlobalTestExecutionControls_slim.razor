@@ -1,0 +1,251 @@
+﻿
+@switch (_testExecution.IsActive)
+{
+    case true when ExecutionInProgress == false:
+        <h3 class="text-center text-primary mb-4">Start New Test Execution</h3>
+        break;
+    case false when ExecutionInProgress == false:
+        <h3 class="text-center text-primary mb-4">Executed Test Execution</h3>
+        break;
+}
+
+<RadzenCard Style="width: 100%">
+    <RadzenTemplateForm Data="@TestExecutionModel.TestExecution" TItem="TestExecution" Submit="@(() => EndCurrentExecution())">
+
+        <ValidationSummary class="alert alert-danger"/>
+
+        <RadzenRow>
+            <RadzenColumn>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" Gap="1rem">
+                    <!-- Start Execution Button -->
+                    <RadzenButton
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Start Test Execution",TooltipPosition.Top))"
+                        MouseLeave="@AppTooltipService.HideTooltip"
+                        Click="@(StartExecution)"
+                        Size="ButtonSize.Large"
+                        Disabled="@(ExecutionInProgress || _testExecution?.IsActive == false)"
+                        Icon="timer_play"/>
+
+                    <!-- Pause Execution Button -->
+                    <RadzenButton
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Pause Test Execution", TooltipPosition.Top))"
+                        MouseLeave="@AppTooltipService.HideTooltip"
+                        Size="ButtonSize.Large"
+                        Click="@(() => PauseExecution())"
+                        Disabled="@(!ExecutionInProgress || IsPaused)"
+                        Icon="pause"/>
+
+                    <!-- Resume Execution Button -->
+                    <RadzenButton
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Resume Test Execution", TooltipPosition.Top))"
+                        MouseLeave="@AppTooltipService.HideTooltip"
+                        Size="ButtonSize.Large"
+                        Click="@(() => ResumeExecution())"
+                        Disabled="@(!IsPaused)"
+                        Icon="play_arrow"/>
+
+                    <!-- End Execution Button -->
+                    <RadzenButton
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "End Current Test Execution", TooltipPosition.Top))"
+                        MouseLeave="@AppTooltipService.HideTooltip"
+                        Size="ButtonSize.Large"
+                        Disabled="@(!ExecutionInProgress || IsPaused)"
+                        Icon="timer_off"
+                        ButtonType="ButtonType.Submit"/>
+
+                    <!-- Cancel Execution Button -->
+                    <RadzenButton
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Cancel Current Test Execution", TooltipPosition.Top))"
+                        MouseLeave="@AppTooltipService.HideTooltip"
+                        ButtonType="ButtonType.Reset"
+                        Size="ButtonSize.Large"
+                        Icon="cancel"
+                        Click="@(() => CancelExecution())"
+                        Disabled="@(!ExecutionInProgress)"/>
+
+
+                    <!-- Suspend Execution Button -->
+                    <RadzenButton MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Suspend Current Test Execution",TooltipPosition.Top))"
+                                  MouseLeave="@AppTooltipService.HideTooltip"
+                                  Size="ButtonSize.Large"
+                                  Click="@(() => SuspendExecution())"
+                                  Disabled="@(!ExecutionInProgress || IsPaused)"
+                                  Icon="pause_circle_filled"/>
+                    <!-- Resume Execution Button -->
+
+                    <RadzenButton MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Resume From Suspended Execution", TooltipPosition.Top))"
+                                  MouseLeave="@AppTooltipService.HideTooltip"
+                                  Size="ButtonSize.Large"
+                                  Click="@(() => ResumeFromSuspendedExecution())"
+                                  Icon="pause_circle_filled"
+                                  Disabled="IsExecutionStarted(Id)"/>
+                </RadzenStack>
+
+
+                @code{
+
+                    bool IsExecutionStarted(int testExecutionId)
+                    {
+                        return _testExecution.Duration == TimeSpan.Zero || TestExecutionTimerService.IsExecutionInProgress() || !_testExecution.IsActive;
+                    }
+
+                }
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" JustifyContent="JustifyContent.Center" Gap="1rem">
+                    <!-- Dropdown to Select Status -->
+                    <RadzenDropDown @bind-Value="_testExecution.ExecutionStatus"
+                                    Placeholder="Select Status"
+                                    Disabled="@(!ExecutionInProgress)"
+                                    Data="@(EnumService.GetEnumFilteredValues<ExecutionStatus>(ExecutionStatus.NotRun))"/>
+                    <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="ExecutionStatus.NotRun" Text="Please select a status"/>
+
+                    <RadzenTextArea @bind-Value="_testExecution.ExecutionNotes"
+                                    Placeholder="Notes"
+                                    Disabled="@(!ExecutionInProgress)"
+                                    Style="flex-direction: row-reverse; resize: both"/>
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Start" Wrap="FlexWrap.Wrap" Gap="1rem">
+                    @if (ExecutionInProgress)
+                    {
+                        <RadzenLabel Text="@TimeElapsed.ToString("hh\\:mm\\:ss")"
+                                     Style="font-weight: bold; font-size: 3rem;"/>
+                    }
+                    else
+                    {
+                        <RadzenLabel Text="@_testExecution.Duration.ToString("hh\\:mm\\:ss")"
+                                     Style="font-weight: bold; font-size: 3rem;"/>
+                    }
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
+        
+    </RadzenTemplateForm>
+    @if (ExecutionInProgress)
+    {
+        <RadzenProgressBar ProgressBarStyle="ProgressBarStyle.Warning" Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+    }
+</RadzenCard>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+
+    bool IsPaused => TestExecutionTimerService.IsPaused();
+    private bool ExecutionInProgress => TestExecutionTimerService.IsExecutionInProgress(); // Check if execution is in progress
+    private TestExecution _testExecution = new();
+    private TimeSpan TimeElapsed { get; set; }
+
+
+    private async Task StartExecution()
+    {
+        await TestExecutionTimerService.StartExecutionAndTrackTime(Id); // Start tracking time
+    }
+
+
+    async Task PauseExecution()
+    {
+        await TestExecutionTimerService.PauseExecution(Id);
+    }
+
+    async Task ResumeExecution()
+    {
+        await TestExecutionTimerService.ResumeExecution(Id);
+    }
+
+    async Task CancelExecution()
+    {
+        await TestExecutionTimerService.CancelExecution(Id);
+        TestExecutionModel.TestExecution = new TestExecution();
+        StateHasChanged();
+        await FormNotificationService.NotifyWarning("Test Execution Canceled");
+        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution/view/{_testExecution.Id}");
+    }
+
+    private async Task SuspendExecution()
+    {
+        var db = await DbContext.CreateDbContextAsync();
+        var testexecution = await db.TestExecution.FindAsync(Id) ?? throw new Exception("Test Execution is Null");
+
+        testexecution.Duration = TestExecutionTimerService.GetElapsedTime(); // Get the elapsed time
+
+        await TestExecutionTimerService.SuspendExecution(Id);
+        await TestExecutionTimerService.EndExecution(Id); // Stop tracking time
+        db.TestExecution.Update(testexecution);
+        await db.SaveChangesAsync();
+
+        //refresh and redirect to same page
+        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution/view/{_testExecution.Id}", true);
+    }
+
+    async Task ResumeFromSuspendedExecution()
+    {
+        await TestExecutionTimerService.ResumeSuspendedExecution(Id, _testExecution.Duration);
+    }
+
+
+    private async Task EndCurrentExecution()
+    {
+        await TestExecutionTimerService.EndExecution(Id); // Stop tracking time
+
+        await SaveTestExecutionForm(Id);
+        await CreateNewExecution();
+    }
+
+
+    private void UpdateElapsedTime(TimeSpan elapsed, int testExecutionId)
+    {
+        testExecutionId = Id;
+        TimeElapsed = elapsed;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void Dispose()
+    {
+        TestExecutionTimerService.OnTimeUpdated -= UpdateElapsedTime; // Unsubscribe from time updates
+    }
+
+
+    /// <summary>
+    /// Save the Test Execution Form to the database after starting execution
+    /// </summary>
+    /// <param name="testExecutionId"></param>
+    /// <exception cref="Exception"></exception>
+    private async Task SaveTestExecutionForm(int testExecutionId)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        var testexecution = await db.TestExecution.FindAsync(testExecutionId) ?? throw new Exception("Test Execution is Null");
+
+        testexecution.IsActive = false;
+        testexecution.ModifiedAt = DateTime.UtcNow;
+        testexecution.ExecutionNotes = _testExecution.ExecutionNotes;
+        testexecution.Duration = TestExecutionTimerService.GetElapsedTime(); // Get the elapsed time
+        testexecution.ExecutionStatus = _testExecution.ExecutionStatus;
+
+        db.TestExecution.Update(testexecution);
+        await db.SaveChangesAsync();
+    }
+
+
+    private async Task CreateNewExecution()
+    {
+        {
+            var newExecution = await TestExecutionModel.CreateNewExecutionAsync(_testExecution);
+
+            if (newExecution != null)
+            {
+                NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution/view/{newExecution.Id}", true);
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        TestExecutionTimerService.OnTimeUpdated += UpdateElapsedTime; // Subscribe to time updates
+        _testExecution = await TestExecutionModel.GetTestExecutionAsync(Id);
+    }
+
+}

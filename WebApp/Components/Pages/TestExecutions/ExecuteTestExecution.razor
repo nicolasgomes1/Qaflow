@@ -1,0 +1,64 @@
+@page "/project/{ProjectId:int}/testexecution/execution/{Id:int}"
+@rendermode InteractiveServer
+@implements IDisposable
+@if (_isLoading)
+{
+    <ProgressBar />
+}
+else
+{
+        <!-- Global Test Execution Controls -->
+        <GlobalTestExecutionControls_slim Id="Id" />
+        
+
+    @if (executionInProgress)
+    {
+        <OngoingTestExecution Id="Id" />
+    }
+    else
+    {
+
+    }
+    
+    <div style="margin-top: 10px;">
+        <RadzenButton Text="Edit" Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution/edit/{_testExecution.Id}")' Disabled="@(_testExecution.IsActive == false || executionInProgress)" />
+        <RadzenButton Text="Back" Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution")' Disabled="@(executionInProgress)" />
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public int ProjectId { get; set; }
+
+    private TestExecution _testExecution =new();
+
+    private bool _isLoading = true;
+
+    private bool executionInProgress => TestExecutionTimerService.IsExecutionInProgress(); // Check if execution is in progress
+
+
+    void IDisposable.Dispose()
+    {
+        TestExecutionTimerService.OnExecutionStateChanged -= HandleExecutionStateChanged; // Unsubscribe from the event
+    }
+
+
+    private void HandleExecutionStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        TestExecutionTimerService.OnExecutionStateChanged += HandleExecutionStateChanged; // Subscribe to the event
+
+        _testExecution = await TestExecutionModel.GetTestExecutionAsync(Id);
+
+        _isLoading = false;
+    }
+}
