@@ -22,7 +22,7 @@
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testcases", true))"/>
             </RadzenStack>
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
-                <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@_testCasesCount" class="rz-ms-2"/>
+                <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_testCasesCount" class="rz-ms-2"/>
             </RadzenStack>
         </RadzenStack>
     </RadzenCard>
@@ -82,7 +82,7 @@
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/reports", true))"/>
             </RadzenStack>
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
-                <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="Reports: 3" class="rz-ms-2"/>
+                <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="Reports: 3" class="rz-ms-2"/>
             </RadzenStack>
         </RadzenStack>
     </RadzenCard>

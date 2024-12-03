@@ -20,11 +20,13 @@ test.afterEach('Logout User',async ({ page }) => {
 
 
 test('test', async ({ page }) => {
+    const Random = Math.floor(Math.random() * 1000);
+    
     await page.getByTestId('create_project').click();
     await page.getByTestId('project_name').click();
-    await page.getByTestId('project_name').fill('Test Project Playwright');
+    await page.getByTestId('project_name').fill('Test Project Playwright' + Random);
     await page.getByTestId('project_name').press('Tab');
-    await expect(page.getByTestId('project_name')).toHaveValue('Test Project Playwright');
+    await expect(page.getByTestId('project_name')).toHaveValue('Test Project Playwright' + Random);
     await page.getByTestId('project_description').click();
     await page.getByTestId('project_description').fill('Sample my description');
     await page.getByTestId('project_description').press('Tab');
@@ -32,9 +34,9 @@ test('test', async ({ page }) => {
     await page.getByTestId('submit').click();
     await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').click();
     await page.getByLabel('Name filter value').click();
-    await page.getByLabel('Name filter value').fill('Test Project Playwright');
+    await page.getByLabel('Name filter value').fill('Test Project Playwright' + Random);
     await page.getByRole('button', { name: 'Apply' }).click();
-    await expect(page.locator('tr', { hasText: 'Test Project Playwright' })).toBeVisible();
+    await expect(page.locator('tr', { hasText: 'Test Project Playwright'+ Random })).toBeVisible();
     await page.getByRole('button', { name: 'delete' }).first().click();
     await expect(page.locator('#rz-dialog-0-label')).toContainText('All underlying Data will be lost');
     await page.getByRole('button', { name: 'Ok' }).click();
