@@ -65,8 +65,11 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
  
  public async Task<string> GetUserNameFromUserIdAsync(string id)
  {
-     var users = await userManager.Users.ToListAsync();
-     return users.FirstOrDefault(x => x.Id == id)?.UserName ?? string.Empty;
+     var user = await userManager.Users
+         .Where(x => x.Id == id)
+         .Select(x => x.UserName)
+         .FirstOrDefaultAsync();
+     return user ?? string.Empty;
  }
  
  

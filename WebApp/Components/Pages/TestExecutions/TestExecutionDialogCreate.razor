@@ -45,12 +45,12 @@
     {
         _testPlansList = await TestPlansModel.GetallTestPlansWithStatusCompleted();
 
-        _usersList = await UserService.GetUsersList();
     }
 
 
     async Task ShowInlineDialog()
     {
+        _usersList = await UserService.GetUsersList();
         _testExecution = new TestExecution();
 
         var result = await DialogService.OpenAsync("Create Test Execution", ds =>
