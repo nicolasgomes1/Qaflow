@@ -28,7 +28,7 @@
                     {
                         <RadzenDataGrid Data="@testCaseExecution.TestStepsExecution" TItem="TestStepsExecution" RowRender="@OnRowRenderTestSteps" AllowPaging="false" AllowSorting="false" AllowAlternatingRows="false">
                             <Columns>
-                                <RadzenDataGridColumn TItem="TestStepsExecution" Property="TestCaseExecutionId" Title="Step Execution Id" Width="auto"/>
+                                <RadzenDataGridColumn TItem="TestStepsExecution" Property="@nameof(TestStepsExecution.TestStepsId)" Title="Step Execution Id" Width="auto"/>
                                 <RadzenDataGridColumn TItem="TestStepsExecution" Property="ExecutionStatus" Title="Status" Width="auto"/>
                                 <RadzenDataGridColumn TItem="TestStepsExecution" Property="Duration" Title="Duration" Width="auto"/>
                                 <RadzenDataGridColumn TItem="TestStepsExecution" Property="ExecutionNotes" Title="ExecutionNotes" Width="auto"/>
