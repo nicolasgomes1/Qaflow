@@ -1,11 +1,56 @@
 @page "/project/{ProjectId:int}/testexecutions/manage"
+@rendermode InteractiveServer
 
+<RadzenText TextStyle="TextStyle.DisplayH4" TextAlign="TextAlign.Center">Manage Test Executions</RadzenText>
 
-<h3>ManageTestExecutionsWkf</h3>
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
+        <RadzenButton Icon="assignment_ind" Text="My Assignments" Click="RefreshAssignedTestExecutions"/>
+        <RadzenButton Icon="assignment" Text="All Test Cases" Click="RefreshAllTestExecutions"/>
+    </RadzenStack>
 
-<h1>Nothing to see</h1>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
+        <TestExecutionDialogCreate Title="@Loc["create.testexecution"]"
+                               OnTestExecutionCreated="@RefreshAssignedTestExecutionsFromDialog"/>
+        <RadzenButton Icon="list"
+                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution", true))'/>
+    </RadzenStack>
+</RadzenStack>
 
 @code {
     [Parameter] public int ProjectId { get; set; }
+    private IList<TestExecution>? testexecutionData = [];
+
+    
+    private async Task RefreshAssignedTestExecutionsFromDialog()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        testexecutionData = await db.TestExecution.Where(rp => rp.TEProjectId == ProjectId).ToListAsync();
+        StateHasChanged();
+    }
+    
+    private async Task<List<TestExecution>> GetTestExecutionsAssignedToCurrentUser()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.TestExecution.Where(rp => rp.TEProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
+    }
+    
+    private async Task<List<TestExecution>> GetTestExecutionsAssignedToAll()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.TestExecution.Where(rp => rp.TEProjectId == ProjectId).ToListAsync();
+    }
+    
+    private async Task RefreshAssignedTestExecutions()
+    {
+        testexecutionData = await GetTestExecutionsAssignedToCurrentUser();
+        StateHasChanged();
+    }
+    
+    private async Task RefreshAllTestExecutions()
+    {
+        testexecutionData = await GetTestExecutionsAssignedToAll();
+        StateHasChanged();
+    }
     
 }

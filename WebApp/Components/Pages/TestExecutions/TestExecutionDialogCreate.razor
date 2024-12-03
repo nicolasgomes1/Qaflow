@@ -8,6 +8,9 @@
 @code {
     private TestExecution _testExecution = new();
 
+    [Parameter] public EventCallback OnTestExecutionCreated { get; set; }
+
+    
     private List<ApplicationUser> _usersList = [];
     private string _estimatedTimeInput = string.Empty;
     private List<TestPlans> _testPlansList = [];
@@ -31,6 +34,11 @@
         DialogService.Close(result);
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Execution created successfully with id {_testExecution.Id}");
+        
+        if (OnTestExecutionCreated.HasDelegate)
+        {
+            await OnTestExecutionCreated.InvokeAsync();
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -113,7 +121,7 @@
 
 
                     <!-- Submit button inside the form -->
-                    <RadzenButton Text="Create Test Plan" ButtonStyle="ButtonStyle.Secondary"
+                    <RadzenButton Text="Create Test Execution" ButtonStyle="ButtonStyle.Secondary"
                                   ButtonType="ButtonType.Submit"
                                   Style="margin-bottom: 10px;"/>
                 </RadzenTemplateForm>
