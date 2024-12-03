@@ -57,9 +57,15 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
  /// </summary>
  /// <param name="id"></param>
  /// <returns></returns>
- public string GetUserNameFromUserId(string id)
+ // public string GetUserNameFromUserId(string id)
+ // {
+ //     var users = userManager.Users.ToList();
+ //     return users.FirstOrDefault(x => x.Id == id)?.UserName ?? string.Empty;
+ // }
+ 
+ public async Task<string> GetUserNameFromUserIdAsync(string id)
  {
-     var users = userManager.Users.ToList();
+     var users = await userManager.Users.ToListAsync();
      return users.FirstOrDefault(x => x.Id == id)?.UserName ?? string.Empty;
  }
  

@@ -45,7 +45,7 @@
     {
         _testPlansList = await TestPlansModel.GetallTestPlansWithStatusCompleted();
 
-        _usersList = await UserManager.Users.ToListAsync(); // Fetch all users
+        _usersList = await UserService.GetUsersList();
     }
 
 
@@ -53,7 +53,7 @@
     {
         _testExecution = new TestExecution();
 
-        var result = await DialogService.OpenAsync("Create Test Plan", ds =>
+        var result = await DialogService.OpenAsync("Create Test Execution", ds =>
             @<RadzenStack Gap="1.5rem" Style="height: 600px;">
                 <RadzenTemplateForm Data="_testExecution" TItem="TestExecution" Submit="@CreateNewTestExecution">
                     <ValidationSummary class="alert alert-danger"/>

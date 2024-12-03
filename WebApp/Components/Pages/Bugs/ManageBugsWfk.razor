@@ -38,7 +38,10 @@
                     @context.Priority
                 </RadzenBadge>
                 <RadzenStack Orientation="Orientation.Vertical">
-                    <p>@UserService.GetUserNameFromUserId(context.AssignedTo)</p>
+                    <p>
+                        @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(context.AssignedTo)).Result))
+
+                    </p>
                 </RadzenStack>
 
             </RadzenStack>

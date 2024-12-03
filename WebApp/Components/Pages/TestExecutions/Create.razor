@@ -86,7 +86,7 @@
     {
      //   _testPlansList = await TestPlansModel.GetallTestPlans();
         _testPlansList = await TestPlansModel.GetCompletedTestPlans();
-        _usersList = await UserManager.Users.ToListAsync(); // Fetch all users
+        _usersList = await UserService.GetUsersList();
     }
 
     private async Task CreateExecution()

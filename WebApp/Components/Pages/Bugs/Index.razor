@@ -55,8 +55,9 @@
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn Property="@nameof(Bugs.AssignedTo)" Title="Assigned To" Width="auto">
+
             <Template Context="bugs">
-                @UserService.GetUserNameFromUserId(bugs.AssignedTo)
+                @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(bugs.AssignedTo)).Result))
             </Template>
         </RadzenDataGridColumn>
 

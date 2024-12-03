@@ -94,7 +94,7 @@ else
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Property="@nameof(TestCases.AssignedTo)" Title="Assigned To" Width="auto">
                 <Template Context="testcase">
-                    @UserService.GetUserNameFromUserId(testcase.AssignedTo)
+                    @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(testcase.AssignedTo)).Result))
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Property="@nameof(TestCases.ArchivedStatus)" Title="Is Archived" Width="auto">

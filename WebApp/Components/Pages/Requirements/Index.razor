@@ -93,7 +93,7 @@ else
             <RadzenDataGridColumn Property="@nameof(Requirements.ModifiedAt)" Title="Modified At" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(Requirements.AssignedTo)" Title="Assigned To" Width="auto">
                 <Template Context="requirement">
-                    @UserService.GetUserNameFromUserId(requirement.AssignedTo)
+                    @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(requirement.AssignedTo)).Result))
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Property="@nameof(Requirements.ArchivedStatus)" Title="Is Archived" Width="auto">

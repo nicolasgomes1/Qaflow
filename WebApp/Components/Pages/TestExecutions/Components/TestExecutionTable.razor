@@ -69,11 +69,7 @@
         </RadzenDataGridColumn>
         <RadzenDataGridColumn Property="@nameof(TestExecution.AssignedTo)" Title="Assigned To" Width="auto">
             <Template Context="testexecution">
-                @*
-                TODO: Implement this
-                @UserService.GetUserNameFromUserId(testexecution.AssignedTo)
-            *@
-                @testexecution.AssignedTo
+                @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(testexecution.AssignedTo)).Result))
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn Property="@nameof(TestExecution.IsActive)" Title="Is Active" Width="auto"/>

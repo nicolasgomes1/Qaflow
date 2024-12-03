@@ -49,11 +49,11 @@ public class TestExecutionModel
         testExecution.TEProjectId = _projectSateService.ProjectId;
 
 
-        var assignedUser = await _userManager.FindByIdAsync(testExecution.AssignedTo); // Get user by ID
-        if (assignedUser is { UserName: not null })
-        {
-            testExecution.AssignedTo = assignedUser.UserName; // Save the user's username
-        }
+        // var assignedUser = await _userManager.FindByIdAsync(testExecution.AssignedTo); // Get user by ID
+        // if (assignedUser is { UserName: not null })
+        // {
+        //     testExecution.AssignedTo = assignedUser.UserName; // Save the user's username
+        // }
 
         TestPlans = await _dbContext.TestPlans
             .Include(tp => tp.TestCases)
