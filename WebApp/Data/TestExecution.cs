@@ -24,8 +24,10 @@ public class TestExecution
     // enum with values Passed, Failed, Blocked, NotRun
     public ExecutionStatus ExecutionStatus { get; set; } = ExecutionStatus.NotRun;
 
-    // Version of the test case execution that can be Active or Archived
-    // Archived Versions cannot be executed
+/// <summary>
+///   Version of the test case execution that can be Active or Archived
+///   Archived Versions cannot be executed
+/// </summary>
     public bool IsActive { get; set; } = true;
 
     // The first execution start at version1 as we continue execution the version will be incremented and the status will be updated to Archived
@@ -55,7 +57,7 @@ public class TestExecution
 
     public int TEProjectId { get; set; }
     
-    
+    public WorkflowStatus WorkflowStatus { get; set; }
 
     public Projects? Projects { get; set; }
 }
