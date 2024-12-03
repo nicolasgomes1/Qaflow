@@ -121,6 +121,10 @@ ipch/
 # Visual Studio Trace Files
 *.e2e
 
+# database current snapshot, custom name
+/.idea/.idea.WebApp/
+
+
 # TFS 2012 Local Workspace
 $tf/
 
