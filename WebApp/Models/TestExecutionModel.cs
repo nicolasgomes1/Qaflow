@@ -519,11 +519,15 @@ public class TestExecutionModel
             .ToListAsync();
     }
     
+    /// <summary>
+    /// returns the list of TetsExecutions with the status of Completed and IsActive, so it was not yet executed
+    /// </summary>
+    /// <returns></returns>
     public async Task<List<TestExecution>> GetActiveTestExecutionsAsync()
     {
         return await _dbContext.TestExecution
             .Include(te => te.TestPlan)
-            .Where(te => te.IsActive)
+            .Where(te => te.IsActive && te.WorkflowStatus == WorkflowStatus.Completed)
             .Where(te => te.TEProjectId == _projectSateService.ProjectId)
             .ToListAsync();
     }
