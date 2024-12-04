@@ -3,7 +3,7 @@ using WebApp.Data.enums;
 
 namespace WebApp.Data;
 
-public class Projects
+public class Projects : BaseEntity
 {
     public int Id { get; init; }
 
@@ -11,18 +11,7 @@ public class Projects
 
     [MaxLength(100)] [Required] public string Description { get; set; } = string.Empty;
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-    public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
-
-
-    [MaxLength(50)] public string? CreatedBy { get; set; }
-
-    [MaxLength(50)] public string? ModifiedBy { get; set; }
-
-    public ArchivedStatus ArchivedStatus { get; init; } = ArchivedStatus.Active;
-
-
+    
     public ICollection<Requirements> Requirements { get; init; } = new List<Requirements>();
     public ICollection<RequirementsFile> RequirementsFile { get; init; } = new List<RequirementsFile>();
     public ICollection<TestPlans> TestPlans { get; init; } = new List<TestPlans>();

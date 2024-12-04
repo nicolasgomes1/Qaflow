@@ -3,7 +3,7 @@ using WebApp.Data.enums;
 
 namespace WebApp.Data;
 
-public class Bugs
+public class Bugs : BaseEntity
 {
     public int Id { get; init; }
 
@@ -16,17 +16,7 @@ public class Bugs
     public Severity Severity { get; set; }
 
     public BugStatus BugStatus { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
-    public DateTime ModifiedAt { get; set; }
-
-    public ArchivedStatus ArchivedStatus { get; set; }
-
-    [MaxLength(50)] public string? CreatedBy { get; set; }
-
-    [MaxLength(50)] public string? ModifiedBy { get; set; }
-
+    
     public int? TestCaseExecutionId { get; set; } // Value can be null value to be filled when running a test execution
 
     public int ProjectsId { get; set; }

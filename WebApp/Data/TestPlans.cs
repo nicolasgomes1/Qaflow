@@ -3,7 +3,7 @@ using WebApp.Data.enums;
 
 namespace WebApp.Data;
 
-public class TestPlans
+public class TestPlans : BaseEntity
 {
     public int Id { get; set; }
 
@@ -11,20 +11,12 @@ public class TestPlans
 
     public string? Description { get; set; }
     public Priority Priority { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<TestCases> TestCases { get; set; } = new List<TestCases>();
 
     // List of selected TestCase IDs (if needed)
     public List<int> SelectedTestCasesIds { get; set; } = new();
-
-    public ArchivedStatus ArchivedStatus { get; set; } = ArchivedStatus.Active;
-
-    public string? CreatedBy { get; set; }
-
-    public string? ModifiedBy { get; set; }
-
+    
     public int ProjectsId { get; set; }
 
     public Projects? Projects { get; set; }

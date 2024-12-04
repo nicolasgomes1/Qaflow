@@ -3,7 +3,7 @@ using WebApp.Data.enums;
 
 namespace WebApp.Data;
 
-public class TestCases
+public class TestCases : BaseEntity
 {
     public int Id { get; set; }
 
@@ -12,17 +12,12 @@ public class TestCases
     [MaxLength(500)] public string? Description { get; set; }
 
     public Priority Priority { get; set; }
-
-    public ArchivedStatus ArchivedStatus { get; set; } = ArchivedStatus.Active;
-
+    
     public TestTypes TestType { get; set; }
 
     public TestScope TestScope { get; set; }
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-    public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
-
+    
     public ICollection<TestPlans> TestPlans { get; set; } = new List<TestPlans>();
 
     public List<TestSteps> TestSteps { get; set; } = new();
@@ -33,11 +28,7 @@ public class TestCases
 
     public ICollection<TestCaseExecution> TestCaseExecutions { get; set; } = new List<TestCaseExecution>();
 
-
-    [MaxLength(50)] public string? CreatedBy { get; set; }
-
-    [MaxLength(50)] public string? ModifiedBy { get; set; }
-
+    
     public int ProjectsId { get; set; }
 
     public Projects? Projects { get; set; }
