@@ -112,7 +112,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
         // Check if the requirement already exists
         var existingRequirement = await dbContext.Requirements
-            .FirstOrDefaultAsync(r => r.RProjectId == projectId && r.Name == name);
+            .FirstOrDefaultAsync(r => r.ProjectsId == projectId && r.Name == name);
 
         if (existingRequirement != null)
         {
@@ -145,7 +145,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         {
             Name = name,
             Description = description,
-            RProjectId = projectId,
+            ProjectsId = projectId,
             AssignedTo = assignedUserId,
             CreatedBy = assignedUserName
         };

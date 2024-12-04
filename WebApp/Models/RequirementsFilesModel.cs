@@ -35,7 +35,7 @@ public class RequirementsFilesModel(
                     FileContent = memoryStream.ToArray(),
                     UploadedAt = DateTime.UtcNow,
                     RequirementId = requirementId,
-                    RfProjectId = projectSateService.ProjectId
+                    ProjectsId = projectSateService.ProjectId
                 };
 
                 _dbContext.RequirementsFiles.Add(requirementsFile);

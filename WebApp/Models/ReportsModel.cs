@@ -116,7 +116,7 @@ public class ReportsModel
 
     public string LoadTotalRequirements()
     {
-        var projectRequirements = _dbContext.Requirements.Count(r => r.RProjectId == _projectStateService.ProjectId)
+        var projectRequirements = _dbContext.Requirements.Count(r => r.ProjectsId == _projectStateService.ProjectId)
             .ToString();
 
         return projectRequirements == "0" ? "No Requirements" : $"Requirements: {projectRequirements}";

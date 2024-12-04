@@ -43,8 +43,8 @@
                 break;
             case Requirements requirement:
                 // Add View and Edit options for Requirements
-                menuItems.Add(new ContextMenuItem { Text = "View Requirement", Value = $"project/{requirement.RProjectId}/requirements/view/{requirement.Id}", Icon = "visibility" });
-                menuItems.Add(new ContextMenuItem { Text = "Edit Requirement", Value = $"project/{requirement.RProjectId}/requirements/edit/{requirement.Id}", Icon = "edit" });
+                menuItems.Add(new ContextMenuItem { Text = "View Requirement", Value = $"project/{requirement.ProjectsId}/requirements/view/{requirement.Id}", Icon = "visibility" });
+                menuItems.Add(new ContextMenuItem { Text = "Edit Requirement", Value = $"project/{requirement.ProjectsId}/requirements/edit/{requirement.Id}", Icon = "edit" });
                 break;
             case TestCases testCase:
                 // Add View and Edit options for TestCases

@@ -60,7 +60,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Projects>()
             .HasMany(p => p.Requirements)
             .WithOne(r => r.Projects)
-            .HasForeignKey(r => r.RProjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Projects>()
@@ -72,7 +71,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Projects>()
             .HasMany(p => p.RequirementsFile)
             .WithOne(r => r.Projects)
-            .HasForeignKey(r => r.RfProjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Projects>()

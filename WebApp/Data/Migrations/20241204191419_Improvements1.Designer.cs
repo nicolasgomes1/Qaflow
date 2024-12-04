@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApp.Data;
 
@@ -11,9 +12,11 @@ using WebApp.Data;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241204191419_Improvements1")]
+    partial class Improvements1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -595,13 +598,13 @@ namespace WebApp.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProjectsId")
-                        .HasColumnType("int");
-
                     b.Property<int>("RequirementId")
                         .HasColumnType("int");
 
                     b.Property<int?>("RequirementsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RfProjectId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UploadedAt")
@@ -609,11 +612,11 @@ namespace WebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectsId");
-
                     b.HasIndex("RequirementId");
 
                     b.HasIndex("RequirementsId");
+
+                    b.HasIndex("RfProjectId");
 
                     b.ToTable("RequirementsFiles");
                 });
@@ -1288,12 +1291,6 @@ namespace WebApp.Migrations
 
             modelBuilder.Entity("WebApp.Data.RequirementsFile", b =>
                 {
-                    b.HasOne("WebApp.Data.Projects", "Projects")
-                        .WithMany("RequirementsFile")
-                        .HasForeignKey("ProjectsId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("WebApp.Data.Requirements", "Requirements")
                         .WithMany()
                         .HasForeignKey("RequirementId")
@@ -1303,6 +1300,12 @@ namespace WebApp.Migrations
                     b.HasOne("WebApp.Data.Requirements", null)
                         .WithMany("RequirementsFiles")
                         .HasForeignKey("RequirementsId");
+
+                    b.HasOne("WebApp.Data.Projects", "Projects")
+                        .WithMany("RequirementsFile")
+                        .HasForeignKey("RfProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Projects");
 

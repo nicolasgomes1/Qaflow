@@ -27,7 +27,7 @@ public static class ApiServiceExtensions
                         Description = r.Description,
                         Priority = r.Priority.ToString(),
                         ArchivedStatus = r.ArchivedStatus,
-                        ProjectId = r.RProjectId
+                        ProjectId = r.ProjectsId
                     }).ToList()
                 }).ToListAsync();
             return Results.Ok(allTestCases);
@@ -50,7 +50,7 @@ public static class ApiServiceExtensions
                         Description = r.Description,
                         Priority = r.Priority.ToString(),
                         ArchivedStatus = r.ArchivedStatus,
-                        ProjectId = r.RProjectId
+                        ProjectId = r.ProjectsId
                     }).ToList()
                 }).FirstOrDefaultAsync();
             return testCase != null ? Results.Ok(testCase) : Results.NotFound();
@@ -66,7 +66,7 @@ public static class ApiServiceExtensions
                     Description = r.Description,
                     Priority = r.Priority.ToString(),
                     ArchivedStatus = r.ArchivedStatus,
-                    ProjectId = r.RProjectId
+                    ProjectId = r.ProjectsId
                 }).ToListAsync();
             return Results.Ok(allRequirements);
         }).WithOpenApi();
@@ -82,7 +82,7 @@ public static class ApiServiceExtensions
                     Description = r.Description,
                     Priority = r.Priority.ToString(),
                     ArchivedStatus = r.ArchivedStatus,
-                    ProjectId = r.RProjectId
+                    ProjectId = r.ProjectsId
                 }).FirstOrDefaultAsync();
             return requirement != null ? Results.Ok(requirement) : Results.NotFound();
         }).WithOpenApi();
@@ -105,7 +105,7 @@ public static class ApiServiceExtensions
                 Description = dto.Description,
                 Priority = Enum.Parse<Priority>(dto.Priority),
                 ArchivedStatus = dto.ArchivedStatus,
-                RProjectId = dto.ProjectId
+                ProjectsId = dto.ProjectId
             };
 
             dbContext.Requirements.Add(newRequirement);

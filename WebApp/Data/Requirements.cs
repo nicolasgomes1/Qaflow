@@ -25,7 +25,7 @@ public class Requirements
 
     [MaxLength(50)] public string? ModifiedBy { get; set; }
 
-    public int RProjectId { get; set; }
+    public int ProjectsId { get; set; }
 
     public Projects? Projects { get; init; }
 

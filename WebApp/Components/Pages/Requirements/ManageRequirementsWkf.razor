@@ -128,14 +128,14 @@
     private async Task RefreshAssignedRequirementsFromDialog()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        _requirementsData = await db.Requirements.Where(rp => rp.RProjectId == ProjectId).ToListAsync();
+        _requirementsData = await db.Requirements.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
         StateHasChanged();
     }
     
     private async Task<List<Requirements>> GetRequirementsAssignedToAll()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.Requirements.Where(rp => rp.RProjectId == ProjectId).ToListAsync();
+        return await db.Requirements.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
     }
     
     
@@ -143,7 +143,7 @@
     private async Task<List<Requirements>> GetRequirementsAssignedToCurrentUser()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.Requirements.Where(rp => rp.RProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
+        return await db.Requirements.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
     }
     
     private async Task RefreshAssignedRequirements()

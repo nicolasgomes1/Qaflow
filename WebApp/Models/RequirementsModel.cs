@@ -31,7 +31,7 @@ public class RequirementsModel(
     public async Task DisplayRequirementsIndexPage()
     {
         requirements = await _dbContext.Requirements.Include(r => r.TestCases)
-            .Where(tc => tc.RProjectId == projectSateService.ProjectId).ToListAsync();
+            .Where(tc => tc.ProjectsId == projectSateService.ProjectId).ToListAsync();
 
         var selection = requirements.FirstOrDefault();
         if (selection == null)
@@ -50,7 +50,7 @@ public class RequirementsModel(
     public async Task<List<Requirements>> GetallRequirements()
     {
         return await _dbContext.Requirements
-            .Where(r => r.RProjectId == projectSateService.ProjectId)
+            .Where(r => r.ProjectsId == projectSateService.ProjectId)
             .Where(r =>r.WorkflowStatus == WorkflowStatus.Completed)
             .ToListAsync();
     }
@@ -81,7 +81,7 @@ public class RequirementsModel(
     {
         // First, create the requirement
         _dbContext.Requirements.Add(requirement);
-        requirement.RProjectId = projectSateService.ProjectId;
+        requirement.ProjectsId = projectSateService.ProjectId;
 
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         
