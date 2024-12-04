@@ -55,7 +55,7 @@ public class TestExecution
     [MaxLength(50)]
     public string AssignedTo { get; set; } = string.Empty;
 
-    public int TEProjectId { get; set; }
+    public int ProjectsId { get; set; }
     
     public WorkflowStatus WorkflowStatus { get; set; }
 

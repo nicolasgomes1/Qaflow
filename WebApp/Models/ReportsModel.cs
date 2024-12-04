@@ -88,17 +88,17 @@ public class ReportsModel
         await using var db3 = await _dbContextFactory.CreateDbContextAsync();
 
         var testExecutionsPassed = await db1.TestExecution
-            .Where(te => te.TEProjectId == _projectStateService.ProjectId)
+            .Where(te => te.ProjectsId == _projectStateService.ProjectId)
             .Where(te => te.ExecutionStatus == ExecutionStatus.Passed)
             .CountAsync();
 
         var testExecutionsFailed = await db2.TestExecution
-            .Where(te => te.TEProjectId == _projectStateService.ProjectId)
+            .Where(te => te.ProjectsId == _projectStateService.ProjectId)
             .Where(te => te.ExecutionStatus == ExecutionStatus.Failed)
             .CountAsync();
 
         var testExecutionsNotRun = await db3.TestExecution
-            .Where(te => te.TEProjectId == _projectStateService.ProjectId)
+            .Where(te => te.ProjectsId == _projectStateService.ProjectId)
             .Where(te => te.ExecutionStatus == ExecutionStatus.NotRun)
             .CountAsync();
 
@@ -141,7 +141,7 @@ public class ReportsModel
     public string LoadTotalTestExecutions()
     {
         var projectTestExecutions = _dbContext.TestExecution
-            .Count(te => te.TEProjectId == _projectStateService.ProjectId).ToString();
+            .Count(te => te.ProjectsId == _projectStateService.ProjectId).ToString();
 
         return projectTestExecutions == "0" ? "No Test Executions" : $"Test Executions: {projectTestExecutions}";
     }

@@ -46,7 +46,7 @@ public class TestExecutionModel
 
 
         testExecution.CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName;
-        testExecution.TEProjectId = _projectSateService.ProjectId;
+        testExecution.ProjectsId = _projectSateService.ProjectId;
 
 
         // var assignedUser = await _userManager.FindByIdAsync(testExecution.AssignedTo); // Get user by ID
@@ -296,7 +296,7 @@ public class TestExecutionModel
             EstimatedTime = testExecution.EstimatedTime,
             AssignedTo = testExecution.AssignedTo,
             CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName,
-            TEProjectId = _projectSateService.ProjectId,
+            ProjectsId = _projectSateService.ProjectId,
             Priority = testExecution.Priority,
             // Automatically populate SelectedTestCaseIds with IDs of test cases for the selected test plan
             SelectedTestCaseIds = testPlan.TestCases.Select(tc => tc.Id).ToList()
@@ -382,7 +382,7 @@ public class TestExecutionModel
 
         testexecution = await _dbContext.TestExecution
             .Include(te => te.TestPlan) // Include the TestPlan navigation property
-            .Where(te => te.TEProjectId == _projectSateService.ProjectId)
+            .Where(te => te.ProjectsId == _projectSateService.ProjectId)
             .ToListAsync();
 
         if (testexecution != null && testexecution.Any()) // Check if there are any elements
@@ -402,7 +402,7 @@ public class TestExecutionModel
         testexecution = await _dbContext.TestExecution
             .Where(te => te.ExecutionStatus == status) // Compare the status directly
             .Include(te => te.TestPlan) // Include the TestPlan navigation property
-            .Where(te => te.TEProjectId == _projectSateService.ProjectId)
+            .Where(te => te.ProjectsId == _projectSateService.ProjectId)
             .ToListAsync();
 
         if (testexecution != null && testexecution.Any()) // Check if there are any elements
@@ -528,7 +528,7 @@ public class TestExecutionModel
         return await _dbContext.TestExecution
             .Include(te => te.TestPlan)
             .Where(te => te.IsActive && te.WorkflowStatus == WorkflowStatus.Completed)
-            .Where(te => te.TEProjectId == _projectSateService.ProjectId)
+            .Where(te => te.ProjectsId == _projectSateService.ProjectId)
             .ToListAsync();
     }
     

@@ -76,7 +76,7 @@
     protected override async Task OnInitializedAsync()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testexecutionData = await db.TestExecution.Where(rp => rp.TEProjectId == ProjectId && rp.IsActive == true ).ToListAsync();
+        testexecutionData = await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.IsActive == true ).ToListAsync();
     }
     
     
@@ -127,20 +127,20 @@
     private async Task RefreshAssignedTestExecutionsFromDialog()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testexecutionData = await db.TestExecution.Where(rp => rp.TEProjectId == ProjectId).ToListAsync();
+        testexecutionData = await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
         StateHasChanged();
     }
     
     private async Task<List<TestExecution>> GetTestExecutionsAssignedToCurrentUser()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestExecution.Where(rp => rp.TEProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
+        return await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
     }
     
     private async Task<List<TestExecution>> GetTestExecutionsAssignedToAll()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestExecution.Where(rp => rp.TEProjectId == ProjectId).ToListAsync();
+        return await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
     }
     
     private async Task RefreshAssignedTestExecutions()

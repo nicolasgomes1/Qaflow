@@ -101,7 +101,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Projects>()
             .HasMany(p => p.TestExecution)
             .WithOne(r => r.Projects)
-            .HasForeignKey(r => r.TEProjectId)
             .OnDelete(DeleteBehavior.Restrict);
         
         modelBuilder.Entity<Projects>()
