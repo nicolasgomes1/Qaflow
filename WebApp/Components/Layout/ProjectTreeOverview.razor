@@ -122,7 +122,7 @@
         await using var db = await DbContext.CreateDbContextAsync();
         return await db.TestPlans
             .Include(tp => tp.TestCases)
-            .Where(p => p.TPProjectId == ProjectStateService.ProjectId)
+            .Where(p => p.ProjectsId == ProjectStateService.ProjectId)
             .ToListAsync();
     }
 

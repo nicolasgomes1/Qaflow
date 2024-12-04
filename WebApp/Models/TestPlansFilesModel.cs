@@ -35,7 +35,7 @@ public class TestPlansFilesModel(
                     FileContent = memoryStream.ToArray(),
                     UploadedAt = DateTime.UtcNow,
                     TestPlanId = testPlanId,
-                    TPFProjectId = projectSateService.ProjectId
+                    ProjectsId = projectSateService.ProjectId
                 };
                 
                 _dbContext.TestPlansFiles.Add(testPlansFile);
@@ -47,7 +47,7 @@ public class TestPlansFilesModel(
     
     public async Task<List<TestPlansFile>> GetFilesByTestPlanId(int testPlanId)
     {
-        ExistingFiles = await _dbContext.TestPlansFiles.Where(tpf => tpf.TestPlanId == testPlanId && tpf.TPFProjectId == projectSateService.ProjectId).ToListAsync();
+        ExistingFiles = await _dbContext.TestPlansFiles.Where(tpf => tpf.TestPlanId == testPlanId && tpf.ProjectsId == projectSateService.ProjectId).ToListAsync();
         return ExistingFiles;
     }
     

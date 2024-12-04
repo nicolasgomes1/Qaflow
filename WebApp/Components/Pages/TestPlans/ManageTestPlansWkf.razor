@@ -67,7 +67,7 @@
     private async Task RefreshAssignedTestPlansFromDialog()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testplansData = await db.TestPlans.Where(rp => rp.TPProjectId == ProjectId).ToListAsync(); 
+        testplansData = await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId).ToListAsync(); 
     }
     
     
@@ -120,13 +120,13 @@
     protected override async Task OnInitializedAsync()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testplansData = await db.TestPlans.Where(rp => rp.TPProjectId == ProjectId).ToListAsync(); 
+        testplansData = await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId).ToListAsync(); 
     }
     
     private async Task<List<TestPlans>> GetTestPlansAssignedToAll()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestPlans.Where(rp => rp.TPProjectId == ProjectId).ToListAsync();
+        return await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
     }
     
     
@@ -134,7 +134,7 @@
     private async Task<List<TestPlans>> GetTestPlansAssignedToCurrentUser()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestPlans.Where(rp => rp.TPProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
+        return await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
     }
     
     private async Task RefreshAssignedTestPlans()

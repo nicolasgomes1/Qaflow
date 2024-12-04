@@ -62,7 +62,7 @@ else
                     @if (testplan.TestCases.Any())
                     {
                         var testcasesLinks = testplan.TestCases
-                            .Select(testcase => $"<a href=\"project/{testplan.TPProjectId}/testcases/view/{testcase.Id}\">{testcase.Name}</a>")
+                            .Select(testcase => $"<a href=\"project/{testplan.ProjectsId}/testcases/view/{testcase.Id}\">{testcase.Name}</a>")
                             .ToList();
 
                         @((MarkupString)string.Join(", ", testcasesLinks))

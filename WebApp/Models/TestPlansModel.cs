@@ -35,7 +35,7 @@ public class TestPlansModel(
     public async Task DisplayTestPlansIndexPage()
     {
         testplans = await _dbContext.TestPlans
-            .Where(p => p.TPProjectId == projectStateService.ProjectId)
+            .Where(p => p.ProjectsId == projectStateService.ProjectId)
             .Include(tp => tp.TestCases).ToListAsync();
 
         if (testplans != null)
@@ -63,17 +63,17 @@ public class TestPlansModel(
     /// <returns></returns>
     public async Task<List<TestPlans>> GetallTestPlans()
     {
-        return await _dbContext.TestPlans.Where(tp => tp.TPProjectId == projectStateService.ProjectId).ToListAsync();
+        return await _dbContext.TestPlans.Where(tp => tp.ProjectsId == projectStateService.ProjectId).ToListAsync();
     }
     
     public async Task<List<TestPlans>> GetallTestPlansWithStatusCompleted()
     {
-        return await _dbContext.TestPlans.Where(tp => tp.TPProjectId == projectStateService.ProjectId && tp.WorkflowStatus == WorkflowStatus.Completed).ToListAsync();
+        return await _dbContext.TestPlans.Where(tp => tp.ProjectsId == projectStateService.ProjectId && tp.WorkflowStatus == WorkflowStatus.Completed).ToListAsync();
     }
     
     public async Task<List<TestPlans>> GetCompletedTestPlans()
     {
-        return await _dbContext.TestPlans.Where(tp => tp.TPProjectId == projectStateService.ProjectId && tp.WorkflowStatus == WorkflowStatus.Completed).ToListAsync();
+        return await _dbContext.TestPlans.Where(tp => tp.ProjectsId == projectStateService.ProjectId && tp.WorkflowStatus == WorkflowStatus.Completed).ToListAsync();
     }
 
 
@@ -105,7 +105,7 @@ public class TestPlansModel(
     public async Task CreateTestPlan(TestPlans testPlan)
     {
         testPlan.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        testPlan.TPProjectId = projectStateService.ProjectId;
+        testPlan.ProjectsId = projectStateService.ProjectId;
         testPlan.TestCases = new List<TestCases>();
 
         foreach (var testCaseId in SelectedTestCasesIds)
@@ -124,7 +124,7 @@ public class TestPlansModel(
     public async Task<TestPlans> CreateTestPlan1(TestPlans testPlan, List<IBrowserFile>? files)
     {
         testPlan.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        testPlan.TPProjectId = projectStateService.ProjectId;
+        testPlan.ProjectsId = projectStateService.ProjectId;
         testPlan.TestCases = new List<TestCases>();
 
         foreach (var testCaseId in SelectedTestCasesIds)
@@ -174,7 +174,7 @@ public class TestPlansModel(
     {
         // Set the ModifiedBy property to the current user's username
         TestPlan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        TestPlan.TPProjectId = projectStateService.ProjectId;
+        TestPlan.ProjectsId = projectStateService.ProjectId;
 
 
         // Retrieve the existing test plan to ensure it exists in the database
@@ -202,7 +202,7 @@ public class TestPlansModel(
     {
         _dbContext.Update(testPlan);
         testPlan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        testPlan.TPProjectId = projectStateService.ProjectId;
+        testPlan.ProjectsId = projectStateService.ProjectId;
 
         // Retrieve the existing test plan to ensure it exists in the database
         var existingTestPlan = await _dbContext.TestPlans

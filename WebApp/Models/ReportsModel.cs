@@ -58,12 +58,12 @@ public class ReportsModel
         await using var db2 = await _dbContextFactory.CreateDbContextAsync();
 
         var testPlansWithTestCases = await db1.TestPlans
-            .Where(tc => tc.TPProjectId == _projectStateService.ProjectId)
+            .Where(tc => tc.ProjectsId == _projectStateService.ProjectId)
             .Where(tc => tc.TestCases.Any())
             .CountAsync();
 
         var testPlansWithoutTestCases = await db2.TestPlans
-            .Where(tc => tc.TPProjectId == _projectStateService.ProjectId)
+            .Where(tc => tc.ProjectsId == _projectStateService.ProjectId)
             .Where(tc => !tc.TestCases.Any())
             .CountAsync();
 
@@ -132,7 +132,7 @@ public class ReportsModel
 
     public string LoadTotalTestPlans()
     {
-        var projectTestPlans = _dbContext.TestPlans.Count(tp => tp.TPProjectId == _projectStateService.ProjectId)
+        var projectTestPlans = _dbContext.TestPlans.Count(tp => tp.ProjectsId == _projectStateService.ProjectId)
             .ToString();
 
         return projectTestPlans == "0" ? "No Test Plans" : $"Test Plans: {projectTestPlans}";

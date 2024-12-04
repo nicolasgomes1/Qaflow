@@ -306,7 +306,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         // Check if a test plan already exists
         var existingTestPlan = await dbContext.TestPlans
             .Include(tp => tp.TestCases) // Include test cases to avoid lazy loading
-            .FirstOrDefaultAsync(tp => tp.TPProjectId == projectId && tp.Name == name);
+            .FirstOrDefaultAsync(tp => tp.ProjectsId == projectId && tp.Name == name);
         
         var assignedUserId = await AssignedUserId(dbContext, assignedUserName);
 
@@ -320,7 +320,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
                 var newTestPlan = new TestPlans
                 {
                     Name = name,
-                    TPProjectId = projectId,
+                    ProjectsId = projectId,
                     CreatedBy = USER,
                     AssignedTo = assignedUserId
                 };
@@ -347,7 +347,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         var newTestPlanForCreation = new TestPlans
         {
             Name = name,
-            TPProjectId = projectId,
+            ProjectsId = projectId,
             CreatedBy = USER,
             AssignedTo = assignedUserId
         };

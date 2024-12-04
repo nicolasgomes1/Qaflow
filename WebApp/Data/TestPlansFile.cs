@@ -18,7 +18,7 @@ public class TestPlansFile
 
     public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
 
-    public int TPFProjectId { get; set; }
+    public int ProjectsId { get; set; }
 
     public Projects? Projects { get; set; }
 

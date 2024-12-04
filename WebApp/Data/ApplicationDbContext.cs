@@ -87,13 +87,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Projects>()
             .HasMany(p => p.TestPlansFile)
             .WithOne(r => r.Projects)
-            .HasForeignKey(r => r.TPFProjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Projects>()
             .HasMany(p => p.TestPlans)
             .WithOne(r => r.Projects)
-            .HasForeignKey(r => r.TPProjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Projects>()

@@ -25,7 +25,7 @@ public class TestPlans
 
     public string? ModifiedBy { get; set; }
 
-    public int TPProjectId { get; set; }
+    public int ProjectsId { get; set; }
 
     public Projects? Projects { get; set; }
     
