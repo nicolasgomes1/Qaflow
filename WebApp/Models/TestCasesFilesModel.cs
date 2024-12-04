@@ -26,7 +26,7 @@ public class TestCasesFilesModel(IDbContextFactory<ApplicationDbContext> dbConte
                     FileContent = memoryStream.ToArray(),
                     UploadedAt = DateTime.UtcNow,
                     TestCaseId = testCaseId,
-                    TcfProjectId = projectSateService.ProjectId
+                    ProjectsId = projectSateService.ProjectId
                 };
 
                 _dbContext.TestCasesFiles.Add(testCaseFile);

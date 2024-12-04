@@ -20,7 +20,7 @@ public static class ApiServiceExtensions
                     Description = tc.Description ?? string.Empty,
                     Priority = tc.Priority,
                     ArchivedStatus = tc.ArchivedStatus,
-                    ProjectId = tc.TcProjectId,
+                    ProjectId = tc.ProjectsId,
                     RequirementsDto = tc.Requirements.Select(r => new RequirementsDto
                     {
                         Name = r.Name,
@@ -43,7 +43,7 @@ public static class ApiServiceExtensions
                     Description = tc.Description ?? string.Empty,
                     Priority = tc.Priority,
                     ArchivedStatus = tc.ArchivedStatus,
-                    ProjectId = tc.TcProjectId,
+                    ProjectId = tc.ProjectsId,
                     RequirementsDto = tc.Requirements.Select(r => new RequirementsDto
                     {
                         Name = r.Name,

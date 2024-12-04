@@ -50,8 +50,8 @@
                 break;
             case TestCases testCase:
                 // Add View and Edit options for TestCases
-                menuItems.Add(new ContextMenuItem { Text = $"View TestCase {testCase.Id}", Value = $"project/{testCase.TcProjectId}/testcases/view/{testCase.Id}", Icon = "visibility" });
-                menuItems.Add(new ContextMenuItem { Text = $"Edit TestCase {testCase.Id}", Value = $"project/{testCase.TcProjectId}/testcases/edit/{testCase.Id}", Icon = "edit" });
+                menuItems.Add(new ContextMenuItem { Text = $"View TestCase {testCase.Id}", Value = $"project/{testCase.ProjectsId}/testcases/view/{testCase.Id}", Icon = "visibility" });
+                menuItems.Add(new ContextMenuItem { Text = $"Edit TestCase {testCase.Id}", Value = $"project/{testCase.ProjectsId}/testcases/edit/{testCase.Id}", Icon = "edit" });
                 break;
         }
 

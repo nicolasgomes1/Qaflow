@@ -27,12 +27,12 @@ public class ReportsModel
 
         // Count the total number of TestCases
         var totalTestCases = await db1.TestCases
-            .Where(tc => tc.TcProjectId == _projectStateService.ProjectId)
+            .Where(tc => tc.ProjectsId == _projectStateService.ProjectId)
             .CountAsync();
 
         // Count the number of TestCases that have at least one Requirement
         var testCasesWithRequirements = await db2.TestCases
-            .Where(tc => tc.TcProjectId == _projectStateService.ProjectId)
+            .Where(tc => tc.ProjectsId == _projectStateService.ProjectId)
             .Where(tc => tc.Requirements.Count != 0)
             .CountAsync();
 
@@ -124,7 +124,7 @@ public class ReportsModel
 
     public string LoadTotalTestCases()
     {
-        var projectTestCases = _dbContext.TestCases.Count(tc => tc.TcProjectId == _projectStateService.ProjectId)
+        var projectTestCases = _dbContext.TestCases.Count(tc => tc.ProjectsId == _projectStateService.ProjectId)
             .ToString();
 
         return projectTestCases == "0" ? "No Test Cases" : $"Test Cases: {projectTestCases}";

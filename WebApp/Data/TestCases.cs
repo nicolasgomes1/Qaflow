@@ -38,7 +38,7 @@ public class TestCases
 
     [MaxLength(50)] public string? ModifiedBy { get; set; }
 
-    public int TcProjectId { get; set; }
+    public int ProjectsId { get; set; }
 
     public Projects? Projects { get; set; }
     

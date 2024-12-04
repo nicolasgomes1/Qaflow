@@ -209,7 +209,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         // Check if the test case already exists
         var existingTestCase = await dbContext.TestCases
             .Include(tc => tc.Requirements) // Include Requirements to avoid lazy loading
-            .FirstOrDefaultAsync(tc => tc.Name == name && tc.TcProjectId == projectId);
+            .FirstOrDefaultAsync(tc => tc.Name == name && tc.ProjectsId == projectId);
 
         if (existingTestCase != null)
         {
@@ -221,7 +221,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         {
             Name = name,
             Description = description,
-            TcProjectId = projectId,
+            ProjectsId = projectId,
             CreatedBy = USER,
             AssignedTo = assignedUserId
 
@@ -254,7 +254,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             .AsSplitQuery()
             .Include(tc => tc.Requirements) // Include Requirements to avoid lazy loading
             .Include(tc => tc.TestSteps) // Include TestSteps to avoid lazy loading
-            .FirstOrDefaultAsync(tc => tc.Name == name && tc.TcProjectId == projectId);
+            .FirstOrDefaultAsync(tc => tc.Name == name && tc.ProjectsId == projectId);
 
         if (existingTestCase != null)
         {
@@ -266,7 +266,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         {
             Name = name,
             Description = description,
-            TcProjectId = projectId,
+            ProjectsId = projectId,
             CreatedBy = USER
         };
 

@@ -38,7 +38,7 @@ public class TestCasesModel(
 
     public async Task DisplayTestCasesIndexPage()
     {
-        testcases = await _dbContext.TestCases.Where(tc => tc.TcProjectId == projectStateService.ProjectId)
+        testcases = await _dbContext.TestCases.Where(tc => tc.ProjectsId == projectStateService.ProjectId)
             .Include(tc => tc.Requirements).ToListAsync();
 
         var selection = testcases.FirstOrDefault();
@@ -54,14 +54,14 @@ public class TestCasesModel(
     public async Task GetAllTestCases()
     {
         TestCasesList = await _dbContext.TestCases
-            .Where(tc => tc.TcProjectId == projectStateService.ProjectId)
+            .Where(tc => tc.ProjectsId == projectStateService.ProjectId)
             .ToListAsync();
     }
     
     public async Task<List<TestCases>> GetTestCasesWithStatusCompleted()
     {
         return await _dbContext.TestCases
-            .Where(tc => tc.TcProjectId == projectStateService.ProjectId && tc.WorkflowStatus == WorkflowStatus.Completed)
+            .Where(tc => tc.ProjectsId == projectStateService.ProjectId && tc.WorkflowStatus == WorkflowStatus.Completed)
             .ToListAsync();
     }
     
@@ -117,7 +117,7 @@ public class TestCasesModel(
     {
         //First create the test case
         _dbContext.TestCases.Add(testcase);
-        testcase.TcProjectId = projectStateService.ProjectId;
+        testcase.ProjectsId = projectStateService.ProjectId;
 
         testcase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 

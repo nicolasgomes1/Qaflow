@@ -17,7 +17,7 @@ public class TestCasesFile
 
     public DateTime ModifiedAt { get; init; } = DateTime.UtcNow;
 
-    public int TcfProjectId { get; init; }
+    public int ProjectsId { get; init; }
 
     public Projects? Projects { get; init; }
 

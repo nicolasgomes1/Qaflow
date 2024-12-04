@@ -76,7 +76,7 @@
     private async Task RefreshAssignedTestCasesFromDialog()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testcasesData = await db.TestCases.Where(rp => rp.TcProjectId == ProjectId).ToListAsync();
+        testcasesData = await db.TestCases.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
         StateHasChanged();
     }
 
@@ -130,20 +130,20 @@
     protected override async Task OnInitializedAsync()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testcasesData = await db.TestCases.Where(rp => rp.TcProjectId == ProjectId).ToListAsync();
+        testcasesData = await db.TestCases.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
     }
 
     private async Task<List<TestCases>> GetTestCasesAssignedToAll()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestCases.Where(rp => rp.TcProjectId == ProjectId).ToListAsync();
+        return await db.TestCases.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
     }
 
 
     private async Task<List<TestCases>> GetTestCasesAssignedToCurrentUser()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestCases.Where(rp => rp.TcProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
+        return await db.TestCases.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
     }
 
     private async Task RefreshAssignedTestCases()
