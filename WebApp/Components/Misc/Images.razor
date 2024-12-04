@@ -58,7 +58,7 @@
     {
         var db = await DbContext.CreateDbContextAsync();
         _files = await db.RequirementsFiles
-            .Where(rf => rf.RequirementId == 42)
+            .Where(rf => rf.RequirementsId == 42)
             .ToListAsync();
     }
 

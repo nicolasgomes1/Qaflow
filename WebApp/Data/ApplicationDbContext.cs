@@ -173,7 +173,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Requirements>()
             .HasMany<RequirementsFile>()
             .WithOne(rf => rf.Requirements)
-            .HasForeignKey(rf => rf.RequirementId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<RequirementsFile>()
+            .HasOne(rf => rf.Requirements)
+            .WithMany(r => r.RequirementsFiles)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TestPlans>()

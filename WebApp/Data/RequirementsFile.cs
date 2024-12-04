@@ -13,7 +13,7 @@ public class RequirementsFile
     public DateTime UploadedAt { get; init; } = DateTime.UtcNow;
 
     // Foreign key to the Requirement
-    public int RequirementId { get; init; }
+    public int RequirementsId { get; init; }
 
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 

@@ -34,7 +34,7 @@ public class RequirementsFilesModel(
                     FileName = file.Name,
                     FileContent = memoryStream.ToArray(),
                     UploadedAt = DateTime.UtcNow,
-                    RequirementId = requirementId,
+                    RequirementsId = requirementId,
                     ProjectsId = projectSateService.ProjectId
                 };
 
@@ -52,7 +52,7 @@ public class RequirementsFilesModel(
     /// <returns></returns>
     public async Task<List<RequirementsFile>> GetFilesByRequirementId(int requirementId)
     {
-        ExistingFiles = await _dbContext.RequirementsFiles.Where(rf => rf.RequirementId == requirementId).ToListAsync();
+        ExistingFiles = await _dbContext.RequirementsFiles.Where(rf => rf.RequirementsId == requirementId).ToListAsync();
         return ExistingFiles;
     }
 }

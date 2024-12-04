@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApp.Data;
 
@@ -11,9 +12,11 @@ using WebApp.Data;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241204214009_Improvements69")]
+    partial class Improvements69
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -601,6 +604,9 @@ namespace WebApp.Migrations
                     b.Property<int>("RequirementsId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("RequirementsId1")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime2");
 
@@ -609,6 +615,8 @@ namespace WebApp.Migrations
                     b.HasIndex("ProjectsId");
 
                     b.HasIndex("RequirementsId");
+
+                    b.HasIndex("RequirementsId1");
 
                     b.ToTable("RequirementsFiles");
                 });
@@ -1290,10 +1298,14 @@ namespace WebApp.Migrations
                         .IsRequired();
 
                     b.HasOne("WebApp.Data.Requirements", "Requirements")
-                        .WithMany("RequirementsFiles")
+                        .WithMany()
                         .HasForeignKey("RequirementsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("WebApp.Data.Requirements", null)
+                        .WithMany("RequirementsFiles")
+                        .HasForeignKey("RequirementsId1");
 
                     b.Navigation("Projects");
 
