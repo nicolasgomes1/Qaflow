@@ -13,7 +13,7 @@ public class TestSteps
 
     [Required] [StringLength(500)] public string? ExpectedResult { get; set; }
 
-    public int TestCaseId { get; set; }
+    public int TestCasesId { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

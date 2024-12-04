@@ -287,7 +287,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
             foreach (var step in testStepsList)
             {
-                step.TestCaseId = newTestCase.Id; // Link step to this test case by setting the foreign key
+                step.TestCasesId = newTestCase.Id; // Link step to this test case by setting the foreign key
                 newTestCase.TestSteps.Add(step); // Add the step to the test case's TestSteps collection
             }
         }
