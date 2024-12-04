@@ -19,7 +19,7 @@ public class BugsFiles
 
     public DateTime ModifiedAt { get; init; } = DateTime.UtcNow;
 
-    public int BfProjectId { get; init; }
+    public int ProjectsId { get; init; }
 
     public Projects? Projects { get; init; }
 

@@ -178,7 +178,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
         
         var existingBug = await dbContext.Bugs
-            .FirstOrDefaultAsync(b => b.BProjectId == projectId && b.Name == name);
+            .FirstOrDefaultAsync(b => b.ProjectsId == projectId && b.Name == name);
 
         if (existingBug != null)
         {
@@ -189,7 +189,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         {
             Name = name,
             Description = description,
-            BProjectId = projectId,
+            ProjectsId = projectId,
             CreatedBy = USER,
             BugStatus = status,
             AssignedTo = assignedUserId

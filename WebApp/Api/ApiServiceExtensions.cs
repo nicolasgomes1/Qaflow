@@ -181,7 +181,7 @@ public static class ApiServiceExtensions
                     Severity = b.Severity.ToString(),
                     BugStatus = b.BugStatus.ToString(),
                     ArchivedStatus = b.ArchivedStatus.ToString(),
-                    ProjectId = b.BProjectId
+                    ProjectId = b.ProjectsId
                 }).ToListAsync();
             return Results.Ok(allBugs);
         }).WithOpenApi();

@@ -18,7 +18,7 @@ public class BugsModel(
 
     public async Task<List<Bugs>> GetBugsAsync()
     {
-        return await _dbContext.Bugs.Where(bp => bp.BProjectId == projectSateService.ProjectId).ToListAsync();
+        return await _dbContext.Bugs.Where(bp => bp.ProjectsId == projectSateService.ProjectId).ToListAsync();
     }
 
     public async Task<Bugs> GetBugByIdAsync(int id)
@@ -32,7 +32,7 @@ public class BugsModel(
     {
         bug.CreatedAt = DateTime.UtcNow;
         bug.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        bug.BProjectId = projectSateService.ProjectId;
+        bug.ProjectsId = projectSateService.ProjectId;
 
         _dbContext.Bugs.Add(bug);
         await _dbContext.SaveChangesAsync();

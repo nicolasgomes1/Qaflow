@@ -29,7 +29,7 @@ public class Bugs
 
     public int? TestCaseExecutionId { get; set; } // Value can be null value to be filled when running a test execution
 
-    public int BProjectId { get; set; }
+    public int ProjectsId { get; set; }
 
     public Projects? Projects { get; init; }
 

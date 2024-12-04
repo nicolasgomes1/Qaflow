@@ -148,7 +148,7 @@ public class ReportsModel
 
     public string LoadTotalBugs()
     {
-        var projectBugs = _dbContext.Bugs.Count(b => b.BProjectId == _projectStateService.ProjectId).ToString();
+        var projectBugs = _dbContext.Bugs.Count(b => b.ProjectsId == _projectStateService.ProjectId).ToString();
         return projectBugs == "0" ? "No Bugs" : $"Bugs: {projectBugs}";
     }
 }

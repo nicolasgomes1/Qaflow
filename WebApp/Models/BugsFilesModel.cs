@@ -36,7 +36,7 @@ public class BugsFilesModel(
                     FileContent = memoryStream.ToArray(),
                     UploadedAt = DateTime.UtcNow,
                     BugId = bugId,
-                    BfProjectId = projectSateService.ProjectId
+                    ProjectsId = projectSateService.ProjectId
                 };
 
                 _dbContext.BugsFiles.Add(bugsFile);

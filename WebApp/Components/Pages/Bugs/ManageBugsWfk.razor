@@ -93,13 +93,13 @@
     protected override async Task OnInitializedAsync()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        bugsData = await db.Bugs.Where(rp => rp.BProjectId == ProjectId).ToListAsync();
+        bugsData = await db.Bugs.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
     }
 
     private async Task<List<Bugs>> GetBugsAssignedToAll()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.Bugs.Where(rp => rp.BProjectId == ProjectId).ToListAsync();
+        return await db.Bugs.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
     }
 
 
@@ -107,7 +107,7 @@
     private async Task<List<Bugs>> GetBugsAssignedToCurrentUser()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.Bugs.Where(rp => rp.BProjectId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
+        return await db.Bugs.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
     }
 
     private async Task RefreshAssignedBugs()
