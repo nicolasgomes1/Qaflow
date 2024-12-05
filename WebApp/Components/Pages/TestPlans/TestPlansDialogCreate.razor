@@ -41,7 +41,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _testCaseslist = await TestCasesModel.GetTestCasesWithStatusCompleted();
+        _testCaseslist = await TestCasesModel.GetTestCasesWithWorkflowStatus();
     }
 
 

@@ -108,7 +108,7 @@ else
         _usersList = await UserService.GetUsersList();
 
       //  await TestCasesModel.GetAllTestCases();
-        _testCasesList = await TestCasesModel.GetTestCasesWithStatusCompleted();
+        _testCasesList = await TestCasesModel.GetTestCasesWithWorkflowStatus();
         _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
         await TestPlansModel.GetAssociatedTestCases(Id);
         await TestPlansFilesModel.GetFilesByTestPlanId(Id);

@@ -24,9 +24,7 @@ public class TestCasesModel(
     /// List of selected Jira tickets to be associated with the test case
     /// </summary>
     public List<string> SelectedJiraTicketIds { get; set; } = [];
-
-    public List<TestCases> TestCasesList { get; set; } = [];
-
+    
     public List<TestSteps> TestStepsList { get; set; } = [];
 
     public List<int> SelectedRequirementIds { get; set; } = [];
@@ -49,29 +47,13 @@ public class TestCasesModel(
         return (testcases, selectedTestCases);
     }
     
-    
-    public async Task GetAllTestCases()
-    {
-        TestCasesList = await _dbContext.TestCases
-            .Where(tc => tc.ProjectsId == projectStateService.ProjectId)
-            .ToListAsync();
-    }
-    
-    public async Task<List<TestCases>> GetTestCasesWithStatusCompleted()
+    public async Task<List<TestCases>> GetTestCasesWithWorkflowStatus(WorkflowStatus workflowStatus = WorkflowStatus.Completed)
     {
         return await _dbContext.TestCases
-            .Where(tc => tc.ProjectsId == projectStateService.ProjectId && tc.WorkflowStatus == WorkflowStatus.Completed)
+            .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result && tc.WorkflowStatus == workflowStatus)
             .ToListAsync();
     }
     
-    
-    // public async Task<List<TestCases>> GetAllTestCases1()
-    // {
-    //     return await _dbContext.TestCases
-    //         .Include(tc => tc.TestPlans)
-    //         .Where(tc => tc.TcProjectId == projectStateService.ProjectId)
-    //         .ToListAsync();
-    // }
 
     /// <summary>
     /// 
