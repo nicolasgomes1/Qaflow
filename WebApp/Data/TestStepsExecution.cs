@@ -3,7 +3,7 @@ using WebApp.Data.enums;
 
 namespace WebApp.Data;
 
-public class TestStepsExecution
+public class TestStepsExecution : BaseEntity
 {
     public int Id { get; set; }
 
@@ -27,21 +27,9 @@ public class TestStepsExecution
     public TimeSpan Duration { get; set; } // Duration of the test case execution
 
     [StringLength(500)] public string ExecutionNotes { get; set; } = string.Empty; // Notes for the test case execution
-
-    public ArchivedStatus ArchivedStatus { get; set; } = ArchivedStatus.Active;
-
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
-
+    
     [StringLength(500)]
-    // Actual result from the test step execution
     public string? ActualResult { get; set; }
-
-
-    [StringLength(500)] public string? CreatedBy { get; set; }
-
-    [StringLength(500)] public string? ModifiedBy { get; set; }
-
-
+    
     public TestStepsExecutionFile? TestStepsExecutionFile { get; set; }
 }

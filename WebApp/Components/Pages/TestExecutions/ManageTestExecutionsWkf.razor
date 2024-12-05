@@ -6,7 +6,7 @@
 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
         <RadzenButton Icon="assignment_ind" Text="My Assignments" Click="RefreshAssignedTestExecutions"/>
-        <RadzenButton Icon="assignment" Text="All Test Cases" Click="RefreshAllTestExecutions"/>
+        <RadzenButton Icon="assignment" Text="All Test Executions" Click="RefreshAllTestExecutions"/>
     </RadzenStack>
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
@@ -127,7 +127,7 @@
     private async Task RefreshAssignedTestExecutionsFromDialog()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testexecutionData = await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        testexecutionData = await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.IsActive == true).ToListAsync();
         StateHasChanged();
     }
     
@@ -140,7 +140,7 @@
     private async Task<List<TestExecution>> GetTestExecutionsAssignedToAll()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        return await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.IsActive == true).ToListAsync();
     }
     
     private async Task RefreshAssignedTestExecutions()

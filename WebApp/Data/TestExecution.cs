@@ -3,7 +3,7 @@ using WebApp.Data.enums;
 
 namespace WebApp.Data;
 
-public class TestExecution
+public class TestExecution : BaseEntity
 {
     public int Id { get; set; }
 
@@ -35,21 +35,11 @@ public class TestExecution
     public TimeSpan EstimatedTime { get; set; } // Field to store the estimated time of the test execution
 
     public string ExecutionNotes { get; set; } = string.Empty; // Field to store the notes of the test execution
-
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
+    
 
     // Navigation property to TestCaseExecution
     public ICollection<TestCaseExecution> TestCaseExecutions { get; set; } = new List<TestCaseExecution>();
-
-    public ArchivedStatus ArchivedStatus { get; set; } = ArchivedStatus.Active;
-
-    [MaxLength(50)]
-    public string? CreatedBy { get; set; }
-
-    [MaxLength(50)]
-    public string? ModifiedBy { get; set; }
-
+    
     [MaxLength(50)]
     public string AssignedTo { get; set; } = string.Empty;
 
