@@ -17,36 +17,7 @@ public class TestPlansModel(
     public TestPlans TestPlans { get; set; } = new();
 
     public List<int> SelectedTestCasesIds { get; set; } = [];
-
-
-    /*/// <summary>
-    /// Ienumerable
-    /// </summary>
-    public IEnumerable<TestPlans>? testplans;
-
-    /// <summary>
-    /// Ilist for selecting the line on the grid
-    /// </summary>
-    public IList<TestPlans> selectedTestPlans = new List<TestPlans>();
-
-
-    public async Task DisplayTestPlansIndexPage()
-    {
-        testplans = await _dbContext.TestPlans
-            .Where(p => p.ProjectsId == projectStateService.ProjectId)
-            .Include(tp => tp.TestCases).ToListAsync();
-
-        if (testplans != null)
-        {
-            var selection = testplans.FirstOrDefault();
-            if (selection == null)
-            {
-                return;
-            }
-
-            selectedTestPlans = new List<TestPlans> { selection };
-        }
-    }*/
+    
     
     public async Task<(IEnumerable<TestPlans> TestPlans, IList<TestPlans> SelectedTestPlans)> DisplayTestPlansIndexPage1()
     {
@@ -94,7 +65,6 @@ public class TestPlansModel(
         SelectedTestCasesIds = testPlans.TestCases.Select(tc => tc.Id).ToList();
     }
     
-    //TODO
     public async Task<TestPlans> CreateTestPlanAsync(TestPlans testPlan, List<IBrowserFile>? files)
     {
         // Fetch current user and project ID asynchronously
@@ -129,16 +99,19 @@ public class TestPlansModel(
         return testPlan;
     }
     
-    public async Task UpdateTestPlan2(TestPlans testPlan, List<IBrowserFile>? files)
+    public async Task UpdateTestPlan2(int testPlanId, List<IBrowserFile>? files)
     {
-        _dbContext.Update(testPlan);
-        testPlan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        testPlan.ProjectsId = projectStateService.ProjectId;
+        var testplan = await _dbContext.TestPlans.FindAsync(testPlanId);
+        if (testplan == null) throw new Exception("Test plan not found");
+        
+        _dbContext.Update(testplan);
+        testplan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        testplan.ProjectsId = projectStateService.ProjectId;
 
         // Retrieve the existing test plan to ensure it exists in the database
         var existingTestPlan = await _dbContext.TestPlans
             .Include(tp => tp.TestCases)
-            .FirstOrDefaultAsync(tp => tp.Id == testPlan.Id);
+            .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
 
         if (existingTestPlan == null) throw new Exception("Test plan not found");
 
@@ -151,7 +124,7 @@ public class TestPlansModel(
         // If there are files, attempt to save them
         if (files != null && files.Count != 0)
         {
-            await testPlansFilesModel.SaveFilesToDb(files, testPlan.Id);
+            await testPlansFilesModel.SaveFilesToDb(files, testPlanId);
         }
     }
 }
