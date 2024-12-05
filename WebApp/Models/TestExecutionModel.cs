@@ -65,12 +65,6 @@ public class TestExecutionModel
             // Fetched TestPlans is not null, proceed with populating the TestExecution
 
             testExecution.TestPlan = TestPlans;
-            //  TestExecution.SelectedTestPlanId = TestPlans.Id;
-
-            // Fetched TestCases is not null, proceed with populating the TestCaseExecutions
-
-            // Automatically populate SelectedTestCaseIds with IDs of test cases for the selected test plan
-            testExecution.SelectedTestCaseIds = TestPlans.TestCases.Select(tc => tc.Id).ToList();
 
             foreach (var testCase in TestPlans.TestCases)
             {
@@ -298,8 +292,6 @@ public class TestExecutionModel
             CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName,
             ProjectsId = _projectSateService.ProjectId,
             Priority = testExecution.Priority,
-            // Automatically populate SelectedTestCaseIds with IDs of test cases for the selected test plan
-            SelectedTestCaseIds = testPlan.TestCases.Select(tc => tc.Id).ToList()
         };
 
         // Populate TestCaseExecutions and TestStepsExecutions for the new TestExecution

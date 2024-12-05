@@ -13,9 +13,6 @@ public class TestPlans : BaseEntity
     public Priority Priority { get; set; }
 
     public ICollection<TestCases> TestCases { get; set; } = new List<TestCases>();
-
-    // List of selected TestCase IDs (if needed)
-    public List<int> SelectedTestCasesIds { get; set; } = new();
     
     public int ProjectsId { get; set; }
 

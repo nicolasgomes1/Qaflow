@@ -18,8 +18,6 @@ public class TestExecution
 
     public TestPlans? TestPlan { get; set; } // Nullable reference to TestPlan
 
-    // List of TestCase IDs related to the TestCaseExecution
-    public List<int> SelectedTestCaseIds { get; set; } = [];
 
     // enum with values Passed, Failed, Blocked, NotRun
     public ExecutionStatus ExecutionStatus { get; set; } = ExecutionStatus.NotRun;
