@@ -89,9 +89,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-   //     _testPlansList = await TestPlansModel.GetallTestPlans();
-        _testPlansList = await TestPlansModel.GetCompletedTestPlans();   
-      //  await TestPlansModel.GetallTestPlans();
+        _testPlansList = await TestPlansModel.GetallTestPlansWithWorkflowStatus(WorkflowStatus.Completed);   
       _usersList = await UserService.GetUsersList();
 
         _testExecution = await TestExecutionModel.GetTestExecutionData(Id);

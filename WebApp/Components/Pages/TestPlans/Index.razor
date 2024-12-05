@@ -17,12 +17,12 @@ else
                     AllowColumnPicking="true"
                     PagerHorizontalAlign="HorizontalAlign.Left"
                     ShowPagingSummary="true"
-                    Data="@TestPlansModel.testplans"
+                    Data="@_testplans"
                     ColumnWidth="300px"
                     LogicalFilterOperator="LogicalFilterOperator.Or"
                     SelectionMode="DataGridSelectionMode.Single"
-                    @bind-Value=@TestPlansModel.selectedTestPlans
-                                         @bind-Settings="@DataGridSettingsService.Settings"
+                    @bind-Value="@_selectedTestPlans"
+                    @bind-Settings="@DataGridSettingsService.Settings"
                     @ref="_dataGrid">
 
         <HeaderTemplate>
@@ -35,7 +35,7 @@ else
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Size="ButtonSize.Medium" Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
 
-            <DeleteallDataForModel EntityName="@(nameof(TestPlansModel.TestPlans))" EntityList="TestPlansModel.testplans"/>
+            <DeleteallDataForModel EntityName="@(nameof(TestPlans))" EntityList="_testplans"/>
             <ExportGridDataCsv Grid="_dataGrid"/>
             <RadzenButton Icon="assessment"
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
@@ -108,7 +108,10 @@ else
 @code {
     [Parameter] public int ProjectId { get; set; }
 
+    private IEnumerable<TestPlans>? _testplans;
 
+    private IList<TestPlans> _selectedTestPlans = [];
+    
     private readonly string _gridId = "testplans"; // Unique identifier for this grid
 
     private bool _isLoading = true;
@@ -127,7 +130,8 @@ else
     {
         DataGridSettingsService.SetCurrentGridId(_gridId);
 
-        await TestPlansModel.DisplayTestPlansIndexPage();
+        (_testplans, _selectedTestPlans) = await TestPlansModel.DisplayTestPlansIndexPage1();
+      //  await TestPlansModel.DisplayTestPlansIndexPage();
         _isLoading = false;
     }
 

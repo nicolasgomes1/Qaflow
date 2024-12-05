@@ -16,12 +16,10 @@ public class TestPlansModel(
 
     public TestPlans TestPlans { get; set; } = new();
 
-    public List<TestPlans> TestPlansList { get; private set; } = [];
-
     public List<int> SelectedTestCasesIds { get; set; } = [];
 
 
-    /// <summary>
+    /*/// <summary>
     /// Ienumerable
     /// </summary>
     public IEnumerable<TestPlans>? testplans;
@@ -48,34 +46,31 @@ public class TestPlansModel(
 
             selectedTestPlans = new List<TestPlans> { selection };
         }
-    }
-
-
-    /// <returns>A List of All Test Plans</returns>
-    // public async Task GetallTestPlans()
-    // {
-    //     TestPlansList = await _dbContext.TestPlans.Where(tp => tp.TPProjectId == projectStateService.ProjectId).ToListAsync();
-    // }
-
-    /// <summary>
-    /// Returns a list of all test plans within the project
-    /// </summary>
-    /// <returns></returns>
-    public async Task<List<TestPlans>> GetallTestPlans()
+    }*/
+    
+    public async Task<(IEnumerable<TestPlans> TestPlans, IList<TestPlans> SelectedTestPlans)> DisplayTestPlansIndexPage1()
     {
-        return await _dbContext.TestPlans.Where(tp => tp.ProjectsId == projectStateService.ProjectId).ToListAsync();
+        var testplans = await _dbContext.TestPlans
+            .Include(r => r.TestCases)
+            .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result)
+            .ToListAsync();
+
+        var selectedTestPlans = new List<TestPlans>();
+        var selection = testplans.FirstOrDefault();
+        if (selection != null)
+        {
+            selectedTestPlans.Add(selection);
+        }
+
+        return (testplans, selectedTestPlans);
     }
     
-    public async Task<List<TestPlans>> GetallTestPlansWithStatusCompleted()
+    
+    public async Task<List<TestPlans>> GetallTestPlansWithWorkflowStatus(WorkflowStatus status = WorkflowStatus.Completed)
     {
-        return await _dbContext.TestPlans.Where(tp => tp.ProjectsId == projectStateService.ProjectId && tp.WorkflowStatus == WorkflowStatus.Completed).ToListAsync();
+        return await _dbContext.TestPlans.Where(tp => tp.ProjectsId == projectStateService.ProjectId && tp.WorkflowStatus == status).ToListAsync();
     }
     
-    public async Task<List<TestPlans>> GetCompletedTestPlans()
-    {
-        return await _dbContext.TestPlans.Where(tp => tp.ProjectsId == projectStateService.ProjectId && tp.WorkflowStatus == WorkflowStatus.Completed).ToListAsync();
-    }
-
 
     public async Task<TestPlans> GetTestPlanByIdAsync(int testPlanId)
     {
@@ -83,12 +78,9 @@ public class TestPlansModel(
             .Include(tp => tp.TestCases)
             .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
 
-        if (testPlans != null)
-        {
-            TestPlans = testPlans;
-        }
+        if (testPlans == null) throw new ApplicationException("Test Plan not found");
 
-        return TestPlans;
+        return testPlans;
     }
 
 
@@ -101,25 +93,7 @@ public class TestPlansModel(
         if (testPlans == null) throw new ApplicationException("Test Plan not found");
         SelectedTestCasesIds = testPlans.TestCases.Select(tc => tc.Id).ToList();
     }
-
-    public async Task CreateTestPlan(TestPlans testPlan)
-    {
-        testPlan.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        testPlan.ProjectsId = projectStateService.ProjectId;
-        testPlan.TestCases = new List<TestCases>();
-
-        foreach (var testCaseId in SelectedTestCasesIds)
-        {
-            var testCase = await _dbContext.TestCases.FindAsync(testCaseId);
-            if (testCase == null) throw new Exception("Test case not found");
-
-            testPlan.TestCases.Add(testCase);
-        }
-
-        _dbContext.TestPlans.Add(testPlan);
-        await _dbContext.SaveChangesAsync();
-    }
-
+    
 
     public async Task<TestPlans> CreateTestPlan1(TestPlans testPlan, List<IBrowserFile>? files)
     {
@@ -146,58 +120,8 @@ public class TestPlansModel(
         return testPlan;
     }
 
-
-    public async Task UpdateTestPlan()
-    {
-        TestPlans.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-
-
-        var existingTestPlan = await _dbContext.TestPlans
-            .Include(tp => tp.TestCases)
-            .FirstOrDefaultAsync(tp => tp.Id == TestPlans.Id);
-
-        if (existingTestPlan != null)
-        {
-            existingTestPlan.TestCases = await _dbContext.TestCases
-                .Where(tc => SelectedTestCasesIds.Contains(tc.Id))
-                .ToListAsync();
-
-            existingTestPlan.Name = TestPlans.Name;
-            existingTestPlan.Description = TestPlans.Description;
-            existingTestPlan.Priority = TestPlans.Priority;
-
-            await _dbContext.SaveChangesAsync();
-        }
-    }
-
-    public async Task UpdateTestPlan1(TestPlans TestPlan)
-    {
-        // Set the ModifiedBy property to the current user's username
-        TestPlan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        TestPlan.ProjectsId = projectStateService.ProjectId;
-
-
-        // Retrieve the existing test plan to ensure it exists in the database
-        var existingTestPlan = await _dbContext.TestPlans
-            .Include(tp => tp.TestCases)
-            .FirstOrDefaultAsync(tp => tp.Id == TestPlan.Id);
-
-        if (existingTestPlan != null)
-        {
-            // Optionally update the test cases if needed
-            existingTestPlan.TestCases = await _dbContext.TestCases
-                .Where(tc => SelectedTestCasesIds.Contains(tc.Id))
-                .ToListAsync();
-
-            // Update the TestPlan object in the context
-            _dbContext.Update(TestPlan);
-
-            // Save changes to the database
-            await _dbContext.SaveChangesAsync();
-        }
-    }
-
-
+    
+    
     public async Task UpdateTestPlan2(TestPlans testPlan, List<IBrowserFile>? files)
     {
         _dbContext.Update(testPlan);
