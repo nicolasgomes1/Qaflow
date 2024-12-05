@@ -25,31 +25,30 @@ public class TestCasesModel(
     /// </summary>
     public List<string> SelectedJiraTicketIds { get; set; } = [];
 
-    public TestCases TestCases { get; set; } = new();
-
     public List<TestCases> TestCasesList { get; set; } = [];
 
     public List<TestSteps> TestStepsList { get; set; } = [];
 
     public List<int> SelectedRequirementIds { get; set; } = [];
+    
 
-    public IEnumerable<TestCases>? testcases;
-    public IList<TestCases> selectedTestCases = new List<TestCases>();
-
-    public async Task DisplayTestCasesIndexPage()
+    public async Task<(IEnumerable<TestCases> TestCases, IList<TestCases> SelectedTestCases)> DisplayTestCasesIndexPage1()
     {
-        testcases = await _dbContext.TestCases.Where(tc => tc.ProjectsId == projectStateService.ProjectId)
-            .Include(tc => tc.Requirements).ToListAsync();
-
+        var testcases = await _dbContext.TestCases
+            .Include(r => r.Requirements)
+            .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result)
+            .ToListAsync();
+        
+        var selectedTestCases = new List<TestCases>();
         var selection = testcases.FirstOrDefault();
-        if (selection == null)
+        if (selection != null)
         {
-            return;
+            selectedTestCases.Add(selection);
         }
-
-        selectedTestCases = new List<TestCases>() { selection };
+        
+        return (testcases, selectedTestCases);
     }
-
+    
     
     public async Task GetAllTestCases()
     {

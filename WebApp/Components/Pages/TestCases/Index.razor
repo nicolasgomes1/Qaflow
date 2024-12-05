@@ -20,12 +20,12 @@ else
                     PagerHorizontalAlign="HorizontalAlign.Left"
                     ShowPagingSummary="true"
                     AllowVirtualization="true"
-                    Data="@TestCasesModel.testcases"
+                    Data="@_testcases"
                     ColumnWidth="auto"
                     LogicalFilterOperator="LogicalFilterOperator.Or"
                     SelectionMode="DataGridSelectionMode.Single"
                     AllowColumnReorder="true"
-                    @bind-Value="@TestCasesModel.selectedTestCases"
+                    @bind-Value="@_selectedTestCases"
                     @bind-Settings="@DataGridSettingsService.Settings"
                     @ref="_dataGrid">
 
@@ -40,7 +40,7 @@ else
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Size="ButtonSize.Medium" Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
-            <DeleteallDataForModel EntityName="@(nameof(TestCasesModel.TestCases))" EntityList="TestCasesModel.testcases"/>
+            <DeleteallDataForModel EntityName="@(nameof(TestCases))" EntityList="_testcases"/>
             <ExportGridDataCsv Grid="@_dataGrid"/>
             <RadzenButton Icon="assessment"
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
@@ -125,6 +125,8 @@ else
     private const string GridId = "testcases"; // Unique identifier for this grid
     private RadzenDataGrid<TestCases> _dataGrid = new();
 
+    private IEnumerable<TestCases>? _testcases;
+    private IList<TestCases> _selectedTestCases = [];
 
     private async Task OnPageSizeChanged(int newSize)
     {
@@ -136,8 +138,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         DataGridSettingsService.SetCurrentGridId(GridId);
-
-        await TestCasesModel.DisplayTestCasesIndexPage();
+        (_testcases, _selectedTestCases) = await TestCasesModel.DisplayTestCasesIndexPage1();
         _isLoading = false;
     }
 
