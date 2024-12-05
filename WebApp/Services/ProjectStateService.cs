@@ -31,6 +31,17 @@ public class ProjectStateService
 
         return ProjectId;
     }
+    
+    
+    public async Task<int> GetProjectIdAsync()
+    {
+        if (ProjectId == 0)
+        {
+            throw new InvalidOperationException("ProjectId is not set.");
+        }
+
+        return await Task.FromResult(ProjectId);
+    }
 
 
 

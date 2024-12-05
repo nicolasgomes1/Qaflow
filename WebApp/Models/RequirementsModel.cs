@@ -15,38 +15,12 @@ public class RequirementsModel(
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
 
-
-    public Requirements Requirements { get; set; } = new();
-
-    public List<Requirements> RequirementsList { get; private set; } = [];
-
-    /// <summary>
-    /// Ienumerable of Requirements
-    /// </summary>
-    public IEnumerable<Requirements> requirements = [];
-
-    public IList<Requirements> selectedRequirements = new List<Requirements>();
-
-
-    public async Task DisplayRequirementsIndexPage()
-    {
-        requirements = await _dbContext.Requirements.Include(r => r.TestCases)
-            .Where(tc => tc.ProjectsId == projectSateService.ProjectId).ToListAsync();
-
-        var selection = requirements.FirstOrDefault();
-        if (selection == null)
-        {
-            return;
-        }
-
-        selectedRequirements = new List<Requirements> { selection };
-    }
     
     public async Task<(IEnumerable<Requirements> Requirements, IList<Requirements> SelectedRequirements)> DisplayRequirementsIndexPage1()
     {
         var requirements = await _dbContext.Requirements
             .Include(r => r.TestCases)
-            .Where(tc => tc.ProjectsId == projectSateService.ProjectId)
+            .Where(tc => tc.ProjectsId == projectSateService.GetProjectIdAsync().Result)
             .ToListAsync();
 
         var selectedRequirements = new List<Requirements>();
@@ -67,17 +41,11 @@ public class RequirementsModel(
     public async Task<List<Requirements>> GetRequirementsWithWorkflowCompleted()
     {
         return await _dbContext.Requirements
-            .Where(r => r.ProjectsId == projectSateService.ProjectId)
+            .Where(r => r.ProjectsId == projectSateService.GetProjectIdAsync().Result)
             .Where(r =>r.WorkflowStatus == WorkflowStatus.Completed)
             .ToListAsync();
     }
-
-    public async Task GetallRequirementsWithTests()
-    {
-        RequirementsList = await _dbContext.Requirements.Include(r => r.TestCases).ToListAsync();
-    }
-
-
+    
     /// <summary>
     /// Load Requirement by Id
     /// </summary>
@@ -98,7 +66,7 @@ public class RequirementsModel(
     {
         // First, create the requirement
         _dbContext.Requirements.Add(requirement);
-        requirement.ProjectsId = projectSateService.ProjectId;
+        requirement.ProjectsId = projectSateService.GetProjectIdAsync().Result;
 
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         
@@ -109,8 +77,7 @@ public class RequirementsModel(
         {
             await requirementsFilesModel.SaveFilesToDb(files, requirement.Id);
         }
-
-
+        
         return requirement;
     }
 
