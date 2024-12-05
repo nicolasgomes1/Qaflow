@@ -35,14 +35,14 @@ public class RequirementsModel(
 
 
     /// <summary>
-    /// Returns a list of requirements for the project
+    /// Returns a list of requirements for the project with default workflow status completed
     /// </summary>
     /// <returns></returns>
-    public async Task<List<Requirements>> GetRequirementsWithWorkflowCompleted()
+    public async Task<List<Requirements>> GetRequirementsWithWorkflowStatus(WorkflowStatus workflowStatus = WorkflowStatus.Completed)
     {
         return await _dbContext.Requirements
             .Where(r => r.ProjectsId == projectSateService.GetProjectIdAsync().Result)
-            .Where(r =>r.WorkflowStatus == WorkflowStatus.Completed)
+            .Where(r =>r.WorkflowStatus == workflowStatus)
             .ToListAsync();
     }
     
