@@ -81,8 +81,11 @@ public class RequirementsModel(
         return requirement;
     }
 
-    public async Task UpdateRequirement(Requirements requirement, List<IBrowserFile>? files)
+    public async Task UpdateRequirement(int requirementId, List<IBrowserFile>? files)
     {
+        var requirement = await _dbContext.Requirements.FindAsync(requirementId);
+        if (requirement == null) throw new Exception("Requirement not found");
+        
         // First, update the requirement
         _dbContext.Requirements.Update(requirement);
         requirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
@@ -93,7 +96,7 @@ public class RequirementsModel(
         // If there are files, attempt to save them
         if (files != null && files.Count != 0)
         {
-            await requirementsFilesModel.SaveFilesToDb(files, requirement.Id);
+            await requirementsFilesModel.SaveFilesToDb(files, requirementId);
         }
     }
 }

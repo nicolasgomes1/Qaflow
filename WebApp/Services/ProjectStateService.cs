@@ -20,18 +20,6 @@ public class ProjectStateService
     {
         ProjectId = 0;  // 0 can represent "no project" or "invalid project" as needed.
     }
-
-    // Return the project ID (throws if not set correctly).
-    public int GetProjectId()
-    {
-        if (ProjectId == 0)
-        {
-            throw new InvalidOperationException("ProjectId is not set.");
-        }
-
-        return ProjectId;
-    }
-    
     
     public async Task<int> GetProjectIdAsync()
     {

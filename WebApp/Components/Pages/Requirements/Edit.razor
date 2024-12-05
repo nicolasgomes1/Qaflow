@@ -104,7 +104,7 @@ else
     
     private async Task UpdateRequirement()
     {
-        await RequirementsModel.UpdateRequirement(_requirements, _uploadedFiles);
+        await RequirementsModel.UpdateRequirement(Id, _uploadedFiles);
         
         NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/requirements");
         StateHasChanged();
