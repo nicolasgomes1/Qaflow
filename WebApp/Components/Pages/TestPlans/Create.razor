@@ -110,7 +110,8 @@
 
     private async Task CreateNewTestPlan()
     {
-        await TestPlansModel.CreateTestPlan1(_testPlans, _uploadedFiles);
+        //await TestPlansModel.CreateTestPlan1(_testPlans, _uploadedFiles);
+        await TestPlansModel.CreateTestPlanAsync(_testPlans, _uploadedFiles);
         NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testplans");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Plan with Id {_testPlans.Id} Created Successfully");

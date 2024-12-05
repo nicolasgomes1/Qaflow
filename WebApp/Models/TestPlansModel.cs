@@ -94,33 +94,40 @@ public class TestPlansModel(
         SelectedTestCasesIds = testPlans.TestCases.Select(tc => tc.Id).ToList();
     }
     
-
-    public async Task<TestPlans> CreateTestPlan1(TestPlans testPlan, List<IBrowserFile>? files)
+    //TODO
+    public async Task<TestPlans> CreateTestPlanAsync(TestPlans testPlan, List<IBrowserFile>? files)
     {
-        testPlan.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        testPlan.ProjectsId = projectStateService.ProjectId;
+        // Fetch current user and project ID asynchronously
+        var currentUserInfo = userService.GetCurrentUserInfoAsync().Result.UserName;
+        var projectId = projectStateService.GetProjectIdAsync().Result;
+
+        // Set test plan properties
+        testPlan.CreatedBy = currentUserInfo;
+        testPlan.ProjectsId = projectId;
         testPlan.TestCases = new List<TestCases>();
 
+        // Fetch and add test cases asynchronously
         foreach (var testCaseId in SelectedTestCasesIds)
         {
             var testCase = await _dbContext.TestCases.FindAsync(testCaseId);
-            if (testCase == null) throw new Exception("Test case not found");
+            if (testCase == null)
+                throw new Exception($"Test case with ID {testCaseId} not found.");
 
             testPlan.TestCases.Add(testCase);
         }
 
-        _dbContext.TestPlans.Add(testPlan);
+        // Save the test plan
+        await _dbContext.TestPlans.AddAsync(testPlan);
         await _dbContext.SaveChangesAsync();
 
-        if (files != null && files.Count != 0)
+        // Save associated files if provided
+        if (files?.Any() == true)
         {
             await testPlansFilesModel.SaveFilesToDb(files, testPlan.Id);
         }
 
         return testPlan;
     }
-
-    
     
     public async Task UpdateTestPlan2(TestPlans testPlan, List<IBrowserFile>? files)
     {
