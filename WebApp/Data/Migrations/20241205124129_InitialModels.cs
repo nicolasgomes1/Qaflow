@@ -6,11 +6,50 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebApp.Migrations
 {
     /// <inheritdoc />
-    public partial class Models : Migration
+    public partial class InitialModels : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AspNetRoles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "GridSettings",
                 columns: table => new
@@ -70,6 +109,112 @@ namespace WebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Bugs",
                 columns: table => new
                 {
@@ -80,20 +225,22 @@ namespace WebApp.Migrations
                     Priority = table.Column<int>(type: "int", nullable: false),
                     Severity = table.Column<int>(type: "int", nullable: false),
                     BugStatus = table.Column<int>(type: "int", nullable: false),
+                    TestCaseExecutionId = table.Column<int>(type: "int", nullable: true),
+                    ProjectsId = table.Column<int>(type: "int", nullable: false),
+                    WorkflowStatus = table.Column<int>(type: "int", nullable: false),
+                    AssignedTo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ArchivedStatus = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    TestCaseExecutionId = table.Column<int>(type: "int", nullable: true),
-                    BProjectId = table.Column<int>(type: "int", nullable: false)
+                    ArchivedStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Bugs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bugs_Projects_BProjectId",
-                        column: x => x.BProjectId,
+                        name: "FK_Bugs_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
                         principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -108,19 +255,21 @@ namespace WebApp.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     Priority = table.Column<int>(type: "int", nullable: false),
+                    ProjectsId = table.Column<int>(type: "int", nullable: false),
+                    WorkflowStatus = table.Column<int>(type: "int", nullable: false),
+                    AssignedTo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ArchivedStatus = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    RProjectId = table.Column<int>(type: "int", nullable: false)
+                    ArchivedStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Requirements", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Requirements_Projects_RProjectId",
-                        column: x => x.RProjectId,
+                        name: "FK_Requirements_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
                         principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -135,22 +284,24 @@ namespace WebApp.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Priority = table.Column<int>(type: "int", nullable: false),
-                    ArchivedStatus = table.Column<int>(type: "int", nullable: false),
                     TestType = table.Column<int>(type: "int", nullable: false),
                     TestScope = table.Column<int>(type: "int", nullable: false),
+                    EstimatedTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    ProjectsId = table.Column<int>(type: "int", nullable: false),
+                    WorkflowStatus = table.Column<int>(type: "int", nullable: false),
+                    AssignedTo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EstimatedTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    TcProjectId = table.Column<int>(type: "int", nullable: false)
+                    ArchivedStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TestCases", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TestCases_Projects_TcProjectId",
-                        column: x => x.TcProjectId,
+                        name: "FK_TestCases_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
                         principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -165,20 +316,22 @@ namespace WebApp.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Priority = table.Column<int>(type: "int", nullable: false),
+                    SelectedTestCasesIds = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjectsId = table.Column<int>(type: "int", nullable: false),
+                    WorkflowStatus = table.Column<int>(type: "int", nullable: false),
+                    AssignedTo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SelectedTestCasesIds = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ArchivedStatus = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TPProjectId = table.Column<int>(type: "int", nullable: false)
+                    CreatedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ArchivedStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TestPlans", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TestPlans_Projects_TPProjectId",
-                        column: x => x.TPProjectId,
+                        name: "FK_TestPlans_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
                         principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -245,7 +398,7 @@ namespace WebApp.Migrations
                     BugId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    BfProjectId = table.Column<int>(type: "int", nullable: false)
+                    ProjectsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -257,8 +410,8 @@ namespace WebApp.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BugsFiles_Projects_BfProjectId",
-                        column: x => x.BfProjectId,
+                        name: "FK_BugsFiles_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
                         principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -273,32 +426,26 @@ namespace WebApp.Migrations
                     FileName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     FileContent = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RequirementId = table.Column<int>(type: "int", nullable: false),
+                    RequirementsId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RfProjectId = table.Column<int>(type: "int", nullable: false),
-                    RequirementsId = table.Column<int>(type: "int", nullable: true)
+                    ProjectsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RequirementsFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RequirementsFiles_Projects_RfProjectId",
-                        column: x => x.RfProjectId,
+                        name: "FK_RequirementsFiles_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
                         principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_RequirementsFiles_Requirements_RequirementId",
-                        column: x => x.RequirementId,
-                        principalTable: "Requirements",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_RequirementsFiles_Requirements_RequirementsId",
                         column: x => x.RequirementsId,
                         principalTable: "Requirements",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -336,15 +483,15 @@ namespace WebApp.Migrations
                     UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TcfProjectId = table.Column<int>(type: "int", nullable: false),
+                    ProjectsId = table.Column<int>(type: "int", nullable: false),
                     TestCaseId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TestCasesFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TestCasesFiles_Projects_TcfProjectId",
-                        column: x => x.TcfProjectId,
+                        name: "FK_TestCasesFiles_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
                         principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -392,10 +539,9 @@ namespace WebApp.Migrations
                     Number = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     ExpectedResult = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    TestCaseId = table.Column<int>(type: "int", nullable: false),
+                    TestCasesId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TestCasesId = table.Column<int>(type: "int", nullable: false),
                     ArchivedStatus = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
@@ -455,17 +601,18 @@ namespace WebApp.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ArchivedStatus = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AssignedTo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TEProjectId = table.Column<int>(type: "int", nullable: false)
+                    CreatedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    AssignedTo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ProjectsId = table.Column<int>(type: "int", nullable: false),
+                    WorkflowStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TestExecution", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TestExecution_Projects_TEProjectId",
-                        column: x => x.TEProjectId,
+                        name: "FK_TestExecution_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
                         principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -489,15 +636,15 @@ namespace WebApp.Migrations
                     TestPlanId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TPFProjectId = table.Column<int>(type: "int", nullable: false),
+                    ProjectsId = table.Column<int>(type: "int", nullable: false),
                     TestPlansId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TestPlansFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TestPlansFiles_Projects_TPFProjectId",
-                        column: x => x.TPFProjectId,
+                        name: "FK_TestPlansFiles_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
                         principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -556,7 +703,7 @@ namespace WebApp.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TestCaseExecutionId = table.Column<int>(type: "int", nullable: false),
+                    TestCaseExecutionIdFk = table.Column<int>(type: "int", nullable: false),
                     TestStepsId = table.Column<int>(type: "int", nullable: false),
                     ExecutionStatus = table.Column<int>(type: "int", nullable: false),
                     Version = table.Column<int>(type: "int", nullable: false),
@@ -570,7 +717,7 @@ namespace WebApp.Migrations
                     CreatedBy = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     TestStepsExecutionFileId = table.Column<int>(type: "int", nullable: true),
-                    TestCaseExecutionId1 = table.Column<int>(type: "int", nullable: true)
+                    TestCaseExecutionId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -579,13 +726,13 @@ namespace WebApp.Migrations
                         name: "FK_TestStepsExecution_TestCaseExecution_TestCaseExecutionId",
                         column: x => x.TestCaseExecutionId,
                         principalTable: "TestCaseExecution",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TestStepsExecution_TestCaseExecution_TestCaseExecutionIdFk",
+                        column: x => x.TestCaseExecutionIdFk,
+                        principalTable: "TestCaseExecution",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TestStepsExecution_TestCaseExecution_TestCaseExecutionId1",
-                        column: x => x.TestCaseExecutionId1,
-                        principalTable: "TestCaseExecution",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TestStepsExecution_TestStepsExecutionFiles_TestStepsExecutionFileId",
                         column: x => x.TestStepsExecutionFileId,
@@ -599,9 +746,48 @@ namespace WebApp.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bugs_BProjectId",
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserLogins_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_RoleId",
+                table: "AspNetUserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bugs_ProjectsId",
                 table: "Bugs",
-                column: "BProjectId");
+                column: "ProjectsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BugsComments_BugId",
@@ -609,34 +795,29 @@ namespace WebApp.Migrations
                 column: "BugId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BugsFiles_BfProjectId",
-                table: "BugsFiles",
-                column: "BfProjectId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_BugsFiles_BugId",
                 table: "BugsFiles",
                 column: "BugId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Requirements_RProjectId",
-                table: "Requirements",
-                column: "RProjectId");
+                name: "IX_BugsFiles_ProjectsId",
+                table: "BugsFiles",
+                column: "ProjectsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RequirementsFiles_RequirementId",
+                name: "IX_Requirements_ProjectsId",
+                table: "Requirements",
+                column: "ProjectsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RequirementsFiles_ProjectsId",
                 table: "RequirementsFiles",
-                column: "RequirementId");
+                column: "ProjectsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RequirementsFiles_RequirementsId",
                 table: "RequirementsFiles",
                 column: "RequirementsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RequirementsFiles_RfProjectId",
-                table: "RequirementsFiles",
-                column: "RfProjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RequirementsTestCases_TestCasesId",
@@ -654,14 +835,14 @@ namespace WebApp.Migrations
                 column: "TestExecutionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestCases_TcProjectId",
+                name: "IX_TestCases_ProjectsId",
                 table: "TestCases",
-                column: "TcProjectId");
+                column: "ProjectsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestCasesFiles_TcfProjectId",
+                name: "IX_TestCasesFiles_ProjectsId",
                 table: "TestCasesFiles",
-                column: "TcfProjectId");
+                column: "ProjectsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestCasesFiles_TestCaseId",
@@ -684,9 +865,9 @@ namespace WebApp.Migrations
                 column: "TestPlansId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestExecution_TEProjectId",
+                name: "IX_TestExecution_ProjectsId",
                 table: "TestExecution",
-                column: "TEProjectId");
+                column: "ProjectsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestExecution_TestPlanId",
@@ -694,9 +875,14 @@ namespace WebApp.Migrations
                 column: "TestPlanId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestPlans_TPProjectId",
+                name: "IX_TestPlans_ProjectsId",
                 table: "TestPlans",
-                column: "TPProjectId");
+                column: "ProjectsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestPlansFiles_ProjectsId",
+                table: "TestPlansFiles",
+                column: "ProjectsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestPlansFiles_TestPlanId",
@@ -709,11 +895,6 @@ namespace WebApp.Migrations
                 column: "TestPlansId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestPlansFiles_TPFProjectId",
-                table: "TestPlansFiles",
-                column: "TPFProjectId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_TestSteps_TestCasesId",
                 table: "TestSteps",
                 column: "TestCasesId");
@@ -724,9 +905,9 @@ namespace WebApp.Migrations
                 column: "TestCaseExecutionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestStepsExecution_TestCaseExecutionId1",
+                name: "IX_TestStepsExecution_TestCaseExecutionIdFk",
                 table: "TestStepsExecution",
-                column: "TestCaseExecutionId1");
+                column: "TestCaseExecutionIdFk");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestStepsExecution_TestStepsExecutionFileId",
@@ -747,6 +928,21 @@ namespace WebApp.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
+
             migrationBuilder.DropTable(
                 name: "BugsComments");
 
@@ -779,6 +975,12 @@ namespace WebApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "TestStepsExecution");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Bugs");

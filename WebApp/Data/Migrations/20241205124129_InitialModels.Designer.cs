@@ -12,8 +12,8 @@ using WebApp.Data;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241204191419_Improvements1")]
-    partial class Improvements1
+    [Migration("20241205124129_InitialModels")]
+    partial class InitialModels
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -269,9 +269,6 @@ namespace WebApp.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("BProjectId")
-                        .HasColumnType("int");
-
                     b.Property<int>("BugStatus")
                         .HasColumnType("int");
 
@@ -301,6 +298,9 @@ namespace WebApp.Migrations
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
+                    b.Property<int>("ProjectsId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Severity")
                         .HasColumnType("int");
 
@@ -312,7 +312,7 @@ namespace WebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BProjectId");
+                    b.HasIndex("ProjectsId");
 
                     b.ToTable("Bugs");
                 });
@@ -362,9 +362,6 @@ namespace WebApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BfProjectId")
-                        .HasColumnType("int");
-
                     b.Property<int>("BugId")
                         .HasColumnType("int");
 
@@ -383,14 +380,17 @@ namespace WebApp.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("ProjectsId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BfProjectId");
-
                     b.HasIndex("BugId");
+
+                    b.HasIndex("ProjectsId");
 
                     b.ToTable("BugsFiles");
                 });
@@ -598,13 +598,10 @@ namespace WebApp.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("RequirementId")
+                    b.Property<int>("ProjectsId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RequirementsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RfProjectId")
+                    b.Property<int>("RequirementsId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UploadedAt")
@@ -612,11 +609,9 @@ namespace WebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RequirementId");
+                    b.HasIndex("ProjectsId");
 
                     b.HasIndex("RequirementsId");
-
-                    b.HasIndex("RfProjectId");
 
                     b.ToTable("RequirementsFiles");
                 });
@@ -722,7 +717,7 @@ namespace WebApp.Migrations
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
-                    b.Property<int>("TcProjectId")
+                    b.Property<int>("ProjectsId")
                         .HasColumnType("int");
 
                     b.Property<int>("TestScope")
@@ -736,7 +731,7 @@ namespace WebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TcProjectId");
+                    b.HasIndex("ProjectsId");
 
                     b.ToTable("TestCases");
                 });
@@ -764,7 +759,7 @@ namespace WebApp.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TcfProjectId")
+                    b.Property<int>("ProjectsId")
                         .HasColumnType("int");
 
                     b.Property<int>("TestCaseId")
@@ -775,7 +770,7 @@ namespace WebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TcfProjectId");
+                    b.HasIndex("ProjectsId");
 
                     b.HasIndex("TestCaseId");
 
@@ -868,12 +863,12 @@ namespace WebApp.Migrations
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
+                    b.Property<int>("ProjectsId")
+                        .HasColumnType("int");
+
                     b.PrimitiveCollection<string>("SelectedTestCaseIds")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TEProjectId")
-                        .HasColumnType("int");
 
                     b.Property<int>("TestPlanId")
                         .HasColumnType("int");
@@ -886,7 +881,7 @@ namespace WebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TEProjectId");
+                    b.HasIndex("ProjectsId");
 
                     b.HasIndex("TestPlanId");
 
@@ -913,7 +908,8 @@ namespace WebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -922,7 +918,8 @@ namespace WebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -931,19 +928,19 @@ namespace WebApp.Migrations
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
+                    b.Property<int>("ProjectsId")
+                        .HasColumnType("int");
+
                     b.PrimitiveCollection<string>("SelectedTestCasesIds")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TPProjectId")
-                        .HasColumnType("int");
 
                     b.Property<int>("WorkflowStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TPProjectId");
+                    b.HasIndex("ProjectsId");
 
                     b.ToTable("TestPlans");
                 });
@@ -970,7 +967,7 @@ namespace WebApp.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TPFProjectId")
+                    b.Property<int>("ProjectsId")
                         .HasColumnType("int");
 
                     b.Property<int>("TestPlanId")
@@ -984,7 +981,7 @@ namespace WebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TPFProjectId");
+                    b.HasIndex("ProjectsId");
 
                     b.HasIndex("TestPlanId");
 
@@ -1029,9 +1026,6 @@ namespace WebApp.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("Number")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TestCaseId")
                         .HasColumnType("int");
 
                     b.Property<int>("TestCasesId")
@@ -1241,7 +1235,7 @@ namespace WebApp.Migrations
                 {
                     b.HasOne("WebApp.Data.Projects", "Projects")
                         .WithMany("Bugs")
-                        .HasForeignKey("BProjectId")
+                        .HasForeignKey("ProjectsId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1261,16 +1255,16 @@ namespace WebApp.Migrations
 
             modelBuilder.Entity("WebApp.Data.BugsFiles", b =>
                 {
-                    b.HasOne("WebApp.Data.Projects", "Projects")
-                        .WithMany("BugsFile")
-                        .HasForeignKey("BfProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("WebApp.Data.Bugs", "Bugs")
                         .WithMany("BugFiles")
                         .HasForeignKey("BugId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApp.Data.Projects", "Projects")
+                        .WithMany("BugsFile")
+                        .HasForeignKey("ProjectsId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Bugs");
@@ -1291,20 +1285,16 @@ namespace WebApp.Migrations
 
             modelBuilder.Entity("WebApp.Data.RequirementsFile", b =>
                 {
-                    b.HasOne("WebApp.Data.Requirements", "Requirements")
-                        .WithMany()
-                        .HasForeignKey("RequirementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApp.Data.Requirements", null)
-                        .WithMany("RequirementsFiles")
-                        .HasForeignKey("RequirementsId");
-
                     b.HasOne("WebApp.Data.Projects", "Projects")
                         .WithMany("RequirementsFile")
-                        .HasForeignKey("RfProjectId")
+                        .HasForeignKey("ProjectsId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebApp.Data.Requirements", "Requirements")
+                        .WithMany("RequirementsFiles")
+                        .HasForeignKey("RequirementsId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Projects");
@@ -1335,7 +1325,7 @@ namespace WebApp.Migrations
                 {
                     b.HasOne("WebApp.Data.Projects", "Projects")
                         .WithMany("TestCases")
-                        .HasForeignKey("TcProjectId")
+                        .HasForeignKey("ProjectsId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1346,7 +1336,7 @@ namespace WebApp.Migrations
                 {
                     b.HasOne("WebApp.Data.Projects", "Projects")
                         .WithMany("TestCasesFile")
-                        .HasForeignKey("TcfProjectId")
+                        .HasForeignKey("ProjectsId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1378,7 +1368,7 @@ namespace WebApp.Migrations
                 {
                     b.HasOne("WebApp.Data.Projects", "Projects")
                         .WithMany("TestExecution")
-                        .HasForeignKey("TEProjectId")
+                        .HasForeignKey("ProjectsId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1397,7 +1387,7 @@ namespace WebApp.Migrations
                 {
                     b.HasOne("WebApp.Data.Projects", "Projects")
                         .WithMany("TestPlans")
-                        .HasForeignKey("TPProjectId")
+                        .HasForeignKey("ProjectsId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1408,7 +1398,7 @@ namespace WebApp.Migrations
                 {
                     b.HasOne("WebApp.Data.Projects", "Projects")
                         .WithMany("TestPlansFile")
-                        .HasForeignKey("TPFProjectId")
+                        .HasForeignKey("ProjectsId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
