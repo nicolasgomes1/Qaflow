@@ -136,7 +136,7 @@ else
     {
         _usersList = await UserService.GetUsersList();
 
-        _requirementsList = await RequirementsModel.GetallRequirements();
+        _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowCompleted();
         _testCases = await TestCasesModel.GetTestCaseData(Id);
 
         await TestCasesModel.GetAssociatedRequirements(_testCases);

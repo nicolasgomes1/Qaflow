@@ -16,11 +16,11 @@ else
                     PageSize="@_pageSizeFilter"
                     PagerHorizontalAlign="HorizontalAlign.Left"
                     ShowPagingSummary="true"
-                    Data="@RequirementsModel.requirements"
+                    Data="@_requirements"
                     ColumnWidth="auto"
                     LogicalFilterOperator="LogicalFilterOperator.Or"
                     SelectionMode="DataGridSelectionMode.Single"
-                    @bind-Value="@RequirementsModel.selectedRequirements"
+                    @bind-Value="@_selectedRequirements"
                     @bind-Settings="@DataGridSettingsService.Settings"
                     @ref="_dataGrid"
                     AllowVirtualization="true"
@@ -48,8 +48,8 @@ else
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Size="ButtonSize.Medium"
                           Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
-            <DeleteallDataForModel EntityName="@(nameof(RequirementsModel.Requirements))"
-                                   EntityList="RequirementsModel.requirements"/>
+            <DeleteallDataForModel EntityName="@(nameof(Requirements))"
+                                   EntityList="_requirements"/>
             <ExportGridDataCsv Grid="@_dataGrid"/>
             <RadzenButton Icon="assessment"
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
@@ -125,6 +125,10 @@ else
     private bool _isLoading = true; // Initially true to hide grid until everything is loaded
     private const string GridId = "requirements"; // Unique identifier for this grid
 
+    
+    private IEnumerable<Requirements> _requirements = [];
+    private IList<Requirements> _selectedRequirements = [];
+    
     int _pageSizeFilter = 10;
 
     private GridSettings _gridSettings = new();
@@ -133,7 +137,14 @@ else
     {
         DataGridSettingsService.SetCurrentGridId(GridId);
 
-        await RequirementsModel.DisplayRequirementsIndexPage();
+     //   await RequirementsModel.DisplayRequirementsIndexPage();
+        
+        
+        var result = await RequirementsModel.DisplayRequirementsIndexPage1();
+        _requirements = result.Requirements;
+        _selectedRequirements = result.SelectedRequirements;
+        
+        
         _gridSettings = await GetCUrrentGridUserSettings("Requirements");
         _isLoading = false;
     }

@@ -41,13 +41,30 @@ public class RequirementsModel(
 
         selectedRequirements = new List<Requirements> { selection };
     }
+    
+    public async Task<(IEnumerable<Requirements> Requirements, IList<Requirements> SelectedRequirements)> DisplayRequirementsIndexPage1()
+    {
+        var requirements = await _dbContext.Requirements
+            .Include(r => r.TestCases)
+            .Where(tc => tc.ProjectsId == projectSateService.ProjectId)
+            .ToListAsync();
+
+        var selectedRequirements = new List<Requirements>();
+        var selection = requirements.FirstOrDefault();
+        if (selection != null)
+        {
+            selectedRequirements.Add(selection);
+        }
+
+        return (requirements, selectedRequirements);
+    }
 
 
     /// <summary>
     /// Returns a list of requirements for the project
     /// </summary>
     /// <returns></returns>
-    public async Task<List<Requirements>> GetallRequirements()
+    public async Task<List<Requirements>> GetRequirementsWithWorkflowCompleted()
     {
         return await _dbContext.Requirements
             .Where(r => r.ProjectsId == projectSateService.ProjectId)
