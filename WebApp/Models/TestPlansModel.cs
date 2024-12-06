@@ -101,27 +101,23 @@ public class TestPlansModel(
     
     public async Task UpdateTestPlan2(int testPlanId, List<IBrowserFile>? files)
     {
-        var testplan = await _dbContext.TestPlans.FindAsync(testPlanId);
+        //find testplan with testcases
+        var testplan = await _dbContext.TestPlans
+            .Include(tp => tp.TestCases)
+            .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
         if (testplan == null) throw new Exception("Test plan not found");
         
         _dbContext.Update(testplan);
         testplan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         testplan.ProjectsId = projectStateService.ProjectId;
-
-        // Retrieve the existing test plan to ensure it exists in the database
-        var existingTestPlan = await _dbContext.TestPlans
-            .Include(tp => tp.TestCases)
-            .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
-
-        if (existingTestPlan == null) throw new Exception("Test plan not found");
-
-        existingTestPlan.TestCases = await _dbContext.TestCases
+        
+        // Update test cases of testplan
+        testplan.TestCases = await _dbContext.TestCases
             .Where(tc => SelectedTestCasesIds.Contains(tc.Id))
             .ToListAsync();
 
         await _dbContext.SaveChangesAsync();
-
-        // If there are files, attempt to save them
+        
         if (files != null && files.Count != 0)
         {
             await testPlansFilesModel.SaveFilesToDb(files, testPlanId);
