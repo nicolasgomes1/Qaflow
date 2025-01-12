@@ -15,7 +15,13 @@ using WebApp.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddSqlServerDbContext<ApplicationDbContext>("qa");
+#if POSTGRES
+    builder.AddNpgsqlDbContext<ApplicationDbContext>(qapgsql);
+#elif SQLSERVER
+    builder.AddSqlServerDbContext<ApplicationDbContext>("qa");
+#endif
+
+
 
 builder.AddServiceDefaults();
 
