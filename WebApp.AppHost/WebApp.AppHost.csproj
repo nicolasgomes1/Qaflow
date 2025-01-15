@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>SQLSERVER</DefineConstants>
+    <DefineConstants>POSTGRES</DefineConstants>
   </PropertyGroup>
 
 </Project>

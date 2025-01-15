@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>SQLSERVER</DefineConstants>
+    <DefineConstants>POSTGRES</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -73,6 +73,10 @@
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.js.map" />
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js" />
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Migrations\" />
   </ItemGroup>
 
 </Project>

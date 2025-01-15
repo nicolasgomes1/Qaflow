@@ -20,19 +20,16 @@ builder.AddProject<Projects.WebApp>("webapp")
     .WaitFor(db);
 #elif POSTGRES
 // Configure PostgreSQL and ensure it returns an IResourceBuilder
-var pg = builder.AddPostgres("pg", password: sqlPassword, port: 1400) // Use the overload that takes the name and password
-    .WithDataVolume("data")
-    .WithLifetime(ContainerLifetime.Persistent);
+var postgres = builder.AddPostgres("postgres").WithPgWeb().WithDataVolume("data",isReadOnly: false);
+var postgresdb = postgres.AddDatabase("postgresdb");
 
-// Add a database to the SQL Server instance
-var db = pg.AddDatabase("qapgsql");
 
 // Add a project and set up dependencies on the database
 builder.AddProject<Projects.WebApp>("webapp")
-    .WithReference(pg)
-    .WaitFor(pg)
-    .WithReference(db)
-    .WaitFor(db);
+    .WithReference(postgres)
+    .WaitFor(postgres)
+    .WithReference(postgresdb)
+    .WaitFor(postgresdb);
 
 #endif
 
