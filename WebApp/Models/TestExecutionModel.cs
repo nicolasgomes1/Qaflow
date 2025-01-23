@@ -530,4 +530,12 @@ public class TestExecutionModel
 
         return testCaseExecution;
     }
+    
+    public async Task<int> GetTestExecutionsReadyToExecuteAsync()
+    {
+        return await _dbContext.TestExecution
+            .Where(te => te.IsActive && te.WorkflowStatus == WorkflowStatus.Completed)
+            .Where(te => te.ProjectsId == _projectSateService.ProjectId)
+            .CountAsync();
+    }
 }

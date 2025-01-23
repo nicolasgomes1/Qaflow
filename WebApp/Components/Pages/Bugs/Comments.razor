@@ -60,7 +60,7 @@
         _comment.BugId = Id;
         var currentUser = await UserService.GetCurrentUserInfoAsync();
         _comment.CreatedBy = currentUser.UserName;
-        _comment.CreatedAt = DateTime.Now;
+        _comment.CreatedAt = DateTime.UtcNow;
 
         await using var db = await DbContext.CreateDbContextAsync();
         await db.BugsComments.AddAsync(_comment);

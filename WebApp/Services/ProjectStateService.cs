@@ -21,14 +21,14 @@ public class ProjectStateService
         ProjectId = 0;  // 0 can represent "no project" or "invalid project" as needed.
     }
     
-    public async Task<int> GetProjectIdAsync()
+    public  Task<int> GetProjectIdAsync()
     {
         if (ProjectId == 0)
         {
             throw new InvalidOperationException("ProjectId is not set.");
         }
 
-        return await Task.FromResult(ProjectId);
+        return  Task.FromResult(ProjectId);
     }
 
 

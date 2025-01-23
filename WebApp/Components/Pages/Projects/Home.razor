@@ -16,30 +16,32 @@
         <div>
             <Dashboard/>
 
-            <ProjectTree/>
         </div>
 
+        <ProjectTree/>
 
         <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap" JustifyContent="JustifyContent.Center"
-                     AlignItems="AlignItems.Center">
-            <RequirementsDialogCreate Title="@Loc["create.requirements"]"/>
-            <TestCasesDialogCreate Title="@Loc["create.testcases"]"/>
-            <TestPlansDialogCreate Title="@Loc["create.testplans"]"/>
-            <TestExecutionDialogCreate Title="@Loc["create.testexecution"]"/>
-            <BugDialogCreate Title="@Loc["create.bug"]"/>
-        </RadzenStack>
+                         AlignItems="AlignItems.Center" Style="border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <RequirementsDialogCreate Title="@Loc["create.requirements"]"/>
+                <TestCasesDialogCreate Title="@Loc["create.testcases"]"/>
+                <TestPlansDialogCreate Title="@Loc["create.testplans"]"/>
+                <TestExecutionDialogCreate Title="@Loc["create.testexecution"]"/>
+                <BugDialogCreate Title="@Loc["create.bug"]"/>
+            </RadzenStack>
+
         
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="margin-top: 20px;" Wrap="FlexWrap.Wrap">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="margin-top: 20px; border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" Wrap="FlexWrap.Wrap">
             <RadzenButton ButtonStyle="ButtonStyle.Warning" Icon="category" Text="Requirements" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")'></RadzenButton>
             <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="category" Text="Test Cases" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'></RadzenButton>
             <RadzenButton Icon="category" Text="Test Plans" Shade="Shade.Light" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")'></RadzenButton>
             <RadzenButton Icon="category" Text="Test Executions" ButtonStyle="ButtonStyle.Success" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecutions/manage")'></RadzenButton>
             <RadzenButton Icon="category" Text="Bugs" ButtonStyle="ButtonStyle.Danger" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs/manage")'></RadzenButton>
         </RadzenStack>
-        
-        <RadzenStack Orientation="Orientation.Horizontal">
-            <RadzenButton IconColor="yellow" Icon="task" Size="ButtonSize.Large" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution/active")'></RadzenButton>
-        </RadzenStack>
+
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="margin-top: 20px; border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" Wrap="FlexWrap.Wrap">
+            <RadzenButton Text="View Test Executions Ready for execution" Icon="task" Size="ButtonSize.Large" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution/active")'></RadzenButton>
+            <RadzenBadge Shade="Shade.Darker" Text="@_testExecutionsReady.ToString()"></RadzenBadge>
+            </RadzenStack>
 
 
     </Authorized>
@@ -49,4 +51,13 @@
 @code {
     [Parameter] public int ProjectId { get; set; }
     
+    
+    private int _testExecutionsReady;
+
+    protected override async Task OnInitializedAsync()
+    {
+      _testExecutionsReady = await TestExecutionModel.GetTestExecutionsReadyToExecuteAsync();
+    }
+
+
 }
