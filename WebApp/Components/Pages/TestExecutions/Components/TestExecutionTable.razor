@@ -22,6 +22,10 @@
         <DeleteallDataForModel EntityName="@(nameof(TestExecutionModel.TestExecution))"
                                EntityList="TestExecutionModel.testexecution"/>
         <ExportGridDataCsv Grid="_dataGrid"/>
+        <RadzenButton Icon="assessment"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
+                      MouseLeave="@AppTooltipService.HideTooltip"
+                      Click='() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testexecutions/manage")' />
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn Property="@nameof(TestExecution.Id)" Filterable="false" Title="ID" Frozen="true"
@@ -73,7 +77,13 @@
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn Property="@nameof(TestExecution.IsActive)" Title="Is Active" Width="auto"/>
-        <RadzenDataGridColumn Property="@nameof(TestExecution.ArchivedStatus)" Title="Archived Status" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(TestExecution.ArchivedStatus)" Title="Is Archived" Width="auto">
+            <Template Context="ctx">
+                <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleArchivedStatus(ctx.ArchivedStatus)">
+                    @ctx.ArchivedStatus
+                </RadzenBadge>
+            </Template>
+        </RadzenDataGridColumn>
 
         <IndexActions TItem="TestExecution" EntityName="TestExecution"/>
 

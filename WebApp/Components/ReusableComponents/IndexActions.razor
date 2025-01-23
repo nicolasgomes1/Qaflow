@@ -21,7 +21,11 @@
                               Click="@(() => EditItem(item))"
                               Size="ButtonSize.ExtraSmall"/>
                 <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: red;"
-                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Delete {EntityName}"))"
+                              Disabled="@IsArchived(item)"
+                              MouseEnter="@(args =>
+                                          {
+                                              if (!IsArchived(item)) AppTooltipService.ShowTooltip(args, $"Delete {EntityName}");
+                                          })"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               Click="@(() => DeleteItem(item))"
                               Size="ButtonSize.ExtraSmall"/>
@@ -52,9 +56,9 @@
 
         var confirmed = await DialogService.Confirm($"Are you sure you want to delete this {EntityName}?", $"Delete {EntityName}");
 
-        if (confirmed == true)
+        if (confirmed is true)
         {
-            if (item == null) throw new Exception($"{item} is null");
+            if (item is null) throw new Exception($"{item} is null");
             db.Remove(item);
             await db.SaveChangesAsync();
         }
@@ -65,14 +69,14 @@
     private int GetId(TItem item)
     {
         var prop = typeof(TItem).GetProperty("Id");
-        if (prop == null) throw new InvalidOperationException("The item does not have an 'Id' property.");
+        if (prop is null) throw new InvalidOperationException("The item does not have an 'Id' property.");
         return (int)(prop.GetValue(item) ?? 0);
     }
 
     private bool IsArchived(TItem item)
     {
         var prop = typeof(TItem).GetProperty("ArchivedStatus");
-        if (prop == null) throw new InvalidOperationException("The item does not have an 'ArchivedStatus' property.");
+        if (prop is null) throw new InvalidOperationException("The item does not have an 'ArchivedStatus' property.");
         return (ArchivedStatus)(prop.GetValue(item) ?? 0) == ArchivedStatus.Archived;
     }
 
