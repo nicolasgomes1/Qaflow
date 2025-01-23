@@ -14,8 +14,14 @@
 
         void ReturnToHome()
         {
-            ProjectStateService.ClearProjectId();
-            NavigationManager.NavigateTo($"/");
+            if (ProjectStateService.ProjectId is 0)
+            {
+                NavigationManager.NavigateTo("/");
+                FormNotificationService.NotifyInfo("Returning to the Hub Home Page as no Project is selected");
+                return;
+            }
+            
+            NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}");
             FormNotificationService.NotifyInfo("Returning to Home Page");
         }
 
