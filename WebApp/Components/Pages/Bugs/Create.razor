@@ -66,6 +66,18 @@
                 </div>
 
                 <div class="form-group mb-4">
+                    <RadzenLabel Text="Test Cases"/>
+                    <RadzenDropDown id="testcases"
+                                    Data="@_testCaseslist"
+                                    @bind-Value="BugsModel.SelectedTestCasesIds"
+                                    TextProperty="Name"
+                                    ValueProperty="Id"
+                                    Multiple="true"
+                                    class="input-style"
+                                    Name="Test Cases"/>
+                </div>
+
+                <div class="form-group mb-4">
                     <RadzenLabel Text="Assigned To"/>
                     <RadzenDropDown id="assignedto"
                                     Data="@_usersList"
@@ -100,6 +112,7 @@
     [Parameter] public int ProjectId { get; set; }
     private readonly List<IBrowserFile>? _uploadedFiles = [];
     private List<ApplicationUser> _usersList = [];
+    private List<TestCases> _testCaseslist = [];
 
     int _selectedIndex;
     private readonly Bugs _bugs = new();
@@ -107,6 +120,8 @@
     protected override async Task OnInitializedAsync()
     {   
         _usersList = await UserService.GetUsersList();
+        _testCaseslist = await TestCasesModel.GetTestCasesWithWorkflowStatus();
+
     }
     
     

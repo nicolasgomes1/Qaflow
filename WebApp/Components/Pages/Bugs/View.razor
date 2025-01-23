@@ -35,11 +35,16 @@
                         <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
                         <RadzenLabel Text="@_bug.ModifiedBy"/>
 
-                        <RadzenLabel Text="Associated Test Case Execution:" Style="font-weight: bold;"/>
-                        <RadzenLabel Text="@_bug.TestCaseExecutionId.ToString()"/>
-                        
-                        <RadzenLabel Text="Associated Test Case" Style="font-weight: bold;"/>
-                        <RadzenLink  Text="@_testCaseExecution.TestCaseId.ToString()" Path="@TestCaseExecutionLink(_testCaseExecution.TestCaseId)" ></RadzenLink>    
+                        @if (_bug.TestCaseExecutionId.HasValue)
+                        {
+                            <a>Open during TestExecution</a>
+                            <RadzenLabel Text="Associated Test Case Execution:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_bug.TestCaseExecutionId.ToString()"/>
+
+                            <RadzenLabel Text="Associated Test Case" Style="font-weight: bold;"/>
+                            <RadzenLink Text="@_testCaseExecution.TestCaseId.ToString()" Path="@TestCaseExecutionLink(_testCaseExecution.TestCaseId)"></RadzenLink>
+                        }
+
                         @code
 
                         {
@@ -48,7 +53,26 @@
                                 return $"/project/{ProjectId}/testcases/view/{id}";
                             }
                         }
-</div>
+
+                        @if(!_bug.TestCaseExecutionId.HasValue)
+                        {
+                            <a>Open outside of TestExecution</a>
+
+                            <RadzenLabel Text="Associated Test Case" Style="font-weight: bold;"/>
+                        @foreach (var testCase in TestCasesList)
+                        {
+                            <RadzenLink  Text="@testCase.Id.ToString()" Path="@TestCaseLink(testCase.Id)" ></RadzenLink>    
+                            @code
+
+                            {
+                                private string TestCaseLink(int id)
+                                {
+                                    return $"/project/{ProjectId}/testcases/view/{id}";
+                                }
+                            }
+                        }
+                        }
+                    </div>
                 </RadzenCard>
             </RadzenRow>
         </RadzenStepsItem>
@@ -77,9 +101,11 @@
     
     private TestCaseExecution _testCaseExecution = new();
 
+    private List<TestCases> TestCasesList { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
+        TestCasesList = await BugsModel.GetTestCasesAssociatedWithBugAsync(Id);
         _bug = await BugsModel.GetBugByIdAsync(Id);
         Files = await BugsFilesModel.GetBugFilesById(Id);
         _testCaseExecution = await TestExecutionModel.GetTestCaseExecutionByIdAsync(_bug.TestCaseExecutionId.HasValue ? _bug.TestCaseExecutionId.Value : 0) ?? new TestCaseExecution();

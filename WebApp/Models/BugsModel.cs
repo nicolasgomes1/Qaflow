@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
@@ -15,6 +16,7 @@ public class BugsModel(
 
     public Bugs Bugs { get; set; } = new();
 
+    public List<int> SelectedTestCasesIds { get; set; } = [];
 
     public async Task<List<Bugs>> GetBugsAsync()
     {
@@ -27,14 +29,39 @@ public class BugsModel(
         if (bug == null) throw new Exception("Bug not found");
         return bug;
     }
+    
+    public async Task<List<TestCases>> GetTestCasesAssociatedWithBugAsync(int bugId)
+    {
+        var bug = await _dbContext.Bugs
+            .Include(b => b.TestCases)
+            .FirstOrDefaultAsync(b => b.Id == bugId);
+
+        if (bug is null) throw new Exception("Bug not found");
+
+        return bug.TestCases.ToList();
+    }
 
     public async Task<Bugs> CreateBug(Bugs bug, List<IBrowserFile>? files)
     {
         bug.CreatedAt = DateTime.UtcNow;
         bug.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         bug.ProjectsId = projectSateService.ProjectId;
+        bug.TestCases = new List<TestCases>();
 
-        _dbContext.Bugs.Add(bug);
+        // Fetch and add test cases asynchronously
+        foreach (var testCaseId in SelectedTestCasesIds)
+        {
+            var testCase = await _dbContext.TestCases.FindAsync(testCaseId);
+            if (testCase == null)
+                throw new Exception($"Test case with ID {testCaseId} not found.");
+
+            bug.TestCases.Add(testCase);
+        }
+
+        // Save the bug
+        await _dbContext.Bugs.AddAsync(bug);
+        
+        
         await _dbContext.SaveChangesAsync();
 
         // If there are files, attempt to save them
