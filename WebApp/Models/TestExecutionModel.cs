@@ -510,7 +510,7 @@ public class TestExecutionModel
             .Where(tce => tce.TestExecutionId == testExecution.Id)
             .ToListAsync();
     }
-    
+
     /// <summary>
     /// returns the list of TetsExecutions with the status of Completed and IsActive, so it was not yet executed
     /// </summary>
@@ -524,5 +524,10 @@ public class TestExecutionModel
             .ToListAsync();
     }
     
-    
+    public async Task<TestCaseExecution?> GetTestCaseExecutionByIdAsync(int testCaseExecutionId)
+    {
+        var testCaseExecution = await _dbContext.TestCaseExecution.FindAsync(testCaseExecutionId);
+
+        return testCaseExecution;
+    }
 }

@@ -37,7 +37,18 @@
 
                         <RadzenLabel Text="Associated Test Case Execution:" Style="font-weight: bold;"/>
                         <RadzenLabel Text="@_bug.TestCaseExecutionId.ToString()"/>
-                    </div>
+                        
+                        <RadzenLabel Text="Associated Test Case" Style="font-weight: bold;"/>
+                        <RadzenLink  Text="@_testCaseExecution.TestCaseId.ToString()" Path="@TestCaseExecutionLink(_testCaseExecution.TestCaseId)" ></RadzenLink>    
+                        @code
+
+                        {
+                            private string TestCaseExecutionLink(int id)
+                            {
+                                return $"/project/{ProjectId}/testcases/view/{id}";
+                            }
+                        }
+</div>
                 </RadzenCard>
             </RadzenRow>
         </RadzenStepsItem>
@@ -63,12 +74,15 @@
     private List<BugsFiles>? Files { get; set; }
 
     private Bugs _bug = new();
+    
+    private TestCaseExecution _testCaseExecution = new();
 
 
     protected override async Task OnInitializedAsync()
     {
         _bug = await BugsModel.GetBugByIdAsync(Id);
         Files = await BugsFilesModel.GetBugFilesById(Id);
+        _testCaseExecution = await TestExecutionModel.GetTestCaseExecutionByIdAsync(_bug.TestCaseExecutionId.HasValue ? _bug.TestCaseExecutionId.Value : 0) ?? new TestCaseExecution();
     }
 
     private bool BugsHasNoFiles => !BugsFilesModel.ExistingFiles.Any();

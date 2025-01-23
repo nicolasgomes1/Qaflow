@@ -18,6 +18,8 @@ public class Bugs : BaseEntity
     public BugStatus BugStatus { get; set; }
     
     public int? TestCaseExecutionId { get; set; } // Value can be null value to be filled when running a test execution
+    
+    public TestCaseExecution? TestCaseExecutions { get; set; }
 
     public int ProjectsId { get; set; }
 
