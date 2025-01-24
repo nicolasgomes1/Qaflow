@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Dynamic.Core;
+using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Data.enums;
 using WebApp.Services;
@@ -150,5 +151,31 @@ public class ReportsModel
     {
         var projectBugs = _dbContext.Bugs.Count(b => b.ProjectsId == _projectStateService.ProjectId).ToString();
         return projectBugs == "0" ? "No Bugs" : $"Bugs: {projectBugs}";
+    }
+    
+    public async Task<double> GetTestExecutionPassRateAsync()
+    {
+        await using var db1 = await _dbContextFactory.CreateDbContextAsync();
+        await using var db2 = await _dbContextFactory.CreateDbContextAsync();
+        await using var db3 = await _dbContextFactory.CreateDbContextAsync();
+
+        var testExecutionsPassed = await db1.TestExecution
+            .Where(te => te.ProjectsId == _projectStateService.ProjectId)
+            .Where(te => te.ExecutionStatus == ExecutionStatus.Passed)
+            .Where(te => te.IsActive == false)
+            .CountAsync();
+
+        var testExecutionsFailed = await db2.TestExecution
+            .Where(te => te.ProjectsId == _projectStateService.ProjectId)
+            .Where(te => te.ExecutionStatus == ExecutionStatus.Failed)
+            .Where(te => te.IsActive == false)
+            .CountAsync();
+
+        var totalTestExecutions = testExecutionsPassed + testExecutionsFailed;
+
+        var testExecutionsPassedPercentage =
+            totalTestExecutions > 0 ? (double)testExecutionsPassed / totalTestExecutions * 100 : 0;
+
+        return testExecutionsPassedPercentage;
     }
 }

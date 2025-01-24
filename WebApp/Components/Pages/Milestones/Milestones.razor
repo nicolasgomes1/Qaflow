@@ -1,0 +1,22 @@
+@page "/project/{ProjectId:int}/milestones"
+@rendermode InteractiveServer
+<h3>Milestones</h3>
+
+
+<MilestoneGauge CurrentValue="@_mydouble" ExpectedValue="69"></MilestoneGauge>
+
+<MilestoneGauge CurrentValue="20" ExpectedValue="10"></MilestoneGauge>
+
+@code
+{
+    [Parameter] 
+    public int ProjectId { get; set; }
+
+
+    private double _mydouble;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _mydouble = await ReportsModel.GetTestExecutionPassRateAsync();
+    }
+}

@@ -1,0 +1,34 @@
+<RadzenArcGauge Style="width: 100%; height: 250px;">
+    <RadzenArcGaugeScale Step="10" Min="0" Max="100" MinorStep="2" Radius="1.5" TickPosition="GaugeTickPosition.Outside" Y="0.9" Margin="0">
+        <!-- Expected Value Gauge -->
+        <RadzenArcGaugeScaleValue Value="@ExpectedValue" ShowValue="true" StrokeWidth="20" Stroke="green">
+            <Template Context="pointer">
+                <RadzenStack AlignItems="AlignItems.End" Gap="0" Style="margin-top: -50%;">
+                    <RadzenText TextStyle="TextStyle.H5" class="rz-m-0" Style="color: green;">
+                        <strong>Expected @pointer.Value%</strong>
+                    </RadzenText>
+                </RadzenStack>
+            </Template>
+        </RadzenArcGaugeScaleValue>
+        <!-- Current Value Gauge -->
+        <RadzenArcGaugeScaleValue Value="@CurrentValue" ShowValue="true" Fill="blue" StrokeWidth="0" Stroke="blue">
+            <Template Context="pointer">
+                <RadzenStack AlignItems="AlignItems.Start" Gap="0" Style="margin-top: 50%;">
+                    <RadzenText TextStyle="TextStyle.H5" class="rz-m-0" Style="color: blue;">
+                        <strong>Attained @pointer.Value%</strong>
+                    </RadzenText>
+                </RadzenStack>
+            </Template>
+        </RadzenArcGaugeScaleValue>
+    </RadzenArcGaugeScale>
+</RadzenArcGauge>
+
+@code {
+
+    [Parameter]
+    public double CurrentValue { get; set; } // Current percentage value
+
+    [Parameter]
+    public double ExpectedValue { get; set; } // Expected percentage value
+
+}
