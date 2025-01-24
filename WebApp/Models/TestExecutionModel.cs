@@ -567,6 +567,7 @@ public class TestExecutionModel
         var totalTestExecutions = await GetTotalTestExecutionsAsync();
         var testExecutionsWithPriority = await TestExecutionWIthPriority(priority);
 
-        return totalTestExecutions == 0 ? 0 : (double)testExecutionsWithPriority / totalTestExecutions;
+        return totalTestExecutions == 0 ? 0 : Math.Round((double)testExecutionsWithPriority / totalTestExecutions * 100, 2);
+        
     }
 }

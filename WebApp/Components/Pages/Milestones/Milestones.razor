@@ -32,10 +32,10 @@
     protected override async Task OnInitializedAsync()
     {
         _mydouble = await ReportsModel.GetTestExecutionPassRateAsync();
-        CurrentValueLow = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Low)*100;
-        CurrentValueMedium = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Medium)*100;
-        CurrentValueHigh = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.High)*100;
-        CurrentValueCritical = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Critical)*100;
+        CurrentValueLow = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Low);
+        CurrentValueMedium = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Medium);
+        CurrentValueHigh = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.High);
+        CurrentValueCritical = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Critical);
         
 
     }
