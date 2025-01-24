@@ -157,7 +157,6 @@ public class ReportsModel
     {
         await using var db1 = await _dbContextFactory.CreateDbContextAsync();
         await using var db2 = await _dbContextFactory.CreateDbContextAsync();
-        await using var db3 = await _dbContextFactory.CreateDbContextAsync();
 
         var testExecutionsPassed = await db1.TestExecution
             .Where(te => te.ProjectsId == _projectStateService.ProjectId)
@@ -176,6 +175,6 @@ public class ReportsModel
         var testExecutionsPassedPercentage =
             totalTestExecutions > 0 ? (double)testExecutionsPassed / totalTestExecutions * 100 : 0;
 
-        return testExecutionsPassedPercentage;
+        return Math.Round(testExecutionsPassedPercentage,2);
     }
 }

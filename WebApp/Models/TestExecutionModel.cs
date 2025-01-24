@@ -538,4 +538,35 @@ public class TestExecutionModel
             .Where(te => te.ProjectsId == _projectSateService.ProjectId)
             .CountAsync();
     }
+    
+    /// <summary>
+    /// Returns the count to Test Executions based on the priority
+    /// </summary>
+    /// <param name="priority"></param>
+    /// <returns></returns>
+    public async Task<int> TestExecutionWIthPriority(Priority priority)
+    {
+        return await _dbContext.TestExecution
+            .Where(te => te.Priority == priority)
+            .Where(te => te.IsActive == false)
+            .Where(te => te.ProjectsId == _projectSateService.ProjectId)
+            .CountAsync();
+    }
+    
+    
+    public async Task<int> GetTotalTestExecutionsAsync()
+    {
+        return await _dbContext.TestExecution
+            .Where(te => te.ProjectsId == _projectSateService.ProjectId)
+            .CountAsync();
+    }
+    
+    
+    public async Task<double> GetRationofTestExecutionsByPriorityAsync(Priority priority)
+    {
+        var totalTestExecutions = await GetTotalTestExecutionsAsync();
+        var testExecutionsWithPriority = await TestExecutionWIthPriority(priority);
+
+        return totalTestExecutions == 0 ? 0 : (double)testExecutionsWithPriority / totalTestExecutions;
+    }
 }

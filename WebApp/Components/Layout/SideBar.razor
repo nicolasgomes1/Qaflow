@@ -30,6 +30,8 @@
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs", true))"/>
             <RadzenPanelMenuItem Text="@Loc["Reports"]" Icon="analytics" data-testid="sidebar_reports"
                                  Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/reports", true))"/>
+            <RadzenPanelMenuItem Text="@Loc["Milestones"]" Icon="analytics" data-testid="sidebar_milestones"
+                                 Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/milestones", true))"/>
         </RadzenPanelMenu>
     </RadzenSidebar>
 }

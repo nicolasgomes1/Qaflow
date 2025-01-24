@@ -1,22 +1,46 @@
 @page "/project/{ProjectId:int}/milestones"
 @rendermode InteractiveServer
-<h3>Milestones</h3>
+
+<MilestoneGauge CurrentValue="@_mydouble" ExpectedValue="69" Title="Test Execution Pass Rate"></MilestoneGauge>
+
+<RadzenStack Orientation="Orientation.Horizontal">
+    <MilestoneGauge CurrentValue="@CurrentValueLow" ExpectedValue="30" Title="@MilestoneTitleL"></MilestoneGauge>
+    <MilestoneGauge CurrentValue="@CurrentValueMedium" ExpectedValue="50" Title="@MilestoneTitleM"></MilestoneGauge>
+    <MilestoneGauge CurrentValue="@CurrentValueHigh" ExpectedValue="70" Title="@MilestoneTitleH"></MilestoneGauge>
+    <MilestoneGauge CurrentValue="CurrentValueCritical" ExpectedValue="90" Title="@MilestoneTitleC"></MilestoneGauge>
+</RadzenStack>
 
 
-<MilestoneGauge CurrentValue="@_mydouble" ExpectedValue="69"></MilestoneGauge>
-
-<MilestoneGauge CurrentValue="20" ExpectedValue="10"></MilestoneGauge>
 
 @code
 {
     [Parameter] 
     public int ProjectId { get; set; }
 
-
+    private double CurrentValueLow;
+    private double CurrentValueMedium;
+    private double CurrentValueHigh;
+    private double CurrentValueCritical;
+    
+    private string MilestoneTitleL => $"Test Execution With {EnumService.GetSingleEnum(Priority.Low).ToString()} Priority";
+    private string MilestoneTitleM => $"Test Execution With {EnumService.GetSingleEnum(Priority.Medium).ToString()} Priority";
+    private string MilestoneTitleH => $"Test Execution With {EnumService.GetSingleEnum(Priority.High).ToString()} Priority";
+    private string MilestoneTitleC => $"Test Execution With {EnumService.GetSingleEnum(Priority.Critical).ToString()} Priority";
+    
     private double _mydouble;
     
     protected override async Task OnInitializedAsync()
     {
         _mydouble = await ReportsModel.GetTestExecutionPassRateAsync();
+        CurrentValueLow = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Low)*100;
+        CurrentValueMedium = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Medium)*100;
+        CurrentValueHigh = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.High)*100;
+        CurrentValueCritical = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Critical)*100;
+        
+
     }
+
+
+    
+
 }
