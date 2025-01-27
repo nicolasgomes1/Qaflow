@@ -78,19 +78,5 @@
       <jdbc-url>Server=127.0.0.1,1400;User ID=sa;Password=Admin123!;TrustServerCertificate=true;Database=qa</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="postgres" uuid="0c3b87b0-6552-4681-aeeb-dd841ba39cb4">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:51133/?password=HmSUa%2BBaGhNa0GSgQ7*S8w&amp;user=postgres</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="postgresdb" uuid="223b04c9-0022-481f-8a9a-39f8917433e6">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:51133/postgresdb?password=HmSUa%2BBaGhNa0GSgQ7*S8w&amp;user=postgres</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
   </component>
 </project>
