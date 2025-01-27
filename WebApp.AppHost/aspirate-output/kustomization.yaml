@@ -1,0 +1,12 @@
+namespace: testmasternicolas
+
+resources:
+- postgres
+- webapp
+- namespace.yaml
+- dashboard.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+

@@ -1,0 +1,36 @@
+{
+  "projectPath": ".",
+  "outputPath": "aspirate-output",
+  "namespace": "TestMasterNicolas",
+  "containerImageTags": [
+    "latest"
+  ],
+  "imagePullPolicy": "Always",
+  "containerBuilder": "docker",
+  "outputFormat": "kustomize",
+  "skipFinalKustomizeGeneration": false,
+  "privateRegistryEmail": "aspir8@aka.ms",
+  "includeDashboard": true,
+  "useCustomNamespace": true,
+  "secrets": {
+    "salt": "EmLWv/fcujy8MJc8",
+    "hash": "M8xW2WHJ\u002BAWzXf3s1WKQhRDlU4M9rerVM9aUjLNo5XE=",
+    "secrets": {
+      "postgres-password": {
+        "value": "EmLWv/fcujy8MJc8ZveMpGfkKlk5\u002BUSE9Ub6\u002B1pJsrqYmPV7NWNn1u11k28A6fc2m8w="
+      },
+      "sql-password": {
+        "value": "EmLWv/fcujy8MJc8BpMEvEe\u002BXIdXMUscrRYxPWBLs7jOiKE4"
+      },
+      "postgres": {
+        "POSTGRES_PASSWORD": "EmLWv/fcujy8MJc8ZveMpGfkKlk5\u002BUSE9Ub6\u002B1pJsrqYmPV7NWNn1u11k28A6fc2m8w="
+      },
+      "postgresdb": {},
+      "webapp": {
+        "ConnectionStrings__postgres": "EmLWv/fcujy8MJc8hVBXku46Gun80C8ndjpnnVhLs7iUiqs4MlxH9d0rjnIk8PNO/IcYPOR5ABtWofVZg0BXvz/XhuQqbwWEaA72ETIZJnG7oP/Btarovk\u002BmUfOnUTpwnhabKNU=",
+        "ConnectionStrings__postgresdb": "EmLWv/fcujy8MJc8n4gJ7\u002BQb/9F3oEG3nqCS8lhLs7iUiqs4MlxH9d0rjnIk8PNO/IcYPOR5ABtWofVZg0BXvz/XhuQqbwWEaA72ETIZJnG7oP/Btarovk\u002BmUfOnUTpwnhabKNV2wTTicawHVp6cgXd/UbLpHRE8ow=="
+      }
+    }
+  },
+  "processAllComponents": true
+}
