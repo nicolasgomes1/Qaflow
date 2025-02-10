@@ -43,7 +43,7 @@
             </RadzenStack>
             <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="margin-top: 20px; border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" Wrap="FlexWrap.Wrap">
                 <RadzenLabel Text="View Test Executions Ready for execution"></RadzenLabel>
-                <RadzenButton Text="Test Executions" Icon="task" Size="ButtonSize.Large" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution/active")'></RadzenButton>
+                <RadzenButton Text="Test Executions" Icon="task" ButtonStyle="ButtonStyle.Success" Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution/active")'></RadzenButton>
                 <RadzenBadge Shade="Shade.Darker" Text="@_testExecutionsReady.ToString()"></RadzenBadge>
             </RadzenStack>
         </RadzenStack>
