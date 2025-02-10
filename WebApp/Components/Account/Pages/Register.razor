@@ -79,6 +79,14 @@
 
         Logger.LogInformation("User created a new account with password.");
 
+        //add a role to the user based on the existing roles that match the name "User"
+        var role = await RoleManager.FindByNameAsync("User");
+        if (role != null && role.Name != null)
+        {
+            await UserManager.AddToRoleAsync(user, role.Name);
+        }
+        
+        
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
