@@ -16,7 +16,7 @@
 
 <h1>Register</h1>
 
-<div class="row">
+<div class="row" >
     <div class="col-lg-6">
         <StatusMessage Message="@Message" />
         <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
@@ -39,15 +39,10 @@
                 <label for="Input.ConfirmPassword">Confirm Password</label>
                 <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Register" Icon="person" IconPosition="IconPosition.Left" Class="btn btn-primary btn-lg btn-block" />
+            
         </EditForm>
-    </div>
-    <div class="col-lg-4 col-lg-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
     </div>
 </div>
 

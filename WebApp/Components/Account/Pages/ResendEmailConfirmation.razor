@@ -1,6 +1,8 @@
 ﻿@page "/Account/ResendEmailConfirmation"
 
 @using System.ComponentModel.DataAnnotations
+@using System.Net
+@using System.Net.Mail
 @using System.Text
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
@@ -56,6 +58,8 @@
             new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code });
         await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
 
+        await SendEmailAsync(Input.Email, "Confirm your email", $"Please click <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>here</a> to confirm your email.");
+
         message = "Verification email sent. Please check your email.";
     }
 
@@ -64,5 +68,24 @@
         [Required]
         [EmailAddress]
         public string Email { get; set; } = "";
+    }
+    
+    private async Task<bool> SendEmailAsync(string email, string subject, string confirmlink)
+    {
+        MailMessage message = new MailMessage();
+        SmtpClient smtpClient = new SmtpClient();
+        message.From = new MailAddress("testdotnet10@gmail.com");
+        message.To.Add(email);
+        message.Subject = subject;
+        message.IsBodyHtml = true;
+        message.Body = confirmlink;
+        smtpClient.Port = 587;
+        smtpClient.Host = "smtp.gmail.com";
+        smtpClient.EnableSsl = true;
+        smtpClient.UseDefaultCredentials = false;
+        smtpClient.Credentials = new NetworkCredential("testdotnet10@gmail.com", "rmrcmrpqgkcrfkgl");
+        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+        smtpClient.Send(message);
+        return true;
     }
 }
