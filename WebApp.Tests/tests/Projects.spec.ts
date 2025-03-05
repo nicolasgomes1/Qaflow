@@ -19,7 +19,7 @@ test.afterEach('Logout User',async ({ page }) => {
 });
 
 
-test('test', async ({ page }) => {
+test('CRUD a Project', async ({ page }) => {
     const Random = Math.floor(Math.random() * 1000);
     await page.waitForLoadState('load');
     await page.getByTestId('create_project').hover().then(() => {
