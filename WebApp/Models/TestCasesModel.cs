@@ -265,4 +265,22 @@ public class TestCasesModel(
         // Save changes to the database
         await _dbContext.SaveChangesAsync();
     }
+
+    public async Task<List<TestCases>> GetTestCasesToValidateAgainstCsv()
+    {
+        return await _dbContext.TestCases
+            .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result)
+            .Include(tc => tc.TestSteps)
+            .ToListAsync();
+    }
+    
+    public async Task AddTestCasesFromCsv(TestCases testCase)
+    {
+        _dbContext.TestCases.Add(testCase);
+        testCase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        testCase.ProjectsId = projectStateService.GetProjectIdAsync().Result;
+        testCase.WorkflowStatus = WorkflowStatus.New;
+        testCase.CreatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync();
+    }
 }
