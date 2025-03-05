@@ -1,0 +1,119 @@
+<RadzenButton Icon="upload" Text="Import CSV" Click="OpenFileUpload"></RadzenButton>
+@inject UserService UserService
+@code {
+    private IEnumerable<Requirements> _requirements = [];
+    private string _fileContent = string.Empty;
+
+    /// <summary>
+    /// Event callback to be invoked when the upload is completed. It will refresh the page on parent component.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnUploadCompleted { get; set; }
+
+    private async Task OpenFileUpload()
+    {
+        await DialogService.OpenAsync("Import Requirements from CSV", ds =>
+        {
+            return @<RadzenStack Orientation="Orientation.Vertical">
+                <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload" Change="@(args => SaveFileContent(args))" />
+                <RadzenButton Text="Submit" Icon="check" Click="ProcessCsvFile" Style="margin-top: 10px;" />
+            </RadzenStack>;
+        }, new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
+    }
+
+    private async Task SaveFileContent(UploadChangeEventArgs args)
+    {
+        if (!args.Files.Any()) throw new Exception("No files found.");
+
+        var file = args.Files.First();
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+
+        using var reader = new StreamReader(memoryStream);
+        _fileContent = await reader.ReadToEndAsync();
+        
+        if (string.IsNullOrWhiteSpace(_fileContent))
+        {
+            await FormNotificationService.NotifyError("No file content found. Please upload a CSV file.");
+        }
+    }
+
+    int _currentLine = 0;
+    int _validLines;
+    int _invalidLines;
+    int _totalLines;
+
+    private async Task ProcessCsvFile()
+    {
+
+
+        var csvlines = _fileContent.Split('\n').Skip(1);
+        _totalLines = csvlines.Count();
+
+        _requirements = await RequirementsModel.GetRequirementsToValidateAgainstCsv();
+
+        _currentLine = 0;
+        _validLines = 0;
+        _invalidLines = 0;
+
+        foreach (var line in csvlines)
+        {
+            _currentLine++;
+
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            var values = line.Split(',');
+            if (values.Length < 2)
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            var requirements = new Requirements
+            {
+                Name = values[0].Trim(),
+                Description = values[1].Trim(),
+                Priority = Enum.Parse<Priority>(values[2].Trim()),
+                WorkflowStatus = WorkflowStatus.New,
+                CreatedAt = DateTime.UtcNow,
+                ModifiedAt = DateTime.UtcNow,
+                CreatedBy = UserService.GetCurrentUserInfoAsync().Result.UserName,
+                ProjectsId = ProjectStateService.ProjectId,
+                ArchivedStatus = ArchivedStatus.Active
+            };
+
+            if (string.IsNullOrWhiteSpace(requirements.Name) || string.IsNullOrWhiteSpace(requirements.Description))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            if(_requirements.Any(r => r.Name == requirements.Name && r.Description == requirements.Description))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            await RequirementsModel.AddRequirementFromCsv(requirements);
+            _validLines++;
+        }
+
+        DialogService.Close();
+        await OnUploadCompleted.InvokeAsync();
+
+        if (_validLines == 0)
+        {
+            await FormNotificationService.NotifyError("No blog posts found in the CSV file.");
+        }
+        else
+        {
+            await FormNotificationService.NotifySuccess($"CSV imported successfully with {_validLines} blog posts and {_invalidLines} invalid lines.");
+        }
+    }
+    
+}

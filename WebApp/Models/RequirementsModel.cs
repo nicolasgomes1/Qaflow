@@ -99,4 +99,20 @@ public class RequirementsModel(
             await requirementsFilesModel.SaveFilesToDb(files, requirementId);
         }
     }
+    
+    public async Task<List<Requirements>> GetRequirementsToValidateAgainstCsv()
+    {
+        return await _dbContext.Requirements
+            .Where(r => r.ProjectsId == projectSateService.GetProjectIdAsync().Result)
+            .ToListAsync();
+    }
+    
+    public async Task<Requirements> AddRequirementFromCsv(Requirements requirement)
+    {
+        _dbContext.Requirements.Add(requirement);
+        requirement.ProjectsId = projectSateService.GetProjectIdAsync().Result;
+        requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        await _dbContext.SaveChangesAsync();
+        return requirement;
+    }
 }

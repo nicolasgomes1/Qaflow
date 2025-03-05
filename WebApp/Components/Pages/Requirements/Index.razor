@@ -55,6 +55,19 @@ else
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")' />
+            <UploadCsv OnUploadCompleted="RefreshPage"></UploadCsv>
+            
+            @code{
+
+                private async Task RefreshPage()
+                {
+                    _requirements = await RequirementsModel.GetRequirementsToValidateAgainstCsv();
+
+                    // Refresh the Home component (re-render it)
+                    await InvokeAsync(StateHasChanged);
+                }
+
+            }
         </HeaderTemplate>
         <Columns>
             <RadzenDataGridColumn Property="@nameof(Requirements.Id)" Filterable="false" Title="ID" Frozen="true"
