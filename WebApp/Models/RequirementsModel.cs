@@ -112,6 +112,11 @@ public class RequirementsModel(
         _dbContext.Requirements.Add(requirement);
         requirement.ProjectsId = projectSateService.GetProjectIdAsync().Result;
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        requirement.WorkflowStatus = WorkflowStatus.New;
+        requirement.CreatedAt = DateTime.UtcNow;
+        requirement.ModifiedAt = DateTime.UtcNow;
+        requirement.ProjectsId = projectSateService.GetProjectIdAsync().Result;
+        requirement.ArchivedStatus = ArchivedStatus.Active;
         await _dbContext.SaveChangesAsync();
         return requirement;
     }

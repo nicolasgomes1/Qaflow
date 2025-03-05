@@ -1,4 +1,6 @@
-<RadzenButton Icon="upload" Text="Import CSV" Click="OpenFileUpload"></RadzenButton>
+<RadzenButton Icon="csv" Click="OpenFileUpload"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Upload requirements data from csv", TooltipPosition.Bottom))"
+              MouseLeave="@AppTooltipService.HideTooltip"/>
 @inject UserService UserService
 @code {
     private IEnumerable<Requirements> _requirements = [];
@@ -79,12 +81,6 @@
                 Name = values[0].Trim(),
                 Description = values[1].Trim(),
                 Priority = Enum.Parse<Priority>(values[2].Trim()),
-                WorkflowStatus = WorkflowStatus.New,
-                CreatedAt = DateTime.UtcNow,
-                ModifiedAt = DateTime.UtcNow,
-                CreatedBy = UserService.GetCurrentUserInfoAsync().Result.UserName,
-                ProjectsId = ProjectStateService.ProjectId,
-                ArchivedStatus = ArchivedStatus.Active
             };
 
             if (string.IsNullOrWhiteSpace(requirements.Name) || string.IsNullOrWhiteSpace(requirements.Description))
