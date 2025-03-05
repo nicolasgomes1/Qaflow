@@ -21,7 +21,8 @@ test.afterEach('Logout User',async ({ page }) => {
 
 test('test', async ({ page }) => {
     const Random = Math.floor(Math.random() * 1000);
-    
+
+    await page.getByTestId('create_project').hover()
     await page.getByTestId('create_project').click();
     await page.getByTestId('project_name').click();
     await page.getByTestId('project_name').fill('Test Project Playwright' + Random);
