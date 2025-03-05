@@ -80,6 +80,9 @@
                 Name = values[0].Trim(),
                 Description = values[1].Trim(),
                 Priority = Enum.Parse<Priority>(values[2].Trim()),
+                TestType = Enum.Parse<TestTypes>(values[3].Trim()),
+                TestScope = Enum.Parse<TestScope>(values[4].Trim()),
+                
             };
 
             if (string.IsNullOrWhiteSpace(testCases.Name) || string.IsNullOrWhiteSpace(testCases.Description))
