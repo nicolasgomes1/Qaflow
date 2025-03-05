@@ -28,6 +28,14 @@ public class ProjectModel(
         project.CreatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
     }
+    
+    public async Task AddProjectFromCsv(Projects project)
+    {
+        _dbContext.Projects.Add(project);
+        project.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        project.CreatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync();
+    }
 
     /// <summary>
     /// Updates the project with the specified id.

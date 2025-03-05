@@ -86,6 +86,19 @@
             </RadzenStack>
         </RadzenStack>
     </RadzenCard>
+
+    <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
+        <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
+                     AlignItems="AlignItems.Center">
+            <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
+                <RadzenButton Text="@Loc["Milestones"]"
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/milestones", true))"/>
+            </RadzenStack>
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+                <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="Milestones" class="rz-ms-2"/>
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenCard>
 </div>
 
 

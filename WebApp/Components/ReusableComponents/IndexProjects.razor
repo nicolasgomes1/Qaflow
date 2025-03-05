@@ -19,6 +19,19 @@
                       MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.project.tooltip"], TooltipPosition.Bottom))"
                       MouseLeave="@AppTooltipService.HideTooltip"
                       Style="margin-bottom: 20px"/>
+        <UploadProjectsCsv OnUploadCompleted="RefreshPage"></UploadProjectsCsv>
+
+        @code{
+
+            private async Task RefreshPage()
+            {
+                _projectsList = await ProjectModel.GetProjects();
+
+                // Refresh the Home component (re-render it)
+                await InvokeAsync(StateHasChanged);
+            }
+
+        }
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn Property="@nameof(_projects.Id)" Title="Id" Width="auto"/>
