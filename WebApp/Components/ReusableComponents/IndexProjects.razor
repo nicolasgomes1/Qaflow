@@ -66,10 +66,17 @@
         var confirmed = await DialogService.Confirm($"Are you sure you want to delete the Project {_projects.Name}?", "All underlying Data will be lost");
         if (confirmed == true)
         {
-            await ProjectModel.RemoveProject(projectId);
+            try
+            {
+                await ProjectModel.RemoveProject(projectId);
+                NavigationManager.NavigateTo("/", true);
+            }
+            catch (Exception ex)
+            {
+                await FormNotificationService.NotifyError($"Failed to delete the project: {ex.Message}");
+            }
         }
 
-        NavigationManager.NavigateTo("/", true);
     }
 
 
