@@ -55,7 +55,7 @@ else
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")' />
-            <UploadCsv OnUploadCompleted="RefreshPage"></UploadCsv>
+            <UploadRequirementsCsv OnUploadCompleted="RefreshPage"></UploadRequirementsCsv>
             
             @code{
 

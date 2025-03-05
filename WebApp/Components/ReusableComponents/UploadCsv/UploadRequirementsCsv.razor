@@ -14,7 +14,7 @@
 
     private async Task OpenFileUpload()
     {
-        await DialogService.OpenAsync("Import Requirements from CSV", ds =>
+        await DialogService.OpenAsync($"Import {nameof(Requirements)} from CSV", ds =>
         {
             return @<RadzenStack Orientation="Orientation.Vertical">
                 <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload" Change="@(args => SaveFileContent(args))" />
@@ -104,11 +104,11 @@
 
         if (_validLines == 0)
         {
-            await FormNotificationService.NotifyError("No blog posts found in the CSV file.");
+            await FormNotificationService.NotifyError($"No {nameof(Requirements)} found in the CSV file.");
         }
         else
         {
-            await FormNotificationService.NotifySuccess($"CSV imported successfully with {_validLines} blog posts and {_invalidLines} invalid lines.");
+            await FormNotificationService.NotifySuccess($"{nameof(Requirements)} CSV imported successfully with {_validLines} blog posts and {_invalidLines} invalid lines.");
         }
     }
     
