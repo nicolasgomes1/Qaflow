@@ -65,4 +65,3 @@ test('Create New Requirement', async ({ page })=> {
     await page.waitForLoadState('load');
 });
 
-//create a simple test.slow test
