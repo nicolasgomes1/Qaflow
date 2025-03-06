@@ -61,16 +61,17 @@ test('Create New Requirement', async ({ page })=> {
     
     const req_priority = "requirement_priority";
     await page.getByTestId(req_priority).hover()
-    await page.getByTestId(req_priority).click();
+    await page.getByTestId(req_priority).click({force: true});
     await page.getByRole('option', { name: 'Medium' }).hover();
-    await page.getByRole('option', { name: 'Medium' }).click();
+    await page.getByRole('option', { name: 'Medium' }).click({force: true});
+    await page.keyboard.press('Tab');
     
     const req_status = "requirement_status";
     await page.getByTestId(req_status).hover()
-    await page.getByTestId(req_status).click();
-  //  await page.getByText('New').nth(1).click();
-    await page.getByRole('option', { name: 'New' }).hover();
-    await page.getByRole('option', { name: 'New' }).click();
+    await page.getByTestId(req_status).click({force: true});
+    await page.getByRole('option', { name: 'Completed' }).hover();
+    await page.getByRole('option', { name: 'Completed' }).click({force: true});
+    await page.keyboard.press('Tab');
     
     const req_assignedto = "requirement_assignedto";
     await page.getByTestId(req_assignedto).hover();
@@ -81,4 +82,68 @@ test('Create New Requirement', async ({ page })=> {
     await page.getByTestId('submit').click({force:true});
     await page.waitForLoadState('load');
    // await expect(page.getByTestId('create_requirement')).toBeVisible();
+});
+
+
+test('Create New Requirement ChatGPT', async ({ page })=> {
+    const Random = Math.floor(Math.random() * 1000);
+
+    await filterAndLaunchProject(page);
+
+    const requirements = page.getByTestId('d_requirements');
+    await requirements.waitFor({ state: 'visible' });
+    await requirements.hover();
+    await requirements.click({ force: true, delay: 100 });
+    await page.waitForLoadState('networkidle');
+
+    const createRequirement = page.getByTestId('create_requirement');
+    await createRequirement.waitFor({ state: 'visible' });
+    await createRequirement.hover();
+    await createRequirement.click();
+
+    const reqName = page.getByTestId('requirement_name');
+    await reqName.waitFor({ state: 'visible' });
+    await reqName.click();
+    await reqName.fill('Test Requirement Playwright' + Random);
+    await reqName.press('Tab');
+    await expect(reqName).toHaveValue('Test Requirement Playwright' + Random);
+
+    const reqDescription = page.getByTestId('requirement_description');
+    await reqDescription.waitFor({ state: 'visible' });
+    await reqDescription.click();
+    await reqDescription.fill('Test Requirement Playwright Description' + Random);
+    await reqDescription.press('Tab');
+    await expect(reqDescription).toHaveValue('Test Requirement Playwright Description' + Random);
+
+    const reqPriority = page.getByTestId('requirement_priority');
+    await reqPriority.waitFor({ state: 'visible' });
+    await reqPriority.click();
+
+    const mediumOption = page.getByRole('option', { name: 'Medium' });
+    await mediumOption.waitFor({ state: 'visible' });
+    await mediumOption.click();
+    await page.keyboard.press('Tab');
+
+    const reqStatus = page.getByTestId('requirement_status');
+    await reqStatus.waitFor({ state: 'visible' });
+    await reqStatus.click();
+
+    const completedOption = page.getByRole('option', { name: 'Completed' });
+    await completedOption.waitFor({ state: 'visible' });
+    await completedOption.click();
+    await page.keyboard.press('Tab');
+
+    const reqAssignedTo = page.getByTestId('requirement_assignedto');
+    await reqAssignedTo.waitFor({ state: 'visible' });
+    await reqAssignedTo.click();
+
+    const userOption = page.getByRole('option', { name: 'user@example.com' });
+    await userOption.waitFor({ state: 'visible' });
+    await userOption.click();
+    await reqAssignedTo.press('Tab');
+
+    const submitButton = page.getByTestId('submit');
+    await submitButton.waitFor({ state: 'visible' });
+    await submitButton.click({ force: true });
+    await page.waitForLoadState('networkidle');
 });
