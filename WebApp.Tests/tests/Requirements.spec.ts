@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
 const URL = 'https://localhost:7089';
 
@@ -19,7 +19,7 @@ test.afterEach('Logout User',async ({ page }) => {
     await expect(guest_user).toBeVisible();
 });
 
-async function filterAndLaunchProject(page, projectName = 'Demo Project Without Data') {
+async function filterAndLaunchProject(page: Page, projectName = 'Demo Project Without Data') {
     await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').hover();
     await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').click();
     await page.getByRole('textbox', { name: 'Name filter value' }).click();
@@ -30,69 +30,91 @@ async function filterAndLaunchProject(page, projectName = 'Demo Project Without 
     await page.waitForLoadState('load');
 }
 
+/**
+ * @param {Page} page - The Playwright page object.
+ * @param {string} id - data-testid to locate the element.
+ */
+async function click_button(page: Page, id: string)
+{
+    const el = page.getByTestId(id);
+    await el.waitFor({ state: 'visible' });
+    await el.hover();
+    await el.click({ force: true, delay: 100 });
+    await page.waitForLoadState('networkidle');
+}
+
+/**
+ * @param {Page} page - The Playwright page object.
+ * @param {string} id - data-testid element to be validated.
+ */
+async function validate_button(page: Page, id: string)
+{
+    const el = page.getByTestId(id);
+    await el.waitFor({ state: 'visible' });
+    await page.waitForLoadState('networkidle');
+}
+
+/**
+ * @param {Page} page - The Playwright page object.
+ * @param {string} id - data-testid to locate the element.
+ * @param {string} value - value to be filled in the input element.
+ */
+async function fill_input(page: Page, id: string, value: string)
+{
+    const el = page.getByTestId(id);
+    await el.waitFor({ state: 'visible' });
+    await el.click();
+    await el.fill(value);
+    await el.press('Tab');
+    await expect(el).toHaveValue(value);
+}
+
+async function select_dropdown_option(page: Page, id: string, option: string)
+{
+    const el = page.getByTestId(id);
+    await el.waitFor({ state: 'visible' });
+    await el.click();
+    const optionElement = page.getByRole('option', { name: option });
+    await optionElement.waitFor({ state: 'visible' });
+    await optionElement.click();
+    await page.keyboard.press('Tab');
+    await expect(el).toHaveText(option);
+}
+
+async function submit_form(page: Page)
+{
+    const submitButton = page.getByTestId('submit');
+    await submitButton.waitFor({ state: 'visible' });
+    await submitButton.click({ force: true });
+}
+
 
 test('Create New Requirement', async ({ page })=> {
     const Random = Math.floor(Math.random() * 1000);
 
     await filterAndLaunchProject(page);
 
-    const requirements = page.getByTestId('d_requirements');
-    await requirements.waitFor({ state: 'visible' });
-    await requirements.hover();
-    await requirements.click({ force: true, delay: 100 });
-    await page.waitForLoadState('networkidle');
+    await click_button(page, 'd_requirements');
+    
+    await click_button(page, 'create_requirement');
 
-    const createRequirement = page.getByTestId('create_requirement');
-    await createRequirement.waitFor({ state: 'visible' });
-    await createRequirement.hover();
-    await createRequirement.click();
+    await fill_input(page, 'requirement_name', 'Test Requirement Playwright' + Random);
 
-    const reqName = page.getByTestId('requirement_name');
-    await reqName.waitFor({ state: 'visible' });
-    await reqName.click();
-    await reqName.fill('Test Requirement Playwright' + Random);
-    await reqName.press('Tab');
-    await expect(reqName).toHaveValue('Test Requirement Playwright' + Random);
+    await fill_input(page, 'requirement_description', 'Test Requirement Playwright Description' + Random);
+    
+    await select_dropdown_option(page, 'requirement_priority', 'Medium');
+    
 
-    const reqDescription = page.getByTestId('requirement_description');
-    await reqDescription.waitFor({ state: 'visible' });
-    await reqDescription.click();
-    await reqDescription.fill('Test Requirement Playwright Description' + Random);
-    await reqDescription.press('Tab');
-    await expect(reqDescription).toHaveValue('Test Requirement Playwright Description' + Random);
+    await select_dropdown_option(page,'requirement_status', 'Completed');
 
-    const reqPriority = page.getByTestId('requirement_priority');
-    await reqPriority.waitFor({ state: 'visible' });
-    await reqPriority.click();
+    await select_dropdown_option(page,'requirement_assignedto', 'user@example.com');
+    
+    await submit_form(page);
 
-    const mediumOption = page.getByRole('option', { name: 'Medium' });
-    await mediumOption.waitFor({ state: 'visible' });
-    await mediumOption.click();
-    await page.keyboard.press('Tab');
+    await validate_button(page, 'create_requirement');
 
-    const reqStatus = page.getByTestId('requirement_status');
-    await reqStatus.waitFor({ state: 'visible' });
-    await reqStatus.click();
-
-    const completedOption = page.getByRole('option', { name: 'Completed' });
-    await completedOption.waitFor({ state: 'visible' });
-    await completedOption.click();
-    await page.keyboard.press('Tab');
-
-    const reqAssignedTo = page.getByTestId('requirement_assignedto');
-    await reqAssignedTo.waitFor({ state: 'visible' });
-    await reqAssignedTo.click();
-
-    const userOption = page.getByRole('option', { name: 'user@example.com' });
-    await userOption.waitFor({ state: 'visible' });
-    await userOption.click();
-    await reqAssignedTo.press('Tab');
-
-    const submitButton = page.getByTestId('submit');
-    await submitButton.waitFor({ state: 'visible' });
-    await submitButton.click({ force: true });
-    await createRequirement.waitFor({ state: 'visible' });
-    await page.waitForLoadState('networkidle');
+    
+    //delete the created requirement
     await page.getByRole('columnheader', { name: 'Name sort   filter_alt' }).locator('i').click();
     await page.getByRole('textbox', { name: 'Name filter value' }).click();
     await page.getByRole('textbox', { name: 'Name filter value' }).fill('Test Requirement Playwright' + Random);
