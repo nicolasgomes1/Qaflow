@@ -92,18 +92,18 @@
       <jdbc-url>jdbc:postgresql://localhost:59851/postgresdb?password=HmSUa%2BBaGhNa0GSgQ7*S8w&amp;user=postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="postgres" uuid="b3227a5f-5585-4f82-b1cd-34a5fe7f3451">
+    <data-source source="LOCAL" name="postgres" uuid="eb1d1807-e558-43f6-8804-7a8e2871c12a">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:55501/?password=HmSUa%2BBaGhNa0GSgQ7*S8w&amp;user=postgres</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:61141/?password=HmSUa%2BBaGhNa0GSgQ7*S8w&amp;user=postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="postgresdb" uuid="47d1c57a-2c71-40fa-923b-b5bd09d8aa4a">
+    <data-source source="LOCAL" name="postgresdb" uuid="13905b16-b0e4-4e59-99d8-a1372fe3fa9d">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:55501/postgresdb?password=HmSUa%2BBaGhNa0GSgQ7*S8w&amp;user=postgres</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:61141/postgresdb?password=HmSUa%2BBaGhNa0GSgQ7*S8w&amp;user=postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
