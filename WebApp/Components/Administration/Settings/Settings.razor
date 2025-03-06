@@ -159,7 +159,7 @@
         else // Update existing record
         {
             gridSetting.ModifiedBy = user;
-            gridSetting.ModifiedAt = DateTime.Now;
+            gridSetting.ModifiedAt = DateTime.UtcNow;
             dbContext.Update(gridSetting);
         }
 

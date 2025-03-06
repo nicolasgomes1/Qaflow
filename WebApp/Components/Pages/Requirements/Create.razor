@@ -11,7 +11,7 @@
             <RadzenTabsItem Text="Requirement">
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Name"/>
-                    <RadzenTextBox data-testid="name"
+                    <RadzenTextBox data-testid="requirement_name"
                                    @bind-Value="_requirements.Name"
                                    class="input-style"
                                    Name="name"/>
@@ -20,7 +20,7 @@
 
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Description"/>
-                    <RadzenTextArea data-testid="description"
+                    <RadzenTextArea data-testid="requirement_description"
                                     @bind-Value="_requirements.Description"
                                     class="input-style"
                                     Name="description"/>
@@ -29,7 +29,7 @@
 
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Priority"/>
-                    <RadzenDropDown data-testid="priority"
+                    <RadzenDropDown data-testid="requirement_priority"
                                     @bind-Value="_requirements.Priority"
                                     Data="EnumService.GetEnumValues<Priority>()"
                                     class="input-style"
@@ -39,7 +39,7 @@
 
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Status"/>
-                    <RadzenDropDown data-testid="status"
+                    <RadzenDropDown data-testid="requirement_status"
                                     @bind-Value="_requirements.WorkflowStatus"
                                     Data="EnumService.GetEnumValues<WorkflowStatus>()"
                                     class="input-style"
@@ -49,7 +49,7 @@
 
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Assigned To"/>
-                    <RadzenDropDown data-testid="assignedto"
+                    <RadzenDropDown data-testid="requirement_assignedto"
                                     Data="@_usersList"
                                     @bind-Value="_requirements.AssignedTo"
                                     TextProperty="UserName"

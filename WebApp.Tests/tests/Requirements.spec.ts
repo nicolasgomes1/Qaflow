@@ -19,7 +19,8 @@ test.afterEach('Logout User',async ({ page }) => {
     await expect(guest_user).toBeVisible();
 });
 
-test('Create New Requirement', async ({ page }) => {
+test('Create New Requirement', async ({ page })=> {
+    
     const Random = Math.floor(Math.random() * 1000);
 
     await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').hover();
@@ -29,23 +30,39 @@ test('Create New Requirement', async ({ page }) => {
     await page.getByRole('button', { name: 'Apply' }).click();
     
     await page.getByRole('button', { name: 'launch' }).first().click({ force: true });
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    await page.getByTestId('d_requirements').click({ force: true });
-    await new Promise(resolve => setTimeout(resolve, 500));
-    await page.getByTestId('create-requirement').click({ force: true });
-    await new Promise(resolve => setTimeout(resolve, 500));
-    await page.getByTestId('name').click();
-    await page.getByTestId('name').fill('This is a new requirement ' + Random);
-    
-    await page.getByTestId('description').click();
-    await page.getByTestId('description').fill('This s a description for the new requirement ' + Random);
+    await page.waitForLoadState('load');
+    await expect(page.getByTestId('d_requirements')).toBeVisible();
+    await page.getByTestId('d_requirements').hover();
+    await page.getByTestId('d_requirements').click();
+    await page.waitForLoadState('load');
+    await expect(page.getByTestId('create_requirement')).toBeVisible();
+
+    await page.getByTestId('create_requirement').hover().then(() => {
+        return page.getByTestId('create_requirement').click();
+    });
+    const req_name = "requirement_name";
+    await page.getByTestId(req_name).hover()
+    await page.getByTestId(req_name).click();
+    await page.getByTestId(req_name).fill('Test Requirement Playwright' + Random);
+    await page.getByTestId(req_name).press('Tab');
+    await expect(page.getByTestId(req_name)).toHaveValue('Test Requirement Playwright' + Random);
+
+    await page.getByTestId('requirement_description').hover()
+    await page.getByTestId('requirement_description').click();
+    await page.getByTestId('requirement_description').fill('Test Requirement Playwright Description' + Random);
+    await page.getByTestId('requirement_description').press('Tab');
+    await expect(page.getByTestId('requirement_description')).toHaveValue('Test Requirement Playwright Description' + Random);
+
+
     await page.getByText('Low').first().click();
     await page.getByRole('option', { name: 'Medium' }).click();
     await page.getByText('New').nth(1).click();
     await page.getByRole('option', { name: 'New' }).click();
-    await page.getByTestId('assignedto').click();
+    await page.getByTestId('requirement_assignedto').click();
     await page.getByRole('option', { name: 'user@example.com' }).click();
     await page.getByRole('tab', { name: 'Files' }).click();
     await page.getByTestId('submit').click();
     await page.waitForLoadState('load');
 });
+
+//create a simple test.slow test
