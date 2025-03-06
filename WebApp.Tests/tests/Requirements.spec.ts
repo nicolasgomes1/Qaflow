@@ -19,21 +19,26 @@ test.afterEach('Logout User',async ({ page }) => {
     await expect(guest_user).toBeVisible();
 });
 
+async function filterAndLaunchProject(page, projectName = 'Demo Project Without Data') {
+    await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').hover();
+    await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').click();
+    await page.getByRole('textbox', { name: 'Name filter value' }).click();
+    await page.getByRole('textbox', { name: 'Name filter value' }).fill(projectName);
+    await page.getByRole('button', { name: 'Apply' }).click();
+
+    await page.getByRole('button', { name: 'launch' }).first().click({ force: true });
+    await page.waitForLoadState('load');
+}
+
 test('Create New Requirement', async ({ page })=> {
     
     const Random = Math.floor(Math.random() * 1000);
 
-    await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').hover();
-    await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').click();
-    await page.getByRole('textbox', { name: 'Name filter value' }).click();
-    await page.getByRole('textbox', { name: 'Name filter value' }).fill('Demo Project Without Data');
-    await page.getByRole('button', { name: 'Apply' }).click();
-    
-    await page.getByRole('button', { name: 'launch' }).first().click({ force: true });
-    await page.waitForLoadState('load');
+    await filterAndLaunchProject(page);
+
     await expect(page.getByTestId('d_requirements')).toBeVisible();
     await page.getByTestId('d_requirements').hover();
-    await page.getByTestId('d_requirements').click();
+    await page.getByTestId('d_requirements').click({ force: true, delay: 100 });
     await page.waitForLoadState('load');
     await expect(page.getByTestId('create_requirement')).toBeVisible();
 
@@ -53,15 +58,27 @@ test('Create New Requirement', async ({ page })=> {
     await page.getByTestId('requirement_description').press('Tab');
     await expect(page.getByTestId('requirement_description')).toHaveValue('Test Requirement Playwright Description' + Random);
 
-
-    await page.getByText('Low').first().click();
+    
+    const req_priority = "requirement_priority";
+    await page.getByTestId(req_priority).hover()
+    await page.getByTestId(req_priority).click();
+    await page.getByRole('option', { name: 'Medium' }).hover();
     await page.getByRole('option', { name: 'Medium' }).click();
-    await page.getByText('New').nth(1).click();
+    
+    const req_status = "requirement_status";
+    await page.getByTestId(req_status).hover()
+    await page.getByTestId(req_status).click();
+  //  await page.getByText('New').nth(1).click();
+    await page.getByRole('option', { name: 'New' }).hover();
     await page.getByRole('option', { name: 'New' }).click();
-    await page.getByTestId('requirement_assignedto').click();
-    await page.getByRole('option', { name: 'user@example.com' }).click();
-    await page.getByRole('tab', { name: 'Files' }).click();
-    await page.getByTestId('submit').click();
+    
+    const req_assignedto = "requirement_assignedto";
+    await page.getByTestId(req_assignedto).hover();
+    await page.getByTestId(req_assignedto).click({force: true});
+    await page.getByRole('option', { name: 'user@example.com' }).hover();
+    await page.getByRole('option', { name: 'user@example.com' }).click({force: true});
+    await page.getByTestId(req_assignedto).press('Tab');
+    await page.getByTestId('submit').click({force:true});
     await page.waitForLoadState('load');
+   // await expect(page.getByTestId('create_requirement')).toBeVisible();
 });
-

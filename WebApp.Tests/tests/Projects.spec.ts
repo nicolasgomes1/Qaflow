@@ -36,7 +36,9 @@ test('CRUD a Project', async ({ page }) => {
     await page.getByTestId('project_description').fill('Sample my description');
     await page.getByTestId('project_description').press('Tab');
     await expect(page.getByTestId('project_description')).toHaveValue('Sample my description');
+    
     await page.getByTestId('submit').click();
+    await page.waitForLoadState('load');
     await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').hover();
     await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').click();
     await page.getByLabel('Name filter value').click();

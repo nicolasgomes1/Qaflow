@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test && npx playwright show-report",
-    "test:chromium": "playwright test --project=chromium --headed",
+    "test:chromium": "playwright test --project=\"Google Chrome\" --headed",
     "posttest:requirements": "playwright test ./tests/Requirements.spec.ts --project=\"Google Chrome\" --headed"
   },
   "keywords": [],
