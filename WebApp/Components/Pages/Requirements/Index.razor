@@ -40,6 +40,7 @@ else
                           Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/requirements/create", true)'
                           Size="ButtonSize.Medium"
                           Icon="add"
+                          data-testid="create-requirement"
                           ButtonStyle="ButtonStyle.Warning"
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create new Requirement", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"/>

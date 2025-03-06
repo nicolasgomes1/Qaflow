@@ -11,7 +11,7 @@
             <RadzenTabsItem Text="Requirement">
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Name"/>
-                    <RadzenTextBox id="name"
+                    <RadzenTextBox data-testid="name"
                                    @bind-Value="_requirements.Name"
                                    class="input-style"
                                    Name="name"/>
@@ -20,7 +20,7 @@
 
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Description"/>
-                    <RadzenTextArea id="description"
+                    <RadzenTextArea data-testid="description"
                                     @bind-Value="_requirements.Description"
                                     class="input-style"
                                     Name="description"/>
@@ -29,7 +29,7 @@
 
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Priority"/>
-                    <RadzenDropDown id="priority"
+                    <RadzenDropDown data-testid="priority"
                                     @bind-Value="_requirements.Priority"
                                     Data="EnumService.GetEnumValues<Priority>()"
                                     class="input-style"
@@ -39,7 +39,7 @@
 
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Status"/>
-                    <RadzenDropDown id="status"
+                    <RadzenDropDown data-testid="status"
                                     @bind-Value="_requirements.WorkflowStatus"
                                     Data="EnumService.GetEnumValues<WorkflowStatus>()"
                                     class="input-style"
@@ -49,7 +49,7 @@
 
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Assigned To"/>
-                    <RadzenDropDown id="assignedto"
+                    <RadzenDropDown data-testid="assignedto"
                                     Data="@_usersList"
                                     @bind-Value="_requirements.AssignedTo"
                                     TextProperty="UserName"

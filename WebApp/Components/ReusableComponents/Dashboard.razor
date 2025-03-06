@@ -4,6 +4,7 @@
                      AlignItems="AlignItems.Center">
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenButton Text="@Loc["Requirements"]"
+                              data-testid="d_requirements"
                               ButtonStyle="ButtonStyle.Warning"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/requirements", true))"/>
             </RadzenStack>
