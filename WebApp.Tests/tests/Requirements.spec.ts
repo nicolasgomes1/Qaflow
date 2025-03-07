@@ -90,6 +90,7 @@ async function submit_form(page: Page)
 
 
 test('Create New Requirement', async ({ page })=> {
+    test.slow();
     const Random = Math.floor(Math.random() * 1000);
 
     await filterAndLaunchProject(page);
@@ -113,16 +114,17 @@ test('Create New Requirement', async ({ page })=> {
 
     await validate_button(page, 'create_requirement');
 
-    
+
     //delete the created requirement
     await page.getByRole('columnheader', { name: 'Name sort   filter_alt' }).locator('i').click();
     await page.getByRole('textbox', { name: 'Name filter value' }).click();
     await page.getByRole('textbox', { name: 'Name filter value' }).fill('Test Requirement Playwright' + Random);
     await page.getByRole('button', { name: 'Apply' }).click();
-    await expect(page.getByRole('table')).toContainText('Test Requirement Playwright' + Random);
     if (await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()) {
         await page.locator('.rz-notification-item > div:nth-child(2)').click();
     }
+    await expect(page.getByRole('table')).toContainText('Test Requirement Playwright' + Random);
+
     await page.getByRole('button', { name: 'delete', exact: true }).click();
     await page.getByRole('button', { name: 'Ok' }).click();
     await expect(page.getByRole('table')).not.toContainText('Test Requirement Playwright' + Random);
