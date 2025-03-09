@@ -7,6 +7,7 @@
         <Template Context="item">
             <div style="display: flex; gap: 5px;">
                 <RadzenButton Icon="visibility" ButtonStyle="ButtonStyle.Light" Style="color: blue;"
+                              data-testid="view"
                               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"View {EntityName}"))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               Click="@(() => ViewItem(item))"

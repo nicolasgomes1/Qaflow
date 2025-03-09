@@ -41,6 +41,7 @@
             <Template Context="item">
                 <div class="btn-group" style="display: flex; gap: 5px;">
                     <RadzenButton Icon="visibility"
+                                  data-testid="view"
                                   ButtonStyle="ButtonStyle.Light"
                                   Style="color: blue;"
                                   MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "View Project"))"
