@@ -1,62 +1,63 @@
 import { test, expect } from '@playwright/test';
 
 
-const URL = 'https://localhost:7089';
-
-test('Access Login', async ({ page }) => {
-  await page.goto(URL);
-
+test('Verify that Login and Register is visible', async ({ page }) => {
+  await page.goto('/');
+  const guest_user = page.locator('strong', { hasText: 'Welcome, Guest User!'});
+  await expect(guest_user).toBeVisible();
   // Expect a title "to contain" a substring.
   await expect(page.getByTestId('login')).toHaveText('Login');
   await expect(page.getByTestId('register')).toHaveText('Register');
+  await expect(page.getByTestId('login_top')).toHaveText('Login');
+  await expect(page.getByTestId('register_top')).toHaveText('Register');
 });
 
-test('Click Login', async ({ page }) => {
-  await page.goto(URL);
+test('Verify that Login page is accessible', async ({ page }) => {
+  await page.goto('/');
 
   // Click login
   await page.getByTestId('login').click();
 
   // Wait for navigation and specific content to load
-  await page.waitForURL(URL + '/Account/Login');
+  await page.waitForURL('/Account/Login');
   const heading = page.locator('h1', { hasText: 'Log in' });
   await expect(heading).toBeVisible();
 });
 
-test('Click Login top nav', async ({ page }) => {
-  await page.goto(URL);
+test('Verify that Login page is accessible via Top navigation', async ({ page }) => {
+  await page.goto('/');
   await page.getByTestId('login_top').click();
-  await page.waitForURL(URL + '/Account/Login');
+  await page.waitForURL('/Account/Login');
   const heading = page.locator('h1', { hasText: 'Log in' });
   await expect(heading).toBeVisible();
 });
 
-test('Click Register', async ({ page }) => {
-  await page.goto(URL);
+test('Verify that Register page is accessible', async ({ page }) => {
+  await page.goto('/');
 
   // Click register
   await page.getByTestId('register').click();
 
   // Wait for navigation and specific content to load
-  await page.waitForURL(URL +'/Account/Register');
+  await page.waitForURL('/Account/Register');
   const heading = page.locator('h1', { hasText: 'Register' });
   await expect(heading).toBeVisible();
 });
 
-test('Click Register top', async ({ page }) => {
-  await page.goto(URL);
+test('Verify that Register page is accessible via Top navigation', async ({ page }) => {
+  await page.goto('/');
 
   // Click register
   await page.getByTestId('register_top').click();
 
   // Wait for navigation and specific content to load
-  await page.waitForURL(URL +'/Account/Register');
+  await page.waitForURL('/Account/Register');
   const heading = page.locator('h1', { hasText: 'Register' });
   await expect(heading).toBeVisible();
 });
 
-test('Submit Login as Admin', async ({ page }) => {
-  await page.goto(URL + '/Account/Login');
+test('User can Login as Admin', async ({ page }) => {
+  await page.goto('/Account/Login');
 
   await page.getByTestId('login_emailform').fill('admin@example.com');
   await page.getByTestId('login_passwordform').fill('Admin123!');
@@ -65,8 +66,8 @@ test('Submit Login as Admin', async ({ page }) => {
   await expect(heading).toBeVisible();
 });
 
-test('Submit Login as User', async ({ page }) => {
-  await page.goto(URL + '/Account/Login');
+test('User caan Login as User', async ({ page }) => {
+  await page.goto('/Account/Login');
 
   await page.getByTestId('login_emailform').fill('user@example.com');
   await page.getByTestId('login_passwordform').fill('User123!');
@@ -75,8 +76,8 @@ test('Submit Login as User', async ({ page }) => {
   await expect(heading).toBeVisible();
 });
 
-test('Submit Login as Manager', async ({ page }) => {
-  await page.goto(URL + '/Account/Login');
+test('User can Login as Manager', async ({ page }) => {
+  await page.goto('/Account/Login');
   await page.getByTestId('login_emailform').fill('manager@example.com');
   await page.getByTestId('login_passwordform').fill('Manager123!');
   await page.getByTestId('login_submitform').click();
@@ -84,8 +85,8 @@ test('Submit Login as Manager', async ({ page }) => {
   await expect(heading).toBeVisible();
 });
 
-test('User Can Loggout', async ({ page }) => {
-  await page.goto(URL + '/Account/Login');
+test('User Can Loggout from the application', async ({ page }) => {
+  await page.goto('/Account/Login');
   await page.getByTestId('login_emailform').fill('manager@example.com');
   await page.getByTestId('login_passwordform').fill('Manager123!');
   await page.getByTestId('login_submitform').click();

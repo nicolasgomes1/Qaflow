@@ -1,0 +1,61 @@
+import { expect, Page } from '@playwright/test';
+
+/**
+ * @param {Page} page - The Playwright page object.
+ * @param {string} id - data-testid to locate the element.
+ */
+async function click_button(page: Page, id: string)
+{
+    const el = page.getByTestId(id);
+    await el.waitFor({ state: 'visible' });
+    await el.hover();
+    await el.click({ force: true, delay: 100 });
+    await page.waitForLoadState('networkidle');
+}
+
+/**
+ * @param {Page} page - The Playwright page object.
+ * @param {string} id - data-testid element to be validated.
+ */
+async function validate_button(page: Page, id: string)
+{
+    const el = page.getByTestId(id);
+    await el.waitFor({ state: 'visible' });
+    await page.waitForLoadState('networkidle');
+}
+
+/**
+ * @param {Page} page - The Playwright page object.
+ * @param {string} id - data-testid to locate the element.
+ * @param {string} value - value to be filled in the input element.
+ */
+async function fill_input(page: Page, id: string, value: string)
+{
+    const el = page.getByTestId(id);
+    await el.waitFor({ state: 'visible' });
+    await el.click();
+    await el.fill(value);
+    await el.press('Tab');
+    await expect(el).toHaveValue(value);
+}
+
+async function select_dropdown_option(page: Page, id: string, option: string)
+{
+    const el = page.getByTestId(id);
+    await el.waitFor({ state: 'visible' });
+    await el.click();
+    const optionElement = page.getByRole('option', { name: option });
+    await optionElement.waitFor({ state: 'visible' });
+    await optionElement.click();
+    await page.keyboard.press('Tab');
+    await expect(el).toHaveText(option);
+}
+
+async function submit_form(page: Page, id: string = 'submit')
+{
+    const submitButton = page.getByTestId(id);
+    await submitButton.waitFor({ state: 'visible' });
+    await submitButton.click({ force: true });
+}
+
+export { click_button, validate_button, fill_input, select_dropdown_option, submit_form };

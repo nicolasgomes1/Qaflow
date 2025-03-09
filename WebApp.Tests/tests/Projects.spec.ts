@@ -1,15 +1,9 @@
 import { test, expect } from '@playwright/test';
-
-
-const URL = 'https://localhost:7089';
+import * as actions from '../TestSteps/ReusableTestSteps';
+import * as login from '../TestSteps/LoginbyRole';
 
 test.beforeEach('Login User',async ({ page }) => {
-    await page.goto(URL + '/Account/Login');
-    await page.getByTestId('login_emailform').fill('admin@example.com');
-    await page.getByTestId('login_passwordform').fill('Admin123!');
-    await page.getByTestId('login_submitform').click();
-    const heading = page.locator('strong', { hasText: 'Welcome, admin@example.com!'});
-    await expect(heading).toBeVisible();
+    login.LoginbyRole(page, login.Users.Admin);
 });
 
 test.afterEach('Logout User',async ({ page }) => {
@@ -20,25 +14,23 @@ test.afterEach('Logout User',async ({ page }) => {
 
 
 test('CRUD a Project', async ({ page }) => {
+    test.slow();
     const Random = Math.floor(Math.random() * 1000);
-    await page.waitForLoadState('load');
-    await page.getByTestId('create_project').hover().then(() => {
-        return page.getByTestId('create_project').click();
-    });
-    await page.getByTestId('project_name').hover()
-    await page.getByTestId('project_name').click();
-    await page.getByTestId('project_name').fill('Test Project Playwright' + Random);
-    await page.getByTestId('project_name').press('Tab');
-    await expect(page.getByTestId('project_name')).toHaveValue('Test Project Playwright' + Random);
     
-    await page.getByTestId('project_description').hover()
-    await page.getByTestId('project_description').click();
-    await page.getByTestId('project_description').fill('Sample my description');
-    await page.getByTestId('project_description').press('Tab');
-    await expect(page.getByTestId('project_description')).toHaveValue('Sample my description');
-    
-    await page.getByTestId('submit').click();
-    await page.waitForLoadState('load');
+    await actions.click_button(page, 'create_project');
+
+    await actions.fill_input(page, 'project_name', 'Test Project Playwright' + Random);
+
+    await actions.fill_input(page, 'project_description', 'Sample my description');
+
+    await actions.submit_form(page);
+
+    await actions.validate_button(page, 'create_project');
+
+    if (await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()) {
+        await page.locator('.rz-notification-item > div:nth-child(2)').click();
+    }
+
     await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').hover();
     await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').click();
     await page.getByLabel('Name filter value').click();
