@@ -31,13 +31,12 @@ var app = builder.AddProject<Projects.WebApp>("webapp")
     .WithReference(postgres)
     .WaitFor(postgres)
     .WithReference(postgresdb)
-    .WaitFor(postgresdb);
+    .WaitFor(postgresdb)
+    .WithHttpsHealthCheck("/health");
 
 tests.WaitFor(app);
 
 
 #endif
-
-
 
 builder.Build().Run();
