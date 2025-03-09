@@ -6,7 +6,8 @@
     "test": "playwright test && npx playwright show-report",
     "test:chromium": "playwright test --project=\"Google Chrome\" --headed",
     "posttest:requirements": "playwright test ./tests/Requirements.spec.ts --project=\"Google Chrome\" --headed",
-    "posttest:projects": "playwright test ./tests/Projects.spec.ts --project=\"Google Chrome\" --headed"
+    "posttest:projects": "playwright test ./tests/Projects.spec.ts --project=\"Google Chrome\" --headed",
+    "start": "npm run test:chromium"
   },
   "keywords": [],
   "author": "",

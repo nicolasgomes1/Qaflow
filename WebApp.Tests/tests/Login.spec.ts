@@ -91,7 +91,7 @@ test('User caan Login as User', async ({ page }) => {
 
 test('User can Login as Manager', async ({ page }) => {
   test.slow();
-
+  console.log('Test');
   await page.goto('/Account/Login');
   await page.getByTestId('login_emailform').fill('manager@example.com');
   await page.getByTestId('login_passwordform').fill('Manager123!');

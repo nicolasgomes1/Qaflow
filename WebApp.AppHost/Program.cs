@@ -2,6 +2,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var sqlPassword = builder.AddParameter("sql-password", secret: true);
 
+var tests = builder.AddNpmApp("webapptests", "C:\\Users\\nicol\\source\\repos\\WebApp\\WebApp.Tests", "start");
 
 #if SQLSERVER
 // Configure SQL Server and ensure it returns an IResourceBuilder
@@ -30,6 +31,7 @@ builder.AddProject<Projects.WebApp>("webapp")
     .WaitFor(postgres)
     .WithReference(postgresdb)
     .WaitFor(postgresdb);
+
 
 #endif
 
