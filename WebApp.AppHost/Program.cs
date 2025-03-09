@@ -26,11 +26,13 @@ var postgresdb = postgres.AddDatabase("postgresdb");
 
 
 // Add a project and set up dependencies on the database
-builder.AddProject<Projects.WebApp>("webapp")
+var app = builder.AddProject<Projects.WebApp>("webapp")
     .WithReference(postgres)
     .WaitFor(postgres)
     .WithReference(postgresdb)
     .WaitFor(postgresdb);
+
+tests.WaitFor(app);
 
 
 #endif
