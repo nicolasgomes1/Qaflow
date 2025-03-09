@@ -1,10 +1,11 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var sqlPassword = builder.AddParameter("sql-password", secret: true);
 
-var tests = builder.AddNpmApp("webapptests", "C:\\Users\\nicol\\source\\repos\\WebApp\\WebApp.Tests", "start");
+var tests = builder.AddNpmApp("webapptests",
+    "C:\\Users\\nicol\\source\\repos\\WebApp\\WebApp.Tests", "start");
 
 #if SQLSERVER
+var sqlPassword = builder.AddParameter("sql-password", secret: true);
 // Configure SQL Server and ensure it returns an IResourceBuilder
 var sql = builder.AddSqlServer("sql", password: sqlPassword, port: 1400) // Use the overload that takes the name and password
     .WithDataVolume("data")
