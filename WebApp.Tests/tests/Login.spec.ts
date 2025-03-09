@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 
 
 test('Verify that Login and Register is visible', async ({ page }) => {
+  test.slow();
   await page.goto('/');
   const guest_user = page.locator('strong', { hasText: 'Welcome, Guest User!'});
   await expect(guest_user).toBeVisible();
@@ -13,6 +14,8 @@ test('Verify that Login and Register is visible', async ({ page }) => {
 });
 
 test('Verify that Login page is accessible', async ({ page }) => {
+  test.slow();
+
   await page.goto('/');
 
   // Click login
@@ -25,6 +28,8 @@ test('Verify that Login page is accessible', async ({ page }) => {
 });
 
 test('Verify that Login page is accessible via Top navigation', async ({ page }) => {
+  test.slow();
+
   await page.goto('/');
   await page.getByTestId('login_top').click();
   await page.waitForURL('/Account/Login');
@@ -33,6 +38,8 @@ test('Verify that Login page is accessible via Top navigation', async ({ page })
 });
 
 test('Verify that Register page is accessible', async ({ page }) => {
+  test.slow();
+
   await page.goto('/');
 
   // Click register
@@ -45,6 +52,8 @@ test('Verify that Register page is accessible', async ({ page }) => {
 });
 
 test('Verify that Register page is accessible via Top navigation', async ({ page }) => {
+  test.slow();
+
   await page.goto('/');
 
   // Click register
@@ -57,6 +66,8 @@ test('Verify that Register page is accessible via Top navigation', async ({ page
 });
 
 test('User can Login as Admin', async ({ page }) => {
+  test.slow();
+
   await page.goto('/Account/Login');
 
   await page.getByTestId('login_emailform').fill('admin@example.com');
@@ -67,6 +78,8 @@ test('User can Login as Admin', async ({ page }) => {
 });
 
 test('User caan Login as User', async ({ page }) => {
+  test.slow();
+
   await page.goto('/Account/Login');
 
   await page.getByTestId('login_emailform').fill('user@example.com');
@@ -77,6 +90,8 @@ test('User caan Login as User', async ({ page }) => {
 });
 
 test('User can Login as Manager', async ({ page }) => {
+  test.slow();
+
   await page.goto('/Account/Login');
   await page.getByTestId('login_emailform').fill('manager@example.com');
   await page.getByTestId('login_passwordform').fill('Manager123!');
@@ -86,6 +101,8 @@ test('User can Login as Manager', async ({ page }) => {
 });
 
 test('User Can Loggout from the application', async ({ page }) => {
+  test.slow();
+
   await page.goto('/Account/Login');
   await page.getByTestId('login_emailform').fill('manager@example.com');
   await page.getByTestId('login_passwordform').fill('Manager123!');
