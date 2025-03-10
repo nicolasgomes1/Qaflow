@@ -9,6 +9,7 @@
     <div class="form-group mb-4">
         <RadzenLabel Text="Name"/>
         <RadzenTextBox @bind-Value="@_projects.Name"
+                       data-testid="project_name"
                        class="input-style"
                        Name="name"/>
         <RadzenRequiredValidator Component="name" Text="Name is required"/>
@@ -17,6 +18,7 @@
     <div class="form-group mb-4">
         <RadzenLabel Text="Description"/>
         <RadzenTextBox @bind-Value="@_projects.Description"
+                       data-testid="project_description"
                        class="input-style"
                        Name="Description"/>
         <RadzenRequiredValidator Component="Description" Text="Description is required"/>

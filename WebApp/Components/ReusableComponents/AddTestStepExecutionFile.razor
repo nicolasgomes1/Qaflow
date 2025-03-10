@@ -43,39 +43,39 @@
         {
             try
             {
-// Read the file into a MemoryStream
+                // Read the file into a MemoryStream
                 using var stream = new MemoryStream();
                 await _selectedFile.OpenReadStream().CopyToAsync(stream);
                 _fileBytes = stream.ToArray();
 
-// Retrieve the corresponding TestStepExecution entity from the database
+                // Retrieve the corresponding TestStepExecution entity from the database
                 var testStepExecution = await db.TestStepsExecution.FindAsync(teststepexecutionId);
                 if (testStepExecution != null)
                 {
-// Check if an existing file entry is associated with the TestStepExecutionId
+                // Check if an existing file entry is associated with the TestStepExecutionId
                     var existingFile = await db.TestStepsExecutionFiles
                         .FirstOrDefaultAsync(file => file.TestStepExecutionId == teststepexecutionId);
 
                     if (existingFile != null)
                     {
-// Update the existing file
+                // Update the existing file
                         existingFile.FileContent = _fileBytes;
                         existingFile.FileName = _selectedFile.Name;
-                        existingFile.UploadedAt = DateTime.Now; // Update the upload time if needed
-                        existingFile.UploadedAt = DateTime.Now;
+                        existingFile.UploadedAt = DateTime.UtcNow; // Update the upload time if needed
+                        existingFile.UploadedAt = DateTime.UtcNow;
                         existingFile.TSEFProjectId = ProjectStateService.ProjectId;
                         Console.WriteLine("Existing file updated in the database.");
                     }
                     else
                     {
-// Add a new file entry if none exists
+                // Add a new file entry if none exists
                         var testStepExecutionFile = new TestStepsExecutionFile
                         {
                             FileContent = _fileBytes,
                             FileName = _selectedFile.Name,
                             TestStepExecutionId = teststepexecutionId,
-                            UploadedAt = DateTime.Now,
-                            CreatedAt = DateTime.Now,
+                            UploadedAt = DateTime.UtcNow,
+                            CreatedAt = DateTime.UtcNow,
                             TSEFProjectId = ProjectStateService.ProjectId
                         };
                         db.TestStepsExecutionFiles.Add(testStepExecutionFile);

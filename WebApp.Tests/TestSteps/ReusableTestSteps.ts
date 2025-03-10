@@ -6,7 +6,7 @@ import { expect, Page } from '@playwright/test';
  */
 async function click_button(page: Page, id: string)
 {
-    const el = page.getByTestId(id);
+    const el = page.getByTestId(id).first();
     await el.waitFor({ state: 'visible' });
     await el.hover();
     await el.click({ force: true, delay: 100 });

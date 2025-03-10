@@ -90,7 +90,7 @@ public class RequirementsModel(
         _dbContext.Requirements.Update(requirement);
         requirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
-        requirement.ModifiedAt = DateTime.Now;
+        requirement.ModifiedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
 
         // If there are files, attempt to save them

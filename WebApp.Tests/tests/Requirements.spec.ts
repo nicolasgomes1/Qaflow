@@ -8,9 +8,7 @@ test.beforeEach('Login User',async ({ page }) => {
 });
 
 test.afterEach('Logout User',async ({ page }) => {
-    await page.getByTestId('logout').hover();
-    await page.getByTestId('logout').click();
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await actions.click_button(page, 'logout');
     const guest_user = page.locator('strong', { hasText: 'Welcome, Guest User!'});
     await expect(guest_user).toBeVisible();
 });

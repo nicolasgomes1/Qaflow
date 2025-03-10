@@ -49,17 +49,20 @@
                                   MouseLeave="@AppTooltipService.HideTooltip"
                                   Click="@(() => ViewProject(item.Id))" Size="ButtonSize.ExtraSmall"/>
                     <RadzenButton Icon="edit"
+                                  data-testid="edit"
                                   ButtonStyle="ButtonStyle.Light" Style="color: green;"
                                   MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Edit Project"))"
                                   MouseLeave="AppTooltipService.HideTooltip"
                                   Click="@(() => EditProject(item.Id))" Size="ButtonSize.ExtraSmall"/>
                     <RadzenButton Icon="delete"
+                                  data-testid="delete"
                                   ButtonStyle="ButtonStyle.Light" Style="color: red;"
                                   MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Delete Project"))"
                                   MouseLeave="@AppTooltipService.HideTooltip"
                                   Click="@(() => DeleteData(item.Id))"
                                   Size="ButtonSize.ExtraSmall"/>
                     <RadzenButton Icon="launch"
+                                  data-testid="launch"
                                   ButtonStyle="ButtonStyle.Light" Style="color: cornflowerblue;"
                                   MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Go To {item.Name}"))"
                                   MouseLeave="@AppTooltipService.HideTooltip"
