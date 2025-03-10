@@ -31,8 +31,8 @@ test('CRUD a Project', async ({ page }) => {
         await page.locator('.rz-notification-item > div:nth-child(2)').click();
     }
 
-    await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').hover();
-    await page.getByRole('columnheader', { name: 'Name filter_alt' }).locator('i').click();
+    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
+    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
     await page.getByLabel('Name filter value').click();
     await page.getByLabel('Name filter value').fill('Test Project Playwright' + Random);
     await page.getByRole('button', { name: 'Apply' }).click();

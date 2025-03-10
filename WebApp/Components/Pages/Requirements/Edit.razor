@@ -18,7 +18,7 @@ else
                 <RadzenTabsItem Text="Requirement">
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Name"/>
-                        <RadzenTextBox data-testid="name"
+                        <RadzenTextBox data-testid="requirement_name"
                                        @bind-Value="@_requirements.Name"
                                        class="input-style"
                                        Name="name"/>
@@ -27,7 +27,7 @@ else
 
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Description"/>
-                        <RadzenTextBox data-testid="description"
+                        <RadzenTextBox data-testid="requirement_description"
                                        @bind-Value="@_requirements.Description"
                                        class="input-style"
                                        Name="description"/>
@@ -36,7 +36,7 @@ else
 
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Priority"/>
-                        <RadzenDropDown data-testid="priority"
+                        <RadzenDropDown data-testid="requirement_priority"
                                         @bind-Value="@_requirements.Priority"
                                         Data="EnumService.GetEnumValues<Priority>()"
                                         class="input-style"
@@ -46,7 +46,7 @@ else
 
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Assigned To"/>
-                        <RadzenDropDown data-testid="assignedto"
+                        <RadzenDropDown data-testid="requirement_assignedto"
                                         Data="@_usersList"
                                         @bind-Value="_requirements.AssignedTo"
                                         TextProperty="UserName"

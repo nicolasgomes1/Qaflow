@@ -13,6 +13,7 @@
                               Click="@(() => ViewItem(item))"
                               Size="ButtonSize.ExtraSmall"/>
                 <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Style="color: green;"
+                              data-testid="edit"
                               Disabled="@IsArchived(item)"
                               MouseEnter="@(args =>
                                           {
@@ -22,6 +23,7 @@
                               Click="@(() => EditItem(item))"
                               Size="ButtonSize.ExtraSmall"/>
                 <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: red;"
+                              data-testid="delete"
                               Disabled="@IsArchived(item)"
                               MouseEnter="@(args =>
                                           {

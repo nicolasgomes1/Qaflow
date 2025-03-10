@@ -1,8 +1,14 @@
 ﻿// ProjectStateService.cs
+
+using Microsoft.AspNetCore.Components;
+
 namespace WebApp.Services;
 
 public class ProjectStateService
 {
+    private readonly NavigationManager navigationManager;
+    private readonly FormNotificationService formNotificationService;
+    
     // ProjectId is now non-nullable, default to 0 (or some other invalid sentinel value).
     public int ProjectId { get; private set; }
 
@@ -23,15 +29,10 @@ public class ProjectStateService
     
     public  Task<int> GetProjectIdAsync()
     {
-        if (ProjectId == 0)
-        {
-            throw new InvalidOperationException("ProjectId is not set.");
-        }
-
+        if (ProjectId is not 0) return Task.FromResult(ProjectId);
+        navigationManager.NavigateTo("/");
+        formNotificationService.NotifyError("Returning to the Hub Home Page as no Project is selected");
+        
         return  Task.FromResult(ProjectId);
     }
-
-
-
-
 }

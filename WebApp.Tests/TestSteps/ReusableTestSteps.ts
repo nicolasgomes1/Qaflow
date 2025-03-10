@@ -39,6 +39,13 @@ async function fill_input(page: Page, id: string, value: string)
     await expect(el).toHaveValue(value);
 }
 
+async function validate_input(page: Page, id: string, value: string)
+{
+    const el = page.getByTestId(id);
+    await el.waitFor({ state: 'visible' });
+    await expect(el).toHaveValue(value);
+}
+
 async function select_dropdown_option(page: Page, id: string, option: string)
 {
     const el = page.getByTestId(id);
@@ -58,4 +65,4 @@ async function submit_form(page: Page, id: string = 'submit')
     await submitButton.click({ force: true });
 }
 
-export { click_button, validate_button, fill_input, select_dropdown_option, submit_form };
+export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input };
