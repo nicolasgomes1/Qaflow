@@ -113,4 +113,32 @@ test('User Can Loggout from the application', async ({ page }) => {
   await expect(guest_user).toBeVisible();
 });
 
+test.skip('User Can Register in the application', async ({page}) => {
+  // TODO
+  test.slow();
+  await page.goto('/Account/Register');
+
+  await page.getByTestId('register_emailform').fill('nicolasdiasgomes+10@gmail.com');
+  await page.getByTestId('register_passwordform').fill('User@1000!');
+  await page.getByTestId('register_confirmpasswordform').fill('User@1000!');
+  await page.getByTestId('register_submitform').click();
+
+  const confirmation = page.getByText("Please check your email to confirm your account.")
+  await expect(confirmation).toBeVisible();
+})
+
+test("User Registered can't register again", async ({page}) => {
+  // TODO
+  test.slow();
+  await page.goto('/Account/Register');
+
+  await page.getByTestId('register_emailform').fill('admin@example.com');
+  await page.getByTestId('register_passwordform').fill('Admin123!');
+  await page.getByTestId('register_confirmpasswordform').fill('Admin123!');
+  await page.getByTestId('register_submitform').click();
+
+  const confirmation = page.getByText("Error: Username 'admin@example.com' is already taken.\n")
+  await expect(confirmation).toBeVisible();
+})
+
 
