@@ -4,12 +4,23 @@ using WebApp.Services;
 
 namespace WebApp.Models;
 
-public class ProjectModel(
+public class ProjectModel
+{
+private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
+private readonly UserService _userService;
+private readonly ProjectStateService _projectStateService;
+public ProjectModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory,
     UserService userService,
     ProjectStateService projectStateService)
 {
-    private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
+    _userService = userService;
+    _projectStateService = projectStateService;
+    _dbContextFactory = dbContextFactory;
+    _dbContext = _dbContextFactory.CreateDbContext();
+}
+
+private readonly ApplicationDbContext _dbContext;
 
     /// <summary>
     /// Get Project by Id
@@ -24,7 +35,7 @@ public class ProjectModel(
     public async Task AddProject(Projects project)
     {
         _dbContext.Projects.Add(project);
-        project.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        project.CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName;
         project.CreatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
     }
@@ -32,7 +43,7 @@ public class ProjectModel(
     public async Task AddProjectFromCsv(Projects project)
     {
         _dbContext.Projects.Add(project);
-        project.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        project.CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName;
         project.CreatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
     }
@@ -45,7 +56,7 @@ public class ProjectModel(
     public async Task UpdateProject(int projectId)
     {
         var project = await _dbContext.Projects.FindAsync(projectId) ?? throw new Exception("Project is Null");
-        project.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        project.ModifiedBy = _userService.GetCurrentUserInfoAsync().Result.UserName;
         project.ModifiedAt = DateTime.UtcNow;
         _dbContext.Projects.Update(project);
         await _dbContext.SaveChangesAsync();
@@ -60,35 +71,35 @@ public class ProjectModel(
     public async Task<List<Projects>> GetProjectsTestCasesRequirements()
     {
         // Check if ProjectId is set
-        if (projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
+        if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
 
         // If ProjectId is set, return the specific project with its requirements and test cases
         return await _dbContext.Projects
             .AsSplitQuery()
             .Include(p => p.Requirements)
             .ThenInclude(r => r.TestCases)
-            .Where(p => p.Id == projectStateService.ProjectId) // Filter by ProjectId
+            .Where(p => p.Id == _projectStateService.ProjectId) // Filter by ProjectId
             .ToListAsync();
     }
 
     public async Task<List<Projects>> GetProjectsTestplansTestCases()
     {
         // Check if ProjectId is set
-        if (projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
+        if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
 
         // If ProjectId is set, return the specific project with its requirements and test cases
         return await _dbContext.Projects
             .AsSplitQuery()
             .Include(p => p.TestPlans)
             .ThenInclude(r => r.TestCases)
-            .Where(p => p.Id == projectStateService.ProjectId) // Filter by ProjectId
+            .Where(p => p.Id == _projectStateService.ProjectId) // Filter by ProjectId
             .ToListAsync();
     }
 
     public async Task<List<Projects>> GetProjectsData()
     {
         // Check if ProjectId is set
-        if (projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
+        if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
 
         // If ProjectId is set, return the specific project with its requirements and test cases
         return await _dbContext.Projects
@@ -97,7 +108,7 @@ public class ProjectModel(
             .ThenInclude(r => r.TestCases)
             .Include(p => p.TestPlans)
             .ThenInclude(r => r.TestCases)
-            .Where(p => p.Id == projectStateService.ProjectId) // Filter by ProjectId
+            .Where(p => p.Id == _projectStateService.ProjectId) // Filter by ProjectId
             .ToListAsync();
     }
 

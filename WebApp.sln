@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp.AppHost", "WebApp.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp.ServiceDefaults", "WebApp.ServiceDefaults\WebApp.ServiceDefaults.csproj", "{40417585-EED4-4D4F-9580-B06A6CAAA2EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp.UnitTests", "WebApp.UnitTests\WebApp.UnitTests.csproj", "{AF1A936F-D94C-44BC-ACAD-F0F8847C8617}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{E2C1F436-2E61-4913-8D49-6EA1A73F2B05}"
 EndProject
 Global
@@ -31,10 +29,6 @@ Global
 		{40417585-EED4-4D4F-9580-B06A6CAAA2EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40417585-EED4-4D4F-9580-B06A6CAAA2EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40417585-EED4-4D4F-9580-B06A6CAAA2EF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AF1A936F-D94C-44BC-ACAD-F0F8847C8617}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AF1A936F-D94C-44BC-ACAD-F0F8847C8617}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AF1A936F-D94C-44BC-ACAD-F0F8847C8617}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF1A936F-D94C-44BC-ACAD-F0F8847C8617}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E2C1F436-2E61-4913-8D49-6EA1A73F2B05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E2C1F436-2E61-4913-8D49-6EA1A73F2B05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2C1F436-2E61-4913-8D49-6EA1A73F2B05}.Release|Any CPU.ActiveCfg = Release|Any CPU
