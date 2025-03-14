@@ -9,21 +9,21 @@ namespace WebApp.UnitTests.Services;
 [TestSubject(typeof(ProjectStateService))]
 public class ProjectStateServiceTest
 {
-    private readonly int _testProject = 1;
-    private ProjectStateService _projectStateService = new ProjectStateService();
+    private const int TestProject = 1;
+    private readonly ProjectStateService _projectStateService = new();
     
     [TestMethod]
     public void TestProjectCanBeSet()
     {
-        _projectStateService.SetProjectId(_testProject);
-        Assert.AreEqual(_testProject, _projectStateService.ProjectId);
+        _projectStateService.SetProjectId(TestProject);
+        Assert.AreEqual(TestProject, _projectStateService.ProjectId);
     }
     
     [TestMethod]
     public void TestProjectCanBeCleared()
     {
-        _projectStateService.SetProjectId(_testProject);
-        Assert.AreEqual(_testProject, _projectStateService.ProjectId);
+        _projectStateService.SetProjectId(TestProject);
+        Assert.AreEqual(TestProject, _projectStateService.ProjectId);
         
         _projectStateService.ClearProjectId();
         Assert.AreEqual(0, _projectStateService.ProjectId);
@@ -32,8 +32,8 @@ public class ProjectStateServiceTest
     [TestMethod]
     public void TestProjectCanBeRetrieved()
     {
-        _projectStateService.SetProjectId(_testProject);
-        Assert.AreEqual(_testProject, _projectStateService.ProjectId);
+        _projectStateService.SetProjectId(TestProject);
+        Assert.AreEqual(TestProject, _projectStateService.ProjectId);
         
         var currentProject = _projectStateService.GetProjectIdAsync().Result;
         Assert.AreEqual(currentProject, _projectStateService.ProjectId);
@@ -45,7 +45,7 @@ public class ProjectStateServiceTest
         _projectStateService.SetProjectId(0);
         Assert.AreEqual(0, _projectStateService.ProjectId);
         
-        Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => await _projectStateService.GetProjectIdAsync());
+        Assert.ThrowsExactlyAsync<InvalidOperationException>(async () => await _projectStateService.GetProjectIdAsync());
         
     }
     
