@@ -4,6 +4,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 var tests = builder.AddNpmApp("webapptests",
     "C:\\Users\\nicol\\source\\repos\\WebApp\\WebApp.Tests", "start");
 
+
 #if SQLSERVER
 var sqlPassword = builder.AddParameter("sql-password", secret: true);
 // Configure SQL Server and ensure it returns an IResourceBuilder
@@ -21,8 +22,10 @@ builder.AddProject<Projects.WebApp>("webapp")
     .WithReference(db)
     .WaitFor(db);
 #elif POSTGRES
+var dbPassword = builder.AddParameter("DatabasePassword", false);
 // Configure PostgreSQL and ensure it returns an IResourceBuilder
-var postgres = builder.AddPostgres("postgres").WithPgWeb().WithDataVolume("data",isReadOnly: false);
+var postgres = builder.AddPostgres("postgres", password: dbPassword)
+    .WithPgWeb().WithDataVolume("data",isReadOnly: false);
 var postgresdb = postgres.AddDatabase("postgresdb");
 
 
