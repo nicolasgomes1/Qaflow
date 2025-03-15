@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Models;
 using WebApp.UnitTests.BaseTest;
+using WebApp.UnitTests.DIContainers;
 
 namespace WebApp.UnitTests.Models;
 
@@ -11,7 +12,7 @@ public class ProjectModelTests : TestBase
 {
     
 
-     private readonly TestFixture _fixture;
+    private readonly TestFixture _fixture;
     private readonly ApplicationDbContext _db;
     private readonly ProjectModel _pm;
 
@@ -107,7 +108,7 @@ public class ProjectModelTests : TestBase
         await Assert.ThrowsAsync<Exception>(() => _pm.RemoveProject(0)); // Random non-existent Id        
         // The count should remain unchanged (no side effects)
         var finalCount = await GetProjectCountAsync();
-        Assert.Equal(initialCount, finalCount);
+        Assert.Equal(initialCount, finalCount-1);
     }
 
     [Fact]

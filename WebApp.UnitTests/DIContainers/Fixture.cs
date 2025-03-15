@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Models;
 using WebApp.Services;
+using WebApp.UnitTests.Models;
 
-namespace WebApp.UnitTests.Models;
+namespace WebApp.UnitTests.DIContainers;
 
 public class TestFixture : IDisposable
 {
@@ -28,6 +28,8 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<AuthenticationStateProvider, TestAuthenticationStateProvider>();
         serviceCollection.AddScoped<UserService>();
         serviceCollection.AddScoped<ProjectStateService>();
+        serviceCollection.AddScoped<RequirementsModel>();
+        serviceCollection.AddScoped<RequirementsFilesModel>();
 
         // Register IDbContextFactory
         serviceCollection.AddDbContextFactory<ApplicationDbContext>();

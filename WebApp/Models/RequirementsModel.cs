@@ -62,7 +62,7 @@ public class RequirementsModel(
         return requirement;
     }
 
-    public async Task<Requirements> CreateRequirement(Requirements requirement, List<IBrowserFile>? files)
+    public async Task<Requirements> AddRequirement(Requirements requirement, List<IBrowserFile>? files)
     {
         // First, create the requirement
         _dbContext.Requirements.Add(requirement);

@@ -90,7 +90,7 @@
     
     private async Task CreateNewRequirement()
     {
-        _requirements = await RequirementsModel.CreateRequirement(_requirements, _uploadedFiles);
+        _requirements = await RequirementsModel.AddRequirement(_requirements, _uploadedFiles);
         
         NavigationManager.NavigateTo($"project/{ProjectId}/requirements");
 

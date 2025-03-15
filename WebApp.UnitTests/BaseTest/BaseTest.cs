@@ -1,3 +1,4 @@
+using WebApp.UnitTests.DIContainers;
 using WebApp.UnitTests.Models;
 
 namespace WebApp.UnitTests.BaseTest;

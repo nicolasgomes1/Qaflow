@@ -51,7 +51,7 @@
 
     private async Task CreateNewIntegration()
     {
-        await IntegrationsModel.CreateIntegration(_integrations);
+        await IntegrationsModel.AddIntegration(_integrations);
         NavigationManager.NavigateTo("/integrations", true);
         await FormNotificationService.NotifySuccess("Integration Created Successfully");
     }

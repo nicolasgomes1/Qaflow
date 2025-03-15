@@ -14,7 +14,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
     /// <param name="integration">The integration entity to be created.</param>
     /// <returns>Returns the created integration entity.</returns>
     /// <exception cref="DbUpdateException">Thrown when the database update fails.</exception>
-    public async Task<Integrations> CreateIntegration(Integrations integration)
+    public async Task<Integrations> AddIntegration(Integrations integration)
     {
         _dbContext.Integrations.Add(integration);
         await _dbContext.SaveChangesAsync();
