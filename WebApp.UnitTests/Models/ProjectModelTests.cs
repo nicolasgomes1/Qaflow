@@ -109,4 +109,42 @@ public class ProjectModelTests : TestBase
         var finalCount = await GetProjectCountAsync();
         Assert.Equal(initialCount, finalCount);
     }
+
+    [Fact]
+    public async Task ProjectModel_GetProjectById()
+    {
+        var newProject = new Data.Projects
+        {
+            Name = "sample",
+            Description = "Description"
+        };
+        
+        await _pm.AddProject(newProject);
+
+        var createdProject = await _pm.GetProjectById(newProject.Id);
+        Assert.Equal(newProject.Id, createdProject.Id);
+        
+    }
+
+    [Fact]
+    public async Task ProjectModel_UpdateProject()
+    {
+        var newProject = new Data.Projects
+        {
+            Name = "sample",
+            Description = "Description"
+        };
+    
+        await _pm.AddProject(newProject);
+
+        // Update the project's name
+        newProject.Name = "updated sample";
+        await _pm.UpdateProject(newProject.Id);
+
+        // Retrieve the updated project
+        var updatedProject = await _pm.GetProjectById(newProject.Id);
+
+        // Assert that the name was updated
+        Assert.Equal("updated sample", updatedProject.Name);
+    }
 }
