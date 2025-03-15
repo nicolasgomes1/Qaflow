@@ -1,17 +1,14 @@
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebApp.Controllers;
 
 namespace WebApp.UnitTests.Controllers;
 
-[TestClass]
 public class CultureControllerTest
 {
 
-    [TestMethod]
+    [Fact]
     public void TestCultureIsSetCorrectly()
     {
         // Arrange
@@ -28,13 +25,13 @@ public class CultureControllerTest
         var result = controller.Set(culture, redirectUri) as LocalRedirectResult;
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(redirectUri, result.Url);
-        Assert.AreEqual(redirectUri, result.Url);
+        Assert.NotNull(result);
+        Assert.Equal(redirectUri, result.Url);
+        Assert.Equal(redirectUri, result.Url);
         var cookieHeader = httpContext.Response.Headers["Set-Cookie"].ToString();
-        Assert.IsTrue(cookieHeader.Contains(CookieRequestCultureProvider.DefaultCookieName));
+        Assert.Contains(CookieRequestCultureProvider.DefaultCookieName, cookieHeader);
         var expectedCookieValue = CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture));
-        Assert.AreEqual(expectedCookieValue, GetCookieValue(cookieHeader, CookieRequestCultureProvider.DefaultCookieName));
+        Assert.Equal(expectedCookieValue, GetCookieValue(cookieHeader, CookieRequestCultureProvider.DefaultCookieName));
     }
     
     private static string GetCookieValue(string cookieHeader, string cookieName)

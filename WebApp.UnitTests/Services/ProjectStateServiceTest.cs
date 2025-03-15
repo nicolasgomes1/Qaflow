@@ -1,47 +1,46 @@
 using WebApp.Services;
 
-namespace Tests.Services;
+namespace WebApp.UnitTests.Services;
 
-[TestClass]
 public class ProjectStateServiceTest
 {
     private const int TestProject = 1;
     private readonly ProjectStateService _projectStateService = new();
     
-    [TestMethod]
+    [Fact]
     public void TestProjectCanBeSet()
     {
         _projectStateService.SetProjectId(TestProject);
-        Assert.AreEqual(TestProject, _projectStateService.ProjectId);
+        Assert.Equal(TestProject, _projectStateService.ProjectId);
     }
     
-    [TestMethod]
+    [Fact]
     public void TestProjectCanBeCleared()
     {
         _projectStateService.SetProjectId(TestProject);
-        Assert.AreEqual(TestProject, _projectStateService.ProjectId);
+        Assert.Equal(TestProject, _projectStateService.ProjectId);
         
         _projectStateService.ClearProjectId();
-        Assert.AreEqual(0, _projectStateService.ProjectId);
+        Assert.Equal(0, _projectStateService.ProjectId);
     }
     
-    [TestMethod]
+    [Fact]
     public void TestProjectCanBeRetrieved()
     {
         _projectStateService.SetProjectId(TestProject);
-        Assert.AreEqual(TestProject, _projectStateService.ProjectId);
+        Assert.Equal(TestProject, _projectStateService.ProjectId);
         
         var currentProject = _projectStateService.GetProjectIdAsync().Result;
-        Assert.AreEqual(currentProject, _projectStateService.ProjectId);
+        Assert.Equal(currentProject, _projectStateService.ProjectId);
     }
     
-    [TestMethod]
+    [Fact]
     public async Task TestProjectCanBeRetrievedButCanError()
     {
         _projectStateService.SetProjectId(0);
-        Assert.AreEqual(0, _projectStateService.ProjectId);
+        Assert.Equal(0, _projectStateService.ProjectId);
         
-        await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => await _projectStateService.GetProjectIdAsync());        
+        await Assert.ThrowsAsync<InvalidOperationException>(async () => await _projectStateService.GetProjectIdAsync());
     }
     
 }

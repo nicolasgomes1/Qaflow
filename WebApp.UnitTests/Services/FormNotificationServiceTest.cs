@@ -1,13 +1,12 @@
 using Radzen;
 using WebApp.Services;
 
-namespace Tests.Services;
+namespace WebApp.UnitTests.Services;
 
-[TestClass]
 public class FormNotificationServiceTest
 {
 
-    [TestMethod]
+    [Fact]
     public async Task TestNotifySuccess()
     {
         // Arrange
@@ -19,15 +18,15 @@ public class FormNotificationServiceTest
         await formNotificationService.NotifySuccess(message);
 
         // Assert
-        Assert.AreEqual(1, notificationService.Messages.Count);
+        Assert.Single(notificationService.Messages);
         var notification = notificationService.Messages.First();
-        Assert.AreEqual(NotificationSeverity.Success, notification.Severity);
-        Assert.AreEqual("Success", notification.Summary);
-        Assert.AreEqual(message, notification.Detail);
-        Assert.AreEqual(4000, notification.Duration);
+        Assert.Equal(NotificationSeverity.Success, notification.Severity);
+        Assert.Equal("Success", notification.Summary);
+        Assert.Equal(message, notification.Detail);
+        Assert.Equal(4000, notification.Duration);
     }
     
-    [TestMethod]
+    [Fact]
     public async Task TestNotifyError()
     {
         // Arrange
@@ -39,15 +38,15 @@ public class FormNotificationServiceTest
         await formNotificationService.NotifyError(message);
 
         // Assert
-        Assert.AreEqual(1, notificationService.Messages.Count);
+        Assert.Single(notificationService.Messages);
         var notification = notificationService.Messages.First();
-        Assert.AreEqual(NotificationSeverity.Error, notification.Severity);
-        Assert.AreEqual("Error", notification.Summary);
-        Assert.AreEqual(message, notification.Detail);
-        Assert.AreEqual(4000, notification.Duration);
+        Assert.Equal(NotificationSeverity.Error, notification.Severity);
+        Assert.Equal("Error", notification.Summary);
+        Assert.Equal(message, notification.Detail);
+        Assert.Equal(4000, notification.Duration);
     }
     
-    [TestMethod]
+    [Fact]
     public async Task TestNotifyWarning()
     {
         // Arrange
@@ -59,15 +58,15 @@ public class FormNotificationServiceTest
         await formNotificationService.NotifyWarning(message);
 
         // Assert
-        Assert.AreEqual(1, notificationService.Messages.Count);
+        Assert.Single(notificationService.Messages);
         var notification = notificationService.Messages.First();
-        Assert.AreEqual(NotificationSeverity.Warning, notification.Severity);
-        Assert.AreEqual("Warning", notification.Summary);
-        Assert.AreEqual(message, notification.Detail);
-        Assert.AreEqual(4000, notification.Duration);
+        Assert.Equal(NotificationSeverity.Warning, notification.Severity);
+        Assert.Equal("Warning", notification.Summary);
+        Assert.Equal(message, notification.Detail);
+        Assert.Equal(4000, notification.Duration);
     }
     
-    [TestMethod]
+    [Fact]
     public async Task TestNotifyInfo()
     {
         // Arrange
@@ -79,11 +78,11 @@ public class FormNotificationServiceTest
         await formNotificationService.NotifyInfo(message);
 
         // Assert
-        Assert.AreEqual(1, notificationService.Messages.Count);
+        Assert.Single(notificationService.Messages);
         var notification = notificationService.Messages.First();
-        Assert.AreEqual(NotificationSeverity.Info, notification.Severity);
-        Assert.AreEqual("Info", notification.Summary);
-        Assert.AreEqual(message, notification.Detail);
-        Assert.AreEqual(4000, notification.Duration);
+        Assert.Equal(NotificationSeverity.Info, notification.Severity);
+        Assert.Equal("Info", notification.Summary);
+        Assert.Equal(message, notification.Detail);
+        Assert.Equal(4000, notification.Duration);
     }
 }

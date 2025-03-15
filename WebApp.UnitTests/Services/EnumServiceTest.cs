@@ -1,8 +1,8 @@
 using WebApp.Services;
 
-namespace Tests.Services;
+namespace WebApp.UnitTests.Services;
 
-[TestClass]
+
 public class EnumServiceTest
 {
     
@@ -12,24 +12,25 @@ public class EnumServiceTest
         Beta
     }
 
-    [TestMethod]
+    [Fact]
     public void GetEnumValues()
     {
         var result = EnumService.GetEnumValues<TestEnum>();
-        CollectionAssert.AreEqual(new List<TestEnum> { TestEnum.Alpha, TestEnum.Beta }, result);
+        Assert.Equal(new List<TestEnum> { TestEnum.Alpha, TestEnum.Beta }, result);        
     }
 
-    [TestMethod]
+    [Fact]
     public void GetEnumFilteredValues()
     {
         var result = EnumService.GetEnumFilteredValues(TestEnum.Alpha);
-        CollectionAssert.AreEqual(new List<TestEnum> { TestEnum.Beta }, result);
+        Assert.Equal(new List<TestEnum> { TestEnum.Beta }, result);
+        
     }
 
-    [TestMethod]
+    [Fact]
     public void GetSingleEnum()
     {
         var result = EnumService.GetSingleEnum(TestEnum.Alpha);
-        Assert.AreEqual(TestEnum.Alpha, result);
+        Assert.Equal(TestEnum.Alpha, result);
     }
 }
