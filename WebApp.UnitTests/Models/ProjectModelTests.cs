@@ -108,7 +108,7 @@ public class ProjectModelTests : TestBase
         await Assert.ThrowsAsync<Exception>(() => _pm.RemoveProject(0)); // Random non-existent Id        
         // The count should remain unchanged (no side effects)
         var finalCount = await GetProjectCountAsync();
-        Assert.Equal(initialCount, finalCount-1);
+        Assert.Equal(initialCount, finalCount);
     }
 
     [Fact]
