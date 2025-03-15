@@ -6,24 +6,24 @@ namespace WebApp.Models;
 
 public class ProjectModel
 {
-private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
-private readonly UserService _userService;
-private readonly ProjectStateService _projectStateService;
-public ProjectModel(
-    IDbContextFactory<ApplicationDbContext> dbContextFactory,
-    UserService userService,
-    ProjectStateService projectStateService)
-{
-    _userService = userService;
-    _projectStateService = projectStateService;
-    _dbContextFactory = dbContextFactory;
-    _dbContext = _dbContextFactory.CreateDbContext();
-}
+    private readonly ApplicationDbContext _dbContext;
+    private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
+    private readonly ProjectStateService _projectStateService;
+    private readonly UserService _userService;
 
-private readonly ApplicationDbContext _dbContext;
+    public ProjectModel(
+        IDbContextFactory<ApplicationDbContext> dbContextFactory,
+        UserService userService,
+        ProjectStateService projectStateService)
+    {
+        _userService = userService;
+        _projectStateService = projectStateService;
+        _dbContextFactory = dbContextFactory;
+        _dbContext = _dbContextFactory.CreateDbContext();
+    }
 
     /// <summary>
-    /// Get Project by Id
+    ///     Get Project by Id
     /// </summary>
     /// <param name="projectId"></param>
     /// <returns>Returns the Project with the specified id.</returns>
@@ -39,7 +39,7 @@ private readonly ApplicationDbContext _dbContext;
         project.CreatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
     }
-    
+
     public async Task AddProjectFromCsv(Projects project)
     {
         _dbContext.Projects.Add(project);
@@ -49,7 +49,7 @@ private readonly ApplicationDbContext _dbContext;
     }
 
     /// <summary>
-    /// Updates the project with the specified id.
+    ///     Updates the project with the specified id.
     /// </summary>
     /// <param name="projectId"></param>
     /// <exception cref="Exception"></exception>
@@ -63,9 +63,10 @@ private readonly ApplicationDbContext _dbContext;
     }
 
     /// <summary>
-    /// Retrieves a list of projects based on the project state.
-    /// If the project state has a ProjectId set, it returns the specific project with its requirements and test cases.
-    /// If the project state does not have a ProjectId set, it returns all projects with related requirements and test cases.
+    ///     Retrieves a list of projects based on the project state.
+    ///     If the project state has a ProjectId set, it returns the specific project with its requirements and test cases.
+    ///     If the project state does not have a ProjectId set, it returns all projects with related requirements and test
+    ///     cases.
     /// </summary>
     /// <returns>A list of projects with their requirements and test cases.</returns>
     public async Task<List<Projects>> GetProjectsTestCasesRequirements()
@@ -113,7 +114,7 @@ private readonly ApplicationDbContext _dbContext;
     }
 
     /// <summary>
-    /// Returns a List of all Projects
+    ///     Returns a List of all Projects
     /// </summary>
     /// <returns></returns>
     public async Task<List<Projects>> GetProjects()
