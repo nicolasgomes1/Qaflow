@@ -1,7 +1,10 @@
+using JetBrains.Annotations;
 using Radzen;
 using WebApp.Services;
 
 namespace WebApp.UnitTests.Services;
+
+[TestSubject(typeof(FormNotificationService))]
 
 public class FormNotificationServiceTest
 {

@@ -1,8 +1,9 @@
+using JetBrains.Annotations;
 using WebApp.Services;
 
 namespace WebApp.UnitTests.Services;
 
-
+[TestSubject(typeof(EnumService))]
 public class EnumServiceTest
 {
     

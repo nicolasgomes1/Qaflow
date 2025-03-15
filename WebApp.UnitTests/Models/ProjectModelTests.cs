@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Models;
@@ -5,6 +6,7 @@ using WebApp.UnitTests.BaseTest;
 
 namespace WebApp.UnitTests.Models;
 
+[TestSubject(typeof(ProjectModel))]
 public class ProjectModelTests : TestBase
 {
     
