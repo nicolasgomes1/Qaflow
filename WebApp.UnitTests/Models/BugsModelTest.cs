@@ -8,7 +8,7 @@ public class BugsModelTest
 {
 
     [Fact]
-    public void METHOD()
+    public void ddd()
     {
         
     }

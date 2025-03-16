@@ -1,10 +1,13 @@
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.Components.Layout;
 using WebApp.Controllers;
 
 namespace WebApp.UnitTests.Controllers;
 
+[TestSubject(typeof(CultureSelector))]
 public class CultureControllerTest
 {
 

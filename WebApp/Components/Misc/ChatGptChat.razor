@@ -24,15 +24,9 @@
 
 @code{
 
-    //  private const string ApiKey = "Bearer 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";
     private string _request = "";
     private string? _response = "";
     private const string Endpoint = "https://api.openai.com/v1/chat/completions";
-
-}
-
-@code {
-
     private string? _apiKey = string.Empty;
 
     protected override void OnInitialized()

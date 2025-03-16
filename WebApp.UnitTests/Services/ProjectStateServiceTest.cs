@@ -4,7 +4,6 @@ using WebApp.Services;
 namespace WebApp.UnitTests.Services;
 
 [TestSubject(typeof(ProjectStateService))]
-
 public class ProjectStateServiceTest
 {
     private const int TestProject = 1;
