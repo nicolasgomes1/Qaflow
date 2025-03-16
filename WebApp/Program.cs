@@ -1,6 +1,8 @@
+using System.Text;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Radzen;
 using WebApp.Api.Jira;
 using WebApp.Components;
@@ -21,6 +23,10 @@ var builder = WebApplication.CreateBuilder(args);
     builder.AddSqlServerDbContext<ApplicationDbContext>("qa");
 #endif
 
+// Add authentication
+    var key = builder.Configuration["Jwt:Key"]; // Store securely!
+    var issuer = builder.Configuration["Jwt:Issuer"];
+    var audience = builder.Configuration["Jwt:Audience"];
 
 
 builder.AddServiceDefaults();
@@ -39,6 +45,19 @@ builder.Services.AddAuthentication(options =>
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
+    .AddJwtBearer(options =>
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!))
+
+        }
+        )
     .AddIdentityCookies();
 #endregion
 
@@ -78,6 +97,18 @@ builder.Services.Configure<JiraApiOptions>(builder.Configuration.GetSection("Jir
 builder.Services.AddHttpClient<JiraService>();
 builder.Services.AddHttpClient<JiraServiceFromDb>();
 
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorClient", policy =>
+    {
+        policy.WithOrigins("https://localhost:7089") // Replace with your Blazor app URL
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
+});
+
 
 var app = builder.Build();
 
@@ -91,7 +122,8 @@ app.UseRequestLocalization(localizationOptions);
 app.MapDefaultEndpoints();
 
 await app.ConfigureDatabaseAsync();
-
+// Enable CORS
+app.UseCors("AllowBlazorClient");
 
 app.MapControllers();
 
@@ -117,6 +149,7 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();

@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Api.Dto;
@@ -87,15 +89,16 @@ public static class ApiServiceExtensions
             return requirement != null ? Results.Ok(requirement) : Results.NotFound();
         }).WithOpenApi();
 
-        app.MapDelete("/api/requirements/delete/{id}", async (ApplicationDbContext dbContext, int id) =>
+        app.MapDelete("/api/requirements/delete/{id}", 
+            async (ApplicationDbContext dbContext, int id) =>
         {
             var requirement = await dbContext.Requirements.FindAsync(id);
             if (requirement == null) return Results.NotFound();
             dbContext.Requirements.Remove(requirement);
             await dbContext.SaveChangesAsync();
             return Results.Ok($"Requirement {id} deleted");
-        }).WithOpenApi();
-
+        }).WithOpenApi().RequireAuthorization();
+        
         // Endpoint to create a new requirement
         app.MapPost("/api/requirements", async (ApplicationDbContext dbContext, RequirementsDto dto) =>
         {

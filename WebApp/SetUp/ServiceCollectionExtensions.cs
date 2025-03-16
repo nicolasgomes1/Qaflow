@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<TestStepsExecutionTimerService>();
         services.AddScoped<AppTooltipService>();
         services.AddScoped<UserService>();
+        services.AddScoped<GenerateJwtToken>();
     }
     
     /// <summary>
