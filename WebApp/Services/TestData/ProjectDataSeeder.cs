@@ -223,7 +223,8 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             Description = description,
             ProjectsId = projectId,
             CreatedBy = USER,
-            AssignedTo = assignedUserId
+            AssignedTo = assignedUserId,
+            WorkflowStatus = WorkflowStatus.Completed
 
         };
 
@@ -267,7 +268,8 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             Name = name,
             Description = description,
             ProjectsId = projectId,
-            CreatedBy = USER
+            CreatedBy = USER,
+            WorkflowStatus = WorkflowStatus.Completed
         };
 
         // Add the requirement if it's provided

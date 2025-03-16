@@ -2,7 +2,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 
 var tests = builder.AddNpmApp("webapptests",
-    "C:\\Users\\nicol\\source\\repos\\WebApp\\WebApp.Tests", "start");
+    "../WebApp.Tests", "start");
 
 
 #if SQLSERVER
