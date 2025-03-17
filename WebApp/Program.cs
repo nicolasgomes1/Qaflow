@@ -1,4 +1,5 @@
 using System.Text;
+using MartinCostello.OpenApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -128,6 +129,13 @@ builder.Services.AddLocalization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+builder.Services.AddOpenApiExtensions(options =>
+{
+    options.AddServerUrls = true;
+
+    options.DefaultServerUrl = "https://localhost:50001";
+});
+
 builder.Services.Configure<JiraApiOptions>(builder.Configuration.GetSection("JiraApi"));
 // Register JiraService with HttpClient for dependency injection
 builder.Services.AddHttpClient<JiraService>();
@@ -145,6 +153,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -163,12 +172,6 @@ app.UseCors("AllowBlazorClient");
 
 app.MapControllers();
 
-#region Api
-app.MapOwnAppApiEndpoints();
-app.MapJiraApiEndpoints();
-#endregion
-
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -182,6 +185,11 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+#region Api
+app.MapOwnAppApiEndpoints();
+app.MapJiraApiEndpoints();
+#endregion
 
 app.UseHttpsRedirection();
 
