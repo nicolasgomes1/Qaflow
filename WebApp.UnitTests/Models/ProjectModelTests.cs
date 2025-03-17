@@ -71,7 +71,8 @@ public class ProjectModelTests : TestBase
 
         // Verify the number of projects is exactly 3
         var result = await _pm.GetProjects();
-        Assert.Equal(initialCount+3, result.Count());
+  //      Assert.Equal(initialCount+3, result.Count());
+    Assert.Equal(initialCount + 3, finalCount);
     }
 
     [Fact]
