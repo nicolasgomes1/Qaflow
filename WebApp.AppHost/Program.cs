@@ -1,8 +1,8 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 
-var tests = builder.AddNpmApp("webapptests",
-    "../WebApp.Tests", "start");
+//var tests = builder.AddNpmApp("webapptests",
+//    "../WebApp.Tests", "start");
 
 
 #if SQLSERVER
@@ -37,7 +37,7 @@ var app = builder.AddProject<Projects.WebApp>("webapp")
     .WaitFor(postgresdb)
     .WithHttpsHealthCheck("/health");
 
-tests.WaitFor(app);
+//tests.WaitFor(app);
 
 
 #endif

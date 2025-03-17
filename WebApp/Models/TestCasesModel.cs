@@ -141,7 +141,7 @@ public class TestCasesModel(
 
 
         testCases.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        testCases.ModifiedAt = DateTime.Now;
+        testCases.ModifiedAt = DateTime.UtcNow;
 
         var existingTestCase = await _dbContext.TestCases
             .AsSplitQuery()

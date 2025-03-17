@@ -1,3 +1,4 @@
+using WebApp.Api;
 using WebApp.Models;
 using WebApp.Services;
 using WebApp.Services.TestData;
@@ -25,6 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<AppTooltipService>();
         services.AddScoped<UserService>();
         services.AddScoped<GenerateJwtToken>();
+        services.AddScoped<FetchApiData>();
     }
     
     /// <summary>

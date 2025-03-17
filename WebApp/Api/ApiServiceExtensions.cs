@@ -14,25 +14,9 @@ public static class ApiServiceExtensions
 {
     public static void MapOwnAppApiEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/testcases", async (ApplicationDbContext dbContext) =>
+        app.MapGet("/api/testcases", async (FetchApiData fetchApiData) =>
         {
-            var allTestCases = await dbContext.TestCases
-                .Select(tc => new TestCasesDto
-                {
-                    Name = tc.Name ?? string.Empty,
-                    Description = tc.Description ?? string.Empty,
-                    Priority = tc.Priority,
-                    ArchivedStatus = tc.ArchivedStatus,
-                    ProjectId = tc.ProjectsId,
-                    RequirementsDto = tc.Requirements.Select(r => new RequirementsDto
-                    {
-                        Name = r.Name,
-                        Description = r.Description,
-                        Priority = r.Priority.ToString(),
-                        ArchivedStatus = r.ArchivedStatus,
-                        ProjectId = r.ProjectsId
-                    }).ToList()
-                }).ToListAsync();
+            var allTestCases = await fetchApiData.Api_GetListTestCases();
             return Results.Ok(allTestCases);
         }).WithOpenApi();
 
