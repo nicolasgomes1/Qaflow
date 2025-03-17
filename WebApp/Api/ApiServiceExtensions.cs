@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -97,7 +98,7 @@ public static class ApiServiceExtensions
             dbContext.Requirements.Remove(requirement);
             await dbContext.SaveChangesAsync();
             return Results.Ok($"Requirement {id} deleted");
-        }).WithOpenApi().RequireAuthorization();
+        }).WithOpenApi().RequireAuthorization(new AuthorizeAttribute {AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme});
         
         // Endpoint to create a new requirement
         app.MapPost("/api/requirements", async (ApplicationDbContext dbContext, RequirementsDto dto) =>

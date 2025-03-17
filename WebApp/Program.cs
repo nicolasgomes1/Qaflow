@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -40,12 +41,34 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+// builder.Services.AddAuthentication(options =>
+//     {
+//         options.DefaultScheme = IdentityConstants.ApplicationScheme;
+//         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+//     })
+//     .AddJwtBearer(options =>
+//         options.TokenValidationParameters = new TokenValidationParameters
+//         {
+//             ValidateIssuer = true,
+//             ValidateAudience = true,
+//             ValidateLifetime = true,
+//             ValidateIssuerSigningKey = true,
+//             ValidIssuer = issuer,
+//             ValidAudience = audience,
+//             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!))
+//
+//         }
+//         )
+//     .AddIdentityCookies();
+
 builder.Services.AddAuthentication(options =>
     {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultScheme = IdentityConstants.ApplicationScheme; // Default to Identity cookies for UI
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
-    .AddJwtBearer(options =>
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options => // JWT Bearer Authentication for API requests
+    {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -55,10 +78,23 @@ builder.Services.AddAuthentication(options =>
             ValidIssuer = issuer,
             ValidAudience = audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!))
+        };
 
-        }
-        )
-    .AddIdentityCookies();
+        // Prevent redirect to login page when an API request is unauthorized
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                return context.Response.WriteAsync("{\"error\": \"Unauthorized\"}");
+            }
+        };
+    })
+    .AddIdentityCookies(); // Identity cookies for Blazor UI authentication
+
+
 #endregion
 
 
