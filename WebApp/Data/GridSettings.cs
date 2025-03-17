@@ -10,9 +10,9 @@ public class GridSettings
 
     [MaxLength(50)] [Required] public string GridName { get; set; } = string.Empty;
     public bool IsCompactMode { get; set; }
-    public bool IsVirtualizationEnabled { get; set; }
-    public bool IsFilterEnabled { get; set; }
-    public bool IsSortingEnabled { get; set; }
+    public bool IsVirtualizationEnabled { get; set; } = true;
+    public bool IsFilterEnabled { get; set; } = true;
+    public bool IsSortingEnabled { get; set; } = true;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

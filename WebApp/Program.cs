@@ -152,8 +152,16 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICleanUpPlaywrightTestsData, CleanUpPlaywrightTestsData>();
 
 var app = builder.Build();
+
+// After building the app:
+using (var scope = app.Services.CreateScope())
+{
+    var cleanupService = scope.ServiceProvider.GetRequiredService<ICleanUpPlaywrightTestsData>();
+    await cleanupService.DeleteAllPlaywrightProjectData();
+}
 
 var supportedCultures = new[] { "en-US", "fr-BE", "nl-BE" };
 var localizationOptions = new RequestLocalizationOptions()

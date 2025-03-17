@@ -19,6 +19,7 @@ async function filterAndLaunchProject(page: Page, projectName = 'Demo Project Wi
     await page.getByRole('textbox', { name: 'Name filter value' }).click();
     await page.getByRole('textbox', { name: 'Name filter value' }).fill(projectName);
     await page.getByRole('button', { name: 'Apply' }).click();
+    await page.waitForLoadState('networkidle');
     await page.getByRole('button', { name: 'launch' }).first().click({ force: true });
     await page.waitForLoadState('load');
 }
