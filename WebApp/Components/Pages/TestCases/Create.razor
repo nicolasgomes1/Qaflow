@@ -16,7 +16,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Name"/>
                     <RadzenTextBox id="name"
-                                   @data-testid="testcase_name"
+                                   data-testid="testcase_name"
                                    @bind-Value="_testCases.Name"
                                    class="input-style"
                                    Name="name"/>
@@ -26,8 +26,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Description"/>
                     <RadzenTextArea id="description"
-                                    @data-testid="testcase_description"
-
+                                    data-testid="testcase_description"
                                     @bind-Value="_testCases.Description"
                                     class="input-style"
                                     Name="description"/>
@@ -48,7 +47,7 @@
                     <RadzenDropDown id="priority" @bind-Value="_testCases.Priority"
                                     Data="EnumService.GetEnumValues<Priority>()"
                                     class="input-style"
-                                    @data-testid="testcase_priority"
+                                    data-testid="testcase_priority"
                                     Name="priority"/>
                     <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
                 </div>
@@ -89,7 +88,7 @@
                     <RadzenLabel Text="Status"/>
                     <RadzenDropDown id="status"
                                     @bind-Value="_testCases.WorkflowStatus"
-                                    @data-testid="testcase_status"
+                                    data-testid="testcase_status"
                                     Data="EnumService.GetEnumValues<WorkflowStatus>()"
                                     class="input-style"
                                     Name="status"/>
@@ -100,7 +99,7 @@
                     <RadzenLabel Text="Assigned To"/>
                     <RadzenDropDown id="assignedto"
                                     Data="@_usersList"
-                                    @data-testid="testcase_assignedto"
+                                    data-testid="testcase_assignedto"
                                     @bind-Value="_testCases.AssignedTo"
                                     TextProperty="UserName"
                                     ValueProperty="Id"
