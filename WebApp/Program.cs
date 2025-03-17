@@ -132,8 +132,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddOpenApiExtensions(options =>
 {
     options.AddServerUrls = true;
-
-    options.DefaultServerUrl = "https://localhost:50001";
 });
 
 builder.Services.Configure<JiraApiOptions>(builder.Configuration.GetSection("JiraApi"));
