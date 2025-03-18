@@ -6,6 +6,7 @@
                 @ref="_dataGrid">
     <HeaderTemplate>
         <RadzenButton Text="Bug"
+                      data-testid="create-bug"
                       Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs/create", true)'
                       Size="ButtonSize.Medium"
                       Icon="add"

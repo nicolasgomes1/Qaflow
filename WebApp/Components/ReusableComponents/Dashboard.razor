@@ -23,7 +23,6 @@
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenButton Text="@Loc["TestCases"]"
                               data-testid="d_testcases"
-
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testcases", true))"/>
             </RadzenStack>
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
@@ -37,6 +36,7 @@
                      AlignItems="AlignItems.Center">
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenButton Text="@Loc["TestPlans"]"
+                              data-testid="d_testplans"
                               Shade="Shade.Light"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testplans", true))"/>
             </RadzenStack>
@@ -55,6 +55,7 @@
                      AlignItems="AlignItems.Center">
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenButton Text="@Loc["TestExecutions"]"
+                              data-testid="d_testexecutions"
                               ButtonStyle="ButtonStyle.Success"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testexecution", true))"/>
             </RadzenStack>
@@ -70,6 +71,7 @@
                      AlignItems="AlignItems.Center">
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenButton Text="@Loc["Bugs"]"
+                              data-testid="d_bugs"
                               ButtonStyle="ButtonStyle.Danger"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/bugs", true))"/>
             </RadzenStack>
@@ -84,6 +86,7 @@
                      AlignItems="AlignItems.Center">
             <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
                 <RadzenButton Text="@Loc["Reports"]"
+                              data-testid="d_reports"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/reports", true))"/>
             </RadzenStack>
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
@@ -97,6 +100,7 @@
                      AlignItems="AlignItems.Center">
             <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
                 <RadzenButton Text="@Loc["Milestones"]"
+                              data-testid="d_milestones"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/milestones", true))"/>
             </RadzenStack>
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">

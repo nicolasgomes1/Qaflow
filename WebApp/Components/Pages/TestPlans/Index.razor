@@ -27,6 +27,7 @@ else
 
         <HeaderTemplate>
             <RadzenButton Text="Test Plan"
+                          data-testid="create-testplan"
                           Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testplans/create", true)'
                           Size="ButtonSize.Medium"
                           Icon="add"/>

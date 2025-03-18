@@ -65,4 +65,10 @@ async function submit_form(page: Page, id: string = 'submit')
     await submitButton.click({ force: true });
 }
 
-export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input };
+async function validate_page_has_text(page: Page, text: string)
+{
+    expect(page.getByText(text)).toBeVisible();
+}
+
+
+export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text };
