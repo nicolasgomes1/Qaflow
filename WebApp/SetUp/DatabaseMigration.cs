@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using WebApp.Data;
+using WebApp.Services.TestData;
 
 namespace WebApp.SetUp
 {
@@ -14,6 +15,8 @@ namespace WebApp.SetUp
 
             await EnsureDatabaseAsync(dbContext);
             await RunMigrationsAsync(dbContext);
+            var cleanupService = scope.ServiceProvider.GetRequiredService<ICleanUpPlaywrightTestsData>();
+            await cleanupService.DeleteAllPlaywrightProjectData();
         }
 
 

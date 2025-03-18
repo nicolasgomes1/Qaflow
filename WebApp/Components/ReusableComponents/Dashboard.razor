@@ -1,4 +1,6 @@
-﻿<div style="display: flex; justify-content: center; align-items: center;">
+﻿@using WebApp.Components.Administration.Settings
+@using Microsoft.CodeAnalysis
+<div style="display: flex; justify-content: center; align-items: center;">
     <RadzenCard Style="max-width: 420px; flex: 1 1 420px; margin: 10px;">
         <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
                      AlignItems="AlignItems.Center">
@@ -106,6 +108,9 @@
 
 
 @code {
+    
+    [Parameter] public int ProjectId { get; set; }
+    
     private string _requirementsCount = string.Empty;
     private string _testCasesCount = string.Empty;
     private string _testPlansCount = string.Empty;
@@ -114,11 +119,11 @@
 
     protected override void OnInitialized()
     {
-        _requirementsCount = ReportsModel.LoadTotalRequirements();
-        _testCasesCount = ReportsModel.LoadTotalTestCases();
-        _testPlansCount = ReportsModel.LoadTotalTestPlans();
-        _testExecutionsCount = ReportsModel.LoadTotalTestExecutions();
-        _bugsCount = ReportsModel.LoadTotalBugs();
+        _requirementsCount = ReportsModel.LoadTotalRequirements(ProjectId);
+        _testCasesCount = ReportsModel.LoadTotalTestCases(ProjectId);
+        _testPlansCount = ReportsModel.LoadTotalTestPlans(ProjectId);
+        _testExecutionsCount = ReportsModel.LoadTotalTestExecutions(ProjectId);
+        _bugsCount = ReportsModel.LoadTotalBugs(ProjectId);
     }
 
 }

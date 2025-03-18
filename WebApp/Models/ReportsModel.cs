@@ -115,41 +115,41 @@ public class ReportsModel
             Math.Round(testExecutionNotRunPercentage, 2));
     }
 
-    public string LoadTotalRequirements()
+    public string LoadTotalRequirements(int projectId)
     {
-        var projectRequirements = _dbContext.Requirements.Count(r => r.ProjectsId == _projectStateService.ProjectId)
+        var projectRequirements = _dbContext.Requirements.Count(r => r.ProjectsId == projectId)
             .ToString();
 
         return projectRequirements == "0" ? "No Requirements" : $"Requirements: {projectRequirements}";
     }
 
-    public string LoadTotalTestCases()
+    public string LoadTotalTestCases(int projectId)
     {
-        var projectTestCases = _dbContext.TestCases.Count(tc => tc.ProjectsId == _projectStateService.ProjectId)
+        var projectTestCases = _dbContext.TestCases.Count(tc => tc.ProjectsId == projectId)
             .ToString();
 
         return projectTestCases == "0" ? "No Test Cases" : $"Test Cases: {projectTestCases}";
     }
 
-    public string LoadTotalTestPlans()
+    public string LoadTotalTestPlans(int projectId)
     {
-        var projectTestPlans = _dbContext.TestPlans.Count(tp => tp.ProjectsId == _projectStateService.ProjectId)
+        var projectTestPlans = _dbContext.TestPlans.Count(tp => tp.ProjectsId == projectId)
             .ToString();
 
         return projectTestPlans == "0" ? "No Test Plans" : $"Test Plans: {projectTestPlans}";
     }
 
-    public string LoadTotalTestExecutions()
+    public string LoadTotalTestExecutions(int projectId)
     {
         var projectTestExecutions = _dbContext.TestExecution
-            .Count(te => te.ProjectsId == _projectStateService.ProjectId).ToString();
+            .Count(te => te.ProjectsId == projectId).ToString();
 
         return projectTestExecutions == "0" ? "No Test Executions" : $"Test Executions: {projectTestExecutions}";
     }
 
-    public string LoadTotalBugs()
+    public string LoadTotalBugs(int projectId)
     {
-        var projectBugs = _dbContext.Bugs.Count(b => b.ProjectsId == _projectStateService.ProjectId).ToString();
+        var projectBugs = _dbContext.Bugs.Count(b => b.ProjectsId == projectId).ToString();
         return projectBugs == "0" ? "No Bugs" : $"Bugs: {projectBugs}";
     }
     

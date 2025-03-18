@@ -7,10 +7,10 @@
 }
 else
 {
-    
-<RadzenSteps>
-    <Steps>
-        <RadzenStepsItem Text="Test Case Details">
+
+<RadzenTabs RenderMode="TabRenderMode.Client">
+    <Tabs>
+        <RadzenTabsItem Text="Test Case Details">
             <RadzenRow>
                 <RadzenCard Style="width: 50%; padding: 20px;">
                     <h4 class="text-center text-primary mb-4">Test Case Details</h4>
@@ -69,19 +69,18 @@ else
                     </div>
                 </RadzenCard>
             </RadzenRow>
-        </RadzenStepsItem>
-
-        <RadzenStepsItem Text="@ContextFilesTitle()" Disabled="@TestCasesHasNoFiles">
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@TestCasesHasNoFiles">
             <FileViewer Files="Files" EntityName="@nameof(TestCasesFile)"/>
-        </RadzenStepsItem>
 
-        <RadzenStepsItem Text="@ContextTestStepsTitle()" Disabled="@IsTestStepsEmpty">
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="@ContextTestStepsTitle()" Disabled="@IsTestStepsEmpty">
             <RadzenRow>
                 <TestStepsViewer TestStepsData="@_testCases.TestSteps"/>
             </RadzenRow>
-        </RadzenStepsItem>
-
-        <RadzenStepsItem Text="@ContextExternalReferencesTitle()" Disabled="@TestCasesHasNoExternalReferences">
+        </RadzenTabsItem>
+        
+        <RadzenTabsItem Text="@ContextExternalReferencesTitle()" Disabled="@TestCasesHasNoExternalReferences">
             <RadzenRow>
                 <RadzenDataList Data="@_testCasesJira" TItem="TestCasesJira">
                     <Template Context="testCasesJira">
@@ -107,10 +106,10 @@ else
                     </Template>
                 </RadzenDataList>
             </RadzenRow>
-        </RadzenStepsItem>
-    </Steps>
-</RadzenSteps>
+        </RadzenTabsItem>
+    </Tabs>
 
+</RadzenTabs>
 
 <ViewEditActions EntityName="testcases" EntityId="_testCases.Id"/>
 }
