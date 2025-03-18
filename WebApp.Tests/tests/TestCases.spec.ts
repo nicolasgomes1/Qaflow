@@ -40,14 +40,14 @@ async function filterTestCase(page: Page, testcaseName: string) {
 test('Create New Test Case With Main Information', async ({ page })=> {
     test.slow();
     const Random = Math.floor(Math.random() * 1000);
-
+    const testcase_name = 'Test Case Playwright' + Random;
     await filterAndLaunchProject(page);
 
     await actions.click_button(page, 'd_testcases');
 
     await actions.click_button(page, 'create_testcase');
 
-    await actions.fill_input(page, 'testcase_name', 'Test Case Playwright' + Random);
+    await actions.fill_input(page, 'testcase_name', testcase_name);
 
     await actions.fill_input(page, 'testcase_description', 'Test Test Cases Playwright Description' + Random);
 
@@ -62,10 +62,10 @@ test('Create New Test Case With Main Information', async ({ page })=> {
 
     await actions.validate_button(page, 'create_testcase');
 
-    await filterTestCase(page, 'Test Case Playwright' + Random);
+    await filterTestCase(page, testcase_name);
 
     await actions.click_button(page, 'delete');
 
     await page.getByRole('button', { name: 'Ok' }).click();
-    await expect(page.getByRole('table')).not.toContainText('Test Case Playwright' + Random);
+    await expect(page.getByRole('table')).not.toContainText(testcase_name);
 });
