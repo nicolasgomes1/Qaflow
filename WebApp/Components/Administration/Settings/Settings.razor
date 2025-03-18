@@ -73,7 +73,7 @@
 </RadzenDataGrid>
 
 @code {
-    RadzenDataGrid<GridSettings> _gridSettingsGrid;
+    RadzenDataGrid<GridSettings> _gridSettingsGrid = new();
     IEnumerable<GridSettings> _gridSettings = new List<GridSettings>(); // Use IEnumerable for compatibility
     readonly List<GridSettings> _gridSettingsToInsert = new(); // For tracking inserted rows
 

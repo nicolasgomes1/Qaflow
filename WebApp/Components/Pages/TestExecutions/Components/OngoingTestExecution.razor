@@ -37,7 +37,7 @@
             .ToListAsync();
 
         AssociatedTestStepsExecution = await db.TestStepsExecution
-            .Where(tse => tse.TestCaseExecution.TestExecutionId == _testExecution.Id)
+            .Where(tse => tse.TestCaseExecution != null && tse.TestCaseExecution.TestExecutionId == _testExecution.Id)
             .Include(ts => ts.TestSteps)
             .ToListAsync();
     }
@@ -286,7 +286,7 @@
 
                     <RadzenDataGridColumn TItem="TestStepsExecution" Title="Expected result" Width="200px">
                         <Template Context="testStepExecution">
-                            @testStepExecution.TestSteps.ExpectedResult
+                            @testStepExecution.TestSteps?.ExpectedResult
                         </Template>
                     </RadzenDataGridColumn>
 
@@ -314,7 +314,7 @@
                         </EditTemplate>
 
                         <Template Context="ctx">
-                            @if (ctx.TestStepsExecutionFile != null)
+                            @if (ctx.TestStepsExecutionFile?.FileContent is not null)
                             {
                                 <RadzenImage
                                     Path="@($"data:image/jpeg;base64,{Convert.ToBase64String(ctx.TestStepsExecutionFile.FileContent)}")"

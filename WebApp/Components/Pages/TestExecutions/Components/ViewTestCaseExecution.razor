@@ -14,7 +14,7 @@
                     <RadzenDataGridColumn TItem="TestCaseExecution" Property="Duration" Title="Duration" Width="200px" />
                     <RadzenDataGridColumn TItem="TestCaseExecution" Title="Estimated Time" Width="200px">
                         <Template Context="testCaseExecution">
-                            @testCaseExecution.TestCases.EstimatedTime
+                            @testCaseExecution.TestCases?.EstimatedTime
                         </Template>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="TestCaseExecution" Property="ExecutionStatus" Title="Status" Width="150px" />

@@ -115,7 +115,7 @@ public class TestExecutionModel
             .Include(te => te.TestCaseExecutions)
             .ThenInclude(tce => tce.TestStepsExecution)
             .Include(te => te.TestPlan)
-            .ThenInclude(tp => tp.TestCases)
+            .ThenInclude(tp => tp!.TestCases)
             .ThenInclude(tc => tc.TestSteps)
             .FirstOrDefaultAsync(te => te.Id == testExecutionId);
 
@@ -342,27 +342,27 @@ public class TestExecutionModel
     /// <returns>The TestExecution object</returns>
     public async Task<TestExecution> GetTestExecutionData(int testExecutionId)
     {
-        await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        var testexecution = await _dbContext.TestExecution
+        var getTestExecutionData = await dbContext.TestExecution
             .Include(te => te.TestPlan)
             .Include(te => te.TestCaseExecutions)
             .ThenInclude(tce => tce.TestStepsExecution)
             .FirstOrDefaultAsync(te => te.Id == testExecutionId);
 
-        if (testexecution is { TestPlan: not null })
+        if (getTestExecutionData is { TestPlan: not null })
         {
-            TestPlanId = testexecution.TestPlan.Id;
+            TestPlanId = getTestExecutionData.TestPlan.Id;
         }
-
-        return testexecution;
+        
+        return getTestExecutionData ?? throw new InvalidOperationException("Test Execution Data was null here");
     }
 
     public async Task<List<TestExecution>> GetTestExecutionWithTestPlan()
     {
-        await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        return await _dbContext.TestExecution
+        return await dbContext.TestExecution
             .Include(te => te.TestPlan)
             .ToListAsync();
     }
@@ -370,9 +370,9 @@ public class TestExecutionModel
 
     public async Task DisplayTestExecutionIndexPage()
     {
-        await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        testexecution = await _dbContext.TestExecution
+        testexecution = await dbContext.TestExecution
             .Include(te => te.TestPlan) // Include the TestPlan navigation property
             .Where(te => te.ProjectsId == _projectSateService.ProjectId)
             .ToListAsync();
@@ -416,18 +416,18 @@ public class TestExecutionModel
     /// <exception cref="InvalidOperationException"></exception>
     public async Task<List<TestCases>> GetTestCasesForTestExecution(int testExecutionId)
     {
-        await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        var testExecution = await _dbContext.TestExecution
+        var testExecution = await dbContext.TestExecution
             .Include(te => te.TestPlan)
-            .ThenInclude(tp => tp.TestCases)
+            .ThenInclude(tp => tp!.TestCases)
             .FirstOrDefaultAsync(te => te.Id == testExecutionId);
         if (testExecution == null) throw new InvalidOperationException("TestExecution not found.");
 
         var testPlan = testExecution.TestPlan;
         if (testPlan == null) throw new InvalidOperationException("TestPlan not found.");
 
-        return testPlan.TestCases.ToList();
+        return testPlan.TestCases?.ToList() ?? new List<TestCases>();
     }
 
     public async Task<List<TestExecution>> GetPastTestExecutions(int testExecutionId)

@@ -20,27 +20,10 @@ public static class ApiServiceExtensions
             return Results.Ok(allTestCases);
         }).WithOpenApi();
 
-        app.MapGet("/api/testcases/view/{id}", async (ApplicationDbContext dbContext, int id) =>
+        app.MapGet("/api/testcases/view/{id}", async (FetchApiData fetchApiData, int id) =>
         {
-            var testCase = await dbContext.TestCases
-                .Where(tc => tc.Id == id)
-                .Select(tc => new TestCasesDto
-                {
-                    Name = tc.Name ?? string.Empty,
-                    Description = tc.Description ?? string.Empty,
-                    Priority = tc.Priority,
-                    ArchivedStatus = tc.ArchivedStatus,
-                    ProjectId = tc.ProjectsId,
-                    RequirementsDto = tc.Requirements.Select(r => new RequirementsDto
-                    {
-                        Name = r.Name,
-                        Description = r.Description,
-                        Priority = r.Priority.ToString(),
-                        ArchivedStatus = r.ArchivedStatus,
-                        ProjectId = r.ProjectsId
-                    }).ToList()
-                }).FirstOrDefaultAsync();
-            return testCase != null ? Results.Ok(testCase) : Results.NotFound();
+            var testCase = await fetchApiData.Api_GetTestCases(id);
+            return Results.Ok(testCase);
         }).WithOpenApi();
 
 
@@ -147,6 +130,7 @@ public static class ApiServiceExtensions
             var project = await dbContext.Projects.FindAsync(id);
             try
             {
+                if (project is null) return Results.NotFound($"Project {id} not found");
                 dbContext.Projects.Remove(project);
                 await dbContext.SaveChangesAsync();
                 return Results.Ok($"Project {id} deleted");

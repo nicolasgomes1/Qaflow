@@ -34,7 +34,7 @@ public class ReportsModel
         // Count the number of TestCases that have at least one Requirement
         var testCasesWithRequirements = await db2.TestCases
             .Where(tc => tc.ProjectsId == _projectStateService.ProjectId)
-            .Where(tc => tc.Requirements.Count != 0)
+            .Where(tc => tc.Requirements != null && tc.Requirements.Count != 0)
             .CountAsync();
 
         // Calculate the number of TestCases without Requirements

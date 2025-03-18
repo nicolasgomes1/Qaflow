@@ -151,7 +151,7 @@
         public string ConfirmPassword { get; set; } = "";
     }
     
-    private async Task<bool> SendEmailAsync(string email, string subject, string confirmlink)
+    private async Task SendEmailAsync(string email, string subject, string confirmlink)
     {
         MailMessage message = new MailMessage();
         SmtpClient smtpClient = new SmtpClient();
@@ -166,7 +166,7 @@
         smtpClient.UseDefaultCredentials = false;
         smtpClient.Credentials = new NetworkCredential("testdotnet10@gmail.com", "rmrcmrpqgkcrfkgl");
         smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-        smtpClient.Send(message);
-        return true;
+        await smtpClient.SendMailAsync(message);
+        
     }
 }

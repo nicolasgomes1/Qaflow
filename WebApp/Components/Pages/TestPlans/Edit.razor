@@ -11,7 +11,7 @@ else
 
     <RadzenTemplateForm Data="@_testPlans" TItem="TestPlans" Submit="UpdateTestPlan">
         <ValidationSummary class="alert alert-danger"/>
-        <RadzenTabs RenderMode="TabRenderMode.Client" bind-SelectedIndex="_selectedIndex">
+        <RadzenTabs RenderMode="TabRenderMode.Client">
             <Tabs>
                 <RadzenTabsItem Text="Test Plans">
                     
@@ -100,7 +100,7 @@ else
     
     private bool _isLoading = true;
 
-    int _selectedIndex;
+  //  private int _selectedIndex;
     private TestPlans _testPlans = new();
    
     protected override async Task OnInitializedAsync()

@@ -27,12 +27,12 @@ public class ProjectStateServiceTest
     }
     
     [Fact]
-    public void TestProjectCanBeRetrieved()
+    public async Task TestProjectCanBeRetrieved()
     {
         _projectStateService.SetProjectId(TestProject);
         Assert.Equal(TestProject, _projectStateService.ProjectId);
         
-        var currentProject = _projectStateService.GetProjectIdAsync().Result;
+        var currentProject = await _projectStateService.GetProjectIdAsync();
         Assert.Equal(currentProject, _projectStateService.ProjectId);
     }
     
