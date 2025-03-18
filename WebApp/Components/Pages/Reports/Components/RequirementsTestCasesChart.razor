@@ -18,8 +18,9 @@
     /// <summary>
     /// Parameter ProjectId required
     /// </summary>
-    [Parameter] 
+    [Parameter, EditorRequired] 
     public int ProjectId { get; set; }
+    
     private List<ChartData> _chartData = [];
 
     public class ChartData

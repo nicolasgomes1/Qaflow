@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <WarningsAsErrors>RZ2012</WarningsAsErrors>
     <UserSecretsId>aspnet-WebApp-07de1245-d9ea-4a53-90d5-e2f010a42a25</UserSecretsId>
   </PropertyGroup>
 
@@ -81,5 +82,5 @@
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
   </ItemGroup>
-
+  
 </Project>

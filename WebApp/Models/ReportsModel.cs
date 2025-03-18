@@ -19,25 +19,18 @@ public class ReportsModel
 
     public async Task<(double, double)> GetTestCasePercentagesAsync(int projectId)
     {
-        await using var db1 = await _dbContextFactory.CreateDbContextAsync();
-        await using var db2 = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
 
-
-        // Count the total number of TestCases
-        var totalTestCases = await db1.TestCases
+        var totalTestCases = await db.TestCases
             .Where(tc => tc.ProjectsId == projectId)
             .CountAsync();
 
-        // Count the number of TestCases that have at least one Requirement
-        var testCasesWithRequirements = await db2.TestCases
+        var testCasesWithRequirements = await db.TestCases
             .Where(tc => tc.ProjectsId == projectId)
-            .Where(tc => tc.Requirements != null && tc.Requirements.Count != 0)
-            .CountAsync();
+            .CountAsync(tc => tc.Requirements.Any());
 
-        // Calculate the number of TestCases without Requirements
         var testCasesWithoutRequirements = totalTestCases - testCasesWithRequirements;
 
-        // Calculate percentages (default to 0 if no total test cases)
         var testCasesWithRequirementsPercentage = totalTestCases > 0
             ? (double)testCasesWithRequirements / totalTestCases * 100
             : 0;
@@ -52,63 +45,52 @@ public class ReportsModel
 
     public async Task<(double, double)> GetTestPlansPercentagesAsync(int projectId)
     {
-        await using var db1 = await _dbContextFactory.CreateDbContextAsync();
-        await using var db2 = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
 
-        var testPlansWithTestCases = await db1.TestPlans
-            .Where(tc => tc.ProjectsId == projectId)
-            .Where(tc => tc.TestCases.Any())
-            .CountAsync();
+        var testPlans = await db.TestPlans
+            .Where(tp => tp.ProjectsId == projectId)
+            .Select(tp => new { tp.Id, HasTestCases = tp.TestCases.Any() })
+            .ToListAsync();
 
-        var testPlansWithoutTestCases = await db2.TestPlans
-            .Where(tc => tc.ProjectsId == projectId)
-            .Where(tc => !tc.TestCases.Any())
-            .CountAsync();
+        var testPlansWithTestCases = testPlans.Count(tp => tp.HasTestCases);
+        var testPlansWithoutTestCases = testPlans.Count(tp => !tp.HasTestCases);
+        var totalTestPlans = testPlans.Count;
 
-        var totalTestPlans = testPlansWithTestCases + testPlansWithoutTestCases;
+        double testPlansWithTestCasesPercentage = 0;
+        double testPlansWithoutTestCasesPercentage = 0;
 
-        float testPlansWithTestCasesPercentage = 0;
-        float testPlansWithoutTestCasesPercentage = 0;
+        if (totalTestPlans > 0)
+        {
+            testPlansWithTestCasesPercentage = (double)testPlansWithTestCases / totalTestPlans * 100;
+            testPlansWithoutTestCasesPercentage = (double)testPlansWithoutTestCases / totalTestPlans * 100;
+        }
 
-        if (totalTestPlans <= 0)
-            return (Math.Round(testPlansWithTestCasesPercentage, 2),
-                Math.Round(testPlansWithoutTestCasesPercentage, 2));
-        testPlansWithTestCasesPercentage = (float)testPlansWithTestCases / totalTestPlans * 100;
-        testPlansWithoutTestCasesPercentage = (float)testPlansWithoutTestCases / totalTestPlans * 100;
-
-        return (Math.Round(testPlansWithTestCasesPercentage, 2), Math.Round(testPlansWithoutTestCasesPercentage, 2));
+        return (Math.Round(testPlansWithTestCasesPercentage, 2), 
+            Math.Round(testPlansWithoutTestCasesPercentage, 2));
     }
 
     public async Task<(double, double, double)> GetTestExecutionsPercentagesAsync(int projectId)
     {
-        await using var db1 = await _dbContextFactory.CreateDbContextAsync();
-        await using var db2 = await _dbContextFactory.CreateDbContextAsync();
-        await using var db3 = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
 
-        var testExecutionsPassed = await db1.TestExecution
+        var executionCounts = await db.TestExecution
             .Where(te => te.ProjectsId == projectId)
-            .Where(te => te.ExecutionStatus == ExecutionStatus.Passed)
-            .CountAsync();
+            .GroupBy(te => te.ExecutionStatus)
+            .Select(g => new { Status = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Status, x => x.Count);
 
-        var testExecutionsFailed = await db2.TestExecution
-            .Where(te => te.ProjectsId == projectId)
-            .Where(te => te.ExecutionStatus == ExecutionStatus.Failed)
-            .CountAsync();
-
-        var testExecutionsNotRun = await db3.TestExecution
-            .Where(te => te.ProjectsId == projectId)
-            .Where(te => te.ExecutionStatus == ExecutionStatus.NotRun)
-            .CountAsync();
+        var testExecutionsPassed = executionCounts.GetValueOrDefault(ExecutionStatus.Passed);
+        var testExecutionsFailed = executionCounts.GetValueOrDefault(ExecutionStatus.Failed);
+        var testExecutionsNotRun = executionCounts.GetValueOrDefault(ExecutionStatus.NotRun);
 
         var totalTestExecutions = testExecutionsPassed + testExecutionsFailed + testExecutionsNotRun;
 
-        var testExecutionsPassedPercentage =
-            totalTestExecutions > 0 ? (double)testExecutionsPassed / totalTestExecutions * 100 : 0;
-        var testExecutionsFailedPercentage =
-            totalTestExecutions > 0 ? (double)testExecutionsFailed / totalTestExecutions * 100 : 0;
-        var testExecutionNotRunPercentage =
-            totalTestExecutions > 0 ? (double)testExecutionsNotRun / totalTestExecutions * 100 : 0;
-        return (Math.Round(testExecutionsPassedPercentage, 2), Math.Round(testExecutionsFailedPercentage, 2),
+        var testExecutionsPassedPercentage = totalTestExecutions > 0 ? (double)testExecutionsPassed / totalTestExecutions * 100 : 0;
+        var testExecutionsFailedPercentage = totalTestExecutions > 0 ? (double)testExecutionsFailed / totalTestExecutions * 100 : 0;
+        var testExecutionNotRunPercentage = totalTestExecutions > 0 ? (double)testExecutionsNotRun / totalTestExecutions * 100 : 0;
+
+        return (Math.Round(testExecutionsPassedPercentage, 2),
+            Math.Round(testExecutionsFailedPercentage, 2),
             Math.Round(testExecutionNotRunPercentage, 2));
     }
 

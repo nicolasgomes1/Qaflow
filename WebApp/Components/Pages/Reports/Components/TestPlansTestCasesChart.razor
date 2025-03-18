@@ -16,8 +16,7 @@
 
 
 @code {
-    [Required]
-    [Parameter]
+    [Parameter,EditorRequired]
     public int ProjectId { get; set; }
     
     private List<ChartData> _chartData = [];
