@@ -69,7 +69,10 @@ public class RequirementsModel(
         requirement.ProjectsId = projectSateService.GetProjectIdAsync().Result;
 
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        
+        if (requirement.WorkflowStatus == WorkflowStatus.Completed)
+        {
+            requirement.ArchivedStatus = ArchivedStatus.Archived;
+        }
         await _dbContext.SaveChangesAsync();
 
         // If there are files, attempt to save them

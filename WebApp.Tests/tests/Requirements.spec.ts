@@ -54,7 +54,7 @@ test('Create New Requirement', async ({ page })=> {
     await actions.select_dropdown_option(page, 'requirement_priority', 'Medium');
     
 
-    await actions.select_dropdown_option(page,'requirement_status', 'Completed');
+    await actions.select_dropdown_option(page,'requirement_status', 'New');
 
     await actions.select_dropdown_option(page,'requirement_assignedto', 'user@example.com');
     
@@ -119,7 +119,7 @@ test('Edit New Requirement', async ({ page })=> {
     await actions.fill_input(page, 'requirement_description', description);
 
     await actions.select_dropdown_option(page, 'requirement_priority', 'Medium');
-    await actions.select_dropdown_option(page,'requirement_status', 'Completed');
+    await actions.select_dropdown_option(page,'requirement_status', 'New');
     await actions.select_dropdown_option(page,'requirement_assignedto', 'user@example.com');
     await actions.submit_form(page);
     await actions.validate_button(page, 'create_requirement');

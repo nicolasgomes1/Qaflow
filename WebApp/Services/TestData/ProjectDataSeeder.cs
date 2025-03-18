@@ -73,9 +73,9 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             testSteps);
 
         // Create or get test plans associated with the test cases
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", USER, testCase1);
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", MANAGER, testCase2);
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Beta", USER, null);
+        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", "Alpha",USER, testCase1);
+        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", "Beta",MANAGER, testCase2);
+        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Beta", "no tests",USER, null);
 
         await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 1", "Bug 1 Description", USER);
         await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 2", "Bug 2 Description", USER, BugStatus.Closed);
@@ -301,7 +301,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
     }
 
 
-    private static async Task GetOrCreateTestPlanAsync(ApplicationDbContext dbContext, int projectId, string name, string assignedUserName,
+    private static async Task GetOrCreateTestPlanAsync(ApplicationDbContext dbContext, int projectId, string name, string description, string assignedUserName,
         TestCases? testCase)
     {
         
@@ -322,6 +322,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
                 var newTestPlan = new TestPlans
                 {
                     Name = name,
+                    Description = description,
                     ProjectsId = projectId,
                     CreatedBy = USER,
                     AssignedTo = assignedUserId
@@ -349,6 +350,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         var newTestPlanForCreation = new TestPlans
         {
             Name = name,
+            Description = description,
             ProjectsId = projectId,
             CreatedBy = USER,
             AssignedTo = assignedUserId

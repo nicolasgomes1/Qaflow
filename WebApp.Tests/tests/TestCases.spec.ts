@@ -54,7 +54,7 @@ test('Create New Test Case With Main Information', async ({ page })=> {
     await actions.select_dropdown_option(page, 'testcase_priority', 'Medium');
 
 
-    await actions.select_dropdown_option(page,'testcase_status', 'Completed');
+    await actions.select_dropdown_option(page,'testcase_status', 'New');
 
     await actions.select_dropdown_option(page,'testcase_assignedto', 'user@example.com');
 

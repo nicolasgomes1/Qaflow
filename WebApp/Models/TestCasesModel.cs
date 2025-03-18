@@ -94,14 +94,20 @@ public class TestCasesModel(
     }
 
 
-    public async Task<TestCases> CreateTestCases(TestCases testcase, List<IBrowserFile>? files)
+    public async Task<TestCases> AddTestCases(TestCases testcase, List<IBrowserFile>? files)
     {
         //First create the test case
         _dbContext.TestCases.Add(testcase);
         testcase.ProjectsId = projectStateService.ProjectId;
 
         testcase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-
+        
+        //adjust the active or not based on the workfllow
+        if (testcase.WorkflowStatus == WorkflowStatus.Completed)
+        {
+            testcase.ArchivedStatus = ArchivedStatus.Archived;
+        }
+        
         // Assign test steps to TestCases before saving
         testcase.TestSteps = TestStepsList;
         foreach (var step in TestStepsList)

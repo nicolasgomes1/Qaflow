@@ -170,7 +170,7 @@
     {
         _testCases.EstimatedTime = TimeSpan.FromMinutes(int.TryParse(_estimatedTimeInput, out var minutes) ? minutes : 0);
 
-        await TestCasesModel.CreateTestCases(_testCases, _uploadedFiles);
+        await TestCasesModel.AddTestCases(_testCases, _uploadedFiles);
         NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testcases");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Case with Id {_testCases.Id} Created Successfully");
