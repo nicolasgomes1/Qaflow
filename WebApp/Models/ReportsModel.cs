@@ -10,17 +10,14 @@ public class ReportsModel
 {
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
     private readonly ApplicationDbContext _dbContext;
-    private readonly ProjectStateService _projectStateService;
 
-    public ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFactory,
-        ProjectStateService projectStateService)
+    public ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
         _dbContext = _dbContextFactory.CreateDbContext();
-        _projectStateService = projectStateService;
     }
 
-    public async Task<(double, double)> GetTestCasePercentagesAsync()
+    public async Task<(double, double)> GetTestCasePercentagesAsync(int projectId)
     {
         await using var db1 = await _dbContextFactory.CreateDbContextAsync();
         await using var db2 = await _dbContextFactory.CreateDbContextAsync();
@@ -28,12 +25,12 @@ public class ReportsModel
 
         // Count the total number of TestCases
         var totalTestCases = await db1.TestCases
-            .Where(tc => tc.ProjectsId == _projectStateService.ProjectId)
+            .Where(tc => tc.ProjectsId == projectId)
             .CountAsync();
 
         // Count the number of TestCases that have at least one Requirement
         var testCasesWithRequirements = await db2.TestCases
-            .Where(tc => tc.ProjectsId == _projectStateService.ProjectId)
+            .Where(tc => tc.ProjectsId == projectId)
             .Where(tc => tc.Requirements != null && tc.Requirements.Count != 0)
             .CountAsync();
 
@@ -53,18 +50,18 @@ public class ReportsModel
             Math.Round(testCasesWithoutRequirementsPercentage, 2));
     }
 
-    public async Task<(double, double)> GetTestPlansPercentagesAsync()
+    public async Task<(double, double)> GetTestPlansPercentagesAsync(int projectId)
     {
         await using var db1 = await _dbContextFactory.CreateDbContextAsync();
         await using var db2 = await _dbContextFactory.CreateDbContextAsync();
 
         var testPlansWithTestCases = await db1.TestPlans
-            .Where(tc => tc.ProjectsId == _projectStateService.ProjectId)
+            .Where(tc => tc.ProjectsId == projectId)
             .Where(tc => tc.TestCases.Any())
             .CountAsync();
 
         var testPlansWithoutTestCases = await db2.TestPlans
-            .Where(tc => tc.ProjectsId == _projectStateService.ProjectId)
+            .Where(tc => tc.ProjectsId == projectId)
             .Where(tc => !tc.TestCases.Any())
             .CountAsync();
 
@@ -82,24 +79,24 @@ public class ReportsModel
         return (Math.Round(testPlansWithTestCasesPercentage, 2), Math.Round(testPlansWithoutTestCasesPercentage, 2));
     }
 
-    public async Task<(double, double, double)> GetTestExecutionsPercentagesAsync()
+    public async Task<(double, double, double)> GetTestExecutionsPercentagesAsync(int projectId)
     {
         await using var db1 = await _dbContextFactory.CreateDbContextAsync();
         await using var db2 = await _dbContextFactory.CreateDbContextAsync();
         await using var db3 = await _dbContextFactory.CreateDbContextAsync();
 
         var testExecutionsPassed = await db1.TestExecution
-            .Where(te => te.ProjectsId == _projectStateService.ProjectId)
+            .Where(te => te.ProjectsId == projectId)
             .Where(te => te.ExecutionStatus == ExecutionStatus.Passed)
             .CountAsync();
 
         var testExecutionsFailed = await db2.TestExecution
-            .Where(te => te.ProjectsId == _projectStateService.ProjectId)
+            .Where(te => te.ProjectsId == projectId)
             .Where(te => te.ExecutionStatus == ExecutionStatus.Failed)
             .CountAsync();
 
         var testExecutionsNotRun = await db3.TestExecution
-            .Where(te => te.ProjectsId == _projectStateService.ProjectId)
+            .Where(te => te.ProjectsId == projectId)
             .Where(te => te.ExecutionStatus == ExecutionStatus.NotRun)
             .CountAsync();
 
@@ -153,19 +150,19 @@ public class ReportsModel
         return projectBugs == "0" ? "No Bugs" : $"Bugs: {projectBugs}";
     }
     
-    public async Task<double> GetTestExecutionPassRateAsync()
+    public async Task<double> GetTestExecutionPassRateAsync(int projectId)
     {
         await using var db1 = await _dbContextFactory.CreateDbContextAsync();
         await using var db2 = await _dbContextFactory.CreateDbContextAsync();
 
         var testExecutionsPassed = await db1.TestExecution
-            .Where(te => te.ProjectsId == _projectStateService.ProjectId)
+            .Where(te => te.ProjectsId == projectId)
             .Where(te => te.ExecutionStatus == ExecutionStatus.Passed)
             .Where(te => te.IsActive == false)
             .CountAsync();
 
         var testExecutionsFailed = await db2.TestExecution
-            .Where(te => te.ProjectsId == _projectStateService.ProjectId)
+            .Where(te => te.ProjectsId == projectId)
             .Where(te => te.ExecutionStatus == ExecutionStatus.Failed)
             .Where(te => te.IsActive == false)
             .CountAsync();

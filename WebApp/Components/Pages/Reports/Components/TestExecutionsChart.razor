@@ -14,6 +14,10 @@
 </RadzenStack>
 
 @code {
+    [Required]
+    [Parameter]
+    public int ProjectId { get; set; }
+    
     private List<ChartData> _chartData = [];
     private List<string> _fills = []; // Create a list to store the colors
 
@@ -27,7 +31,7 @@
     protected override async Task OnInitializedAsync()
     {
         var (testExecutionsPassedPercentage, testExecutionsFailedPercentage, testExecutionNotRunPercentage) =
-            await ReportsModel.GetTestExecutionsPercentagesAsync();
+            await ReportsModel.GetTestExecutionsPercentagesAsync(ProjectId);
 
         if (testExecutionsPassedPercentage > 0)
         {

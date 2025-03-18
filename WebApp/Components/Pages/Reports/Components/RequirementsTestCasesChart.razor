@@ -15,6 +15,11 @@
 
 
 @code {
+    /// <summary>
+    /// Parameter ProjectId required
+    /// </summary>
+    [Parameter] 
+    public int ProjectId { get; set; }
     private List<ChartData> _chartData = [];
 
     public class ChartData
@@ -22,12 +27,12 @@
         public string Category { get; set; } = string.Empty;
         public double Value { get; set; }
     }
-
+    
     protected override async Task OnInitializedAsync()
     {
         // Get the test case percentages
         var (testCasesWithRequirementsPercentage, testCasesWithoutRequirementsPercentage) =
-            await ReportsModel.GetTestCasePercentagesAsync();
+            await ReportsModel.GetTestCasePercentagesAsync(ProjectId);
 
         if (testCasesWithRequirementsPercentage > 0)
         {

@@ -16,6 +16,10 @@
 
 
 @code {
+    [Required]
+    [Parameter]
+    public int ProjectId { get; set; }
+    
     private List<ChartData> _chartData = [];
 
     public class ChartData
@@ -28,7 +32,7 @@
     protected override async Task OnInitializedAsync()
     {
         var (testPlansWithTestCasesPercentage, testPlansWithoutTestCasesPercentage) =
-    await ReportsModel.GetTestPlansPercentagesAsync();
+    await ReportsModel.GetTestPlansPercentagesAsync(ProjectId);
 
         if (testPlansWithTestCasesPercentage > 0)
         {
