@@ -33,7 +33,7 @@ else
             <RadzenButton Text="Test Case"
                           data-testid="create_testcase"
                           Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases/create", true)'
-                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create Test Case",TooltipPosition.Bottom))"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create Test Case", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Size="ButtonSize.Medium"
                           Icon="add"/>
@@ -46,7 +46,7 @@ else
             <RadzenButton Icon="assessment"
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"
-                          Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")' />
+                          Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'/>
             <UploadTestCasesCsv OnUploadCompleted="RefreshPage"></UploadTestCasesCsv>
 
             @code{
@@ -66,7 +66,8 @@ else
 
 
         <Columns>
-            <RadzenDataGridColumn Property="@nameof(TestCases.Id)" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center"/>
+            <RadzenDataGridColumn Property="@nameof(TestCases.Id)" Filterable="false" Title="ID" Frozen="true"
+                                  Width="80px" TextAlign="TextAlign.Center"/>
             <RadzenDataGridColumn Property="@nameof(TestCases.Name)" Title="Name" Frozen="true" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(TestCases.Description)" Title="Description" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(TestCases.Priority)" Title="Priority" Width="auto">
@@ -109,7 +110,7 @@ else
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Property="@nameof(TestCases.AssignedTo)" Title="Assigned To" Width="auto">
                 <Template Context="testcase">
-                    @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(testcase.AssignedTo)).Result))
+                    @Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(testcase.AssignedTo)).Result
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Property="@nameof(TestCases.ArchivedStatus)" Title="Is Archived" Width="auto">

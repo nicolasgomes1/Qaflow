@@ -2,65 +2,63 @@
     <h4 class="text-center text-primary mb-4">Test Execution Data</h4>
 
     <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
-        <RadzenLabel Text="Id:" Style="font-weight: bold;" />
-        <RadzenLabel Text="@_testExecution.Id.ToString()" />
+        <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_testExecution.Id.ToString()"/>
 
-        <RadzenLabel Text="Name:" Style="font-weight: bold;" />
-        <RadzenLabel Text="@_testExecution.Name" />
+        <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_testExecution.Name"/>
 
-        <RadzenLabel Text="Description:" Style="font-weight: bold;" />
-        <RadzenLabel Text="@_testExecution.Description" />
+        <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_testExecution.Description"/>
 
-        <RadzenLabel Text="Status:" Style="font-weight: bold;" />
-        <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleExecution(_testExecution.ExecutionStatus)" 
-                     Text="@_testExecution.ExecutionStatus.ToString()" />
+        <RadzenLabel Text="Status:" Style="font-weight: bold;"/>
+        <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleExecution(_testExecution.ExecutionStatus)"
+                     Text="@_testExecution.ExecutionStatus.ToString()"/>
 
-        <RadzenLabel Text="Version:" Style="font-weight: bold;" />
-        <RadzenLabel Text="@_testExecution.Version.ToString()" />
+        <RadzenLabel Text="Version:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_testExecution.Version.ToString()"/>
 
-        <RadzenLabel Text="Created At:" Style="font-weight: bold;" />
-        <RadzenLabel Text="@_testExecution.CreatedAt.ToString(CultureInfo.CurrentCulture)" />
+        <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_testExecution.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
 
-        <RadzenLabel Text="Created By:" Style="font-weight: bold;" />
-        <RadzenLabel Text="@_testExecution.CreatedBy" />
+        <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_testExecution.CreatedBy"/>
 
-        <RadzenLabel Text="Modified At:" Style="font-weight: bold;" />
-        <RadzenLabel Text="@_testExecution.ModifiedAt.ToString(CultureInfo.CurrentCulture)" />
+        <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_testExecution.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
 
-        <RadzenLabel Text="Assigned To:" Style="font-weight: bold;" />
-        <RadzenLabel Text="@_testExecution.AssignedTo" />
+        <RadzenLabel Text="Assigned To:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_testExecution.AssignedTo"/>
 
-        <RadzenLabel Text="Priority:" Style="font-weight: bold;" />
-        <RadzenLabel Text="@_testExecution.Priority.ToString()" Style="font-weight: bold;" />
-        
-        <RadzenLabel Text="Estimated Time:" Style="font-weight: bold;" />
-        <RadzenLabel Text=@_testExecution.EstimatedTime.ToString(@"hh\:mm\:ss") />
-        
-        <RadzenLabel Text="Actual Time:" Style="font-weight: bold;" />
-        <RadzenLabel Text=@_testExecution.Duration.ToString(@"hh\:mm\:ss") />
-        
-        <RadzenLabel Text="Time Difference:" Style="font-weight: bold;" />
-        <RadzenLabel Text="@CalculateTimeDifference()" />
-        
-        <RadzenLabel Text="Test Plan:" Style="font-weight: bold;" />
-         @{
+        <RadzenLabel Text="Priority:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@_testExecution.Priority.ToString()" Style="font-weight: bold;"/>
 
+        <RadzenLabel Text="Estimated Time:" Style="font-weight: bold;"/>
+        <RadzenLabel Text=@_testExecution.EstimatedTime.ToString(@"hh\:mm\:ss")/>
+
+        <RadzenLabel Text="Actual Time:" Style="font-weight: bold;"/>
+        <RadzenLabel Text=@_testExecution.Duration.ToString(@"hh\:mm\:ss")/>
+
+        <RadzenLabel Text="Time Difference:" Style="font-weight: bold;"/>
+        <RadzenLabel Text="@CalculateTimeDifference()"/>
+
+        <RadzenLabel Text="Test Plan:" Style="font-weight: bold;"/>
+        @{
             if (_testExecution.TestPlan != null)
             {
-                <RadzenLabel Text=@_testExecution.TestPlan.Name />
+                <RadzenLabel Text=@_testExecution.TestPlan.Name/>
             }
             else
             {
-                <RadzenLabel Text="Not linked to any test plan" />
+                <RadzenLabel Text="Not linked to any test plan"/>
             }
-        } 
+        }
     </div>
-</RadzenCard>  
+</RadzenCard>
 
 
 @code {
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public int Id { get; set; }
 
     private TestExecution _testExecution = new();
 
@@ -68,10 +66,11 @@
     {
         _testExecution = await TestExecutionModel.GetTestExecutionbyIdAsync(Id);
     }
-    
+
     private string CalculateTimeDifference()
     {
         var timeDifference = _testExecution.EstimatedTime - _testExecution.Duration;
         return timeDifference.ToString(@"hh\:mm\:ss");
     }
+
 }

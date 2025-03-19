@@ -3,7 +3,7 @@
     {
         <RadzenChart>
             <RadzenPieSeries Data="@_chartData" Title="Test Plans" CategoryProperty="Category" ValueProperty="Value">
-                <RadzenSeriesDataLabels Visible="true" />
+                <RadzenSeriesDataLabels Visible="true"/>
             </RadzenPieSeries>
         </RadzenChart>
     }
@@ -16,9 +16,8 @@
 
 
 @code {
-    [Parameter,EditorRequired]
-    public int ProjectId { get; set; }
-    
+    [Parameter][EditorRequired] public int ProjectId { get; set; }
+
     private List<ChartData> _chartData = [];
 
     public class ChartData
@@ -31,24 +30,25 @@
     protected override async Task OnInitializedAsync()
     {
         var (testPlansWithTestCasesPercentage, testPlansWithoutTestCasesPercentage) =
-    await ReportsModel.GetTestPlansPercentagesAsync(ProjectId);
+            await ReportsModel.GetTestPlansPercentagesAsync(ProjectId);
 
         if (testPlansWithTestCasesPercentage > 0)
         {
             _chartData.Add(new ChartData
-                {
-                    Category = "Test Plans with Test Cases",
-                    Value = testPlansWithTestCasesPercentage
-                });
+            {
+                Category = "Test Plans with Test Cases",
+                Value = testPlansWithTestCasesPercentage
+            });
         }
 
         if (testPlansWithoutTestCasesPercentage > 0)
         {
             _chartData.Add(new ChartData
-                {
-                    Category = "Test Plans without Test Cases",
-                    Value = testPlansWithoutTestCasesPercentage
-                });
+            {
+                Category = "Test Plans without Test Cases",
+                Value = testPlansWithoutTestCasesPercentage
+            });
         }
     }
+
 }

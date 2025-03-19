@@ -82,8 +82,8 @@ else
     private bool _isLoading = true;
 
     private readonly List<IBrowserFile>? _uploadedFiles = [];
-    
-    
+
+
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
@@ -94,18 +94,18 @@ else
         {
             NavigationManager.NavigateTo($"project/{ProjectId}/requirements", true);
         }
-        
-        
+
+
         await RequirementsFilesModel.GetFilesByRequirementId(Id);
 
         _isLoading = false;
     }
-    
-    
+
+
     private async Task UpdateRequirement()
     {
         await RequirementsModel.UpdateRequirement(Id, _uploadedFiles);
-        
+
         NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/requirements");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Requirement with Id {_requirements.Id} Updated Successfully");

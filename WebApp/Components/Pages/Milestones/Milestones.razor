@@ -14,21 +14,20 @@
 
 @code
 {
-    [Parameter] 
-    public int ProjectId { get; set; }
+    [Parameter] public int ProjectId { get; set; }
 
     private double CurrentValueLow;
     private double CurrentValueMedium;
     private double CurrentValueHigh;
     private double CurrentValueCritical;
-    
+
     private string MilestoneTitleL => $"Test Execution With {EnumService.GetSingleEnum(Priority.Low).ToString()} Priority";
     private string MilestoneTitleM => $"Test Execution With {EnumService.GetSingleEnum(Priority.Medium).ToString()} Priority";
     private string MilestoneTitleH => $"Test Execution With {EnumService.GetSingleEnum(Priority.High).ToString()} Priority";
     private string MilestoneTitleC => $"Test Execution With {EnumService.GetSingleEnum(Priority.Critical).ToString()} Priority";
-    
+
     private double _mydouble;
-    
+
     protected override async Task OnInitializedAsync()
     {
         _mydouble = await ReportsModel.GetTestExecutionPassRateAsync(ProjectId);
@@ -36,11 +35,7 @@
         CurrentValueMedium = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Medium);
         CurrentValueHigh = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.High);
         CurrentValueCritical = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Critical);
-        
-
     }
 
-
-    
 
 }

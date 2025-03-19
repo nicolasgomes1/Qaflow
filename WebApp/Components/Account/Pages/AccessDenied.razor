@@ -2,12 +2,13 @@
 @rendermode InteractiveServer
 <PageTitle>Access denied</PageTitle>
 
-<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Spacing="20px">
-    <RadzenIcon Icon="lock" Size="5em" IconColor="red" />
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center"
+             Spacing="20px">
+    <RadzenIcon Icon="lock" Size="5em" IconColor="red"/>
     <div>
         <h1 class="text-danger">Access Denied</h1>
         <p class="text-danger">You do not have access to this resource.</p>
     </div>
 </RadzenStack>
 
-<RadzenButton Text="Back to home" Click='()=> NavigationManager.NavigateTo("/", true)' />
+<RadzenButton Text="Back to home" Click='()=> NavigationManager.NavigateTo("/", true)'/>

@@ -3,7 +3,7 @@
 
 @if (_isLoading)
 {
-    <ProgressBar />
+    <ProgressBar/>
 }
 else
 {
@@ -11,44 +11,44 @@ else
 
     <RadzenTemplateForm Data="@_testExecution" TItem="TestExecution" Submit="UpdateTestCaseExecution">
         <div class="form-group mb-4">
-            <RadzenLabel Text="Name" />
-            <RadzenTextBox id="name" 
-                @bind-Value="@_testExecution.Name"
-                class="input-style"
-                Name="name" />
-            <RadzenRequiredValidator Component="name" Text="Name is required" />
+            <RadzenLabel Text="Name"/>
+            <RadzenTextBox id="name"
+                           @bind-Value="@_testExecution.Name"
+                           class="input-style"
+                           Name="name"/>
+            <RadzenRequiredValidator Component="name" Text="Name is required"/>
         </div>
 
         <div class="form-group mb-4">
-            <RadzenLabel Text="Description" />
-            <RadzenTextBox id="description" 
-                @bind-Value="@_testExecution.Description"
-                class="input-style" 
-                Name="description" />
-            <RadzenRequiredValidator Component="description" Text="Description is recommended" />
+            <RadzenLabel Text="Description"/>
+            <RadzenTextBox id="description"
+                           @bind-Value="@_testExecution.Description"
+                           class="input-style"
+                           Name="description"/>
+            <RadzenRequiredValidator Component="description" Text="Description is recommended"/>
         </div>
 
         <div class="form-group mb-4">
-            <RadzenLabel Text="Test Plan" />
+            <RadzenLabel Text="Test Plan"/>
             <RadzenDropDown id="testplan"
                             Data="@_testPlansList"
                             @bind-Value="@TestExecutionModel.TestPlanId"
                             TextProperty="Name"
                             ValueProperty="Id"
                             class="input-style"
-                            Name="testplan" />
-            <RadzenRequiredValidator Component="testplan" Text="Test Plan is required" />
+                            Name="testplan"/>
+            <RadzenRequiredValidator Component="testplan" Text="Test Plan is required"/>
         </div>
 
         <!-- Priority Field -->
         <div class="form-group mb-4">
-            <RadzenLabel Text="Priority" />
-            <RadzenDropDown id="priority" 
-                            @bind-Value="_testExecution.Priority" 
+            <RadzenLabel Text="Priority"/>
+            <RadzenDropDown id="priority"
+                            @bind-Value="_testExecution.Priority"
                             Data="EnumService.GetEnumValues<Priority>()"
-                            class="input-style" 
-                            Name="priority" />
-            <RadzenRequiredValidator Component="priority" Text="Priority is required" />
+                            class="input-style"
+                            Name="priority"/>
+            <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
         </div>
 
         <div class="form-group mb-4">
@@ -63,25 +63,24 @@ else
             <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
         </div>
 
-        <CreateEditActions EntityName="testexecution" CreateEdit="Update" />
+        <CreateEditActions EntityName="testexecution" CreateEdit="Update"/>
     </RadzenTemplateForm>
 }
 
 @code {
-    [Parameter]
-    public int Id { get; set; }
-    
-    [Parameter]
-    public int ProjectId { get; set; }
+    [Parameter] public int Id { get; set; }
+
+    [Parameter] public int ProjectId { get; set; }
 
     private List<TestPlans> _testPlansList = [];
-    
+
     private bool _isLoading = true;
 
     private List<ApplicationUser> _usersList = [];
 
-    
+
     private TestExecution _testExecution = new();
+
     private string CancelUrl()
     {
         return $"project/{ProjectStateService.ProjectId}/testexecution";
@@ -89,8 +88,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _testPlansList = await TestPlansModel.GetallTestPlansWithWorkflowStatus(WorkflowStatus.Completed);   
-      _usersList = await UserService.GetUsersList();
+        _testPlansList = await TestPlansModel.GetallTestPlansWithWorkflowStatus(WorkflowStatus.Completed);
+        _usersList = await UserService.GetUsersList();
 
         _testExecution = await TestExecutionModel.GetTestExecutionData(Id);
 

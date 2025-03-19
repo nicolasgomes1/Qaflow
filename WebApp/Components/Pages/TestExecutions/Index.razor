@@ -1,26 +1,28 @@
 ﻿@page "/project/{ProjectId:int}/testexecution"
 @rendermode InteractiveServer
 
-<RadzenTabs @bind-SelectedIndex=@_selectedIndex>
+<RadzenTabs @bind-SelectedIndex="@_selectedIndex">
     <Tabs>
         <RadzenTabsItem Text="All">
-            <TestExecutionTable OnInitializedMethod="TestExecutionModel.DisplayTestExecutionIndexPage" />
+            <TestExecutionTable OnInitializedMethod="TestExecutionModel.DisplayTestExecutionIndexPage"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Passed">
-            <TestExecutionTable OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Passed)" />
+            <TestExecutionTable
+                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Passed)"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Failed">
-            <TestExecutionTable OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Failed)" />
+            <TestExecutionTable
+                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Failed)"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="No Runs">
-            <TestExecutionTable OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.NotRun)" />
+            <TestExecutionTable
+                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.NotRun)"/>
         </RadzenTabsItem>
     </Tabs>
 </RadzenTabs>
 
 @code {
-    [Parameter]
-    public int ProjectId { get; set; }
+    [Parameter] public int ProjectId { get; set; }
 
     int _selectedIndex;
 }

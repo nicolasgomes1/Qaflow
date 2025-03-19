@@ -15,75 +15,75 @@ else
                 <RadzenTabsItem Text="Test Case">
 
                     <RadzenFieldset Text="Test Cases Details">
-                    
-                    <!-- Name Field -->
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Name"/>
-                        <RadzenTextBox id="name" @bind-Value="_testCases.Name" class="input-style" Name="name"/>
-                        <RadzenRequiredValidator Component="name" Text="Name is required"/>
-                    </div>
 
-                    <!-- Description Field -->
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Description"/>
-                        <RadzenTextBox id="description" @bind-Value="_testCases.Description" class="input-style"
-                                       Name="description"/>
-                    </div>
+                        <!-- Name Field -->
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Name"/>
+                            <RadzenTextBox id="name" @bind-Value="_testCases.Name" class="input-style" Name="name"/>
+                            <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                        </div>
 
-                    <!-- Priority Field -->
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Priority"/>
-                        <RadzenDropDown id="priority" @bind-Value="_testCases.Priority"
-                                        Data="EnumService.GetEnumValues<Priority>()" class="input-style"
-                                        Name="priority"/>
-                        <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
-                    </div>
+                        <!-- Description Field -->
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Description"/>
+                            <RadzenTextBox id="description" @bind-Value="_testCases.Description" class="input-style"
+                                           Name="description"/>
+                        </div>
 
-                    <!-- Test Type Field -->
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Test Type"/>
-                        <RadzenDropDown id="test_type" @bind-Value="_testCases.TestType"
-                                        Data="EnumService.GetEnumValues<TestTypes>()" class="input-style"
-                                        Name="test_type"/>
-                        <RadzenRequiredValidator Component="test_type" Text="Test Type is required"/>
-                    </div>
+                        <!-- Priority Field -->
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Priority"/>
+                            <RadzenDropDown id="priority" @bind-Value="_testCases.Priority"
+                                            Data="EnumService.GetEnumValues<Priority>()" class="input-style"
+                                            Name="priority"/>
+                            <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                        </div>
 
-                    <!-- Test Scope Field -->
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Test Scope"/>
-                        <RadzenDropDown id="test_scope" @bind-Value="_testCases.TestScope"
-                                        Data="EnumService.GetEnumValues<TestScope>()" class="input-style"
-                                        Name="test_scope"/>
-                        <RadzenRequiredValidator Component="test_scope" Text="Test Scope is required"/>
-                    </div>
+                        <!-- Test Type Field -->
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Test Type"/>
+                            <RadzenDropDown id="test_type" @bind-Value="_testCases.TestType"
+                                            Data="EnumService.GetEnumValues<TestTypes>()" class="input-style"
+                                            Name="test_type"/>
+                            <RadzenRequiredValidator Component="test_type" Text="Test Type is required"/>
+                        </div>
 
-                    <!-- Requirements Field -->
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Requirements"/>
-                        <RadzenDropDown id="requirements"
-                                        Data="@_requirementsList"
-                                        @bind-Value="TestCasesModel.SelectedRequirementIds"
-                                        TextProperty="Name"
-                                        ValueProperty="Id"
-                                        Multiple="true"
-                                        class="input-style"
-                                        Name="requirements"
-                                        AllowFiltering="true"
-                                        AllowVirtualization="true"
-                                        FilterPlaceholder="Type to search"/>
-                    </div>
+                        <!-- Test Scope Field -->
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Test Scope"/>
+                            <RadzenDropDown id="test_scope" @bind-Value="_testCases.TestScope"
+                                            Data="EnumService.GetEnumValues<TestScope>()" class="input-style"
+                                            Name="test_scope"/>
+                            <RadzenRequiredValidator Component="test_scope" Text="Test Scope is required"/>
+                        </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Assigned To"/>
-                        <RadzenDropDown id="assignedto"
-                                        Data="@_usersList"
-                                        @bind-Value="_testCases.AssignedTo"
-                                        TextProperty="UserName"
-                                        ValueProperty="Id"
-                                        class="input-style"
-                                        Name="assignedto"/>
-                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
-                    </div>
+                        <!-- Requirements Field -->
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Requirements"/>
+                            <RadzenDropDown id="requirements"
+                                            Data="@_requirementsList"
+                                            @bind-Value="TestCasesModel.SelectedRequirementIds"
+                                            TextProperty="Name"
+                                            ValueProperty="Id"
+                                            Multiple="true"
+                                            class="input-style"
+                                            Name="requirements"
+                                            AllowFiltering="true"
+                                            AllowVirtualization="true"
+                                            FilterPlaceholder="Type to search"/>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Assigned To"/>
+                            <RadzenDropDown id="assignedto"
+                                            Data="@_usersList"
+                                            @bind-Value="_testCases.AssignedTo"
+                                            TextProperty="UserName"
+                                            ValueProperty="Id"
+                                            class="input-style"
+                                            Name="assignedto"/>
+                            <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                        </div>
                     </RadzenFieldset>
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Test Steps">
@@ -146,11 +146,12 @@ else
 
         _currentjiraIntegrations = await GetSelectedJiraTickets();
         TestCasesModel.SelectedJiraTicketIds = _currentjiraIntegrations.Select(j => j.JiraId.ToString()).ToList();
-        
+
         if (_testCases.ArchivedStatus.Equals(ArchivedStatus.Archived))
         {
             NavigationManager.NavigateTo($"project/{ProjectId}/testcases", true);
         }
+
         _isLoading = false;
     }
 

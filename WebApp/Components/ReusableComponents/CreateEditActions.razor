@@ -13,6 +13,7 @@
     /// <summary>
     ///     String Create or Update in the form
     /// </summary>
+    [EditorRequired]
     [Parameter]
     public string CreateEdit { get; set; } = string.Empty;
 
@@ -23,6 +24,7 @@
     ///     When the EntityName is projects, it will redirect to the root page
     ///     When the EntityName is testcases, testplans, requirements, or testexecution, it will redirect to the project page
     /// </summary>
+    [EditorRequired]
     [Parameter]
     public required string EntityName { get; set; }
 

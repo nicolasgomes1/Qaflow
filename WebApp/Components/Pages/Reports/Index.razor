@@ -9,7 +9,7 @@
         <RequirementsTestCasesChart ProjectId="ProjectId"/>
 
         <!-- Second Chart -->
-        <TestPlansTestCasesChart ProjectId="ProjectId" />
+        <TestPlansTestCasesChart ProjectId="ProjectId"/>
     </div>
 
     <!-- Second Row -->
@@ -18,15 +18,14 @@
         <TestExecutionsChart ProjectId="ProjectId"/>
 
         <!-- Fourth Chart -->
-        <RequirementsTestCasesChart ProjectId="ProjectId" />
+        <RequirementsTestCasesChart ProjectId="ProjectId"/>
     </div>
 </RadzenStack>
 
 
 @code {
-    [Parameter]
-    public int ProjectId { get; set; }
-    
+    [Parameter] public int ProjectId { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var user = await UserService.GetCurrentUserNameAsync();

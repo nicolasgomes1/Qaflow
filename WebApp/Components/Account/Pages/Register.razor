@@ -16,40 +16,45 @@
 
 <h1>Register</h1>
 
-<div class="row" >
+<div class="row">
     <div class="col-lg-6">
-        <StatusMessage Message="@Message" />
-        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
-            <DataAnnotationsValidator />
+        <StatusMessage Message="@Message"/>
+        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser"
+                  FormName="register">
+            <DataAnnotationsValidator/>
             <h2>Create a new account.</h2>
-            <hr />
-            <ValidationSummary class="text-danger" role="alert" />
+            <hr/>
+            <ValidationSummary class="text-danger" role="alert"/>
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Input.Email"
                            data-testid="register_emailform"
-                           id="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                           id="Input.Email" class="form-control" autocomplete="username" aria-required="true"
+                           placeholder="name@example.com"/>
                 <label for="Input.Email">Email</label>
-                <ValidationMessage For="() => Input.Email" class="text-danger" />
+                <ValidationMessage For="() => Input.Email" class="text-danger"/>
             </div>
             <div class="form-floating mb-3">
                 <InputText type="password" @bind-Value="Input.Password"
                            data-testid="register_passwordform"
-                           id="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                           id="Input.Password" class="form-control" autocomplete="new-password" aria-required="true"
+                           placeholder="password"/>
                 <label for="Input.Password">Password</label>
-                <ValidationMessage For="() => Input.Password" class="text-danger" />
+                <ValidationMessage For="() => Input.Password" class="text-danger"/>
             </div>
             <div class="form-floating mb-3">
                 <InputText type="password" @bind-Value="Input.ConfirmPassword"
                            data-testid="register_confirmpasswordform"
-                           id="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                           id="Input.ConfirmPassword" class="form-control" autocomplete="new-password"
+                           aria-required="true" placeholder="password"/>
                 <label for="Input.ConfirmPassword">Confirm Password</label>
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger"/>
             </div>
-            
+
             <RadzenButton ButtonType="ButtonType.Submit"
                           data-testid="register_submitform"
-                          Text="Register" Icon="person" IconPosition="IconPosition.Left" Class="btn btn-primary btn-lg btn-block" />
-            
+                          Text="Register" Icon="person" IconPosition="IconPosition.Left"
+                          Class="btn btn-primary btn-lg btn-block"/>
+
         </EditForm>
     </div>
 </div>
@@ -57,11 +62,9 @@
 @code {
     private IEnumerable<IdentityError>? identityErrors;
 
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
 
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
 
@@ -88,8 +91,8 @@
         {
             await UserManager.AddToRoleAsync(user, role.Name);
         }
-        
-        
+
+
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -103,10 +106,10 @@
         {
             RedirectManager.RedirectTo(
                 "Account/RegisterConfirmation",
-                new() { ["email"] = Input.Email, ["returnUrl"] = ReturnUrl });
+                new Dictionary<string, object?> { ["email"] = Input.Email, ["returnUrl"] = ReturnUrl });
         }
 
-        await SignInManager.SignInAsync(user, isPersistent: false);
+        await SignInManager.SignInAsync(user, false);
         RedirectManager.RedirectTo(ReturnUrl);
     }
 
@@ -119,7 +122,7 @@
         catch
         {
             throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
-                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor.");
+                                                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor.");
         }
     }
 
@@ -129,6 +132,7 @@
         {
             throw new NotSupportedException("The default UI requires a user store with email support.");
         }
+
         return (IUserEmailStore<ApplicationUser>)UserStore;
     }
 
@@ -150,11 +154,11 @@
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = "";
     }
-    
+
     private async Task SendEmailAsync(string email, string subject, string confirmlink)
     {
-        MailMessage message = new MailMessage();
-        SmtpClient smtpClient = new SmtpClient();
+        var message = new MailMessage();
+        var smtpClient = new SmtpClient();
         message.From = new MailAddress("testdotnet10@gmail.com");
         message.To.Add(email);
         message.Subject = subject;
@@ -167,6 +171,6 @@
         smtpClient.Credentials = new NetworkCredential("testdotnet10@gmail.com", "rmrcmrpqgkcrfkgl");
         smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
         await smtpClient.SendMailAsync(message);
-        
     }
+
 }

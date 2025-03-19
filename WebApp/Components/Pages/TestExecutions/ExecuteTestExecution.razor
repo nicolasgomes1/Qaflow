@@ -3,38 +3,39 @@
 @implements IDisposable
 @if (_isLoading)
 {
-    <ProgressBar />
+    <ProgressBar/>
 }
 else
 {
-        <!-- Global Test Execution Controls -->
-        <GlobalTestExecutionControls_slim Id="Id" />
-        
+    <!-- Global Test Execution Controls -->
+    <GlobalTestExecutionControls_slim Id="Id"/>
+
 
     @if (executionInProgress)
     {
-        <OngoingTestExecution Id="Id" />
+        <OngoingTestExecution Id="Id"/>
     }
     else
     {
-
     }
-    
+
     <div style="margin-top: 10px;">
-        <RadzenButton Text="Edit" Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution/edit/{_testExecution.Id}")' Disabled="@(_testExecution.IsActive == false || executionInProgress)" />
-        <RadzenButton Text="Back" Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution")' Disabled="@(executionInProgress)" />
+        <RadzenButton Text="Edit"
+                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution/edit/{_testExecution.Id}")'
+                      Disabled="@(_testExecution.IsActive == false || executionInProgress)"/>
+        <RadzenButton Text="Back"
+                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution")'
+                      Disabled="@(executionInProgress)"/>
     </div>
 }
 
 
 @code {
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public int Id { get; set; }
 
-    [Parameter]
-    public int ProjectId { get; set; }
+    [Parameter] public int ProjectId { get; set; }
 
-    private TestExecution _testExecution =new();
+    private TestExecution _testExecution = new();
 
     private bool _isLoading = true;
 
@@ -61,4 +62,5 @@ else
 
         _isLoading = false;
     }
+
 }

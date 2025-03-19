@@ -10,16 +10,18 @@
 }
 
 <RadzenCard Style="width: 100%">
-    <RadzenTemplateForm Data="@TestExecutionModel.TestExecution" TItem="TestExecution" Submit="@(() => EndCurrentExecution())">
+    <RadzenTemplateForm Data="@TestExecutionModel.TestExecution" TItem="TestExecution"
+                        Submit="@(() => EndCurrentExecution())">
 
         <ValidationSummary class="alert alert-danger"/>
 
         <RadzenRow>
             <RadzenColumn>
-                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" Gap="1rem">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start"
+                             JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" Gap="1rem">
                     <!-- Start Execution Button -->
                     <RadzenButton
-                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Start Test Execution",TooltipPosition.Top))"
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Start Test Execution", TooltipPosition.Top))"
                         MouseLeave="@AppTooltipService.HideTooltip"
                         Click="@(StartExecution)"
                         Size="ButtonSize.Large"
@@ -65,20 +67,22 @@
 
 
                     <!-- Suspend Execution Button -->
-                    <RadzenButton MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Suspend Current Test Execution",TooltipPosition.Top))"
-                                  MouseLeave="@AppTooltipService.HideTooltip"
-                                  Size="ButtonSize.Large"
-                                  Click="@(() => SuspendExecution())"
-                                  Disabled="@(!ExecutionInProgress || IsPaused)"
-                                  Icon="pause_circle_filled"/>
+                    <RadzenButton
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Suspend Current Test Execution", TooltipPosition.Top))"
+                        MouseLeave="@AppTooltipService.HideTooltip"
+                        Size="ButtonSize.Large"
+                        Click="@(() => SuspendExecution())"
+                        Disabled="@(!ExecutionInProgress || IsPaused)"
+                        Icon="pause_circle_filled"/>
                     <!-- Resume Execution Button -->
 
-                    <RadzenButton MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Resume From Suspended Execution", TooltipPosition.Top))"
-                                  MouseLeave="@AppTooltipService.HideTooltip"
-                                  Size="ButtonSize.Large"
-                                  Click="@(() => ResumeFromSuspendedExecution())"
-                                  Icon="pause_circle_filled"
-                                  Disabled="IsExecutionStarted(Id)"/>
+                    <RadzenButton
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Resume From Suspended Execution", TooltipPosition.Top))"
+                        MouseLeave="@AppTooltipService.HideTooltip"
+                        Size="ButtonSize.Large"
+                        Click="@(() => ResumeFromSuspendedExecution())"
+                        Icon="pause_circle_filled"
+                        Disabled="IsExecutionStarted(Id)"/>
                 </RadzenStack>
 
 
@@ -92,13 +96,15 @@
                 }
             </RadzenColumn>
             <RadzenColumn>
-                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" JustifyContent="JustifyContent.Center" Gap="1rem">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start"
+                             JustifyContent="JustifyContent.Center" Gap="1rem">
                     <!-- Dropdown to Select Status -->
                     <RadzenDropDown @bind-Value="_testExecution.ExecutionStatus"
                                     Placeholder="Select Status"
                                     Disabled="@(!ExecutionInProgress)"
                                     Data="@(EnumService.GetEnumFilteredValues<ExecutionStatus>(ExecutionStatus.NotRun))"/>
-                    <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="ExecutionStatus.NotRun" Text="Please select a status"/>
+                    <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="ExecutionStatus.NotRun"
+                                            Text="Please select a status"/>
 
                     <RadzenTextArea @bind-Value="_testExecution.ExecutionNotes"
                                     Placeholder="Notes"
@@ -107,7 +113,8 @@
                 </RadzenStack>
             </RadzenColumn>
             <RadzenColumn>
-                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Start" Wrap="FlexWrap.Wrap" Gap="1rem">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+                             JustifyContent="JustifyContent.Start" Wrap="FlexWrap.Wrap" Gap="1rem">
                     @if (ExecutionInProgress)
                     {
                         <RadzenLabel Text="@TimeElapsed.ToString("hh\\:mm\\:ss")"
@@ -121,11 +128,12 @@
                 </RadzenStack>
             </RadzenColumn>
         </RadzenRow>
-        
+
     </RadzenTemplateForm>
     @if (ExecutionInProgress)
     {
-        <RadzenProgressBar ProgressBarStyle="ProgressBarStyle.Warning" Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+        <RadzenProgressBar ProgressBarStyle="ProgressBarStyle.Warning" Value="100" ShowValue="false"
+                           Mode="ProgressBarMode.Indeterminate"/>
     }
 </RadzenCard>
 

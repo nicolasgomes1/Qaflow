@@ -4,47 +4,47 @@
 <RadzenTabs @bind-SelectedIndex="@_selectedIndex">
     <Tabs>
         <RadzenTabsItem Text="Test Execution">
-            <ViewTestExecutionData Id="Id" />
+            <ViewTestExecutionData Id="Id"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Past Test Execution">
-            <PastTestExecutionsTable Id="Id" />
+            <PastTestExecutionsTable Id="Id"/>
         </RadzenTabsItem>
-        
+
         <RadzenTabsItem Text="Associated Test Cases">
-            <AssociatedTestCasesTable Id="Id" />
+            <AssociatedTestCasesTable Id="Id"/>
         </RadzenTabsItem>
-        
-        
+
+
         <RadzenTabsItem Text="Results">
-            <ViewTestCaseExecution Id="Id" />
+            <ViewTestCaseExecution Id="Id"/>
         </RadzenTabsItem>
 
     </Tabs>
 </RadzenTabs>
 <div style="margin-top: 10px;">
-    <RadzenButton Text="Edit" Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/edit/{_testExecution.Id}")' Disabled="@(_testExecution.IsActive == false)" />
-    <RadzenButton Text="Back" Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution")'  />
+    <RadzenButton Text="Edit"
+                  Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/edit/{_testExecution.Id}")'
+                  Disabled="@(_testExecution.IsActive == false)"/>
+    <RadzenButton Text="Back" Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution")'/>
 </div>
 
 
 
 @code
 {
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public int Id { get; set; }
 
-    [Parameter]
-    public int ProjectId { get; set; }
-    
-    private TestExecution _testExecution =new();
-    
-    
+    [Parameter] public int ProjectId { get; set; }
+
+    private TestExecution _testExecution = new();
+
+
     protected override async Task OnInitializedAsync()
     {
         _testExecution = await TestExecutionModel.GetTestExecutionbyIdAsync(Id);
     }
-    
-    
+
+
     int _selectedIndex;
 
 }

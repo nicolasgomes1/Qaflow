@@ -1,93 +1,103 @@
-﻿  <!-- Test Cases Execution with Test Step Execution-->
+﻿<!-- Test Cases Execution with Test Step Execution-->
 
-    @if (_testExecution.ExecutionStatus != EnumService.GetSingleEnum<ExecutionStatus>(ExecutionStatus.NotRun))
-    {
-
-
-        <RadzenCard Style="margin-top: 10px;" class="rz-shadow-10">
+@if (_testExecution.ExecutionStatus != EnumService.GetSingleEnum<ExecutionStatus>(ExecutionStatus.NotRun))
+{
+    <RadzenCard Style="margin-top: 10px;" class="rz-shadow-10">
         <h4 class="text-center text-primary mb-4">Test Case Execution</h4>
 
-        <RadzenDataGrid Data="@_associatedTestCasesExecution" TItem="TestCaseExecution" RowRender="@OnRowRenderTestCase" AllowAlternatingRows="false">
-                <Columns>
-                    <RadzenDataGridColumn TItem="TestCaseExecution" Property="TestExecutionId" Title="TestExecutionId" Width="150px" />
-                    <RadzenDataGridColumn TItem="TestCaseExecution" Property="TestCaseId" Title="TestCaseId" Width="150px" />
-                    <RadzenDataGridColumn TItem="TestCaseExecution" Property="Duration" Title="Duration" Width="200px" />
-                    <RadzenDataGridColumn TItem="TestCaseExecution" Title="Estimated Time" Width="200px">
-                        <Template Context="testCaseExecution">
-                            @testCaseExecution.TestCases?.EstimatedTime
-                        </Template>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="TestCaseExecution" Property="ExecutionStatus" Title="Status" Width="150px" />
-                    <RadzenDataGridColumn TItem="TestCaseExecution" Property="ExecutionNotes" Title="ExecutionNotes" Width="auto" />
-                </Columns>
+        <RadzenDataGrid Data="@_associatedTestCasesExecution" TItem="TestCaseExecution" RowRender="@OnRowRenderTestCase"
+                        AllowAlternatingRows="false">
+            <Columns>
+                <RadzenDataGridColumn TItem="TestCaseExecution" Property="TestExecutionId" Title="TestExecutionId"
+                                      Width="150px"/>
+                <RadzenDataGridColumn TItem="TestCaseExecution" Property="TestCaseId" Title="TestCaseId" Width="150px"/>
+                <RadzenDataGridColumn TItem="TestCaseExecution" Property="Duration" Title="Duration" Width="200px"/>
+                <RadzenDataGridColumn TItem="TestCaseExecution" Title="Estimated Time" Width="200px">
+                    <Template Context="testCaseExecution">
+                        @testCaseExecution.TestCases?.EstimatedTime
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="TestCaseExecution" Property="ExecutionStatus" Title="Status"
+                                      Width="150px"/>
+                <RadzenDataGridColumn TItem="TestCaseExecution" Property="ExecutionNotes" Title="ExecutionNotes"
+                                      Width="auto"/>
+            </Columns>
 
-                <!-- DetailTemplate to embed the nested grid for Test Steps -->
-                <Template Context="testCaseExecution">
-                    
-                    @if(testCaseExecution.TestStepsExecution is { Count: > 0 })
-                    {
-                        <RadzenDataGrid Data="@testCaseExecution.TestStepsExecution" TItem="TestStepsExecution" RowRender="@OnRowRenderTestSteps" AllowPaging="false" AllowSorting="false" AllowAlternatingRows="false">
-                            <Columns>
-                                <RadzenDataGridColumn TItem="TestStepsExecution" Property="@nameof(TestStepsExecution.TestStepsId)" Title="Step Execution Id" Width="auto"/>
-                                <RadzenDataGridColumn TItem="TestStepsExecution" Property="ExecutionStatus" Title="Status" Width="auto"/>
-                                <RadzenDataGridColumn TItem="TestStepsExecution" Property="Duration" Title="Duration" Width="auto"/>
-                                <RadzenDataGridColumn TItem="TestStepsExecution" Property="ExecutionNotes" Title="ExecutionNotes" Width="auto"/>
-                                <RadzenDataGridColumn TItem="TestStepsExecution" Property="@nameof(TestStepsExecutionFile.FileName)" Title="Files">
-                                    <Template Context="ctx">
-                                        @{
+            <!-- DetailTemplate to embed the nested grid for Test Steps -->
+            <Template Context="testCaseExecution">
+
+                @if (testCaseExecution.TestStepsExecution is { Count: > 0 })
+                {
+                    <RadzenDataGrid Data="@testCaseExecution.TestStepsExecution" TItem="TestStepsExecution"
+                                    RowRender="@OnRowRenderTestSteps" AllowPaging="false" AllowSorting="false"
+                                    AllowAlternatingRows="false">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="TestStepsExecution"
+                                                  Property="@nameof(TestStepsExecution.TestStepsId)"
+                                                  Title="Step Execution Id" Width="auto"/>
+                            <RadzenDataGridColumn TItem="TestStepsExecution" Property="ExecutionStatus" Title="Status"
+                                                  Width="auto"/>
+                            <RadzenDataGridColumn TItem="TestStepsExecution" Property="Duration" Title="Duration"
+                                                  Width="auto"/>
+                            <RadzenDataGridColumn TItem="TestStepsExecution" Property="ExecutionNotes"
+                                                  Title="ExecutionNotes" Width="auto"/>
+                            <RadzenDataGridColumn TItem="TestStepsExecution"
+                                                  Property="@nameof(TestStepsExecutionFile.FileName)" Title="Files">
+                                <Template Context="ctx">
+                                    @{
                                         // Retrieve the file and check if FileContent exists, handling null gracefully
                                         var testExecutionFile = GetTestExecutionFileForTestStep(ctx.Id).Result;
                                         var fileContent = testExecutionFile?.FileContent;
-                                        }
+                                    }
 
-                                        @if (fileContent is { Length: > 0 })
-                                        {
+                                    @if (fileContent is { Length: > 0 })
+                                    {
                                         <!-- Render the image if FileContent is available -->
-                                        <RadzenImage Path="@($"data:image/jpeg;base64,{Convert.ToBase64String(fileContent)}")"
-                                                     AlternateText="thumbnail image"
-                                                     Style="max-width: 100px; cursor: pointer;"
-                                                     @onclick="() => ShowFullImage(fileContent)" />
-                                        }
-                                        else
-                                        {
+                                        <RadzenImage
+                                            Path="@($"data:image/jpeg;base64,{Convert.ToBase64String(fileContent)}")"
+                                            AlternateText="thumbnail image"
+                                            Style="max-width: 100px; cursor: pointer;"
+                                            @onclick="() => ShowFullImage(fileContent)"/>
+                                    }
+                                    else
+                                    {
                                         <!-- Display 'No files' text if FileContent is null or empty -->
                                         <span>No files</span>
-                                        }
-                                    </Template>
-                                </RadzenDataGridColumn>
+                                    }
+                                </Template>
+                            </RadzenDataGridColumn>
 
 
-
-                            </Columns>
-                        </RadzenDataGrid>
-                    }
-                </Template>
-            </RadzenDataGrid>
+                        </Columns>
+                    </RadzenDataGrid>
+                }
+            </Template>
+        </RadzenDataGrid>
     </RadzenCard>
 }
 else
 {
-
 }
 
-  <!-- Modal only renders when isModalVisible is true -->
-  @if (_isModalVisible)
-  {
-  <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;"
-       @onclick="CloseFullImage">
-      <div style="position: relative; background: white; padding: 20px; border-radius: 8px;" @onclick:stopPropagation="true">
-          <!-- Full-size image display -->
-          <RadzenImage Path="@($"data:image/jpeg;base64,{Convert.ToBase64String(_fullImageContent)}")"
-                       AlternateText="full image"
-                       Style="max-width: 70vw; max-height: 70vh;" />
-      </div>
-  </div>
-  }
+<!-- Modal only renders when isModalVisible is true -->
+@if (_isModalVisible)
+{
+    <div
+        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;"
+        @onclick="CloseFullImage">
+        <div style="position: relative; background: white; padding: 20px; border-radius: 8px;"
+             @onclick:stopPropagation="true">
+            <!-- Full-size image display -->
+            <RadzenImage Path="@($"data:image/jpeg;base64,{Convert.ToBase64String(_fullImageContent)}")"
+                         AlternateText="full image"
+                         Style="max-width: 70vw; max-height: 70vh;"/>
+        </div>
+    </div>
+}
 
 
 @code{
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public int Id { get; set; }
 
     private TestExecution _testExecution = new();
     private List<TestCaseExecution> _associatedTestCasesExecution = [];
@@ -95,38 +105,37 @@ else
     private bool _isModalVisible = false;
     private byte[] _fullImageContent = new byte[0];
 
-    private TestCaseExecution? _testCaseExecution =new();
+    private TestCaseExecution? _testCaseExecution = new();
 
-    private void OnRowRenderTestCase(Radzen.RowRenderEventArgs<TestCaseExecution> args)
+    private void OnRowRenderTestCase(RowRenderEventArgs<TestCaseExecution> args)
     {
         if (args.Data.TestStepsExecution == null || args.Data.TestStepsExecution.Count == 0)
         {
-            StylesService.ApplyRowStyle(args, args.Data.ExecutionStatus);      
+            StylesService.ApplyRowStyle(args, args.Data.ExecutionStatus);
             args.Expandable = false;
         }
         else
         {
-            StylesService.ApplyRowStyle(args, args.Data.ExecutionStatus);      
+            StylesService.ApplyRowStyle(args, args.Data.ExecutionStatus);
         }
-      
     }
 
 
-    private void OnRowRenderTestSteps(Radzen.RowRenderEventArgs<TestStepsExecution> args)
+    private void OnRowRenderTestSteps(RowRenderEventArgs<TestStepsExecution> args)
     {
         StylesService.ApplyRowStyle(args, args.Data.ExecutionStatus);
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
         _testStepsExecutionFiles = await GetTestStepsExecutionFiles();
-        
+
         _testExecution = await TestExecutionModel.GetTestExecutionByIdAsync(Id);
         _associatedTestCasesExecution = await TestExecutionModel.GetTestCaseExecutionData(Id);
     }
-    
+
     private List<TestExecution> _testExecutionsWithTests = [];
-    
+
     /// <summary>
     /// Returns a list of test steps execution files for the current project
     /// </summary>
@@ -138,20 +147,20 @@ else
             .Where(tsef => tsef.TSEFProjectId == ProjectStateService.ProjectId)
             .ToListAsync();
     }
-    
+
     /// <summary>
     /// Returns the test execution file for the given test step execution id
     /// </summary>
     /// <param name="testStepExecutionId"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-  private Task<TestStepsExecutionFile?> GetTestExecutionFileForTestStep(int testStepExecutionId)
+    private Task<TestStepsExecutionFile?> GetTestExecutionFileForTestStep(int testStepExecutionId)
     {
         // Return the file if it exists; otherwise, return null without throwing an exception
         return Task.FromResult(_testStepsExecutionFiles.FirstOrDefault(f => f.TestStepExecutionId == testStepExecutionId));
     }
 
-    
+
     private void ShowFullImage(byte[] fileContent)
     {
         _fullImageContent = fileContent;
@@ -162,5 +171,5 @@ else
     {
         _isModalVisible = false;
     }
-    
+
 }

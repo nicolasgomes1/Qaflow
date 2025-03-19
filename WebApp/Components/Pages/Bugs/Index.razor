@@ -16,7 +16,7 @@
                       MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All", TooltipPosition.Bottom))"
                       MouseLeave="@AppTooltipService.HideTooltip"
                       Size="ButtonSize.Medium"
-                      Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
+                      Click="@(() => DataGridSettingsService.ClearSettingsAsync())"/>
         <DeleteallDataForModel EntityName="@(nameof(BugsModel.Bugs))"
                                EntityList="_bugs"/>
         <ExportGridDataCsv Grid="@_dataGrid"/>
@@ -58,7 +58,7 @@
         <RadzenDataGridColumn Property="@nameof(Bugs.AssignedTo)" Title="Assigned To" Width="auto">
 
             <Template Context="bugs">
-                @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(bugs.AssignedTo)).Result))
+                @Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(bugs.AssignedTo)).Result
             </Template>
         </RadzenDataGridColumn>
 

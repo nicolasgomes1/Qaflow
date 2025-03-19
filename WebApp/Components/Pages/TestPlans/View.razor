@@ -9,66 +9,67 @@
                 <RadzenCard Style="width: 50%; padding: 20px;">
 
                     <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
-                        <RadzenLabel Text="Id:" Style="font-weight: bold;" />
-                        <RadzenLabel Text="@_testPlans.Id.ToString()" />
+                        <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testPlans.Id.ToString()"/>
 
-                        <RadzenLabel Text="Name:" Style="font-weight: bold;" />
-                        <RadzenLabel Text="@_testPlans.Name" />
+                        <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testPlans.Name"/>
 
-                        <RadzenLabel Text="Description:" Style="font-weight: bold;" />
-                        <RadzenLabel Text="@_testPlans.Description" />
+                        <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testPlans.Description"/>
 
-                        <RadzenLabel Text="Priority:" Style="font-weight: bold;" />
-                        <RadzenLabel Text="@_testPlans.Priority.ToString()" />
+                        <RadzenLabel Text="Priority:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testPlans.Priority.ToString()"/>
 
-                        <RadzenLabel Text="Created At:" Style="font-weight: bold;" />
-                        <RadzenLabel Text="@_testPlans.CreatedAt.ToString(CultureInfo.CurrentCulture)" />
+                        <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testPlans.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
 
-                        <RadzenLabel Text="Modified At:" Style="font-weight: bold;" />
-                        <RadzenLabel Text="@_testPlans.ModifiedAt.ToString(CultureInfo.CurrentCulture)" />
+                        <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testPlans.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
 
                     </div>
                 </RadzenCard>
-            </RadzenRow>  
+            </RadzenRow>
         </RadzenStepsItem>
 
         <RadzenStepsItem Text="@ContextFilesTitle()" Disabled="@TestPlansHasNoFiles">
-            <FileViewer Files="Files" EntityName="@nameof(TestPlansFile)" />
+            <FileViewer Files="Files" EntityName="@nameof(TestPlansFile)"/>
         </RadzenStepsItem>
-        
+
         <RadzenStepsItem Text="@ContextTestTitle()" Disabled="TestPlansHasNoTests">
             @if (_testPlans.TestCases.Any())
             {
-            <RadzenDataGrid Data="_testPlans.TestCases" TItem="TestCases" Style="margin-top: 20px;">
-                <HeaderTemplate>
-                    <h4 class="text-center text-primary mb-4">Test Cases</h4>
+                <RadzenDataGrid Data="_testPlans.TestCases" TItem="TestCases" Style="margin-top: 20px;">
+                    <HeaderTemplate>
+                        <h4 class="text-center text-primary mb-4">Test Cases</h4>
 
-                </HeaderTemplate>
+                    </HeaderTemplate>
 
-                <Columns>
-                    <RadzenDataGridColumn Property="Name" Title="Name" />
-                    <RadzenDataGridColumn Property="Description" Title="Description" />
-                    <RadzenDataGridColumn Property="Priority" Title="Priority" />
-                    <RadzenDataGridColumn Property="CreatedAt" Title="Created At" />
-                    <RadzenDataGridColumn Property="ModifiedAt" Title="Modified At" />
+                    <Columns>
+                        <RadzenDataGridColumn Property="Name" Title="Name"/>
+                        <RadzenDataGridColumn Property="Description" Title="Description"/>
+                        <RadzenDataGridColumn Property="Priority" Title="Priority"/>
+                        <RadzenDataGridColumn Property="CreatedAt" Title="Created At"/>
+                        <RadzenDataGridColumn Property="ModifiedAt" Title="Modified At"/>
 
-                    <RadzenDataGridColumn>
-                        <Template Context="testcases">
-                            <div class="btn-group">
-                                <RadzenButton Click="@( () => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases/view/{testcases.Id}", true))"
-                                              Size="ButtonSize.Small"
-                                              Icon="visibility"
-                                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "View Test Case"))"
-                                              MouseLeave="@AppTooltipService.HideTooltip"/>
-                            </div>
-                        </Template>
-                    </RadzenDataGridColumn>
-                </Columns>
-            </RadzenDataGrid>
+                        <RadzenDataGridColumn>
+                            <Template Context="testcases">
+                                <div class="btn-group">
+                                    <RadzenButton
+                                        Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases/view/{testcases.Id}", true))"
+                                        Size="ButtonSize.Small"
+                                        Icon="visibility"
+                                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "View Test Case"))"
+                                        MouseLeave="@AppTooltipService.HideTooltip"/>
+                                </div>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
             }
             else
             {
-            <p>No Test Cases linked to this Test Plan.</p>
+                <p>No Test Cases linked to this Test Plan.</p>
             }
         </RadzenStepsItem>
     </Steps>
@@ -78,34 +79,33 @@
 <ViewEditActions EntityName="testplans" EntityId="_testPlans.Id"/>
 
 @code {
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public int Id { get; set; }
 
-    [Parameter]
-    public int ProjectId { get; set; }
-    
+    [Parameter] public int ProjectId { get; set; }
+
     private bool TestPlansHasNoFiles => !TestPlansFilesModel.ExistingFiles.Any();
 
     private List<TestPlansFile>? Files { get; set; }
 
 
     private bool TestPlansHasNoTests => !_testPlans.TestCases.Any();
-    
+
     private string ContextFilesTitle()
     {
         return TestPlansHasNoFiles ? "No Files" : "Existing Files";
     }
-    
+
     private string ContextTestTitle()
     {
         return TestPlansHasNoTests ? "No Test Cases" : "Existing Test Cases";
     }
-    
+
     private TestPlans _testPlans = new();
-    
+
     protected override async Task OnInitializedAsync()
     {
         _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
         Files = await TestPlansFilesModel.GetFilesByTestPlanId(Id);
     }
+
 }

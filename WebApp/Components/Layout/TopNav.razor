@@ -20,7 +20,7 @@
                 FormNotificationService.NotifyInfo("Returning to the Hub Home Page as no Project is selected");
                 return;
             }
-            
+
             NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}");
             FormNotificationService.NotifyInfo("Returning to Home Page");
         }
@@ -108,7 +108,7 @@
 
     [Parameter] public int ProjectId { get; set; }
 
-    
+
     protected override async Task OnInitializedAsync()
     {
         await UpdateAuthenticationState();

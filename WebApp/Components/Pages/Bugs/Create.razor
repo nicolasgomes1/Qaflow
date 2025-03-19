@@ -87,7 +87,7 @@
                                     class="input-style"
                                     Name="assignedto"/>
                     <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
-                </div>   
+                </div>
 
 
             </RadzenTabsItem>
@@ -118,13 +118,12 @@
     private readonly Bugs _bugs = new();
 
     protected override async Task OnInitializedAsync()
-    {   
+    {
         _usersList = await UserService.GetUsersList();
         _testCaseslist = await TestCasesModel.GetTestCasesWithWorkflowStatus();
-
     }
-    
-    
+
+
     private async Task CreateNewBug()
     {
         await BugsModel.CreateBug(_bugs, _uploadedFiles);

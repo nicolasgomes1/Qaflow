@@ -1,9 +1,10 @@
 @page "/GenerateJwt"
+@attribute [Authorize(Roles = "Admin, Manager")]
 @rendermode InteractiveServer
 @inject UserService UserService
 <h3>GenerateJwt</h3>
 
-<RadzenButton Text="Generate" Click="() => GeneratenewJwt()" />
+<RadzenButton Text="Generate" Click="() => GeneratenewJwt()"/>
 
 
 <RadzenCard Style="width: 60%; padding: 1rem;">
@@ -12,18 +13,20 @@
 
 @code {
     private string JwtToken = "";
+
     private async Task GeneratenewJwt()
     {
         var currentUser = UserService.GetCurrentUserInfoAsync().Result.UserName;
         if (currentUser is not null)
         {
             JwtToken = await GenerateJwtToken.GenerateJwtTokenmethod(currentUser);
-
         }
         else
         {
             JwtToken = "Jwt Could not be created";
         }
+
         StateHasChanged();
     }
+
 }

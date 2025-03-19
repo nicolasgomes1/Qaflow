@@ -41,10 +41,11 @@ else
             <RadzenButton Icon="assessment"
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"
-                          Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")' />
+                          Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")'/>
         </HeaderTemplate>
         <Columns>
-            <RadzenDataGridColumn Property="@nameof(TestPlans.Id)" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center"/>
+            <RadzenDataGridColumn Property="@nameof(TestPlans.Id)" Filterable="false" Title="ID" Frozen="true"
+                                  Width="80px" TextAlign="TextAlign.Center"/>
             <RadzenDataGridColumn Property="@nameof(TestPlans.Name)" Title="Name" Frozen="true" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(TestPlans.Description)" Title="Description" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(TestPlans.Priority)" Title="Priority" Width="auto">
@@ -83,7 +84,7 @@ else
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Property="@nameof(TestPlans.AssignedTo)" Title="Assigned To" Width="auto">
                 <Template Context="testplan">
-                    @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(testplan.AssignedTo)).Result))
+                    @Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(testplan.AssignedTo)).Result
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Property="@nameof(TestPlans.ArchivedStatus)" Title="Is Archived" Width="auto">
@@ -112,7 +113,7 @@ else
     private IEnumerable<TestPlans>? _testplans;
 
     private IList<TestPlans> _selectedTestPlans = [];
-    
+
     private readonly string _gridId = "testplans"; // Unique identifier for this grid
 
     private bool _isLoading = true;
@@ -132,7 +133,7 @@ else
         DataGridSettingsService.SetCurrentGridId(_gridId);
 
         (_testplans, _selectedTestPlans) = await TestPlansModel.DisplayTestPlansIndexPage1();
-      //  await TestPlansModel.DisplayTestPlansIndexPage();
+        //  await TestPlansModel.DisplayTestPlansIndexPage();
         _isLoading = false;
     }
 

@@ -5,13 +5,15 @@
 
 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
-        <RadzenButton Icon="assignment_ind" Text="My Assignments" Click="RefreshAssignedRequirements" />
-        <RadzenButton Icon="assignment" Text="All Requirements" Click="RefreshAllRequirements" />
+        <RadzenButton Icon="assignment_ind" Text="My Assignments" Click="RefreshAssignedRequirements"/>
+        <RadzenButton Icon="assignment" Text="All Requirements" Click="RefreshAllRequirements"/>
     </RadzenStack>
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
-        <RequirementsDialogCreate Title="@Loc["create.requirements"]" OnRequirementCreated="@RefreshAssignedRequirementsFromDialog"/>
-        <RadzenButton Icon="list" Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements", true))'/>
+        <RequirementsDialogCreate Title="@Loc["create.requirements"]"
+                                  OnRequirementCreated="@RefreshAssignedRequirementsFromDialog"/>
+        <RadzenButton Icon="list"
+                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements", true))'/>
     </RadzenStack>
 </RadzenStack>
 
@@ -19,48 +21,56 @@
 
 
 <RadzenDropZoneContainer TItem="Requirements" Data="_requirementsData"
-                             ItemSelector="@_itemSelector"
-                             ItemRender="@OnItemRender"
-                             CanDrop="@_canDrop"
-                             Drop="@OnDrop">
-        <ChildContent>
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" Wrap="FlexWrap.Wrap" class="rz-p-12">
-                <RadzenDropZone Value="WorkflowStatus.New" class="rz-display-flex rz-flex-column rz-background-color-warning-lighter rz-border-warning-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
-                    <RadzenText Text="New" TextStyle="TextStyle.Subtitle2" />
-                </RadzenDropZone>
+                         ItemSelector="@_itemSelector"
+                         ItemRender="@OnItemRender"
+                         CanDrop="@_canDrop"
+                         Drop="@OnDrop">
+    <ChildContent>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" Wrap="FlexWrap.Wrap" class="rz-p-12">
+            <RadzenDropZone Value="WorkflowStatus.New"
+                            class="rz-display-flex rz-flex-column rz-background-color-warning-lighter rz-border-warning-light rz-border-radius-2 rz-p-4"
+                            Style="flex: 1; gap: 1rem;">
+                <RadzenText Text="New" TextStyle="TextStyle.Subtitle2"/>
+            </RadzenDropZone>
 
-                <RadzenDropZone Value="WorkflowStatus.InReview" class="rz-display-flex rz-flex-column rz-background-color-info-lighter rz-border-info-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
-                    <RadzenText Text="In Review" TextStyle="TextStyle.Subtitle2" />
-                </RadzenDropZone>
+            <RadzenDropZone Value="WorkflowStatus.InReview"
+                            class="rz-display-flex rz-flex-column rz-background-color-info-lighter rz-border-info-light rz-border-radius-2 rz-p-4"
+                            Style="flex: 1; gap: 1rem;">
+                <RadzenText Text="In Review" TextStyle="TextStyle.Subtitle2"/>
+            </RadzenDropZone>
 
-                <RadzenDropZone Value="WorkflowStatus.Completed" class="rz-display-flex rz-flex-column rz-background-color-success-lighter rz-border-success-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
-                    <RadzenText Text="Completed" TextStyle="TextStyle.Subtitle2" />
-                </RadzenDropZone>
+            <RadzenDropZone Value="WorkflowStatus.Completed"
+                            class="rz-display-flex rz-flex-column rz-background-color-success-lighter rz-border-success-light rz-border-radius-2 rz-p-4"
+                            Style="flex: 1; gap: 1rem;">
+                <RadzenText Text="Completed" TextStyle="TextStyle.Subtitle2"/>
+            </RadzenDropZone>
 
-                <RadzenDropZone Value="WorkflowStatus.Reopened" class="rz-display-flex rz-flex-column rz-background-color-danger-lighter rz-border-danger-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
-                    <RadzenText Text="Reopened" TextStyle="TextStyle.Subtitle2" />
-                </RadzenDropZone>
-            </RadzenStack>
-        </ChildContent>
-        <Template>
-            <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
-                <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
-                    <strong>@context.Name</strong>
-                    <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(context.Priority)">
-                        @context.Priority
-                    </RadzenBadge>
-                    <RadzenStack Orientation="Orientation.Vertical">
-                        <p>@((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(context.AssignedTo)).Result))</p>    
-                    </RadzenStack>
+            <RadzenDropZone Value="WorkflowStatus.Reopened"
+                            class="rz-display-flex rz-flex-column rz-background-color-danger-lighter rz-border-danger-light rz-border-radius-2 rz-p-4"
+                            Style="flex: 1; gap: 1rem;">
+                <RadzenText Text="Reopened" TextStyle="TextStyle.Subtitle2"/>
+            </RadzenDropZone>
+        </RadzenStack>
+    </ChildContent>
+    <Template>
+        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
+            <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
+                <strong>@context.Name</strong>
+                <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(context.Priority)">
+                    @context.Priority
+                </RadzenBadge>
+                <RadzenStack Orientation="Orientation.Vertical">
+                    <p>@Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(context.AssignedTo)).Result</p>
                 </RadzenStack>
             </RadzenStack>
-        </Template>
-    </RadzenDropZoneContainer>
+        </RadzenStack>
+    </Template>
+</RadzenDropZoneContainer>
 
 @code {
     [Parameter] public int ProjectId { get; set; }
-    
-    
+
+
     private IList<Requirements>? _requirementsData = [];
 
     Func<Requirements, RadzenDropZone<Requirements>, bool> _itemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
@@ -103,9 +113,9 @@
             args.Item.ArchivedStatus = args.Item.WorkflowStatus switch
             {
                 WorkflowStatus.Completed => ArchivedStatus.Archived,
-                WorkflowStatus.InReview => ArchivedStatus.Active,    
+                WorkflowStatus.InReview => ArchivedStatus.Active,
                 WorkflowStatus.Reopened => ArchivedStatus.Active,
-                WorkflowStatus.New => ArchivedStatus.Active,    
+                WorkflowStatus.New => ArchivedStatus.Active,
                 _ => args.Item.ArchivedStatus
             };
 
@@ -122,41 +132,40 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _requirementsData = await GetRequirementsAssignedToAll(); 
+        _requirementsData = await GetRequirementsAssignedToAll();
     }
-    
+
     private async Task RefreshAssignedRequirementsFromDialog()
     {
         await using var db = await DbContext.CreateDbContextAsync();
         _requirementsData = await db.Requirements.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
         StateHasChanged();
     }
-    
+
     private async Task<List<Requirements>> GetRequirementsAssignedToAll()
     {
         await using var db = await DbContext.CreateDbContextAsync();
         return await db.Requirements.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
     }
-    
-    
-    
+
+
     private async Task<List<Requirements>> GetRequirementsAssignedToCurrentUser()
     {
         await using var db = await DbContext.CreateDbContextAsync();
         return await db.Requirements.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
     }
-    
+
     private async Task RefreshAssignedRequirements()
     {
         _requirementsData = await GetRequirementsAssignedToCurrentUser();
         StateHasChanged();
     }
-    
+
     private async Task RefreshAllRequirements()
     {
         _requirementsData = await GetRequirementsAssignedToAll();
         StateHasChanged();
     }
 
-  
+
 }

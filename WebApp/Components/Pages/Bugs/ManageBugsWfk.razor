@@ -3,8 +3,8 @@
 
 <h3>Manage Bugs</h3>
 
-<RadzenButton Text="My Assignments" Click="RefreshAssignedBugs" />
-<RadzenButton Text="All Bugs" Click="RefreshAllBugs" />
+<RadzenButton Text="My Assignments" Click="RefreshAssignedBugs"/>
+<RadzenButton Text="All Bugs" Click="RefreshAllBugs"/>
 
 <RadzenDropZoneContainer TItem="Bugs" Data="bugsData"
                          ItemSelector="@ItemSelector"
@@ -13,20 +13,28 @@
                          Drop="@OnDrop">
     <ChildContent>
         <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" Wrap="FlexWrap.Wrap" class="rz-p-12">
-            <RadzenDropZone Value="WorkflowStatus.New" class="rz-display-flex rz-flex-column rz-background-color-warning-lighter rz-border-warning-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
-                <RadzenText Text="New" TextStyle="TextStyle.Subtitle2" />
+            <RadzenDropZone Value="WorkflowStatus.New"
+                            class="rz-display-flex rz-flex-column rz-background-color-warning-lighter rz-border-warning-light rz-border-radius-2 rz-p-4"
+                            Style="flex: 1; gap: 1rem;">
+                <RadzenText Text="New" TextStyle="TextStyle.Subtitle2"/>
             </RadzenDropZone>
 
-            <RadzenDropZone Value="WorkflowStatus.InReview" class="rz-display-flex rz-flex-column rz-background-color-info-lighter rz-border-info-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
-                <RadzenText Text="In Review" TextStyle="TextStyle.Subtitle2" />
+            <RadzenDropZone Value="WorkflowStatus.InReview"
+                            class="rz-display-flex rz-flex-column rz-background-color-info-lighter rz-border-info-light rz-border-radius-2 rz-p-4"
+                            Style="flex: 1; gap: 1rem;">
+                <RadzenText Text="In Review" TextStyle="TextStyle.Subtitle2"/>
             </RadzenDropZone>
 
-            <RadzenDropZone Value="WorkflowStatus.Completed" class="rz-display-flex rz-flex-column rz-background-color-success-lighter rz-border-success-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
-                <RadzenText Text="Completed" TextStyle="TextStyle.Subtitle2" />
+            <RadzenDropZone Value="WorkflowStatus.Completed"
+                            class="rz-display-flex rz-flex-column rz-background-color-success-lighter rz-border-success-light rz-border-radius-2 rz-p-4"
+                            Style="flex: 1; gap: 1rem;">
+                <RadzenText Text="Completed" TextStyle="TextStyle.Subtitle2"/>
             </RadzenDropZone>
 
-            <RadzenDropZone Value="WorkflowStatus.Reopened" class="rz-display-flex rz-flex-column rz-background-color-danger-lighter rz-border-danger-light rz-border-radius-2 rz-p-4" Style="flex: 1; gap: 1rem;">
-                <RadzenText Text="Reopened" TextStyle="TextStyle.Subtitle2" />
+            <RadzenDropZone Value="WorkflowStatus.Reopened"
+                            class="rz-display-flex rz-flex-column rz-background-color-danger-lighter rz-border-danger-light rz-border-radius-2 rz-p-4"
+                            Style="flex: 1; gap: 1rem;">
+                <RadzenText Text="Reopened" TextStyle="TextStyle.Subtitle2"/>
             </RadzenDropZone>
         </RadzenStack>
     </ChildContent>
@@ -39,7 +47,7 @@
                 </RadzenBadge>
                 <RadzenStack Orientation="Orientation.Vertical">
                     <p>
-                        @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(context.AssignedTo)).Result))
+                        @Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(context.AssignedTo)).Result
 
                     </p>
                 </RadzenStack>
@@ -101,7 +109,6 @@
         await using var db = await DbContext.CreateDbContextAsync();
         return await db.Bugs.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
     }
-
 
 
     private async Task<List<Bugs>> GetBugsAssignedToCurrentUser()

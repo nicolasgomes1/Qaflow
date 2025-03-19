@@ -3,7 +3,7 @@
 
 @if (_isLoading)
 {
-    <ProgressBar />
+    <ProgressBar/>
 }
 else
 {
@@ -14,61 +14,61 @@ else
         <RadzenTabs RenderMode="TabRenderMode.Client">
             <Tabs>
                 <RadzenTabsItem Text="Test Plans">
-                    
+
                     <RadzenFieldset Text="Test Plans Details">
-                    
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Name"/>
-                        <RadzenTextBox id="name"
-                                       @bind-Value="_testPlans.Name"
-                                       class="input-style"
-                                       Name="name"/>
-                        <RadzenRequiredValidator Component="name" Text="Name is required"/>
-                    </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Description"/>
-                        <RadzenTextBox id="description"
-                                       @bind-Value="_testPlans.Description"
-                                       class="input-style"
-                                       Name="description"/>
-                        <RadzenRequiredValidator Component="description" Text="Description is recommended"/>
-                    </div>
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Name"/>
+                            <RadzenTextBox id="name"
+                                           @bind-Value="_testPlans.Name"
+                                           class="input-style"
+                                           Name="name"/>
+                            <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                        </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Priority"/>
-                        <RadzenDropDown id="priority"
-                                        @bind-Value="_testPlans.Priority"
-                                        Data="EnumService.GetEnumValues<Priority>()"
-                                        class="input-style"
-                                        Name="priority"/>
-                        <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
-                    </div>
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Description"/>
+                            <RadzenTextBox id="description"
+                                           @bind-Value="_testPlans.Description"
+                                           class="input-style"
+                                           Name="description"/>
+                            <RadzenRequiredValidator Component="description" Text="Description is recommended"/>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Priority"/>
+                            <RadzenDropDown id="priority"
+                                            @bind-Value="_testPlans.Priority"
+                                            Data="EnumService.GetEnumValues<Priority>()"
+                                            class="input-style"
+                                            Name="priority"/>
+                            <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                        </div>
 
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Test Cases"/>
-                        <RadzenDropDown id="testcases"
-                                        Data="@_testCasesList"
-                                        @bind-Value="TestPlansModel.SelectedTestCasesIds"
-                                        TextProperty="Name"
-                                        ValueProperty="Id"
-                                        Multiple="true"
-                                        class="input-style"
-                                        Name="testcases"/>
-                    </div>
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Test Cases"/>
+                            <RadzenDropDown id="testcases"
+                                            Data="@_testCasesList"
+                                            @bind-Value="TestPlansModel.SelectedTestCasesIds"
+                                            TextProperty="Name"
+                                            ValueProperty="Id"
+                                            Multiple="true"
+                                            class="input-style"
+                                            Name="testcases"/>
+                        </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Assigned To"/>
-                        <RadzenDropDown id="assignedto"
-                                        Data="@_usersList"
-                                        @bind-Value="_testPlans.AssignedTo"
-                                        TextProperty="UserName"
-                                        ValueProperty="Id"
-                                        class="input-style"
-                                        Name="assignedto"/>
-                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
-                    </div>
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Assigned To"/>
+                            <RadzenDropDown id="assignedto"
+                                            Data="@_usersList"
+                                            @bind-Value="_testPlans.AssignedTo"
+                                            TextProperty="UserName"
+                                            ValueProperty="Id"
+                                            class="input-style"
+                                            Name="assignedto"/>
+                            <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                        </div>
                     </RadzenFieldset>
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Files">
@@ -76,43 +76,41 @@ else
                                     EntityName="@nameof(TestPlansFile)"
                                     UploadedFiles="@_uploadedFiles"/>
                 </RadzenTabsItem>
-                
+
             </Tabs>
         </RadzenTabs>
-        
+
         <CreateEditActions EntityName="testplans" CreateEdit="Update"/>
 
     </RadzenTemplateForm>
 }
 
 @code {
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public int Id { get; set; }
 
-    [Parameter]
-    public int ProjectId { get; set; }
+    [Parameter] public int ProjectId { get; set; }
 
     private List<ApplicationUser> _usersList = [];
 
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
     private List<TestCases> _testCasesList = [];
-    
+
     private bool _isLoading = true;
 
-  //  private int _selectedIndex;
+    //  private int _selectedIndex;
     private TestPlans _testPlans = new();
-   
+
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
 
-      //  await TestCasesModel.GetAllTestCases();
+        //  await TestCasesModel.GetAllTestCases();
         _testCasesList = await TestCasesModel.GetTestCasesWithWorkflowStatus();
         _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
         await TestPlansModel.GetAssociatedTestCases(Id);
         await TestPlansFilesModel.GetFilesByTestPlanId(Id);
-        
+
         if (_testPlans.ArchivedStatus.Equals(ArchivedStatus.Archived))
         {
             NavigationManager.NavigateTo($"project/{ProjectId}/testplans", true);
@@ -128,8 +126,7 @@ else
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Plan with Id {_testPlans.Id} Updated Successfully");
     }
-    
-    
+
 
     private void HandleFileSelected(UploadChangeEventArgs args)
     {

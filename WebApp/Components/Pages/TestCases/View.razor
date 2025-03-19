@@ -3,115 +3,115 @@
 
 @if (isloading)
 {
-<ProgressBar Template="Loading" />
+    <ProgressBar Template="Loading"/>
 }
 else
 {
+    <RadzenTabs RenderMode="TabRenderMode.Client">
+        <Tabs>
+            <RadzenTabsItem Text="Test Case Details">
+                <RadzenRow>
+                    <RadzenCard Style="width: 50%; padding: 20px;">
+                        <h4 class="text-center text-primary mb-4">Test Case Details</h4>
 
-<RadzenTabs RenderMode="TabRenderMode.Client">
-    <Tabs>
-        <RadzenTabsItem Text="Test Case Details">
-            <RadzenRow>
-                <RadzenCard Style="width: 50%; padding: 20px;">
-                    <h4 class="text-center text-primary mb-4">Test Case Details</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
+                            <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_testCases.Id.ToString()"/>
 
-                    <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
-                        <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
-                        <RadzenLabel Text="@_testCases.Id.ToString()"/>
+                            <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_testCases.Name"/>
 
-                        <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
-                        <RadzenLabel Text="@_testCases.Name"/>
+                            <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_testCases.Description"/>
 
-                        <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
-                        <RadzenLabel Text="@_testCases.Description"/>
+                            <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text=@_testCases.CreatedAt.ToString(CultureInfo.CurrentCulture)/>
 
-                        <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
-                        <RadzenLabel Text=@_testCases.CreatedAt.ToString(CultureInfo.CurrentCulture)/>
+                            <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text=@_testCases.ModifiedAt.ToString(CultureInfo.CurrentCulture)/>
 
-                        <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
-                        <RadzenLabel Text=@_testCases.ModifiedAt.ToString(CultureInfo.CurrentCulture)/>
+                            <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_testCases.CreatedBy"/>
 
-                        <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
-                        <RadzenLabel Text="@_testCases.CreatedBy"/>
+                            <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_testCases.ModifiedBy"/>
 
-                        <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
-                        <RadzenLabel Text="@_testCases.ModifiedBy"/>
+                            <RadzenLabel Text="Linked Requirements:" Style="font-weight: bold;"/>
+                            <div style="display: flex; flex-wrap: wrap;">
+                                @if (_testCases.Requirements != null && _testCases.Requirements.Any())
+                                {
+                                    var requirementLinks = _testCases.Requirements
+                                        .Select(requirement => $"<a href=\"project/{ProjectStateService.ProjectId}/requirements/view/{requirement.Id}\">{requirement.Name}</a>")
+                                        .ToList();
 
-                        <RadzenLabel Text="Linked Requirements:" Style="font-weight: bold;"/>
-                        <div style="display: flex; flex-wrap: wrap;">
-                            @if (_testCases.Requirements != null && _testCases.Requirements.Any())
-                            {
-                                var requirementLinks = _testCases.Requirements
-                                    .Select(requirement => $"<a href=\"project/{ProjectStateService.ProjectId}/requirements/view/{requirement.Id}\">{requirement.Name}</a>")
-                                    .ToList();
+                                    @((MarkupString)string.Join(", ", requirementLinks))
+                                }
+                                else
+                                {
+                                    <span style="color:red;">No requirements</span>
+                                }
+                            </div>
 
-                                @((MarkupString)string.Join(", ", requirementLinks))
-                            }
-                            else
-                            {
-                                <span style="color:red;">No requirements</span>
-                            }
+                            <RadzenLabel Text="Test Type:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_testCases.TestType.GetDisplayName()"/>
+
+                            <RadzenLabel Text="Test Scope:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_testCases.TestScope.GetDisplayName()"/>
+
+
+                            <RadzenLabel Text="Estimated Time:" Style="font-weight: bold;"/>
+                            <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
+                                <RadzenBadge Text="@_testCases.EstimatedTime.ToString()"
+                                             BadgeStyle="BadgeStyle.Success"/>
+                            </RadzenStack>
+
+
                         </div>
+                    </RadzenCard>
+                </RadzenRow>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@TestCasesHasNoFiles">
+                <FileViewer Files="Files" EntityName="@nameof(TestCasesFile)"/>
 
-                        <RadzenLabel Text="Test Type:" Style="font-weight: bold;"/>
-                        <RadzenLabel Text="@_testCases.TestType.GetDisplayName()"/>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="@ContextTestStepsTitle()" Disabled="@IsTestStepsEmpty">
+                <RadzenRow>
+                    <TestStepsViewer TestStepsData="@_testCases.TestSteps"/>
+                </RadzenRow>
+            </RadzenTabsItem>
 
-                        <RadzenLabel Text="Test Scope:" Style="font-weight: bold;"/>
-                        <RadzenLabel Text="@_testCases.TestScope.GetDisplayName()"/>
+            <RadzenTabsItem Text="@ContextExternalReferencesTitle()" Disabled="@TestCasesHasNoExternalReferences">
+                <RadzenRow>
+                    <RadzenDataList Data="@_testCasesJira" TItem="TestCasesJira">
+                        <Template Context="testCasesJira">
+                            <RadzenRow>
+                                <RadzenColumn Style="width: 100px;">
+                                    <RadzenLabel Text="@testCasesJira.Key"/>
+                                </RadzenColumn>
+                                <RadzenColumn Style="width: 100px">
+                                    <RadzenLink Path=@GetJiraLink(testCasesJira.Key) Text="Link" Target="_blank"/>
 
+                                    @code{
 
-                        <RadzenLabel Text="Estimated Time:" Style="font-weight: bold;"/>
-                        <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
-                            <RadzenBadge Text="@_testCases.EstimatedTime.ToString()" BadgeStyle="BadgeStyle.Success"/>
-                        </RadzenStack>
+                                        private static string GetJiraLink(string key)
+                                        {
+                                            return $"https://qawebmaster.atlassian.net/browse/{key}";
+                                        }
 
-
-                    </div>
-                </RadzenCard>
-            </RadzenRow>
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@TestCasesHasNoFiles">
-            <FileViewer Files="Files" EntityName="@nameof(TestCasesFile)"/>
-
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="@ContextTestStepsTitle()" Disabled="@IsTestStepsEmpty">
-            <RadzenRow>
-                <TestStepsViewer TestStepsData="@_testCases.TestSteps"/>
-            </RadzenRow>
-        </RadzenTabsItem>
-        
-        <RadzenTabsItem Text="@ContextExternalReferencesTitle()" Disabled="@TestCasesHasNoExternalReferences">
-            <RadzenRow>
-                <RadzenDataList Data="@_testCasesJira" TItem="TestCasesJira">
-                    <Template Context="testCasesJira">
-                        <RadzenRow>
-                            <RadzenColumn Style="width: 100px;">
-                                <RadzenLabel Text="@testCasesJira.Key"/>
-                            </RadzenColumn>
-                            <RadzenColumn Style="width: 100px">
-                                <RadzenLink Path=@GetJiraLink(testCasesJira.Key) Text="Link" Target="_blank"/>
-
-                                @code{
-
-                                    private static string GetJiraLink(string key)
-                                    {
-                                        return $"https://qawebmaster.atlassian.net/browse/{key}";
                                     }
 
-                                }
 
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </Template>
+                    </RadzenDataList>
+                </RadzenRow>
+            </RadzenTabsItem>
+        </Tabs>
 
-                            </RadzenColumn>
-                        </RadzenRow>
-                    </Template>
-                </RadzenDataList>
-            </RadzenRow>
-        </RadzenTabsItem>
-    </Tabs>
+    </RadzenTabs>
 
-</RadzenTabs>
-
-<ViewEditActions EntityName="testcases" EntityId="_testCases.Id"/>
+    <ViewEditActions EntityName="testcases" EntityId="_testCases.Id"/>
 }
 
 

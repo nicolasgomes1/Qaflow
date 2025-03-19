@@ -6,14 +6,14 @@
               Click="@ShowInlineDialog"/>
 
 @code {
-    private TestPlans _testPlans = new TestPlans();
+    private TestPlans _testPlans = new();
     private readonly List<IBrowserFile>? _uploadedFiles = new();
     private List<TestCases> _testCaseslist = [];
 
     [Parameter] public string Title { get; set; } = string.Empty;
 
     [Parameter] public EventCallback OnTestPlanCreated { get; set; }
-    
+
     /// <summary>
     /// Default value is false
     /// </summary>
@@ -32,7 +32,7 @@
         DialogService.Close(result);
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Plan created successfully with id {_testPlans.Id}");
-        
+
         if (OnTestPlanCreated.HasDelegate)
         {
             await OnTestPlanCreated.InvokeAsync();

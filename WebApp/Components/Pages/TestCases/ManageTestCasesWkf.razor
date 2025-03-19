@@ -60,7 +60,7 @@
                 </RadzenBadge>
                 <RadzenStack Orientation="Orientation.Vertical">
                     <p>
-                        @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(context.AssignedTo)).Result))
+                        @Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(context.AssignedTo)).Result
                     </p>
                 </RadzenStack>
 
@@ -110,12 +110,12 @@
             args.Item.ArchivedStatus = args.Item.WorkflowStatus switch
             {
                 WorkflowStatus.Completed => ArchivedStatus.Archived,
-                WorkflowStatus.InReview => ArchivedStatus.Active,    
+                WorkflowStatus.InReview => ArchivedStatus.Active,
                 WorkflowStatus.Reopened => ArchivedStatus.Active,
-                WorkflowStatus.New => ArchivedStatus.Active,    
+                WorkflowStatus.New => ArchivedStatus.Active,
                 _ => args.Item.ArchivedStatus
             };
-            
+
             await using var db = await DbContext.CreateDbContextAsync();
             args.Item.ModifiedBy = UserService.GetCurrentUserNameAsync().Result;
             db.TestCases.Update(args.Item);

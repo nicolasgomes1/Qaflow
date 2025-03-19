@@ -25,7 +25,7 @@
     IBrowserFile? _selectedFile;
     byte[]? _fileBytes;
 
-    [Parameter] public int TestStepExecutionId { get; set; }
+    [EditorRequired] [Parameter] public int TestStepExecutionId { get; set; }
 
 
     void OnChange(UploadChangeEventArgs args, string name)
@@ -52,13 +52,13 @@
                 var testStepExecution = await db.TestStepsExecution.FindAsync(teststepexecutionId);
                 if (testStepExecution != null)
                 {
-                // Check if an existing file entry is associated with the TestStepExecutionId
+                    // Check if an existing file entry is associated with the TestStepExecutionId
                     var existingFile = await db.TestStepsExecutionFiles
                         .FirstOrDefaultAsync(file => file.TestStepExecutionId == teststepexecutionId);
 
                     if (existingFile != null)
                     {
-                // Update the existing file
+                        // Update the existing file
                         existingFile.FileContent = _fileBytes;
                         existingFile.FileName = _selectedFile.Name;
                         existingFile.UploadedAt = DateTime.UtcNow; // Update the upload time if needed
@@ -68,7 +68,7 @@
                     }
                     else
                     {
-                // Add a new file entry if none exists
+                        // Add a new file entry if none exists
                         var testStepExecutionFile = new TestStepsExecutionFile
                         {
                             FileContent = _fileBytes,

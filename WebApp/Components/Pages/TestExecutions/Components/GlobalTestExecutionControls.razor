@@ -1,4 +1,6 @@
-﻿<RadzenCard Style="flex: 1; padding: 20px; display: flex; justify-content: center; align-items: center; flex-direction: column;" class="rz-shadow-10">
+﻿<RadzenCard
+    Style="flex: 1; padding: 20px; display: flex; justify-content: center; align-items: center; flex-direction: column;"
+    class="rz-shadow-10">
     @switch (_testExecution.IsActive)
     {
         case true when ExecutionInProgress == false:
@@ -14,12 +16,14 @@
         <ProgressBar Template="In Progress"/>
     }
 
-    <RadzenTemplateForm Data="@TestExecutionModel.TestExecution" TItem="TestExecution" Submit="@(() => EndCurrentExecution())">
+    <RadzenTemplateForm Data="@TestExecutionModel.TestExecution" TItem="TestExecution"
+                        Submit="@(() => EndCurrentExecution())">
 
         <ValidationSummary class="alert alert-danger"/>
 
 
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" class="rz-m-12" Gap="2rem">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" class="rz-m-12" Gap="2rem">
             <!-- Start Execution Button -->
             <RadzenButton
                 MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Start Test Execution"))"
@@ -69,7 +73,8 @@
 
         </RadzenStack>
 
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" class="rz-m-12" Gap="2rem">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" class="rz-m-12" Gap="2rem">
             <!-- Suspend Execution Button -->
             <RadzenButton MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Suspend Current Test Execution"))"
                           MouseLeave="@AppTooltipService.HideTooltip"
@@ -98,14 +103,16 @@
         }
 
 
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" class="rz-m-12" Gap="2rem">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.Center" class="rz-m-12" Gap="2rem">
             <!-- Dropdown to Select Status -->
             <RadzenDropDown @bind-Value="_testExecution.ExecutionStatus"
                             Placeholder="Select Status"
                             Disabled="@(!ExecutionInProgress)"
                             Data="@(EnumService.GetEnumFilteredValues<ExecutionStatus>(ExecutionStatus.NotRun))"
                             Style="width: 50%; margin-bottom: 20px;"/>
-            <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="ExecutionStatus.NotRun" Text="Please select a status"/>
+            <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="ExecutionStatus.NotRun"
+                                    Text="Please select a status"/>
 
             <RadzenTextArea @bind-Value="_testExecution.ExecutionNotes"
                             Placeholder="Notes"
@@ -113,7 +120,8 @@
                             Style="flex-direction: row-reverse; resize: both"/>
         </RadzenStack>
 
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" class="rz-m-12" Gap="2rem">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" class="rz-m-12" Gap="2rem">
             @if (ExecutionInProgress)
             {
                 <RadzenLabel Text="@TimeElapsed.ToString("hh\\:mm\\:ss")"

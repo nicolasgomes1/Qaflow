@@ -11,7 +11,7 @@
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
         <TestExecutionDialogCreate Title="@Loc["create.testexecution"]"
-                               OnTestExecutionCreated="@RefreshAssignedTestExecutionsFromDialog"/>
+                                   OnTestExecutionCreated="@RefreshAssignedTestExecutionsFromDialog"/>
         <RadzenButton Icon="list"
                       Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution", true))'/>
     </RadzenStack>
@@ -57,7 +57,7 @@
                     @context.Priority
                 </RadzenBadge>
                 <RadzenStack Orientation="Orientation.Vertical">
-                        <p>@((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(context.AssignedTo)).Result))</p>    
+                    <p>@Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(context.AssignedTo)).Result</p>
                 </RadzenStack>
 
             </RadzenStack>
@@ -76,10 +76,10 @@
     protected override async Task OnInitializedAsync()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testexecutionData = await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.IsActive == true ).ToListAsync();
+        testexecutionData = await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.IsActive == true).ToListAsync();
     }
-    
-    
+
+
     Func<TestExecution, RadzenDropZone<TestExecution>, bool> ItemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
 
     Func<RadzenDropZoneItemEventArgs<TestExecution>, bool> CanDrop = request =>
@@ -87,7 +87,7 @@
         return request.FromZone == request.ToZone ||
                Math.Abs((int)request.Item.WorkflowStatus - (int)request.ToZone.Value) == 1;
     };
-    
+
     void OnItemRender(RadzenDropZoneItemRenderEventArgs<TestExecution> args)
     {
         args.Attributes["class"] = "rz-card rz-variant-filled rz-background-color-primary-light rz-color-on-primary-light";
@@ -97,7 +97,7 @@
             args.Attributes["class"] += " rz-border-danger";
         }
     }
-    
+
     async void OnDrop(RadzenDropZoneItemEventArgs<TestExecution> args)
     {
         if (args.FromZone != args.ToZone)
@@ -107,12 +107,12 @@
             args.Item.ArchivedStatus = args.Item.WorkflowStatus switch
             {
                 WorkflowStatus.Completed => ArchivedStatus.Archived,
-                WorkflowStatus.InReview => ArchivedStatus.Active,    
+                WorkflowStatus.InReview => ArchivedStatus.Active,
                 WorkflowStatus.Reopened => ArchivedStatus.Active,
-                WorkflowStatus.New => ArchivedStatus.Active,    
+                WorkflowStatus.New => ArchivedStatus.Active,
                 _ => args.Item.ArchivedStatus
             };
-            
+
             await using var db = await DbContext.CreateDbContextAsync();
             args.Item.ModifiedBy = UserService.GetCurrentUserNameAsync().Result;
             db.TestExecution.Update(args.Item);
@@ -123,36 +123,36 @@
         testexecutionData?.Remove(args.Item);
         testexecutionData?.Insert(testexecutionData.IndexOf(args.ToItem), args.Item);
     }
-    
+
     private async Task RefreshAssignedTestExecutionsFromDialog()
     {
         await using var db = await DbContext.CreateDbContextAsync();
         testexecutionData = await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.IsActive == true).ToListAsync();
         StateHasChanged();
     }
-    
+
     private async Task<List<TestExecution>> GetTestExecutionsAssignedToCurrentUser()
     {
         await using var db = await DbContext.CreateDbContextAsync();
         return await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
     }
-    
+
     private async Task<List<TestExecution>> GetTestExecutionsAssignedToAll()
     {
         await using var db = await DbContext.CreateDbContextAsync();
         return await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.IsActive == true).ToListAsync();
     }
-    
+
     private async Task RefreshAssignedTestExecutions()
     {
         testexecutionData = await GetTestExecutionsAssignedToCurrentUser();
         StateHasChanged();
     }
-    
+
     private async Task RefreshAllTestExecutions()
     {
         testexecutionData = await GetTestExecutionsAssignedToAll();
         StateHasChanged();
     }
-    
+
 }

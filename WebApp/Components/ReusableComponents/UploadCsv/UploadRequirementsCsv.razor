@@ -2,6 +2,7 @@
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Upload requirements data from csv", TooltipPosition.Bottom))"
               MouseLeave="@AppTooltipService.HideTooltip"/>
 @inject UserService UserService
+
 @code {
     private IEnumerable<Requirements> _requirements = [];
     private string _fileContent = string.Empty;
@@ -17,8 +18,9 @@
         await DialogService.OpenAsync($"Import {nameof(Requirements)} from CSV", ds =>
         {
             return @<RadzenStack Orientation="Orientation.Vertical">
-                <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload" Change="@(args => SaveFileContent(args))" />
-                <RadzenButton Text="Submit" Icon="check" Click="ProcessCsvFile" Style="margin-top: 10px;" />
+                <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload"
+                              Change="@(args => SaveFileContent(args))"/>
+                <RadzenButton Text="Submit" Icon="check" Click="ProcessCsvFile" Style="margin-top: 10px;"/>
             </RadzenStack>;
         }, new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
     }
@@ -34,7 +36,7 @@
 
         using var reader = new StreamReader(memoryStream);
         _fileContent = await reader.ReadToEndAsync();
-        
+
         if (string.IsNullOrWhiteSpace(_fileContent))
         {
             await FormNotificationService.NotifyError("No file content found. Please upload a CSV file.");
@@ -48,8 +50,6 @@
 
     private async Task ProcessCsvFile()
     {
-
-
         var csvlines = _fileContent.Split('\n').Skip(1);
         _totalLines = csvlines.Count();
 
@@ -80,7 +80,7 @@
             {
                 Name = values[0].Trim(),
                 Description = values[1].Trim(),
-                Priority = Enum.Parse<Priority>(values[2].Trim()),
+                Priority = Enum.Parse<Priority>(values[2].Trim())
             };
 
             if (string.IsNullOrWhiteSpace(requirements.Name) || string.IsNullOrWhiteSpace(requirements.Description))
@@ -89,7 +89,7 @@
                 continue;
             }
 
-            if(_requirements.Any(r => r.Name == requirements.Name && r.Description == requirements.Description))
+            if (_requirements.Any(r => r.Name == requirements.Name && r.Description == requirements.Description))
             {
                 _invalidLines++;
                 continue;
@@ -111,5 +111,5 @@
             await FormNotificationService.NotifySuccess($"{nameof(Requirements)} CSV imported successfully with {_validLines} blog posts and {_invalidLines} invalid lines.");
         }
     }
-    
+
 }

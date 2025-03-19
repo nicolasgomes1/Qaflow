@@ -6,7 +6,7 @@
               ButtonStyle="ButtonStyle.Danger" Click="@ShowInlineDialog"/>
 
 @code {
-    private Bugs _bugs = new Bugs();
+    private Bugs _bugs = new();
     private readonly List<IBrowserFile>? _uploadedFiles = new();
 
     [Parameter] public string Title { get; set; } = string.Empty;

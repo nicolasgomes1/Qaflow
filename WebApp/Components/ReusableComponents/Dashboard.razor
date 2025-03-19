@@ -112,9 +112,8 @@
 
 
 @code {
-    
-    [Parameter] public int ProjectId { get; set; }
-    
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+
     private string _requirementsCount = string.Empty;
     private string _testCasesCount = string.Empty;
     private string _testPlansCount = string.Empty;

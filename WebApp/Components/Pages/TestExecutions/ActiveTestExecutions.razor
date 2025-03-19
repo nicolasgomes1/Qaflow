@@ -13,7 +13,7 @@
                 ColumnWidth="300px"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
-                @bind-Value=@TestExecutionModel.selectedExecution>
+                @bind-Value="@TestExecutionModel.selectedExecution">
 
     <HeaderTemplate>
     </HeaderTemplate>
@@ -65,29 +65,27 @@
                               Size="ButtonSize.Small"/>
             </Template>
         </RadzenDataGridColumn>
-        
- 
-        
-        
+
+
     </Columns>
 </RadzenDataGrid>
 
 @code {
-[Parameter] public int Id { get; set; }
-[Parameter] public int ProjectId { get; set; }    
-    
-private IEnumerable<TestExecution> _testexecution = [];
+    [Parameter] public int Id { get; set; }
+    [Parameter] public int ProjectId { get; set; }
+
+    private IEnumerable<TestExecution> _testexecution = [];
 
     protected override async Task OnInitializedAsync()
     {
         await GetActiveTestExecutions();
     }
-    
-    
+
+
     private async Task GetActiveTestExecutions()
     {
         _testexecution = await TestExecutionModel.GetActiveTestExecutionsAsync();
     }
-    
+
 
 }

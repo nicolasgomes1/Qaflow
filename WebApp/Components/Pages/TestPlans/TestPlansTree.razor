@@ -1,23 +1,23 @@
 ﻿@rendermode InteractiveServer
 @inject ContextMenuService ContextMenuService
 
-<RadzenTree Style="height: 100%; overflow: auto;" Data=@_projects ItemContextMenu="ItemContextMenu">
+<RadzenTree Style="height: 100%; overflow: auto;" Data="@_projects" ItemContextMenu="ItemContextMenu">
     <!-- Project level -->
     <RadzenTreeLevel TextProperty="@nameof(Projects.Name)"
                      HasChildren="@(project => true)"
                      ChildrenProperty="TestPlans"
-                     Template="@ProjectTemplate" />
+                     Template="@ProjectTemplate"/>
 
     <!-- Requirements level (children of the project) -->
     <RadzenTreeLevel TextProperty="@nameof(TestPlans.Name)"
                      HasChildren="@(testplans => true)"
                      ChildrenProperty="TestCases"
-                     Template="@TestPlansTemplate" />
+                     Template="@TestPlansTemplate"/>
 
     <!-- TestCases level (children of the requirement) -->
     <RadzenTreeLevel TextProperty="@nameof(TestCases.Name)"
                      HasChildren="@(testCase => false)"
-                     Template="@TestCaseTemplate" />
+                     Template="@TestCaseTemplate"/>
 </RadzenTree>
 
 @code {
@@ -28,7 +28,6 @@
     {
         _projects = await ProjectModel.GetProjectsTestplansTestCases();
     }
-
 
 
     // Handle the context menu for each tree item
@@ -57,13 +56,11 @@
 
         ContextMenuService.Open(args, menuItems, (e) =>
         {
-
             var uri = e.Value.ToString();
 
             if (uri == null) throw new InvalidOperationException("URI is not set.");
 
             NavigationManager.NavigateTo(uri, true);
-
         });
     }
 
@@ -134,4 +131,5 @@
         builder.AddContent(5, $"{testCase.Id} - {context.Text}"); // Display ID before Name
         builder.CloseElement();
     };
+
 }

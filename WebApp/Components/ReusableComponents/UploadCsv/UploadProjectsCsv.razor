@@ -17,8 +17,9 @@
         await DialogService.OpenAsync($"Import {nameof(Projects)} from CSV", ds =>
         {
             return @<RadzenStack Orientation="Orientation.Vertical">
-                <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload" Change="@(args => SaveFileContent(args))" />
-                <RadzenButton Text="Submit" Icon="check" Click="ProcessCsvFile" Style="margin-top: 10px;" />
+                <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload"
+                              Change="@(args => SaveFileContent(args))"/>
+                <RadzenButton Text="Submit" Icon="check" Click="ProcessCsvFile" Style="margin-top: 10px;"/>
             </RadzenStack>;
         }, new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
     }
@@ -48,8 +49,6 @@
 
     private async Task ProcessCsvFile()
     {
-
-
         var csvlines = _fileContent.Split('\n').Skip(1);
         _totalLines = csvlines.Count();
 
@@ -88,7 +87,7 @@
                 continue;
             }
 
-            if(_projects.Any(r => r.Name == projects.Name && r.Description == projects.Description))
+            if (_projects.Any(r => r.Name == projects.Name && r.Description == projects.Description))
             {
                 _invalidLines++;
                 continue;

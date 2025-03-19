@@ -112,7 +112,7 @@
     //   string _maxLengthValue = "";
     int _maxLength = 250;
 
- //   string? _value;
+    //   string? _value;
 
     void OnChange(string value, string name)
     {
@@ -130,7 +130,7 @@
 
 
 @code {
-    [Parameter] public List<TestSteps> TestSteps { get; set; } = [];
+    [EditorRequired] [Parameter] public List<TestSteps> TestSteps { get; set; } = [];
 
     private RadzenDataGrid<TestSteps> _dataGrid = new();
     private TestSteps _newTestStep = new();

@@ -72,7 +72,7 @@
 
     [Parameter] public int ProjectId { get; set; }
 
-    private string _estimatedTimeInput = String.Empty;
+    private string _estimatedTimeInput = string.Empty;
 
     private List<TestPlans> _testPlansList = [];
     private readonly TestExecution _testExecution = new();
@@ -84,7 +84,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-     //   _testPlansList = await TestPlansModel.GetallTestPlans();
+        //   _testPlansList = await TestPlansModel.GetallTestPlans();
         _testPlansList = await TestPlansModel.GetallTestPlansWithWorkflowStatus(WorkflowStatus.Completed);
         _usersList = await UserService.GetUsersList();
     }

@@ -2,8 +2,9 @@
     @if (_chartData.Count > 0)
     {
         <RadzenChart>
-            <RadzenPieSeries Data="@_chartData" Title="Test Executions" CategoryProperty="Category" ValueProperty="Value" Fills="@_fills">
-                <RadzenSeriesDataLabels Visible="true" />
+            <RadzenPieSeries Data="@_chartData" Title="Test Executions" CategoryProperty="Category"
+                             ValueProperty="Value" Fills="@_fills">
+                <RadzenSeriesDataLabels Visible="true"/>
             </RadzenPieSeries>
         </RadzenChart>
     }
@@ -14,9 +15,8 @@
 </RadzenStack>
 
 @code {
-    [Parameter, EditorRequired]
-    public int ProjectId { get; set; }
-    
+    [Parameter][EditorRequired] public int ProjectId { get; set; }
+
     private List<ChartData> _chartData = [];
     private List<string> _fills = []; // Create a list to store the colors
 
@@ -35,34 +35,35 @@
         if (testExecutionsPassedPercentage > 0)
         {
             _chartData.Add(new ChartData
-                {
-                    Category = "Test Executions Passed",
-                    Value = testExecutionsPassedPercentage,
-                    Color = Colors.Primary // Set color for passed tests
-                });
+            {
+                Category = "Test Executions Passed",
+                Value = testExecutionsPassedPercentage,
+                Color = Colors.Primary // Set color for passed tests
+            });
             _fills.Add(Colors.Primary); // Add color to the fills list
         }
 
         if (testExecutionsFailedPercentage > 0)
         {
             _chartData.Add(new ChartData
-                {
-                    Category = "Test Executions Failed",
-                    Value = testExecutionsFailedPercentage,
-                    Color = Colors.Danger // Set color for failed tests
-                });
+            {
+                Category = "Test Executions Failed",
+                Value = testExecutionsFailedPercentage,
+                Color = Colors.Danger // Set color for failed tests
+            });
             _fills.Add(Colors.Danger); // Add color to the fills list
         }
 
         if (testExecutionNotRunPercentage > 0)
         {
             _chartData.Add(new ChartData
-                {
-                    Category = "Test Executions Not Run",
-                    Value = testExecutionNotRunPercentage,
-                    Color = Colors.Warning // Set color for not run tests
-                });
+            {
+                Category = "Test Executions Not Run",
+                Value = testExecutionNotRunPercentage,
+                Color = Colors.Warning // Set color for not run tests
+            });
             _fills.Add(Colors.Warning); // Add color to the fills list
         }
     }
+
 }

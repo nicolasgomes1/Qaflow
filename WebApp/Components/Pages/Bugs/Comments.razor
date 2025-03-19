@@ -10,7 +10,7 @@
             <RadzenRow>
                 <!-- User Information -->
                 <RadzenColumn Size="6">
-                    <RadzenLabel Text="Created By:" Style="font-weight: bold; margin-right: 5px;" />
+                    <RadzenLabel Text="Created By:" Style="font-weight: bold; margin-right: 5px;"/>
                     <RadzenText TextStyle="TextStyle.Body2">
                         @(product.CreatedBy)
                     </RadzenText>
@@ -18,7 +18,7 @@
 
                 <!-- Comment Content -->
                 <RadzenColumn Size="6" Style="word-wrap: break-word; white-space: normal;">
-                    <RadzenLabel Text="Comment:" Style="font-weight: bold; margin-right: 5px;" />
+                    <RadzenLabel Text="Comment:" Style="font-weight: bold; margin-right: 5px;"/>
                     <RadzenText TextStyle="TextStyle.Body2">
                         @(product.Comment)
                     </RadzenText>
@@ -53,7 +53,7 @@
         StateHasChanged(); // Ensure UI reflects the updated data
     }
 
-    private BugsComments _comment = new BugsComments();
+    private BugsComments _comment = new();
 
     private async Task CreateNewComment()
     {

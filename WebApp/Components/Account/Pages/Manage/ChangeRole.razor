@@ -28,23 +28,23 @@
 <RadzenTemplateForm Data="@Input"
                     TItem="InputModel"
                     Submit="@OnValidSubmitAsync">
-    <DataAnnotationsValidator />
-    <ValidationSummary class="text-danger" role="alert" />
+    <DataAnnotationsValidator/>
+    <ValidationSummary class="text-danger" role="alert"/>
 
     <div class="form-floating mb-3">
-        <RadzenLabel Text="New role" />
+        <RadzenLabel Text="New role"/>
         <RadzenDropDown @bind-Value="Input.NewRole"
                         Data="@allRoles"
                         Style="width:50%"
-                        Placeholder="Please select a new role" />
-        <ValidationMessage For="() => Input.NewRole" class="text-danger" />
+                        Placeholder="Please select a new role"/>
+        <ValidationMessage For="() => Input.NewRole" class="text-danger"/>
     </div>
 
-    <RadzenButton ButtonType="ButtonType.Submit" Text="Update role" Style="margin-top: 10px; width: 100%;" />
+    <RadzenButton ButtonType="ButtonType.Submit" Text="Update role" Style="margin-top: 10px; width: 100%;"/>
 </RadzenTemplateForm>
 
 
-<RadzenNotification />
+<RadzenNotification/>
 
 @code {
     private string? message;
@@ -52,8 +52,7 @@
     private List<string> userRole = new();
     private List<string> allRoles = new();
 
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -132,4 +131,5 @@
         [Display(Name = "New role")]
         public string NewRole { get; set; } = "";
     }
+
 }

@@ -11,8 +11,8 @@
                 ColumnWidth="300px"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
-                @bind-Value=@TestExecutionModel.selectedExecution
-                @ref="_dataGrid">
+                @bind-Value="@TestExecutionModel.selectedExecution
+                "@ref="_dataGrid">
 
     <HeaderTemplate>
         <RadzenButton Text="Test Execution"
@@ -26,7 +26,7 @@
         <RadzenButton Icon="assessment"
                       MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
                       MouseLeave="@AppTooltipService.HideTooltip"
-                      Click='() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testexecutions/manage")' />
+                      Click='() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testexecutions/manage")'/>
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn Property="@nameof(TestExecution.Id)" Filterable="false" Title="ID" Frozen="true"
@@ -74,7 +74,7 @@
         </RadzenDataGridColumn>
         <RadzenDataGridColumn Property="@nameof(TestExecution.AssignedTo)" Title="Assigned To" Width="auto">
             <Template Context="testexecution">
-                @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(testexecution.AssignedTo)).Result))
+                @Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(testexecution.AssignedTo)).Result
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn Property="@nameof(TestExecution.IsActive)" Title="Is Active" Width="auto"/>

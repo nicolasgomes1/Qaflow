@@ -42,7 +42,8 @@
                             <RadzenLabel Text="@_bug.TestCaseExecutionId.ToString()"/>
 
                             <RadzenLabel Text="Associated Test Case" Style="font-weight: bold;"/>
-                            <RadzenLink Text="@_testCaseExecution.TestCaseId.ToString()" Path="@TestCaseExecutionLink(_testCaseExecution.TestCaseId)"></RadzenLink>
+                            <RadzenLink Text="@_testCaseExecution.TestCaseId.ToString()"
+                                        Path="@TestCaseExecutionLink(_testCaseExecution.TestCaseId)"></RadzenLink>
                         }
 
                         @code
@@ -54,23 +55,25 @@
                             }
                         }
 
-                        @if(!_bug.TestCaseExecutionId.HasValue)
+                        @if (!_bug.TestCaseExecutionId.HasValue)
                         {
                             <a>Open outside of TestExecution</a>
 
                             <RadzenLabel Text="Associated Test Case" Style="font-weight: bold;"/>
-                        @foreach (var testCase in TestCasesList)
-                        {
-                            <RadzenLink  Text="@testCase.Id.ToString()" Path="@TestCaseLink(testCase.Id)" ></RadzenLink>    
-                            @code
-
+                            @foreach (var testCase in TestCasesList)
                             {
-                                private string TestCaseLink(int id)
+                                <RadzenLink Text="@testCase.Id.ToString()"
+                                            Path="@TestCaseLink(testCase.Id)"></RadzenLink>
+
+                                @code
+
                                 {
-                                    return $"/project/{ProjectId}/testcases/view/{id}";
+                                    private string TestCaseLink(int id)
+                                    {
+                                        return $"/project/{ProjectId}/testcases/view/{id}";
+                                    }
                                 }
                             }
-                        }
                         }
                     </div>
                 </RadzenCard>
@@ -98,7 +101,7 @@
     private List<BugsFiles>? Files { get; set; }
 
     private Bugs _bug = new();
-    
+
     private TestCaseExecution _testCaseExecution = new();
 
     private List<TestCases> TestCasesList { get; set; } = new();

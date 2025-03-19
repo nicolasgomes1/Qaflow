@@ -48,17 +48,17 @@
         {
             model = "gpt-3.5-turbo",
             messages = messages,
-            temperature = 0.7,
+            temperature = 0.7
         };
 
         // Serialize the data to a JSON string
-        string jsonString = JsonSerializer.Serialize(data);
+        var jsonString = JsonSerializer.Serialize(data);
 
         // Set the content type for the request body
         var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
 
-        HttpClient client = new HttpClient();
+        var client = new HttpClient();
 
 
         // Add the authorization header
@@ -66,7 +66,7 @@
 
         var response2 = await client.PostAsync(Endpoint, content);
 
-        string responseContent = await response2.Content.ReadAsStringAsync();
+        var responseContent = await response2.Content.ReadAsStringAsync();
         // Parse the response JSON
         var jsonResponse = JObject.Parse(responseContent);
 

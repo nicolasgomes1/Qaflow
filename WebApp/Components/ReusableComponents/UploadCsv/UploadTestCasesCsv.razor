@@ -1,6 +1,7 @@
 <RadzenButton Icon="csv" Click="OpenFileUpload"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Upload test cases data from csv", TooltipPosition.Bottom))"
               MouseLeave="@AppTooltipService.HideTooltip"/>
+
 @code {
     private IEnumerable<TestCases> _testCases = [];
     private string _fileContent = string.Empty;
@@ -16,8 +17,9 @@
         await DialogService.OpenAsync($"Import {nameof(TestCases)} from CSV", ds =>
         {
             return @<RadzenStack Orientation="Orientation.Vertical">
-                <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload" Change="@(args => SaveFileContent(args))" />
-                <RadzenButton Text="Submit" Icon="check" Click="ProcessCsvFile" Style="margin-top: 10px;" />
+                <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload"
+                              Change="@(args => SaveFileContent(args))"/>
+                <RadzenButton Text="Submit" Icon="check" Click="ProcessCsvFile" Style="margin-top: 10px;"/>
             </RadzenStack>;
         }, new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
     }
@@ -47,8 +49,6 @@
 
     private async Task ProcessCsvFile()
     {
-
-
         var csvlines = _fileContent.Split('\n').Skip(1);
         _totalLines = csvlines.Count();
 
@@ -81,8 +81,7 @@
                 Description = values[1].Trim(),
                 Priority = Enum.Parse<Priority>(values[2].Trim()),
                 TestType = Enum.Parse<TestTypes>(values[3].Trim()),
-                TestScope = Enum.Parse<TestScope>(values[4].Trim()),
-                
+                TestScope = Enum.Parse<TestScope>(values[4].Trim())
             };
 
             if (string.IsNullOrWhiteSpace(testCases.Name) || string.IsNullOrWhiteSpace(testCases.Description))
@@ -91,7 +90,7 @@
                 continue;
             }
 
-            if(_testCases.Any(r => r.Name == testCases.Name && r.Description == testCases.Description))
+            if (_testCases.Any(r => r.Name == testCases.Name && r.Description == testCases.Description))
             {
                 _invalidLines++;
                 continue;

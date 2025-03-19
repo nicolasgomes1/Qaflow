@@ -33,7 +33,7 @@
         DialogService.Close(result);
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Case created successfully with id {_testCases.Id}");
-        
+
         if (OnTestCaseCreated.HasDelegate)
         {
             await OnTestCaseCreated.InvokeAsync();
@@ -128,7 +128,7 @@
                                         Name="assignedto"/>
                         <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
                     </div>
-                    
+
                     <FileUpload UploadedFiles="_uploadedFiles"/>
 
 
