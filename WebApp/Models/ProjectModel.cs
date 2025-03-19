@@ -69,7 +69,7 @@ public class ProjectModel
     ///     cases.
     /// </summary>
     /// <returns>A list of projects with their requirements and test cases.</returns>
-    public async Task<List<Projects>> GetProjectsTestCasesRequirements()
+    public async Task<List<Projects>> GetProjectsTestCasesRequirements(int projectId)
     {
         // Check if ProjectId is set
         if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
@@ -79,7 +79,7 @@ public class ProjectModel
             .AsSplitQuery()
             .Include(p => p.Requirements)
             .ThenInclude(r => r.TestCases)
-            .Where(p => p.Id == _projectStateService.ProjectId) // Filter by ProjectId
+            .Where(p => p.Id == projectId) // Filter by ProjectId
             .ToListAsync();
     }
 

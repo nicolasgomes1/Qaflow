@@ -15,7 +15,6 @@ test('Verify that Login and Register is visible', async ({ page }) => {
 
 test('Verify that Login page is accessible', async ({ page }) => {
   test.slow();
-
   await page.goto('/');
 
   // Click login
