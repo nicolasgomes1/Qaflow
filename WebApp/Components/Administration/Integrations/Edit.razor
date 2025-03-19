@@ -51,7 +51,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _integrations = await IntegrationsModel.GetIntegrationById(Id);
+        _integrations = await IntegrationsModel.GetIntegrationByIdAsync(Id);
     }
 
     private async Task UpdateIntegration()

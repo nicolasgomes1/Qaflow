@@ -40,7 +40,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
     /// <param name="integrationId">The ID of the integration to retrieve.</param>
     /// <returns>Returns the integration with the specified ID.</returns>
     /// <exception cref="Exception">Thrown when the integration is not found.</exception>
-    public async Task<Integrations> GetIntegrationById(int integrationId)
+    public async Task<Integrations> GetIntegrationByIdAsync(int integrationId)
     {
         return await _dbContext.Integrations.FindAsync(integrationId) ?? throw new Exception("Integration is null");
     }
@@ -56,5 +56,18 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
     {
         return await _dbContext.Integrations.FirstOrDefaultAsync(x => x.UniqueKey == uniqueKey) ??
                throw new Exception("Integration is null");
+    }
+
+    public async Task<List<Integrations>> GetListIntegrations()
+    {
+        return await _dbContext.Integrations.ToListAsync();
+    }
+
+    public async Task RemoveIntegrationAsync(int integrationId)
+    {
+        var integration = await _dbContext.Integrations.FindAsync(integrationId) ??
+                          throw new Exception("Integration is Null");
+        _dbContext.Integrations.Remove(integration);
+        await _dbContext.SaveChangesAsync();
     }
 }

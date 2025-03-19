@@ -42,7 +42,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Integrations = await IntegrationsModel.GetIntegrationById(Id);
+        Integrations = await IntegrationsModel.GetIntegrationByIdAsync(Id);
     }
 
 }

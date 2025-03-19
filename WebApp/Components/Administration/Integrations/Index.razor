@@ -61,15 +61,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _integrations = await LoadIntegrations();
+        _integrations = await IntegrationsModel.GetListIntegrations();
         Logger.LogInformation("Integrations Loaded");
-    }
-
-
-    private async Task<List<Integrations>> LoadIntegrations()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.Integrations.ToListAsync();
     }
 
     private void CreateIntegration()
@@ -87,7 +80,7 @@
         var confirmed = await DialogService.Confirm("Are you sure you want to delete the Integration?", "All underlying Data will be lost");
         if (confirmed == true)
         {
-            await RemoveIntegration(integrationId);
+            await IntegrationsModel.RemoveIntegrationAsync(integrationId);
         }
 
         NavigationManager.NavigateTo("/integrations", true);
@@ -96,14 +89,6 @@
     private void EditIntegration(int integrationId)
     {
         NavigationManager.NavigateTo($"/integrations/edit/{integrationId}", true);
-    }
-
-    private async Task RemoveIntegration(int integrationId)
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        var integration = await db.Integrations.FindAsync(integrationId) ?? throw new Exception("Integration is Null");
-        db.Integrations.Remove(integration);
-        await db.SaveChangesAsync();
     }
 
 }
