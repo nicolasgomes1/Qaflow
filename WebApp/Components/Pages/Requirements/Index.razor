@@ -25,9 +25,9 @@ else
                     @ref="_dataGrid"
                     AllowVirtualization="true"
                     Density="@setDensityBasedOnSettings()">
-        
+
         @code{
-            
+
             private Density setDensityBasedOnSettings()
             {
                 return _gridSettings.IsCompactMode == true ? Density.Compact : Density.Default;
@@ -55,9 +55,9 @@ else
             <RadzenButton Icon="assessment"
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"
-                          Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")' />
+                          Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")'/>
             <UploadRequirementsCsv OnUploadCompleted="RefreshPage"></UploadRequirementsCsv>
-            
+
             @code{
 
                 private async Task RefreshPage()
@@ -107,7 +107,7 @@ else
             <RadzenDataGridColumn Property="@nameof(Requirements.ModifiedAt)" Title="Modified At" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(Requirements.AssignedTo)" Title="Assigned To" Width="auto">
                 <Template Context="requirement">
-                    @((Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(requirement.AssignedTo)).Result))
+                    @Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(requirement.AssignedTo)).Result
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Property="@nameof(Requirements.ArchivedStatus)" Title="Is Archived" Width="auto">
@@ -133,16 +133,16 @@ else
 
 @code {
     [Parameter] public int ProjectId { get; set; }
-    
+
     private RadzenDataGrid<Requirements> _dataGrid = new();
 
     private bool _isLoading = true; // Initially true to hide grid until everything is loaded
     private const string GridId = "requirements"; // Unique identifier for this grid
 
-    
+
     private IEnumerable<Requirements> _requirements = [];
     private IList<Requirements> _selectedRequirements = [];
-    
+
     int _pageSizeFilter = 10;
 
     private GridSettings _gridSettings = new();
@@ -151,14 +151,12 @@ else
     {
         DataGridSettingsService.SetCurrentGridId(GridId);
 
-     //   await RequirementsModel.DisplayRequirementsIndexPage();
-        
-        
-        var result = await RequirementsModel.DisplayRequirementsIndexPage1();
-        _requirements = result.Requirements;
-        _selectedRequirements = result.SelectedRequirements;
-        
-        
+        //   await RequirementsModel.DisplayRequirementsIndexPage();
+
+
+        _requirements = await RequirementsModel.DisplayRequirementsIndexPage(ProjectId);
+
+
         _gridSettings = await GetCUrrentGridUserSettings("Requirements");
         _isLoading = false;
     }
@@ -196,7 +194,7 @@ else
         gridSetting = new GridSettings
         {
             UserName = user,
-            GridName = gridName,
+            GridName = gridName
         };
         db.GridSettings.Add(gridSetting);
         await db.SaveChangesAsync();

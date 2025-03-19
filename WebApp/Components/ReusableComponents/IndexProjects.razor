@@ -7,6 +7,8 @@
                 PageSize="10"
                 PagerHorizontalAlign="HorizontalAlign.Left"
                 AllowVirtualization="true"
+                SelectionMode="DataGridSelectionMode.Single"
+                @bind-Value="@_selectedProject"
                 ShowPagingSummary="true"
                 FilterMode="FilterMode.Advanced"
                 LogicalFilterOperator="LogicalFilterOperator.Or">
@@ -78,6 +80,7 @@
 @code {
     Projects _projects = new();
     IEnumerable<Projects>? _projectsList;
+    private IList<Projects> _selectedProject = [];
 
     private async Task DeleteData(int projectId)
     {
@@ -94,7 +97,6 @@
                 await FormNotificationService.NotifyError($"Failed to delete the project: {ex.Message}");
             }
         }
-
     }
 
 
