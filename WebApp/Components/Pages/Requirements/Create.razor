@@ -38,8 +38,8 @@
                                 <RadzenLabel Text="Priority"/>
                                 <RadzenDropDown class="w-100"
                                                 data-testid="requirement_priority"
-                                                @bind-Value="_requirements.Priority"
                                                 Data="EnumService.GetEnumValues<Priority>()"
+                                                @bind-Value="_requirements.Priority"
                                                 Name="priority"/>
                                 <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
                             </div>
@@ -50,8 +50,8 @@
                                 <RadzenLabel Text="Status"/>
                                 <RadzenDropDown class="w-100"
                                                 data-testid="requirement_status"
-                                                @bind-Value="_requirements.WorkflowStatus"
                                                 Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                                                @bind-Value="_requirements.WorkflowStatus"
                                                 Name="status"/>
                                 <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
                             </div>
@@ -71,8 +71,6 @@
                             </div>
                         </div>
                     </div>
-
-
                 </RadzenFieldset>
             </RadzenTabsItem>
 
@@ -92,17 +90,14 @@
 </RadzenTemplateForm>
 
 @code {
+    [Parameter] public int ProjectId { get; set; }
 
     //TODO Add same approach to create new items
     private List<ApplicationUser> _usersList = [];
 
-
-    [Parameter] public int ProjectId { get; set; }
-
     int _selectedIndex;
 
     private Requirements _requirements = new();
-
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
     protected override async Task OnInitializedAsync()

@@ -91,7 +91,7 @@
                Math.Abs((int)request.Item.WorkflowStatus - (int)request.ToZone.Value) == 1;
     };
 
-    void OnItemRender(RadzenDropZoneItemRenderEventArgs<TestCases> args)
+    static void OnItemRender(RadzenDropZoneItemRenderEventArgs<TestCases> args)
     {
         args.Attributes["class"] = "rz-card rz-variant-filled rz-background-color-primary-light rz-color-on-primary-light";
 

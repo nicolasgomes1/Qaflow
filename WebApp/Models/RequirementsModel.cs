@@ -64,8 +64,7 @@ public class RequirementsModel(
         requirement.ProjectsId = projectSateService.GetProjectIdAsync().Result;
 
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        if (requirement.WorkflowStatus == WorkflowStatus.Completed)
-            requirement.ArchivedStatus = ArchivedStatus.Archived;
+        UpdateArchivedStatus(requirement);
         await _dbContext.SaveChangesAsync();
 
         // If there are files, attempt to save them
@@ -81,6 +80,7 @@ public class RequirementsModel(
 
         // First, update the requirement
         _dbContext.Requirements.Update(requirement);
+        UpdateArchivedStatus(requirement);
         requirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
         requirement.ModifiedAt = DateTime.UtcNow;
@@ -88,6 +88,16 @@ public class RequirementsModel(
 
         // If there are files, attempt to save them
         if (files != null && files.Count != 0) await requirementsFilesModel.SaveFilesToDb(files, requirementId);
+    }
+
+    /// <summary>
+    /// Determines how the requirements is archived if it has the workflow status complete
+    /// </summary>
+    /// <param name="requirement"></param>
+    private static void UpdateArchivedStatus(Requirements requirement)
+    {
+        if (requirement.WorkflowStatus == WorkflowStatus.Completed)
+            requirement.ArchivedStatus = ArchivedStatus.Archived;
     }
 
     public async Task<List<Requirements>> GetRequirementsToValidateAgainstCsv()

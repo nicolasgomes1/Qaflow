@@ -16,45 +16,69 @@ else
         <RadzenTabs RenderMode="TabRenderMode.Client" @bind-SelectedIndex="@_selectedIndex">
             <Tabs>
                 <RadzenTabsItem Text="Requirement">
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Name"/>
-                        <RadzenTextBox data-testid="requirement_name"
-                                       @bind-Value="@_requirements.Name"
-                                       class="input-style"
-                                       Name="name"/>
-                        <RadzenRequiredValidator Component="name" Text="Name is required"/>
-                    </div>
+                    <RadzenFieldset Text="Requirement Details">
+                        <div class="container-fluid p-0">
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <RadzenLabel Text="Name"/>
+                                    <RadzenTextBox class="w-100"
+                                                   data-testid="requirement_name"
+                                                   @bind-Value="_requirements.Name"
+                                                   Name="name"/>
+                                    <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                                </div>
+                            </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Description"/>
-                        <RadzenTextBox data-testid="requirement_description"
-                                       @bind-Value="@_requirements.Description"
-                                       class="input-style"
-                                       Name="description"/>
-                        <RadzenRequiredValidator Component="description" Text="Description is recommended"/>
-                    </div>
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <RadzenLabel Text="Description"/>
+                                    <RadzenTextArea class="w-100"
+                                                    data-testid="requirement_description"
+                                                    @bind-Value="_requirements.Description"
+                                                    Name="description"/>
+                                    <RadzenRequiredValidator Component="description" Text="Description is required"/>
+                                </div>
+                            </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Priority"/>
-                        <RadzenDropDown data-testid="requirement_priority"
-                                        @bind-Value="@_requirements.Priority"
-                                        Data="EnumService.GetEnumValues<Priority>()"
-                                        class="input-style"
-                                        Name="priority"/>
-                        <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
-                    </div>
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <RadzenLabel Text="Priority"/>
+                                    <RadzenDropDown class="w-100"
+                                                    data-testid="requirement_priority"
+                                                    Data="EnumService.GetEnumValues<Priority>()"
+                                                    @bind-Value="_requirements.Priority"
+                                                    Name="priority"/>
+                                    <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                                </div>
+                            </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Assigned To"/>
-                        <RadzenDropDown data-testid="requirement_assignedto"
-                                        Data="@_usersList"
-                                        @bind-Value="_requirements.AssignedTo"
-                                        TextProperty="UserName"
-                                        ValueProperty="Id"
-                                        class="input-style"
-                                        Name="assignedto"/>
-                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
-                    </div>
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <RadzenLabel Text="Status"/>
+                                    <RadzenDropDown class="w-100"
+                                                    data-testid="requirement_status"
+                                                    Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                                                    @bind-Value="_requirements.WorkflowStatus"
+                                                    Name="status"/>
+                                    <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <RadzenLabel Text="Assigned To"/>
+                                    <RadzenDropDown class="w-100"
+                                                    data-testid="requirement_assignedto"
+                                                    Data="@_usersList"
+                                                    @bind-Value="_requirements.AssignedTo"
+                                                    TextProperty="UserName"
+                                                    ValueProperty="Id"
+                                                    Name="assignedto"/>
+                                    <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                                </div>
+                            </div>
+                        </div>
+                    </RadzenFieldset>
 
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Files">
@@ -106,7 +130,7 @@ else
     {
         await RequirementsModel.UpdateRequirement(Id, _uploadedFiles);
 
-        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/requirements");
+        NavigationManager.NavigateTo($"/project/{ProjectId}/requirements");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Requirement with Id {_requirements.Id} Updated Successfully");
     }
