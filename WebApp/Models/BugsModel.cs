@@ -41,7 +41,7 @@ public class BugsModel(
         return bug.TestCases.ToList();
     }
 
-    public async Task<Bugs> CreateBug(Bugs bug, List<IBrowserFile>? files)
+    public async Task<Bugs> AddBug(Bugs bug, List<IBrowserFile>? files)
     {
         bug.CreatedAt = DateTime.UtcNow;
         bug.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;

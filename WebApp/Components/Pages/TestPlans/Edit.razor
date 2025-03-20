@@ -106,7 +106,7 @@ else
         _usersList = await UserService.GetUsersList();
 
         //  await TestCasesModel.GetAllTestCases();
-        _testCasesList = await TestCasesModel.GetTestCasesWithWorkflowStatus();
+        _testCasesList = await TestCasesModel.GetTestCasesWithWorkflowStatus(ProjectId);
         _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
         await TestPlansModel.GetAssociatedTestCases(Id);
         await TestPlansFilesModel.GetFilesByTestPlanId(Id);
@@ -122,37 +122,9 @@ else
     private async Task UpdateTestPlan()
     {
         await TestPlansModel.UpdateTestPlan2(Id, _uploadedFiles);
-        NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testplans");
+        NavigationManager.NavigateTo($"project/{ProjectId}/testplans");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Plan with Id {_testPlans.Id} Updated Successfully");
-    }
-
-
-    private void HandleFileSelected(UploadChangeEventArgs args)
-    {
-        if (_uploadedFiles == null) return;
-        _uploadedFiles.Clear();
-        foreach (var file in args.Files)
-        {
-            _uploadedFiles.Add(file);
-        }
-    }
-
-    private async Task DeleteFile(TestPlansFile file)
-    {
-        // Remove the file from the database
-        await using var db = await DbContext.CreateDbContextAsync();
-        db.TestPlansFiles.Remove(file);
-        await db.SaveChangesAsync();
-
-        // Update the list of existing files
-        TestPlansFilesModel.ExistingFiles.Remove(file);
-        StateHasChanged(); // Refresh the UI
-    }
-
-    static void OnProgress(UploadProgressArgs args)
-    {
-        Console.WriteLine($"{args.Progress}% - {args.Loaded}/{args.Total} bytes");
     }
 
 }

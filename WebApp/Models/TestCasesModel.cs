@@ -24,36 +24,35 @@ public class TestCasesModel(
     /// List of selected Jira tickets to be associated with the test case
     /// </summary>
     public List<string> SelectedJiraTicketIds { get; set; } = [];
-    
+
     public List<TestSteps> TestStepsList { get; set; } = [];
 
     public List<int> SelectedRequirementIds { get; set; } = [];
-    
 
-    public async Task<(IEnumerable<TestCases> TestCases, IList<TestCases> SelectedTestCases)> DisplayTestCasesIndexPage1()
+
+    public async Task<(IEnumerable<TestCases> TestCases, IList<TestCases> SelectedTestCases)>
+        DisplayTestCasesIndexPage1()
     {
         var testcases = await _dbContext.TestCases
             .Include(r => r.Requirements)
             .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result)
             .ToListAsync();
-        
+
         var selectedTestCases = new List<TestCases>();
         var selection = testcases.FirstOrDefault();
-        if (selection != null)
-        {
-            selectedTestCases.Add(selection);
-        }
-        
+        if (selection != null) selectedTestCases.Add(selection);
+
         return (testcases, selectedTestCases);
     }
-    
-    public async Task<List<TestCases>> GetTestCasesWithWorkflowStatus(WorkflowStatus workflowStatus = WorkflowStatus.Completed)
+
+    public async Task<List<TestCases>> GetTestCasesWithWorkflowStatus(int projectId,
+        WorkflowStatus workflowStatus = WorkflowStatus.Completed)
     {
         return await _dbContext.TestCases
-            .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result && tc.WorkflowStatus == workflowStatus)
+            .Where(tc => tc.ProjectsId == projectId && tc.WorkflowStatus == workflowStatus)
             .ToListAsync();
     }
-    
+
 
     /// <summary>
     /// 
@@ -84,13 +83,9 @@ public class TestCasesModel(
             .FirstOrDefaultAsync(tc => tc.Id == testCase.Id);
 
         if (requirement is { Requirements: not null })
-        {
             SelectedRequirementIds = requirement.Requirements.Select(r => r.Id).ToList();
-        }
         else
-        {
             throw new Exception("Error.");
-        }
     }
 
 
@@ -101,19 +96,13 @@ public class TestCasesModel(
         testcase.ProjectsId = projectStateService.ProjectId;
 
         testcase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        
+
         //adjust the active or not based on the workfllow
-        if (testcase.WorkflowStatus == WorkflowStatus.Completed)
-        {
-            testcase.ArchivedStatus = ArchivedStatus.Archived;
-        }
-        
+        if (testcase.WorkflowStatus == WorkflowStatus.Completed) testcase.ArchivedStatus = ArchivedStatus.Archived;
+
         // Assign test steps to TestCases before saving
         testcase.TestSteps = TestStepsList;
-        foreach (var step in TestStepsList)
-        {
-            step.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        }
+        foreach (var step in TestStepsList) step.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
 
         foreach (var requirement in SelectedRequirementIds)
@@ -133,10 +122,7 @@ public class TestCasesModel(
         await StoreJiraTickets(testcase);
 
         // Process files
-        if (files != null && files.Count != 0)
-        {
-            await testCasesFilesModel.SaveFilesToDb(files, testcase.Id);
-        }
+        if (files != null && files.Count != 0) await testCasesFilesModel.SaveFilesToDb(files, testcase.Id);
 
         return testcase;
     }
@@ -165,26 +151,17 @@ public class TestCasesModel(
 
         // Update the ModifiedBy property for each test step
         foreach (var step in existingTestCase.TestSteps)
-        {
             if (step.ModifiedBy == null)
-            {
                 step.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-            }
             else
-            {
                 step.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-            }
-        }
 
         await _dbContext.SaveChangesAsync();
 
         await UpdateJiraTickets(testCases);
 
         // If there are files, attempt to save them
-        if (files != null && files.Count != 0)
-        {
-            await testCasesFilesModel.SaveFilesToDb(files, testCases.Id);
-        }
+        if (files != null && files.Count != 0) await testCasesFilesModel.SaveFilesToDb(files, testCases.Id);
     }
 
 
@@ -194,10 +171,7 @@ public class TestCasesModel(
             .Include(tc => tc.TestSteps)
             .FirstOrDefaultAsync(tc => tc.Id == testCaseId);
 
-        if (testCase == null)
-        {
-            throw new Exception($"Test case with ID {testCaseId} was not found.");
-        }
+        if (testCase == null) throw new Exception($"Test case with ID {testCaseId} was not found.");
 
         return testCase.TestSteps.OrderBy(s => s.Number).ToList();
     }
@@ -220,9 +194,7 @@ public class TestCasesModel(
                      Key = jiraKey,
                      JiraId = Convert.ToInt32(JiraIntegrations.First(jira => jira.Key == jiraKey).Id.ToString())
                  }))
-        {
             _dbContext.TestCasesJira.Add(testCaseJira);
-        }
 
         await _dbContext.SaveChangesAsync();
     }
@@ -279,7 +251,7 @@ public class TestCasesModel(
             .Include(tc => tc.TestSteps)
             .ToListAsync();
     }
-    
+
     public async Task AddTestCasesFromCsv(TestCases testCase)
     {
         _dbContext.TestCases.Add(testCase);

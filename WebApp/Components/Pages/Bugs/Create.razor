@@ -120,13 +120,13 @@
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
-        _testCaseslist = await TestCasesModel.GetTestCasesWithWorkflowStatus();
+        _testCaseslist = await TestCasesModel.GetTestCasesWithWorkflowStatus(ProjectId);
     }
 
 
     private async Task CreateNewBug()
     {
-        await BugsModel.CreateBug(_bugs, _uploadedFiles);
+        await BugsModel.AddBug(_bugs, _uploadedFiles);
         NavigationManager.NavigateTo($"/project/{ProjectId}/bugs");
         await FormNotificationService.NotifySuccess($"Bug created successfully with id {_bugs.Id}");
     }

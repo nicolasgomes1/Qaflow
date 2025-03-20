@@ -25,7 +25,7 @@
     {
         _bugs.TestCaseExecutionId = TestCaseExecutionId;
         // CreateBug should handle adding the bug and return a result
-        var result = await BugsModel.CreateBug(_bugs, _uploadedFiles);
+        var result = await BugsModel.AddBug(_bugs, _uploadedFiles);
 
 
         // Close the dialog with the result
