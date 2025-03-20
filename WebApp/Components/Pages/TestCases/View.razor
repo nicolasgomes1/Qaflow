@@ -1,7 +1,7 @@
 ﻿@page "/project/{ProjectId:int}/testcases/view/{Id:int}"
 @rendermode InteractiveServer
 
-@if (isloading)
+@if (_isLoading)
 {
     <ProgressBar Template="Loading"/>
 }
@@ -123,7 +123,7 @@ else
     [Parameter] public int ProjectId { get; set; }
 
     private TestCases _testCases = new();
-    private bool isloading = true;
+    private bool _isLoading = true;
 
     private bool TestCasesHasNoFiles => !TestCasesFilesModel.ExistingFiles.Any();
 
@@ -153,7 +153,7 @@ else
 
         Files = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
         _testCasesJira = await GetTestCasesJira();
-        isloading = false;
+        _isLoading = false;
     }
 
 
