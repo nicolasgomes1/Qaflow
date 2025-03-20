@@ -120,16 +120,19 @@ public class TestCasesModel(
 
     private async Task AddRequirementsDropdown(TestCases testcase)
     {
-        foreach (var requirement in SelectedRequirementIds)
-        {
-            var loadedRequirement = await _dbContext.Requirements.FindAsync(requirement);
+        // Initialize the collection if null
+        testcase.Requirements = new List<Requirements>();
 
-            if (loadedRequirement == null) throw new Exception("Requirement not found");
+        // Load all selected requirements in one query
+        var selectedRequirements = await _dbContext.Requirements
+            .Where(r => SelectedRequirementIds.Contains(r.Id))
+            .ToListAsync();
 
-            if (testcase.Requirements == null) throw new Exception("TestCases.Requirements is null");
+        if (selectedRequirements.Count != SelectedRequirementIds.Count)
+            throw new Exception("One or more selected requirements were not found");
 
-            testcase.Requirements.Add(loadedRequirement);
-        }
+        // Add all requirements at once
+        foreach (var requirement in selectedRequirements) testcase.Requirements.Add(requirement);
     }
 
 
