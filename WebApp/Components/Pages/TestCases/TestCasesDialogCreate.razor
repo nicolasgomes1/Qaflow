@@ -28,7 +28,7 @@
         _testCases.EstimatedTime = TimeSpan.FromMinutes(int.TryParse(_estimatedTimeInput, out var minutes) ? minutes : 0);
 
         // CreateBug should handle adding the bug and return a result
-        var result = await TestCasesModel.AddTestCases(_testCases, _uploadedFiles);
+        var result = await TestCasesModel.AddTestCases(_testCases, _uploadedFiles, ProjectId);
 
         DialogService.Close(result);
         StateHasChanged();

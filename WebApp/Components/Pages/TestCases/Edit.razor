@@ -136,7 +136,7 @@ else
     {
         _usersList = await UserService.GetUsersList();
 
-        _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus();
+        _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed);
         _testCases = await TestCasesModel.GetTestCaseData(Id);
 
         await TestCasesModel.GetAssociatedRequirements(_testCases);
@@ -158,7 +158,7 @@ else
     private async Task UpdateTestCase()
     {
         await TestCasesModel.UpdateTestCase(_testCases, _uploadedFiles);
-        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases");
+        NavigationManager.NavigateTo($"/project/{ProjectId}/testcases");
 
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Case with Id {_testCases.Id} Updated Successfully");

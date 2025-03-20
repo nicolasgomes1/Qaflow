@@ -89,11 +89,11 @@ public class TestCasesModel(
     }
 
 
-    public async Task<TestCases> AddTestCases(TestCases testcase, List<IBrowserFile>? files)
+    public async Task<TestCases> AddTestCases(TestCases testcase, List<IBrowserFile>? files, int projectId)
     {
         //First create the test case
         _dbContext.TestCases.Add(testcase);
-        testcase.ProjectsId = projectStateService.ProjectId;
+        testcase.ProjectsId = projectId;
 
         testcase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
@@ -105,16 +105,7 @@ public class TestCasesModel(
         foreach (var step in TestStepsList) step.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
 
-        foreach (var requirement in SelectedRequirementIds)
-        {
-            var loadedRequirement = await _dbContext.Requirements.FindAsync(requirement);
-
-            if (loadedRequirement == null) throw new Exception("Requirement not found");
-
-            if (testcase.Requirements == null) throw new Exception("TestCases.Requirements is null");
-
-            testcase.Requirements.Add(loadedRequirement);
-        }
+        await AddRequirementsDropdown(testcase);
 
         await _dbContext.SaveChangesAsync();
 
@@ -126,6 +117,21 @@ public class TestCasesModel(
 
         return testcase;
     }
+
+    private async Task AddRequirementsDropdown(TestCases testcase)
+    {
+        foreach (var requirement in SelectedRequirementIds)
+        {
+            var loadedRequirement = await _dbContext.Requirements.FindAsync(requirement);
+
+            if (loadedRequirement == null) throw new Exception("Requirement not found");
+
+            if (testcase.Requirements == null) throw new Exception("TestCases.Requirements is null");
+
+            testcase.Requirements.Add(loadedRequirement);
+        }
+    }
+
 
     public async Task UpdateTestCase(TestCases testCases, List<IBrowserFile>? files)
     {
