@@ -27,6 +27,18 @@ public class RequirementsModel(
         return requirements;
     }
 
+    public async Task<List<Requirements>> GetRequirementsAssignedToAll(int projectId)
+    {
+        return await _dbContext.Requirements.Where(rp => rp.ProjectsId == projectId).ToListAsync();
+    }
+
+    public async Task<List<Requirements>> GetRequirementsAssignedToCurrentUser(int projectId)
+    {
+        return await _dbContext.Requirements.Where(rp =>
+                rp.ProjectsId == projectId && rp.AssignedTo == userService.GetCurrentUserInfoAsync().Result.UserId)
+            .ToListAsync();
+    }
+
 
     /// <summary>
     /// Returns a list of requirements for the project with default workflow status completed

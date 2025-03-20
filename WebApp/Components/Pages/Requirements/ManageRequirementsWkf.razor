@@ -132,38 +132,37 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _requirementsData = await GetRequirementsAssignedToAll();
+        _requirementsData = await RequirementsModel.GetRequirementsAssignedToAll(ProjectId);
     }
 
     private async Task RefreshAssignedRequirementsFromDialog()
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-        _requirementsData = await db.Requirements.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _requirementsData = await RequirementsModel.GetRequirementsAssignedToCurrentUser(ProjectId);
         StateHasChanged();
     }
 
-    private async Task<List<Requirements>> GetRequirementsAssignedToAll()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.Requirements.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
-    }
+//    private async Task<List<Requirements>> GetRequirementsAssignedToAll()
+//    {
+//        await using var db = await DbContext.CreateDbContextAsync();
+//        return await db.Requirements.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+//    }
 
 
-    private async Task<List<Requirements>> GetRequirementsAssignedToCurrentUser()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.Requirements.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
-    }
+    //   private async Task<List<Requirements>> GetRequirementsAssignedToCurrentUser()
+    //   {
+    //       await using var db = await DbContext.CreateDbContextAsync();
+    //       return await db.Requirements.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
+    //   }
 
     private async Task RefreshAssignedRequirements()
     {
-        _requirementsData = await GetRequirementsAssignedToCurrentUser();
+        _requirementsData = await RequirementsModel.GetRequirementsAssignedToCurrentUser(ProjectId);
         StateHasChanged();
     }
 
     private async Task RefreshAllRequirements()
     {
-        _requirementsData = await GetRequirementsAssignedToAll();
+        _requirementsData = await RequirementsModel.GetRequirementsAssignedToAll(ProjectId);
         StateHasChanged();
     }
 
