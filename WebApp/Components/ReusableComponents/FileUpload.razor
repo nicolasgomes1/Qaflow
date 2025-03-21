@@ -2,7 +2,7 @@
     <RadzenColumn Size="12" SizeMD="4">
         <RadzenCard Variant="Variant.Outlined">
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Files upload</RadzenText>
-            <RadzenUpload Multiple="true" Progress="@OnProgress" Change="@HandleFileSelected" Style="width: 100%"/>
+            <RadzenUpload Multiple="true" Icon="upload" Change="@HandleFileSelected" Style="width: 100%"/>
         </RadzenCard>
     </RadzenColumn>
 </RadzenRow>
@@ -15,19 +15,25 @@
     [Parameter]
     public List<IBrowserFile>? UploadedFiles { get; set; }
 
+    private const int MaxFileSize = 10 * 1024 * 1024; // 10MB
+
     private void HandleFileSelected(UploadChangeEventArgs args)
     {
         if (UploadedFiles == null) return;
         UploadedFiles.Clear();
+    
         foreach (var file in args.Files)
         {
-            UploadedFiles.Add(file);
+            switch (file.Size)
+            {
+                case <= MaxFileSize:
+                    UploadedFiles.Add(file);
+                    break;
+                case > MaxFileSize:
+                    FormNotificationService.NotifyError($"{file.Name} Exceeds 10MB and will not be added");
+                    break;
+            }
         }
-    }
-
-    static void OnProgress(UploadProgressArgs args)
-    {
-        Console.WriteLine($"{args.Progress}% - {args.Loaded}/{args.Total} bytes");
     }
 
 }

@@ -9,6 +9,9 @@ public class TestCasesFilesModel(IDbContextFactory<ApplicationDbContext> dbConte
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
 
+    private const int MaxFileSize = 10 * 1024 * 1024; // 10MB
+
+    
     public List<TestCasesFile> ExistingFiles = [];
     
     public async Task SaveFilesToDb(List<IBrowserFile>? files, int testCaseId)
@@ -20,6 +23,11 @@ public class TestCasesFilesModel(IDbContextFactory<ApplicationDbContext> dbConte
                 using var memoryStream = new MemoryStream();
                 await file.OpenReadStream().CopyToAsync(memoryStream);
 
+                //Validation at server side
+                if (file.Size > MaxFileSize)
+                {
+                    throw new Exception("File size is too large. Maximum file size is 100KB");
+                }
                 var testCaseFile = new TestCasesFile
                 {
                     FileName = file.Name,
