@@ -12,8 +12,8 @@ using WebApp.Data;
 namespace WebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250321125401_ChangedNamesToLists")]
-    partial class ChangedNamesToLists
+    [Migration("20250321195110_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -660,6 +660,9 @@ namespace WebApp.Data.Migrations
                     b.Property<int>("TestExecutionId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("TestExecutionId1")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Version")
                         .HasColumnType("integer");
 
@@ -668,6 +671,8 @@ namespace WebApp.Data.Migrations
                     b.HasIndex("TestCaseId");
 
                     b.HasIndex("TestExecutionId");
+
+                    b.HasIndex("TestExecutionId1");
 
                     b.ToTable("TestCaseExecution");
                 });
@@ -1313,11 +1318,15 @@ namespace WebApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApp.Data.TestExecution", "TestExecution")
+                    b.HasOne("WebApp.Data.TestExecution", null)
                         .WithMany("LinkedTestCaseExecutions")
                         .HasForeignKey("TestExecutionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("WebApp.Data.TestExecution", "TestExecution")
+                        .WithMany()
+                        .HasForeignKey("TestExecutionId1");
 
                     b.Navigation("TestCases");
 
@@ -1439,7 +1448,8 @@ namespace WebApp.Data.Migrations
                 {
                     b.HasOne("WebApp.Data.TestCaseExecution", null)
                         .WithMany("LinkedTestStepsExecution")
-                        .HasForeignKey("TestCaseExecutionId");
+                        .HasForeignKey("TestCaseExecutionId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("WebApp.Data.TestCaseExecution", "TestCaseExecution")
                         .WithMany()

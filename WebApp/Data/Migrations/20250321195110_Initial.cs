@@ -216,38 +216,6 @@ namespace WebApp.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bugs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
-                    Priority = table.Column<int>(type: "integer", nullable: false),
-                    Severity = table.Column<int>(type: "integer", nullable: false),
-                    BugStatus = table.Column<int>(type: "integer", nullable: false),
-                    TestCaseExecutionId = table.Column<int>(type: "integer", nullable: true),
-                    ProjectsId = table.Column<int>(type: "integer", nullable: false),
-                    WorkflowStatus = table.Column<int>(type: "integer", nullable: false),
-                    AssignedTo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ArchivedStatus = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bugs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Bugs_Projects_ProjectsId",
-                        column: x => x.ProjectsId,
-                        principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Requirements",
                 columns: table => new
                 {
@@ -270,38 +238,6 @@ namespace WebApp.Data.Migrations
                     table.PrimaryKey("PK_Requirements", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Requirements_Projects_ProjectsId",
-                        column: x => x.ProjectsId,
-                        principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TestCases",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    Priority = table.Column<int>(type: "integer", nullable: false),
-                    TestType = table.Column<int>(type: "integer", nullable: false),
-                    TestScope = table.Column<int>(type: "integer", nullable: false),
-                    EstimatedTime = table.Column<TimeSpan>(type: "interval", nullable: false),
-                    ProjectsId = table.Column<int>(type: "integer", nullable: false),
-                    WorkflowStatus = table.Column<int>(type: "integer", nullable: false),
-                    AssignedTo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ArchivedStatus = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TestCases", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TestCases_Projects_ProjectsId",
                         column: x => x.ProjectsId,
                         principalTable: "Projects",
                         principalColumn: "Id",
@@ -363,61 +299,6 @@ namespace WebApp.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BugsComments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Comment = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    BugId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BugsComments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_BugsComments_Bugs_BugId",
-                        column: x => x.BugId,
-                        principalTable: "Bugs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "BugsFiles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FileName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    FileContent = table.Column<byte[]>(type: "bytea", nullable: false),
-                    UploadedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    BugId = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ProjectsId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BugsFiles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_BugsFiles_Bugs_BugId",
-                        column: x => x.BugId,
-                        principalTable: "Bugs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BugsFiles_Projects_ProjectsId",
-                        column: x => x.ProjectsId,
-                        principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RequirementsFiles",
                 columns: table => new
                 {
@@ -444,139 +325,6 @@ namespace WebApp.Data.Migrations
                         name: "FK_RequirementsFiles_Requirements_RequirementsId",
                         column: x => x.RequirementsId,
                         principalTable: "Requirements",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RequirementsTestCases",
-                columns: table => new
-                {
-                    RequirementsId = table.Column<int>(type: "integer", nullable: false),
-                    TestCasesId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RequirementsTestCases", x => new { x.RequirementsId, x.TestCasesId });
-                    table.ForeignKey(
-                        name: "FK_RequirementsTestCases_Requirements_RequirementsId",
-                        column: x => x.RequirementsId,
-                        principalTable: "Requirements",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RequirementsTestCases_TestCases_TestCasesId",
-                        column: x => x.TestCasesId,
-                        principalTable: "TestCases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TestCasesFiles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FileName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    FileContent = table.Column<byte[]>(type: "bytea", nullable: false),
-                    UploadedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ProjectsId = table.Column<int>(type: "integer", nullable: false),
-                    TestCaseId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TestCasesFiles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TestCasesFiles_Projects_ProjectsId",
-                        column: x => x.ProjectsId,
-                        principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TestCasesFiles_TestCases_TestCaseId",
-                        column: x => x.TestCaseId,
-                        principalTable: "TestCases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TestCasesJira",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    JiraId = table.Column<int>(type: "integer", nullable: false),
-                    Key = table.Column<string>(type: "text", nullable: false),
-                    TestCasesJiraId = table.Column<int>(type: "integer", nullable: false),
-                    TestCasesId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TestCasesJira", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TestCasesJira_TestCases_TestCasesId",
-                        column: x => x.TestCasesId,
-                        principalTable: "TestCases",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_TestCasesJira_TestCases_TestCasesJiraId",
-                        column: x => x.TestCasesJiraId,
-                        principalTable: "TestCases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TestSteps",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Number = table.Column<int>(type: "integer", nullable: false),
-                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    ExpectedResult = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    TestCasesId = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ArchivedStatus = table.Column<int>(type: "integer", nullable: false),
-                    CreatedBy = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    ModifiedBy = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TestSteps", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TestSteps_TestCases_TestCasesId",
-                        column: x => x.TestCasesId,
-                        principalTable: "TestCases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TestCasesTestPlans",
-                columns: table => new
-                {
-                    TestCasesId = table.Column<int>(type: "integer", nullable: false),
-                    TestPlansId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TestCasesTestPlans", x => new { x.TestCasesId, x.TestPlansId });
-                    table.ForeignKey(
-                        name: "FK_TestCasesTestPlans_TestCases_TestCasesId",
-                        column: x => x.TestCasesId,
-                        principalTable: "TestCases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TestCasesTestPlans_TestPlans_TestPlansId",
-                        column: x => x.TestPlansId,
-                        principalTable: "TestPlans",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -661,12 +409,162 @@ namespace WebApp.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Bugs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
+                    Priority = table.Column<int>(type: "integer", nullable: false),
+                    Severity = table.Column<int>(type: "integer", nullable: false),
+                    BugStatus = table.Column<int>(type: "integer", nullable: false),
+                    TestCaseExecutionId = table.Column<int>(type: "integer", nullable: true),
+                    ProjectsId = table.Column<int>(type: "integer", nullable: false),
+                    WorkflowStatus = table.Column<int>(type: "integer", nullable: false),
+                    AssignedTo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    ArchivedStatus = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bugs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bugs_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BugsComments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Comment = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    BugId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BugsComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BugsComments_Bugs_BugId",
+                        column: x => x.BugId,
+                        principalTable: "Bugs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BugsFiles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FileName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    FileContent = table.Column<byte[]>(type: "bytea", nullable: false),
+                    UploadedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    BugId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProjectsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BugsFiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BugsFiles_Bugs_BugId",
+                        column: x => x.BugId,
+                        principalTable: "Bugs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BugsFiles_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestCases",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Priority = table.Column<int>(type: "integer", nullable: false),
+                    TestType = table.Column<int>(type: "integer", nullable: false),
+                    TestScope = table.Column<int>(type: "integer", nullable: false),
+                    EstimatedTime = table.Column<TimeSpan>(type: "interval", nullable: false),
+                    ProjectsId = table.Column<int>(type: "integer", nullable: false),
+                    WorkflowStatus = table.Column<int>(type: "integer", nullable: false),
+                    AssignedTo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    BugsId = table.Column<int>(type: "integer", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    ArchivedStatus = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestCases", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TestCases_Bugs_BugsId",
+                        column: x => x.BugsId,
+                        principalTable: "Bugs",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TestCases_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RequirementsTestCases",
+                columns: table => new
+                {
+                    LinkedRequirementsId = table.Column<int>(type: "integer", nullable: false),
+                    LinkedTestCasesId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RequirementsTestCases", x => new { x.LinkedRequirementsId, x.LinkedTestCasesId });
+                    table.ForeignKey(
+                        name: "FK_RequirementsTestCases_Requirements_LinkedRequirementsId",
+                        column: x => x.LinkedRequirementsId,
+                        principalTable: "Requirements",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RequirementsTestCases_TestCases_LinkedTestCasesId",
+                        column: x => x.LinkedTestCasesId,
+                        principalTable: "TestCases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TestCaseExecution",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TestExecutionId = table.Column<int>(type: "integer", nullable: false),
+                    TestExecutionId1 = table.Column<int>(type: "integer", nullable: true),
                     TestCaseId = table.Column<int>(type: "integer", nullable: false),
                     ExecutionStatus = table.Column<int>(type: "integer", nullable: false),
                     Version = table.Column<int>(type: "integer", nullable: false),
@@ -692,6 +590,120 @@ namespace WebApp.Data.Migrations
                         name: "FK_TestCaseExecution_TestExecution_TestExecutionId",
                         column: x => x.TestExecutionId,
                         principalTable: "TestExecution",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TestCaseExecution_TestExecution_TestExecutionId1",
+                        column: x => x.TestExecutionId1,
+                        principalTable: "TestExecution",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestCasesFiles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FileName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    FileContent = table.Column<byte[]>(type: "bytea", nullable: false),
+                    UploadedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProjectsId = table.Column<int>(type: "integer", nullable: false),
+                    TestCaseId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestCasesFiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TestCasesFiles_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TestCasesFiles_TestCases_TestCaseId",
+                        column: x => x.TestCaseId,
+                        principalTable: "TestCases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestCasesJira",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    JiraId = table.Column<int>(type: "integer", nullable: false),
+                    Key = table.Column<string>(type: "text", nullable: false),
+                    TestCasesJiraId = table.Column<int>(type: "integer", nullable: false),
+                    TestCasesId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestCasesJira", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TestCasesJira_TestCases_TestCasesId",
+                        column: x => x.TestCasesId,
+                        principalTable: "TestCases",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TestCasesJira_TestCases_TestCasesJiraId",
+                        column: x => x.TestCasesJiraId,
+                        principalTable: "TestCases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestCasesTestPlans",
+                columns: table => new
+                {
+                    TestCasesId = table.Column<int>(type: "integer", nullable: false),
+                    TestPlansId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestCasesTestPlans", x => new { x.TestCasesId, x.TestPlansId });
+                    table.ForeignKey(
+                        name: "FK_TestCasesTestPlans_TestCases_TestCasesId",
+                        column: x => x.TestCasesId,
+                        principalTable: "TestCases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TestCasesTestPlans_TestPlans_TestPlansId",
+                        column: x => x.TestPlansId,
+                        principalTable: "TestPlans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestSteps",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Number = table.Column<int>(type: "integer", nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    ExpectedResult = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    TestCasesId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ArchivedStatus = table.Column<int>(type: "integer", nullable: false),
+                    CreatedBy = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestSteps", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TestSteps_TestCases_TestCasesId",
+                        column: x => x.TestCasesId,
+                        principalTable: "TestCases",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -725,7 +737,8 @@ namespace WebApp.Data.Migrations
                         name: "FK_TestStepsExecution_TestCaseExecution_TestCaseExecutionId",
                         column: x => x.TestCaseExecutionId,
                         principalTable: "TestCaseExecution",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_TestStepsExecution_TestCaseExecution_TestCaseExecutionIdFk",
                         column: x => x.TestCaseExecutionIdFk,
@@ -787,6 +800,11 @@ namespace WebApp.Data.Migrations
                 column: "ProjectsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bugs_TestCaseExecutionId",
+                table: "Bugs",
+                column: "TestCaseExecutionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BugsComments_BugId",
                 table: "BugsComments",
                 column: "BugId");
@@ -817,9 +835,9 @@ namespace WebApp.Data.Migrations
                 column: "RequirementsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RequirementsTestCases_TestCasesId",
+                name: "IX_RequirementsTestCases_LinkedTestCasesId",
                 table: "RequirementsTestCases",
-                column: "TestCasesId");
+                column: "LinkedTestCasesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestCaseExecution_TestCaseId",
@@ -830,6 +848,16 @@ namespace WebApp.Data.Migrations
                 name: "IX_TestCaseExecution_TestExecutionId",
                 table: "TestCaseExecution",
                 column: "TestExecutionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestCaseExecution_TestExecutionId1",
+                table: "TestCaseExecution",
+                column: "TestExecutionId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestCases_BugsId",
+                table: "TestCases",
+                column: "BugsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestCases_ProjectsId",
@@ -920,11 +948,38 @@ namespace WebApp.Data.Migrations
                 name: "IX_TestStepsExecutionFiles_ProjectsId",
                 table: "TestStepsExecutionFiles",
                 column: "ProjectsId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Bugs_TestCaseExecution_TestCaseExecutionId",
+                table: "Bugs",
+                column: "TestCaseExecutionId",
+                principalTable: "TestCaseExecution",
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Bugs_Projects_ProjectsId",
+                table: "Bugs");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_TestCases_Projects_ProjectsId",
+                table: "TestCases");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_TestExecution_Projects_ProjectsId",
+                table: "TestExecution");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_TestPlans_Projects_ProjectsId",
+                table: "TestPlans");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Bugs_TestCaseExecution_TestCaseExecutionId",
+                table: "Bugs");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -980,13 +1035,7 @@ namespace WebApp.Data.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Bugs");
-
-            migrationBuilder.DropTable(
                 name: "Requirements");
-
-            migrationBuilder.DropTable(
-                name: "TestCaseExecution");
 
             migrationBuilder.DropTable(
                 name: "TestStepsExecutionFiles");
@@ -995,16 +1044,22 @@ namespace WebApp.Data.Migrations
                 name: "TestSteps");
 
             migrationBuilder.DropTable(
-                name: "TestExecution");
+                name: "Projects");
+
+            migrationBuilder.DropTable(
+                name: "TestCaseExecution");
 
             migrationBuilder.DropTable(
                 name: "TestCases");
 
             migrationBuilder.DropTable(
-                name: "TestPlans");
+                name: "TestExecution");
 
             migrationBuilder.DropTable(
-                name: "Projects");
+                name: "Bugs");
+
+            migrationBuilder.DropTable(
+                name: "TestPlans");
         }
     }
 }
