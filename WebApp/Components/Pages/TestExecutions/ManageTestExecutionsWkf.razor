@@ -17,7 +17,7 @@
     </RadzenStack>
 </RadzenStack>
 
-<RadzenDropZoneContainer TItem="TestExecution" Data="testexecutionData"
+<RadzenDropZoneContainer TItem="TestExecution" Data="_testExecutionData"
                          ItemSelector="@ItemSelector"
                          ItemRender="@OnItemRender"
                          CanDrop="@CanDrop"
@@ -71,12 +71,11 @@
 
 @code {
     [Parameter] public int ProjectId { get; set; }
-    private IList<TestExecution>? testexecutionData = [];
+    private List<TestExecution>? _testExecutionData = [];
 
     protected override async Task OnInitializedAsync()
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-        testexecutionData = await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.IsActive == true).ToListAsync();
+        _testExecutionData = await TestExecutionModel.GetActiveTestExecutionsAsyncWkf(ProjectId);
     }
 
 
@@ -120,38 +119,26 @@
         }
 
         if (args.ToItem == null || args.ToItem == args.Item) return;
-        testexecutionData?.Remove(args.Item);
-        testexecutionData?.Insert(testexecutionData.IndexOf(args.ToItem), args.Item);
+        _testExecutionData?.Remove(args.Item);
+        _testExecutionData?.Insert(_testExecutionData.IndexOf(args.ToItem), args.Item);
     }
 
     private async Task RefreshAssignedTestExecutionsFromDialog()
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-        testexecutionData = await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.IsActive == true).ToListAsync();
+        _testExecutionData = await TestExecutionModel.GetActiveTestExecutionsAsyncWkf(ProjectId);
         StateHasChanged();
     }
 
-    private async Task<List<TestExecution>> GetTestExecutionsAssignedToCurrentUser()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
-    }
-
-    private async Task<List<TestExecution>> GetTestExecutionsAssignedToAll()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestExecution.Where(rp => rp.ProjectsId == ProjectId && rp.IsActive == true).ToListAsync();
-    }
 
     private async Task RefreshAssignedTestExecutions()
     {
-        testexecutionData = await GetTestExecutionsAssignedToCurrentUser();
+        _testExecutionData = await TestExecutionModel.GetTestExecutionsAssignedToCurrentUser(ProjectId);
         StateHasChanged();
     }
 
     private async Task RefreshAllTestExecutions()
     {
-        testexecutionData = await GetTestExecutionsAssignedToAll();
+        _testExecutionData = await TestExecutionModel.GetTestExecutionsAssignedToAll(ProjectId);
         StateHasChanged();
     }
 

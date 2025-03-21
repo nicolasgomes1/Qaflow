@@ -17,9 +17,10 @@ public class TestPlansModel(
     public TestPlans TestPlans { get; set; } = new();
 
     public List<int> SelectedTestCasesIds { get; set; } = [];
-    
-    
-    public async Task<(IEnumerable<TestPlans> TestPlans, IList<TestPlans> SelectedTestPlans)> DisplayTestPlansIndexPage1()
+
+
+    public async Task<(IEnumerable<TestPlans> TestPlans, IList<TestPlans> SelectedTestPlans)>
+        DisplayTestPlansIndexPage1()
     {
         var testplans = await _dbContext.TestPlans
             .Include(r => r.LinkedTestCases)
@@ -28,20 +29,18 @@ public class TestPlansModel(
 
         var selectedTestPlans = new List<TestPlans>();
         var selection = testplans.FirstOrDefault();
-        if (selection != null)
-        {
-            selectedTestPlans.Add(selection);
-        }
+        if (selection != null) selectedTestPlans.Add(selection);
 
         return (testplans, selectedTestPlans);
     }
-    
-    
-    public async Task<List<TestPlans>> GetallTestPlansWithWorkflowStatus(WorkflowStatus status = WorkflowStatus.Completed)
+
+
+    public async Task<List<TestPlans>> GetallTestPlansWithWorkflowStatus(WorkflowStatus status)
     {
-        return await _dbContext.TestPlans.Where(tp => tp.ProjectsId == projectStateService.ProjectId && tp.WorkflowStatus == status).ToListAsync();
+        return await _dbContext.TestPlans
+            .Where(tp => tp.ProjectsId == projectStateService.ProjectId && tp.WorkflowStatus == status).ToListAsync();
     }
-    
+
 
     public async Task<TestPlans> GetTestPlanByIdAsync(int testPlanId)
     {
@@ -64,7 +63,7 @@ public class TestPlansModel(
         if (testPlans == null) throw new ApplicationException("Test Plan not found");
         SelectedTestCasesIds = testPlans.LinkedTestCases.Select(tc => tc.Id).ToList();
     }
-    
+
     public async Task<TestPlans> CreateTestPlanAsync(TestPlans testPlan, List<IBrowserFile>? files)
     {
         // Fetch current user and project ID asynchronously
@@ -91,14 +90,11 @@ public class TestPlansModel(
         await _dbContext.SaveChangesAsync();
 
         // Save associated files if provided
-        if (files?.Any() == true)
-        {
-            await testPlansFilesModel.SaveFilesToDb(files, testPlan.Id);
-        }
+        if (files?.Any() == true) await testPlansFilesModel.SaveFilesToDb(files, testPlan.Id);
 
         return testPlan;
     }
-    
+
     public async Task UpdateTestPlan2(int testPlanId, List<IBrowserFile>? files)
     {
         //find testplan with testcases
@@ -106,21 +102,18 @@ public class TestPlansModel(
             .Include(tp => tp.LinkedTestCases)
             .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
         if (testplan == null) throw new Exception("Test plan not found");
-        
+
         _dbContext.Update(testplan);
         testplan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         testplan.ProjectsId = projectStateService.ProjectId;
-        
+
         // Update test cases of testplan
         testplan.LinkedTestCases = await _dbContext.TestCases
             .Where(tc => SelectedTestCasesIds.Contains(tc.Id))
             .ToListAsync();
 
         await _dbContext.SaveChangesAsync();
-        
-        if (files != null && files.Count != 0)
-        {
-            await testPlansFilesModel.SaveFilesToDb(files, testPlanId);
-        }
+
+        if (files != null && files.Count != 0) await testPlansFilesModel.SaveFilesToDb(files, testPlanId);
     }
 }

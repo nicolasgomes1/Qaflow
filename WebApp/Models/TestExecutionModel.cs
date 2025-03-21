@@ -553,4 +553,24 @@ public class TestExecutionModel
             ? 0
             : Math.Round((double)testExecutionsWithPriority / totalTestExecutions * 100, 2);
     }
+
+    public async Task<List<TestExecution>> GetActiveTestExecutionsAsyncWkf(int projectId)
+    {
+        return await _dbContext.TestExecution
+            .Where(te => te.IsActive == true && te.ProjectsId == projectId)
+            .ToListAsync();
+    }
+    
+    public async Task<List<TestExecution>> GetTestExecutionsAssignedToAll(int projectId)
+    {
+        return await _dbContext.TestExecution
+            .Where(te => te.IsActive == true && te.ProjectsId == projectId)
+            .ToListAsync();
+    }
+    
+    public async Task<List<TestExecution>> GetTestExecutionsAssignedToCurrentUser(int projectId)
+    {
+        var currentUser = _userService.GetCurrentUserInfoAsync().Result.UserId;
+        return await _dbContext.TestExecution.Where(rp => rp.ProjectsId == projectId && rp.AssignedTo == currentUser).ToListAsync();
+    }
 }
