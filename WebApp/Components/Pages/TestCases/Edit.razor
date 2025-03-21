@@ -144,7 +144,7 @@ else
         //  TestCasesModel.JiraIntegrations = await JiraService.GetProjectIssuesAsync("MFLP");
         TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync("Jira-01", "MFLP");
 
-        _currentjiraIntegrations = await GetSelectedJiraTickets();
+        _currentjiraIntegrations = await TestCasesJiraModel.GetSelectedJiraTickets(Id);
         TestCasesModel.SelectedJiraTicketIds = _currentjiraIntegrations.Select(j => j.JiraId.ToString()).ToList();
 
         if (_testCases.ArchivedStatus.Equals(ArchivedStatus.Archived))
@@ -164,10 +164,6 @@ else
         await FormNotificationService.NotifySuccess($"Test Case with Id {_testCases.Id} Updated Successfully");
     }
 
-    private async Task<List<TestCasesJira>> GetSelectedJiraTickets()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestCasesJira.Where(x => x.TestCasesJiraId == Id).ToListAsync();
-    }
+
 
 }

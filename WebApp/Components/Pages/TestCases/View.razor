@@ -152,7 +152,7 @@ else
         await TestCasesModel.GetTestStepsForTestCase(Id);
 
         Files = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
-        _testCasesJira = await GetTestCasesJira();
+        _testCasesJira = await TestCasesJiraModel.GetSelectedJiraTickets(Id);;
         _isLoading = false;
     }
 
@@ -160,14 +160,5 @@ else
     private bool IsTestStepsEmpty => !_testCases.TestSteps.Any();
 
     private List<TestCasesJira> _testCasesJira = [];
-
-
-    private async Task<List<TestCasesJira>> GetTestCasesJira()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestCasesJira
-            .Where(tcj => tcj.TestCasesJiraId == _testCases.Id)
-            .ToListAsync();
-    }
-
+    
 }

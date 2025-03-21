@@ -59,5 +59,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<TestPlansFilesModel>();
         services.AddScoped<TestPlansModel>();
         services.AddScoped<TestStepExecutionFileModel>();
+        services.AddScoped<TestCasesJiraModel>();
     }
 }
