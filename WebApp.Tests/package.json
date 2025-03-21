@@ -10,8 +10,8 @@
     "posttest:dashboard": "playwright test ./tests/CanAccessAllDasboardLinks.spec.ts --project=\"Google Chrome\" --headed",
 
     "posttest:projects": "playwright test ./tests/Projects.spec.ts --project=\"Google Chrome\" --headed",
-    "posttest:Login": "playwright test ./tests/Login.spec.ts --project=\"Google Chrome\" --headed",
-    "start": "npm run test:headless"
+    "posttest:Login": "playwright test ./tests/Login.spec.ts --project=\"Google Chrome\"",
+    "start": "npm run posttest:Login"
   },
   "keywords": [],
   "author": "",

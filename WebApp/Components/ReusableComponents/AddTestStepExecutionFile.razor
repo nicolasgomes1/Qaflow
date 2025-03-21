@@ -37,66 +37,55 @@
 
     async Task UploadFileToDatabase(int teststepexecutionId)
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-
-        if (_selectedFile != null)
-        {
-            try
-            {
-                // Read the file into a MemoryStream
-                using var stream = new MemoryStream();
-                await _selectedFile.OpenReadStream().CopyToAsync(stream);
-                _fileBytes = stream.ToArray();
-
-                // Retrieve the corresponding TestStepExecution entity from the database
-                var testStepExecution = await db.TestStepsExecution.FindAsync(teststepexecutionId);
-                if (testStepExecution != null)
-                {
-                    // Check if an existing file entry is associated with the TestStepExecutionId
-                    var existingFile = await db.TestStepsExecutionFiles
-                        .FirstOrDefaultAsync(file => file.TestStepExecutionId == teststepexecutionId);
-
-                    if (existingFile != null)
-                    {
-                        // Update the existing file
-                        existingFile.FileContent = _fileBytes;
-                        existingFile.FileName = _selectedFile.Name;
-                        existingFile.UploadedAt = DateTime.UtcNow; // Update the upload time if needed
-                        existingFile.UploadedAt = DateTime.UtcNow;
-                        existingFile.TSEFProjectId = ProjectStateService.ProjectId;
-                        Console.WriteLine("Existing file updated in the database.");
-                    }
-                    else
-                    {
-                        // Add a new file entry if none exists
-                        var testStepExecutionFile = new TestStepsExecutionFile
-                        {
-                            FileContent = _fileBytes,
-                            FileName = _selectedFile.Name,
-                            TestStepExecutionId = teststepexecutionId,
-                            UploadedAt = DateTime.UtcNow,
-                            CreatedAt = DateTime.UtcNow,
-                            TSEFProjectId = ProjectStateService.ProjectId
-                        };
-                        db.TestStepsExecutionFiles.Add(testStepExecutionFile);
-                        Console.WriteLine("New file uploaded and saved to the database.");
-                    }
-
-                    await db.SaveChangesAsync(); // Save changes to the database
-                }
-                else
-                {
-                    Console.WriteLine("Test Step Execution not found.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error uploading file: {ex.Message}");
-            }
-        }
-        else
+        if (_selectedFile == null)
         {
             Console.WriteLine("No file selected for upload.");
+            return;
+        }
+
+        await using var db = await DbContext.CreateDbContextAsync();
+        try
+        {
+            using var stream = new MemoryStream();
+            await _selectedFile.OpenReadStream().CopyToAsync(stream);
+            _fileBytes = stream.ToArray();
+
+            var testStepExecution = await db.TestStepsExecution.FindAsync(teststepexecutionId);
+            if (testStepExecution == null)
+            {
+                Console.WriteLine("Test Step Execution not found.");
+                return;
+            }
+
+            var existingFile = await db.TestStepsExecutionFiles
+                .FirstOrDefaultAsync(file => file.TestStepExecutionId == teststepexecutionId);
+
+            var fileToSave = existingFile ?? new TestStepsExecutionFile
+            {
+                TestStepExecutionId = teststepexecutionId,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            fileToSave.FileContent = _fileBytes;
+            fileToSave.FileName = _selectedFile.Name;
+            fileToSave.UploadedAt = DateTime.UtcNow;
+            fileToSave.TSEFProjectId = ProjectStateService.ProjectId;
+
+            if (existingFile == null)
+            {
+                db.TestStepsExecutionFiles.Add(fileToSave);
+                Console.WriteLine("New file uploaded and saved to the database.");
+            }
+            else
+            {
+                Console.WriteLine("Existing file updated in the database.");
+            }
+
+            await db.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error uploading file: {ex.Message}");
         }
     }
 
