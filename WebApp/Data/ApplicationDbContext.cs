@@ -191,5 +191,16 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithMany()
             .HasForeignKey(tse => tse.TestStepsId)
             .OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<TestExecution>()
+            .HasMany<TestCaseExecution>(tce => tce.LinkedTestCaseExecutions)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<TestCaseExecution>()
+            .HasMany<TestStepsExecution>(tse => tse.LinkedTestStepsExecution)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
 }

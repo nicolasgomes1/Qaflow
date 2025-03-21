@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApp.Data;
@@ -11,9 +12,11 @@ using WebApp.Data;
 namespace WebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250321182542_Addrelation")]
+    partial class Addrelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1445,8 +1448,7 @@ namespace WebApp.Data.Migrations
                 {
                     b.HasOne("WebApp.Data.TestCaseExecution", null)
                         .WithMany("LinkedTestStepsExecution")
-                        .HasForeignKey("TestCaseExecutionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("TestCaseExecutionId");
 
                     b.HasOne("WebApp.Data.TestCaseExecution", "TestCaseExecution")
                         .WithMany()
