@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GenerateJwtToken>();
         services.AddScoped<FetchApiData>();
     }
-    
+
     /// <summary>
     /// Data Seeding
     /// </summary>
@@ -58,5 +58,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<TestExecutionModel>();
         services.AddScoped<TestPlansFilesModel>();
         services.AddScoped<TestPlansModel>();
+        services.AddScoped<TestStepExecutionFileModel>();
     }
 }

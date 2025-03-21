@@ -26,20 +26,21 @@
     byte[]? _fileBytes;
 
     [EditorRequired] [Parameter] public int TestStepExecutionId { get; set; }
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
 
     void OnChange(UploadChangeEventArgs args, string name)
     {
         if (args.Files.Count() != 1) return;
         _selectedFile = args.Files.First(); // Get the selected file
-        Console.WriteLine($"{name} file selected: {_selectedFile.Name}, {_selectedFile.Size} bytes");
+        Console.WriteLine($@"{name} file selected: {_selectedFile.Name}, {_selectedFile.Size} bytes");
     }
 
     async Task UploadFileToDatabase(int teststepexecutionId)
     {
         if (_selectedFile == null)
         {
-            Console.WriteLine("No file selected for upload.");
+            Console.WriteLine(@"No file selected for upload.");
             return;
         }
 
@@ -53,7 +54,7 @@
             var testStepExecution = await db.TestStepsExecution.FindAsync(teststepexecutionId);
             if (testStepExecution == null)
             {
-                Console.WriteLine("Test Step Execution not found.");
+                Console.WriteLine(@"Test Step Execution not found.");
                 return;
             }
 
@@ -69,23 +70,23 @@
             fileToSave.FileContent = _fileBytes;
             fileToSave.FileName = _selectedFile.Name;
             fileToSave.UploadedAt = DateTime.UtcNow;
-            fileToSave.TSEFProjectId = ProjectStateService.ProjectId;
+            fileToSave.TSEFProjectId = ProjectId;
 
             if (existingFile == null)
             {
                 db.TestStepsExecutionFiles.Add(fileToSave);
-                Console.WriteLine("New file uploaded and saved to the database.");
+                Console.WriteLine(@"New file uploaded and saved to the database.");
             }
             else
             {
-                Console.WriteLine("Existing file updated in the database.");
+                Console.WriteLine(@"Existing file updated in the database.");
             }
 
             await db.SaveChangesAsync();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error uploading file: {ex.Message}");
+            Console.WriteLine($@"Error uploading file: {ex.Message}");
         }
     }
 

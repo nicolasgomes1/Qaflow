@@ -84,7 +84,7 @@
 
 
             default:
-                Console.WriteLine("Unsupported file type.");
+                Console.WriteLine(@"Unsupported file type.");
                 return;
         }
 
@@ -95,7 +95,7 @@
 
     static void OnProgress(UploadProgressArgs args)
     {
-        Console.WriteLine($"{args.Progress}% - {args.Loaded}/{args.Total} bytes");
+        Console.WriteLine($@"{args.Progress}% - {args.Loaded}/{args.Total} bytes");
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿
 @code {
     [Parameter] public int Id { get; set; }
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     private TestExecution _testExecution = new();
 
@@ -310,7 +311,7 @@
 
                     <RadzenDataGridColumn TItem="TestStepsExecution" Title="Upload File" Width="auto">
                         <EditTemplate Context="ctx">
-                            <AddTestStepExecutionFile TestStepExecutionId="ctx.Id"/>
+                            <AddTestStepExecutionFile TestStepExecutionId="ctx.Id" ProjectId="ProjectId"/>
                         </EditTemplate>
 
                         <Template Context="ctx">
