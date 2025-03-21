@@ -26,9 +26,9 @@
             <!-- DetailTemplate to embed the nested grid for Test Steps -->
             <Template Context="testCaseExecution">
 
-                @if (testCaseExecution.TestStepsExecution is { Count: > 0 })
+                @if (testCaseExecution.LinkedTestStepsExecution is { Count: > 0 })
                 {
-                    <RadzenDataGrid Data="@testCaseExecution.TestStepsExecution" TItem="TestStepsExecution"
+                    <RadzenDataGrid Data="@testCaseExecution.LinkedTestStepsExecution" TItem="TestStepsExecution"
                                     RowRender="@OnRowRenderTestSteps" AllowPaging="false" AllowSorting="false"
                                     AllowAlternatingRows="false">
                         <Columns>
@@ -109,7 +109,7 @@ else
 
     private void OnRowRenderTestCase(RowRenderEventArgs<TestCaseExecution> args)
     {
-        if (args.Data.TestStepsExecution == null || args.Data.TestStepsExecution.Count == 0)
+        if (args.Data.LinkedTestStepsExecution == null || args.Data.LinkedTestStepsExecution.Count == 0)
         {
             StylesService.ApplyRowStyle(args, args.Data.ExecutionStatus);
             args.Expandable = false;

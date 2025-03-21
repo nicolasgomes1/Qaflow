@@ -3,14 +3,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Data;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<ApplicationUser>(options)
 {
     public DbSet<Projects> Projects { get; set; }
     public DbSet<TestCasesJira> TestCasesJira { get; set; }
     public DbSet<Integrations> Integrations { get; set; }
     public DbSet<GridSettings> GridSettings { get; set; }
-    
-    
+
+
     public DbSet<Requirements> Requirements { get; set; }
     public DbSet<RequirementsFile> RequirementsFiles { get; set; }
 
@@ -32,15 +33,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-             base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<TestCases>()
-            .HasMany(tc => tc.Requirements)
-            .WithMany(r => r.TestCases)
+            .HasMany(tc => tc.LinkedRequirements)
+            .WithMany(r => r.LinkedTestCases)
             .UsingEntity(j => j.ToTable("RequirementsTestCases")); // Optional: Configure junction table name
 
         modelBuilder.Entity<TestPlans>()
-            .HasMany(tp => tp.TestCases)
+            .HasMany(tp => tp.LinkedTestCases)
             .WithMany(tc => tc.TestPlans)
             .UsingEntity<Dictionary<string, object>>(
                 "TestCasesTestPlans", // Name of the join table
@@ -102,7 +103,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasMany(p => p.TestExecution)
             .WithOne(r => r.Projects)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         modelBuilder.Entity<Projects>()
             .HasMany(p => p.Bugs)
             .WithOne(r => r.Projects)
@@ -114,7 +115,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey(tcj => tcj.TestCasesJiraId).OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TestCases>()
-            .HasMany(tc => tc.TestCaseExecutions)
+            .HasMany(tc => tc.LinkedTestCaseExecutions)
             .WithOne(tce => tce.TestCases)
             .HasForeignKey(tce => tce.TestCaseId)
             .OnDelete(DeleteBehavior.Cascade);
@@ -128,13 +129,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         modelBuilder.Entity<TestCaseExecution>()
             .HasOne(tce => tce.TestExecution)
-            .WithMany(te => te.TestCaseExecutions)
+            .WithMany(te => te.LinkedTestCaseExecutions)
             .HasForeignKey(tce => tce.TestExecutionId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TestCaseExecution>()
             .HasOne(tce => tce.TestCases)
-            .WithMany(tc => tc.TestCaseExecutions)
+            .WithMany(tc => tc.LinkedTestCaseExecutions)
             .HasForeignKey(tce => tce.TestCaseId)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -164,7 +165,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
 
         modelBuilder.Entity<TestCases>()
-            .HasMany(tc => tc.TestCasesFiles)
+            .HasMany(tc => tc.LinkedTestCasesFiles)
             .WithOne(tcf => tcf.TestCases)
             .HasForeignKey(tcf => tcf.TestCaseId)
             .OnDelete(DeleteBehavior.Cascade);
@@ -173,10 +174,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasMany<RequirementsFile>()
             .WithOne(rf => rf.Requirements)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         modelBuilder.Entity<RequirementsFile>()
             .HasOne(rf => rf.Requirements)
-            .WithMany(r => r.RequirementsFiles)
+            .WithMany(r => r.LinkedRequirementsFiles)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TestPlans>()

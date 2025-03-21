@@ -37,9 +37,9 @@
         </RadzenStepsItem>
 
         <RadzenStepsItem Text="@ContextTestTitle()" Disabled="TestPlansHasNoTests">
-            @if (_testPlans.TestCases.Any())
+            @if (_testPlans.LinkedTestCases.Any())
             {
-                <RadzenDataGrid Data="_testPlans.TestCases" TItem="TestCases" Style="margin-top: 20px;">
+                <RadzenDataGrid Data="_testPlans.LinkedTestCases" TItem="TestCases" Style="margin-top: 20px;">
                     <HeaderTemplate>
                         <h4 class="text-center text-primary mb-4">Test Cases</h4>
 
@@ -88,7 +88,7 @@
     private List<TestPlansFile>? Files { get; set; }
 
 
-    private bool TestPlansHasNoTests => !_testPlans.TestCases.Any();
+    private bool TestPlansHasNoTests => !_testPlans.LinkedTestCases.Any();
 
     private string ContextFilesTitle()
     {

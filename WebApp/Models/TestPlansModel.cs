@@ -22,7 +22,7 @@ public class TestPlansModel(
     public async Task<(IEnumerable<TestPlans> TestPlans, IList<TestPlans> SelectedTestPlans)> DisplayTestPlansIndexPage1()
     {
         var testplans = await _dbContext.TestPlans
-            .Include(r => r.TestCases)
+            .Include(r => r.LinkedTestCases)
             .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result)
             .ToListAsync();
 
@@ -46,7 +46,7 @@ public class TestPlansModel(
     public async Task<TestPlans> GetTestPlanByIdAsync(int testPlanId)
     {
         var testPlans = await _dbContext.TestPlans
-            .Include(tp => tp.TestCases)
+            .Include(tp => tp.LinkedTestCases)
             .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
 
         if (testPlans == null) throw new ApplicationException("Test Plan not found");
@@ -58,11 +58,11 @@ public class TestPlansModel(
     public async Task GetAssociatedTestCases(int testPlanId)
     {
         var testPlans = await _dbContext.TestPlans
-            .Include(tp => tp.TestCases)
+            .Include(tp => tp.LinkedTestCases)
             .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
 
         if (testPlans == null) throw new ApplicationException("Test Plan not found");
-        SelectedTestCasesIds = testPlans.TestCases.Select(tc => tc.Id).ToList();
+        SelectedTestCasesIds = testPlans.LinkedTestCases.Select(tc => tc.Id).ToList();
     }
     
     public async Task<TestPlans> CreateTestPlanAsync(TestPlans testPlan, List<IBrowserFile>? files)
@@ -74,7 +74,7 @@ public class TestPlansModel(
         // Set test plan properties
         testPlan.CreatedBy = currentUserInfo;
         testPlan.ProjectsId = projectId;
-        testPlan.TestCases = new List<TestCases>();
+        testPlan.LinkedTestCases = new List<TestCases>();
 
         // Fetch and add test cases asynchronously
         foreach (var testCaseId in SelectedTestCasesIds)
@@ -83,7 +83,7 @@ public class TestPlansModel(
             if (testCase == null)
                 throw new Exception($"Test case with ID {testCaseId} not found.");
 
-            testPlan.TestCases.Add(testCase);
+            testPlan.LinkedTestCases.Add(testCase);
         }
 
         // Save the test plan
@@ -103,7 +103,7 @@ public class TestPlansModel(
     {
         //find testplan with testcases
         var testplan = await _dbContext.TestPlans
-            .Include(tp => tp.TestCases)
+            .Include(tp => tp.LinkedTestCases)
             .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
         if (testplan == null) throw new Exception("Test plan not found");
         
@@ -112,7 +112,7 @@ public class TestPlansModel(
         testplan.ProjectsId = projectStateService.ProjectId;
         
         // Update test cases of testplan
-        testplan.TestCases = await _dbContext.TestCases
+        testplan.LinkedTestCases = await _dbContext.TestCases
             .Where(tc => SelectedTestCasesIds.Contains(tc.Id))
             .ToListAsync();
 

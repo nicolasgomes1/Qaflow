@@ -95,7 +95,7 @@
         builder.OpenElement(5, "span");
 
         // Check if context is a Requirements object and there are no test cases
-        if (context.Value is Requirements { TestCases.Count: 0 })
+        if (context.Value is Requirements { LinkedTestCases.Count: 0 })
         {
             builder.AddAttribute(6, "style", "color: red;"); // Set text color to red if no test cases
         }

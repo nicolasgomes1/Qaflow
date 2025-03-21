@@ -84,7 +84,7 @@ else
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Title="Has Test Cases" Width="auto">
                 <Template Context="requirement">
-                    @if (requirement.TestCases != null && requirement.TestCases.Any())
+                    @if (requirement.LinkedTestCases != null && requirement.LinkedTestCases.Any())
                     {
                         <span>Yes</span>
                     }

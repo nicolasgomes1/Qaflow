@@ -42,7 +42,7 @@
         </RadzenTabsItem>
         <RadzenTabsItem Text="@ContextTestsTitle()" Disabled="@RequirementsHasNoTests">
             <RadzenRow>
-                <RadzenDataGrid TItem="TestCases" Data="@_requirements.TestCases" Style="margin-top: 10px;">
+                <RadzenDataGrid TItem="TestCases" Data="@_requirements.LinkedTestCases" Style="margin-top: 10px;">
 
                     <HeaderTemplate>
                         <h4 class="text-left text-primary mb-4"> Linked Test Cases</h4>
@@ -98,7 +98,7 @@
 
     private bool RequirementHasNoFiles => !RequirementsFilesModel.ExistingFiles.Any();
 
-    private bool RequirementsHasNoTests => _requirements.TestCases != null && !_requirements.TestCases.Any();
+    private bool RequirementsHasNoTests => _requirements.LinkedTestCases != null && !_requirements.LinkedTestCases.Any();
 
     private static Task CanChange(StepsCanChangeEventArgs args)
     {

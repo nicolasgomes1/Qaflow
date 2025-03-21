@@ -56,7 +56,7 @@ public class TestExecutionModel
         // }
 
         TestPlans = await _dbContext.TestPlans
-            .Include(tp => tp.TestCases)
+            .Include(tp => tp.LinkedTestCases)
             .ThenInclude(tc => tc.TestSteps)
             .FirstOrDefaultAsync(tp => tp.Id == TestPlanId);
 
@@ -66,7 +66,7 @@ public class TestExecutionModel
 
             testExecution.TestPlan = TestPlans;
 
-            foreach (var testCase in TestPlans.TestCases)
+            foreach (var testCase in TestPlans.LinkedTestCases)
             {
                 var testCaseExecution = new TestCaseExecution
                 {
@@ -90,12 +90,12 @@ public class TestExecutionModel
                              CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName
                          }))
                 {
-                    if (testCaseExecution.TestStepsExecution == null) throw new Exception("TestSteps is null");
+                    if (testCaseExecution.LinkedTestStepsExecution == null) throw new Exception("TestSteps is null");
 
-                    testCaseExecution.TestStepsExecution.Add(testStepsExecution);
+                    testCaseExecution.LinkedTestStepsExecution.Add(testStepsExecution);
                 }
 
-                testExecution.TestCaseExecutions.Add(testCaseExecution);
+                testExecution.LinkedTestCaseExecutions.Add(testCaseExecution);
             }
 
             _dbContext.TestExecution.Add(testExecution);
@@ -112,10 +112,10 @@ public class TestExecutionModel
 
         // Fetch the existing TestExecution and related data from the database
         var existingTestExecution = await db.TestExecution
-            .Include(te => te.TestCaseExecutions)
-            .ThenInclude(tce => tce.TestStepsExecution)
+            .Include(te => te.LinkedTestCaseExecutions)
+            .ThenInclude(tce => tce.LinkedTestStepsExecution)
             .Include(te => te.TestPlan)
-            .ThenInclude(tp => tp!.TestCases)
+            .ThenInclude(tp => tp!.LinkedTestCases)
             .ThenInclude(tc => tc.TestSteps)
             .FirstOrDefaultAsync(te => te.Id == testExecutionId);
 
@@ -124,7 +124,7 @@ public class TestExecutionModel
 
         // Fetch the selected TestPlan
         var selectedTestPlan = await db.TestPlans
-            .Include(tp => tp.TestCases)
+            .Include(tp => tp.LinkedTestCases)
             .ThenInclude(tc => tc.TestSteps)
             .FirstOrDefaultAsync(tp => tp.Id == TestPlanId);
 
@@ -145,22 +145,22 @@ public class TestExecutionModel
         {
             // Update TestPlan and clear existing TestCaseExecutions
             existingTestExecution.TestPlan = selectedTestPlan;
-            existingTestExecution.TestCaseExecutions.Clear();
+            existingTestExecution.LinkedTestCaseExecutions.Clear();
 
-            foreach (var testCase in selectedTestPlan.TestCases)
+            foreach (var testCase in selectedTestPlan.LinkedTestCases)
             {
                 var newTestCaseExecution = CreateTestCaseExecution(testCase, existingTestExecution);
 
                 db.TestCaseExecution.Add(newTestCaseExecution);
-                existingTestExecution.TestCaseExecutions.Add(newTestCaseExecution);
+                existingTestExecution.LinkedTestCaseExecutions.Add(newTestCaseExecution);
             }
         }
         else
         {
             // TestPlan didn't change, update existing TestCaseExecutions and TestSteps
-            foreach (var testCaseExecution in existingTestExecution.TestCaseExecutions.ToList())
+            foreach (var testCaseExecution in existingTestExecution.LinkedTestCaseExecutions.ToList())
             {
-                var testCase = existingTestExecution.TestPlan?.TestCases
+                var testCase = existingTestExecution.TestPlan?.LinkedTestCases
                     .FirstOrDefault(tc => tc.Id == testCaseExecution.TestCaseId);
 
                 if (testCase == null)
@@ -201,8 +201,8 @@ public class TestExecutionModel
                 ModifiedAt = DateTime.UtcNow
             };
 
-            if (testCaseExecution.TestStepsExecution != null)
-                testCaseExecution.TestStepsExecution.Add(newTestStepExecution);
+            if (testCaseExecution.LinkedTestStepsExecution != null)
+                testCaseExecution.LinkedTestStepsExecution.Add(newTestStepExecution);
         }
 
         return testCaseExecution;
@@ -215,9 +215,9 @@ public class TestExecutionModel
         existingTestCaseExecution.Version = existingTestExecution.Version;
         existingTestCaseExecution.ModifiedAt = DateTime.UtcNow;
 
-        if (existingTestCaseExecution.TestStepsExecution != null)
+        if (existingTestCaseExecution.LinkedTestStepsExecution != null)
         {
-            var existingTestSteps = existingTestCaseExecution.TestStepsExecution.ToList();
+            var existingTestSteps = existingTestCaseExecution.LinkedTestStepsExecution.ToList();
 
             // Add new TestSteps or update existing ones
             foreach (var testStep in testCase.TestSteps)
@@ -237,7 +237,7 @@ public class TestExecutionModel
                         ModifiedAt = DateTime.UtcNow
                     };
 
-                    existingTestCaseExecution.TestStepsExecution.Add(newTestStepExecution);
+                    existingTestCaseExecution.LinkedTestStepsExecution.Add(newTestStepExecution);
                 }
                 else
                 {
@@ -250,9 +250,7 @@ public class TestExecutionModel
             // Remove any TestStepExecutions that no longer exist in the TestCase
             foreach (var testStepExecution in existingTestSteps.Where(ets =>
                          testCase.TestSteps.All(ts => ts.Id != ets.TestStepsId)))
-            {
                 _dbContext.TestStepsExecution.Remove(testStepExecution);
-            }
         }
     }
 
@@ -266,13 +264,10 @@ public class TestExecutionModel
     {
         await using var db = await _dbContextFactory.CreateDbContextAsync();
 
-        if (testExecution == null)
-        {
-            throw new InvalidOperationException("TestExecution not found.");
-        }
+        if (testExecution == null) throw new InvalidOperationException("TestExecution not found.");
 
         var testPlan = await db.TestPlans
-                           .Include(tp => tp.TestCases)
+                           .Include(tp => tp.LinkedTestCases)
                            .ThenInclude(tc => tc.TestSteps)
                            .FirstOrDefaultAsync(tp => tp.Id == testExecution.TestPlanId) ??
                        throw new InvalidOperationException("TestPlan not found.");
@@ -291,11 +286,11 @@ public class TestExecutionModel
             AssignedTo = testExecution.AssignedTo,
             CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName,
             ProjectsId = _projectSateService.ProjectId,
-            Priority = testExecution.Priority,
+            Priority = testExecution.Priority
         };
 
         // Populate TestCaseExecutions and TestStepsExecutions for the new TestExecution
-        foreach (var testCase in testPlan.TestCases)
+        foreach (var testCase in testPlan.LinkedTestCases)
         {
             var newTestCaseExecution = new TestCaseExecution
             {
@@ -318,12 +313,12 @@ public class TestExecutionModel
                          CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName
                      }))
             {
-                if (newTestCaseExecution.TestStepsExecution == null) throw new Exception("TestSteps is null");
+                if (newTestCaseExecution.LinkedTestStepsExecution == null) throw new Exception("TestSteps is null");
 
-                newTestCaseExecution.TestStepsExecution.Add(newTestStepsExecution);
+                newTestCaseExecution.LinkedTestStepsExecution.Add(newTestStepsExecution);
             }
 
-            newExecution.TestCaseExecutions.Add(newTestCaseExecution);
+            newExecution.LinkedTestCaseExecutions.Add(newTestCaseExecution);
         }
 
         // Add the new TestExecution to the DbContext
@@ -346,15 +341,12 @@ public class TestExecutionModel
 
         var getTestExecutionData = await dbContext.TestExecution
             .Include(te => te.TestPlan)
-            .Include(te => te.TestCaseExecutions)
-            .ThenInclude(tce => tce.TestStepsExecution)
+            .Include(te => te.LinkedTestCaseExecutions)
+            .ThenInclude(tce => tce.LinkedTestStepsExecution)
             .FirstOrDefaultAsync(te => te.Id == testExecutionId);
 
-        if (getTestExecutionData is { TestPlan: not null })
-        {
-            TestPlanId = getTestExecutionData.TestPlan.Id;
-        }
-        
+        if (getTestExecutionData is { TestPlan: not null }) TestPlanId = getTestExecutionData.TestPlan.Id;
+
         return getTestExecutionData ?? throw new InvalidOperationException("Test Execution Data was null here");
     }
 
@@ -378,13 +370,9 @@ public class TestExecutionModel
             .ToListAsync();
 
         if (testexecution != null && testexecution.Any()) // Check if there are any elements
-        {
             selectedExecution = new List<TestExecution> { testexecution.First() };
-        }
         else
-        {
             selectedExecution = new List<TestExecution>(); // Handle the case where there are no test executions
-        }
     }
 
     public async Task DisplayTestExecutionIndexPageWithStatus(ExecutionStatus status)
@@ -398,13 +386,9 @@ public class TestExecutionModel
             .ToListAsync();
 
         if (testexecution != null && testexecution.Any()) // Check if there are any elements
-        {
             selectedExecution = new List<TestExecution> { testexecution.First() };
-        }
         else
-        {
             selectedExecution = new List<TestExecution>(); // Handle the case where there are no test executions
-        }
     }
 
 
@@ -420,14 +404,14 @@ public class TestExecutionModel
 
         var testExecution = await dbContext.TestExecution
             .Include(te => te.TestPlan)
-            .ThenInclude(tp => tp!.TestCases)
+            .ThenInclude(tp => tp!.LinkedTestCases)
             .FirstOrDefaultAsync(te => te.Id == testExecutionId);
         if (testExecution == null) throw new InvalidOperationException("TestExecution not found.");
 
         var testPlan = testExecution.TestPlan;
         if (testPlan == null) throw new InvalidOperationException("TestPlan not found.");
 
-        return testPlan.TestCases?.ToList() ?? new List<TestCases>();
+        return testPlan.LinkedTestCases?.ToList() ?? new List<TestCases>();
     }
 
     public async Task<List<TestExecution>> GetPastTestExecutions(int testExecutionId)
@@ -442,9 +426,7 @@ public class TestExecutionModel
 
         // Check if testExecution or its TestPlan is null
         if (testExecution?.TestPlan == null)
-        {
             throw new InvalidOperationException("Test Execution or Test Plan cannot be null");
-        }
 
         // Create a new DbContext for the second operation to avoid ongoing operation issues
         await using var contextForSecondQuery = await _dbContextFactory.CreateDbContextAsync();
@@ -505,7 +487,7 @@ public class TestExecutionModel
         var testExecution = await _dbContext.TestExecution.FindAsync(testExecutionId) ?? new TestExecution();
 
         return await _dbContext.TestCaseExecution
-            .Include(tse => tse.TestStepsExecution)
+            .Include(tse => tse.LinkedTestStepsExecution)
             .Include(tc => tc.TestCases)
             .Where(tce => tce.TestExecutionId == testExecution.Id)
             .ToListAsync();
@@ -523,14 +505,14 @@ public class TestExecutionModel
             .Where(te => te.ProjectsId == _projectSateService.ProjectId)
             .ToListAsync();
     }
-    
+
     public async Task<TestCaseExecution?> GetTestCaseExecutionByIdAsync(int testCaseExecutionId)
     {
         var testCaseExecution = await _dbContext.TestCaseExecution.FindAsync(testCaseExecutionId);
 
         return testCaseExecution;
     }
-    
+
     public async Task<int> GetTestExecutionsReadyToExecuteAsync()
     {
         return await _dbContext.TestExecution
@@ -538,7 +520,7 @@ public class TestExecutionModel
             .Where(te => te.ProjectsId == _projectSateService.ProjectId)
             .CountAsync();
     }
-    
+
     /// <summary>
     /// Returns the count to Test Executions based on the priority
     /// </summary>
@@ -552,22 +534,23 @@ public class TestExecutionModel
             .Where(te => te.ProjectsId == _projectSateService.ProjectId)
             .CountAsync();
     }
-    
-    
+
+
     public async Task<int> GetTotalTestExecutionsAsync()
     {
         return await _dbContext.TestExecution
             .Where(te => te.ProjectsId == _projectSateService.ProjectId)
             .CountAsync();
     }
-    
-    
+
+
     public async Task<double> GetRationofTestExecutionsByPriorityAsync(Priority priority)
     {
         var totalTestExecutions = await GetTotalTestExecutionsAsync();
         var testExecutionsWithPriority = await TestExecutionWIthPriority(priority);
 
-        return totalTestExecutions == 0 ? 0 : Math.Round((double)testExecutionsWithPriority / totalTestExecutions * 100, 2);
-        
+        return totalTestExecutions == 0
+            ? 0
+            : Math.Round((double)testExecutionsWithPriority / totalTestExecutions * 100, 2);
     }
 }

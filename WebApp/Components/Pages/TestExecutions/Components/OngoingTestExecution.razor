@@ -32,7 +32,7 @@
 
 
         AssociatedTestCasesExecution = await db.TestCaseExecution
-            .Include(tse => tse.TestStepsExecution)
+            .Include(tse => tse.LinkedTestStepsExecution)
             .Where(tce => tce.TestExecutionId == _testExecution.Id)
             .ToListAsync();
 
@@ -141,9 +141,9 @@
         // Find the corresponding test step and update its duration
         foreach (var testCaseExecution in AssociatedTestCasesExecution)
         {
-            if (testCaseExecution.TestStepsExecution == null) throw new Exception("Test Step Cannot be null");
+            if (testCaseExecution.LinkedTestStepsExecution == null) throw new Exception("Test Step Cannot be null");
 
-            var testStepExecution = testCaseExecution.TestStepsExecution.FirstOrDefault(ts => ts.TestStepsId == testStepId);
+            var testStepExecution = testCaseExecution.LinkedTestStepsExecution.FirstOrDefault(ts => ts.TestStepsId == testStepId);
             if (testStepExecution == null) continue;
             testStepExecution.Duration = duration;
             InvokeAsync(StateHasChanged);
@@ -161,7 +161,7 @@
     private void OnRowRender(RowRenderEventArgs<TestCaseExecution> args)
     {
         // Disable expand/collapse if the test case doesn't have any test steps
-        if (args.Data.TestStepsExecution == null || args.Data.TestStepsExecution.Count == 0)
+        if (args.Data.LinkedTestStepsExecution == null || args.Data.LinkedTestStepsExecution.Count == 0)
         {
             args.Expandable = false;
         }
@@ -255,9 +255,9 @@
 
     <!-- Only render the template and nested grid when TestSteps exist -->
     <Template Context="testCaseExecution">
-        @if (testCaseExecution.TestStepsExecution is { Count: > 0 })
+        @if (testCaseExecution.LinkedTestStepsExecution is { Count: > 0 })
         {
-            <RadzenDataGrid @ref="_testStepsGrid" Data="@testCaseExecution.TestStepsExecution"
+            <RadzenDataGrid @ref="_testStepsGrid" Data="@testCaseExecution.LinkedTestStepsExecution"
                             TItem="TestStepsExecution" AllowPaging="false" AllowSorting="false">
                 <Columns>
                     <RadzenDataGridColumn TItem="TestStepsExecution" Property="@nameof(TestStepsExecution.TestStepsId)"

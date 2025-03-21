@@ -20,7 +20,7 @@ public class RequirementsModel(
     public async Task<List<Requirements>> DisplayRequirementsIndexPage(int projectId)
     {
         var requirements = await _dbContext.Requirements
-            .Include(r => r.TestCases)
+            .Include(r => r.LinkedTestCases)
             .Where(tc => tc.ProjectsId == projectId)
             .ToListAsync();
 
@@ -60,7 +60,7 @@ public class RequirementsModel(
     public async Task<Requirements> GetRequirementByIdAsync(int requirementId)
     {
         var requirement = await _dbContext.Requirements
-            .Include(r => r.TestCases)
+            .Include(r => r.LinkedTestCases)
             .FirstOrDefaultAsync(r => r.Id == requirementId);
 
         if (requirement == null) throw new Exception("Requirement not found");

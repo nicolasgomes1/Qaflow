@@ -83,9 +83,9 @@ else
             <RadzenDataGridColumn Property="@nameof(TestCases.ModifiedBy)" Title="Modified By" Width="auto"/>
             <RadzenDataGridColumn Title="Requirements" Width="auto">
                 <Template Context="testcase">
-                    @if (testcase.Requirements != null && testcase.Requirements.Any())
+                    @if (testcase.LinkedRequirements != null && testcase.LinkedRequirements.Any())
                     {
-                        var requirementLinks = testcase.Requirements
+                        var requirementLinks = testcase.LinkedRequirements
                             .Select(requirement => $"<a href=\"project/{ProjectStateService.ProjectId}/requirements/view/{requirement.Id}\">{requirement.Name}</a>")
                             .ToList();
 

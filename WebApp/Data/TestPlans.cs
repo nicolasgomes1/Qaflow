@@ -12,7 +12,7 @@ public class TestPlans : BaseEntity
     public string? Description { get; set; }
     public Priority Priority { get; set; }
 
-    public ICollection<TestCases> TestCases { get; set; } = new List<TestCases>();
+    public ICollection<TestCases> LinkedTestCases { get; set; } = [];
     
     public int ProjectsId { get; set; }
 

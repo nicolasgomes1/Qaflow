@@ -12,7 +12,7 @@ public class TestCaseExecution : BaseEntity
     public TestExecution? TestExecution { get; set; } // Navigation property to TestExecution
 
     public int TestCaseId { get; set; }
-    public TestCases? TestCases { get; set; }// Navigation property to TestCase
+    public TestCases? TestCases { get; set; } // Navigation property to TestCase
 
     public ExecutionStatus ExecutionStatus { get; set; } = ExecutionStatus.NotRun;
 
@@ -27,7 +27,6 @@ public class TestCaseExecution : BaseEntity
     public TimeSpan Duration { get; set; } // Duration of the test case execution
 
     public string ExecutionNotes { get; set; } = string.Empty; // Notes for the test case execution
-    
-    public ICollection<TestStepsExecution>? TestStepsExecution { get; set; } = new List<TestStepsExecution>();
-    
+
+    public ICollection<TestStepsExecution>? LinkedTestStepsExecution { get; set; } = [];
 }

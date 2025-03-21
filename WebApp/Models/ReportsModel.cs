@@ -27,7 +27,7 @@ public class ReportsModel
 
         var testCasesWithRequirements = await db.TestCases
             .Where(tc => tc.ProjectsId == projectId)
-            .CountAsync(tc => tc.Requirements.Any());
+            .CountAsync(tc => tc.LinkedRequirements.Any());
 
         var testCasesWithoutRequirements = totalTestCases - testCasesWithRequirements;
 
@@ -49,7 +49,7 @@ public class ReportsModel
 
         var testPlans = await db.TestPlans
             .Where(tp => tp.ProjectsId == projectId)
-            .Select(tp => new { tp.Id, HasTestCases = tp.TestCases.Any() })
+            .Select(tp => new { tp.Id, HasTestCases = tp.LinkedTestCases.Any() })
             .ToListAsync();
 
         var testPlansWithTestCases = testPlans.Count(tp => tp.HasTestCases);
@@ -65,7 +65,7 @@ public class ReportsModel
             testPlansWithoutTestCasesPercentage = (double)testPlansWithoutTestCases / totalTestPlans * 100;
         }
 
-        return (Math.Round(testPlansWithTestCasesPercentage, 2), 
+        return (Math.Round(testPlansWithTestCasesPercentage, 2),
             Math.Round(testPlansWithoutTestCasesPercentage, 2));
     }
 
@@ -85,9 +85,12 @@ public class ReportsModel
 
         var totalTestExecutions = testExecutionsPassed + testExecutionsFailed + testExecutionsNotRun;
 
-        var testExecutionsPassedPercentage = totalTestExecutions > 0 ? (double)testExecutionsPassed / totalTestExecutions * 100 : 0;
-        var testExecutionsFailedPercentage = totalTestExecutions > 0 ? (double)testExecutionsFailed / totalTestExecutions * 100 : 0;
-        var testExecutionNotRunPercentage = totalTestExecutions > 0 ? (double)testExecutionsNotRun / totalTestExecutions * 100 : 0;
+        var testExecutionsPassedPercentage =
+            totalTestExecutions > 0 ? (double)testExecutionsPassed / totalTestExecutions * 100 : 0;
+        var testExecutionsFailedPercentage =
+            totalTestExecutions > 0 ? (double)testExecutionsFailed / totalTestExecutions * 100 : 0;
+        var testExecutionNotRunPercentage =
+            totalTestExecutions > 0 ? (double)testExecutionsNotRun / totalTestExecutions * 100 : 0;
 
         return (Math.Round(testExecutionsPassedPercentage, 2),
             Math.Round(testExecutionsFailedPercentage, 2),
@@ -131,7 +134,7 @@ public class ReportsModel
         var projectBugs = _dbContext.Bugs.Count(b => b.ProjectsId == projectId).ToString();
         return projectBugs == "0" ? "No Bugs" : $"Bugs: {projectBugs}";
     }
-    
+
     public async Task<double> GetTestExecutionPassRateAsync(int projectId)
     {
         await using var db1 = await _dbContextFactory.CreateDbContextAsync();
@@ -154,6 +157,6 @@ public class ReportsModel
         var testExecutionsPassedPercentage =
             totalTestExecutions > 0 ? (double)testExecutionsPassed / totalTestExecutions * 100 : 0;
 
-        return Math.Round(testExecutionsPassedPercentage,2);
+        return Math.Round(testExecutionsPassedPercentage, 2);
     }
 }

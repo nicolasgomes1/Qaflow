@@ -38,9 +38,9 @@ else
 
                             <RadzenLabel Text="Linked Requirements:" Style="font-weight: bold;"/>
                             <div style="display: flex; flex-wrap: wrap;">
-                                @if (_testCases.Requirements != null && _testCases.Requirements.Any())
+                                @if (_testCases.LinkedRequirements != null && _testCases.LinkedRequirements.Any())
                                 {
-                                    var requirementLinks = _testCases.Requirements
+                                    var requirementLinks = _testCases.LinkedRequirements
                                         .Select(requirement => $"<a href=\"project/{ProjectStateService.ProjectId}/requirements/view/{requirement.Id}\">{requirement.Name}</a>")
                                         .ToList();
 

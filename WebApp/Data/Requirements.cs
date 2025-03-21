@@ -12,18 +12,16 @@ public class Requirements : BaseEntity
     [MaxLength(150)] public string? Description { get; set; }
 
     public Priority Priority { get; set; }
-    
-    public ICollection<TestCases>? TestCases { get; init; } = new List<TestCases>();
-    
+
     public int ProjectsId { get; set; }
 
     public Projects? Projects { get; init; }
 
-    public ICollection<RequirementsFile> RequirementsFiles { get; set; } = new List<RequirementsFile>();
-    
-    public WorkflowStatus WorkflowStatus { get; set; }
-    
-    [MaxLength(50)]
-    public string AssignedTo { get; set; } = string.Empty;
 
+    public WorkflowStatus WorkflowStatus { get; set; }
+
+    [MaxLength(50)] public string AssignedTo { get; set; } = string.Empty;
+
+    public ICollection<TestCases>? LinkedTestCases { get; init; } = [];
+    public ICollection<RequirementsFile> LinkedRequirementsFiles { get; set; } = [];
 }

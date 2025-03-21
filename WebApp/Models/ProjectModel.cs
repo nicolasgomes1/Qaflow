@@ -78,7 +78,7 @@ public class ProjectModel
         return await _dbContext.Projects
             .AsSplitQuery()
             .Include(p => p.Requirements)
-            .ThenInclude(r => r.TestCases)
+            .ThenInclude(r => r.LinkedTestCases)
             .Where(p => p.Id == _projectStateService.ProjectId) // Filter by ProjectId
             .ToListAsync();
     }
@@ -92,7 +92,7 @@ public class ProjectModel
         return await _dbContext.Projects
             .AsSplitQuery()
             .Include(p => p.TestPlans)
-            .ThenInclude(r => r.TestCases)
+            .ThenInclude(r => r.LinkedTestCases)
             .Where(p => p.Id == _projectStateService.ProjectId) // Filter by ProjectId
             .ToListAsync();
     }
@@ -106,9 +106,9 @@ public class ProjectModel
         return await _dbContext.Projects
             .AsSplitQuery()
             .Include(p => p.Requirements)
-            .ThenInclude(r => r.TestCases)
+            .ThenInclude(r => r.LinkedTestCases)
             .Include(p => p.TestPlans)
-            .ThenInclude(r => r.TestCases)
+            .ThenInclude(r => r.LinkedTestCases)
             .Where(p => p.Id == _projectStateService.ProjectId) // Filter by ProjectId
             .ToListAsync();
     }

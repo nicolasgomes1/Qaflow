@@ -34,7 +34,7 @@ public class TestCasesModel(
         DisplayTestCasesIndexPage1()
     {
         var testcases = await _dbContext.TestCases
-            .Include(r => r.Requirements)
+            .Include(r => r.LinkedRequirements)
             .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result)
             .ToListAsync();
 
@@ -65,7 +65,7 @@ public class TestCasesModel(
         var testCase = await _dbContext.TestCases
             .AsSplitQuery()
             .Include(tc => tc.TestSteps)
-            .Include(tc => tc.Requirements)
+            .Include(tc => tc.LinkedRequirements)
             .FirstOrDefaultAsync(tc => tc.Id == testCaseId);
 
         return testCase ?? throw new Exception("Test case not found.");
@@ -79,11 +79,11 @@ public class TestCasesModel(
     public async Task GetAssociatedRequirements(TestCases testCase)
     {
         var requirement = await _dbContext.TestCases
-            .Include(tc => tc.Requirements)
+            .Include(tc => tc.LinkedRequirements)
             .FirstOrDefaultAsync(tc => tc.Id == testCase.Id);
 
-        if (requirement is { Requirements: not null })
-            SelectedRequirementIds = requirement.Requirements.Select(r => r.Id).ToList();
+        if (requirement is { LinkedRequirements: not null })
+            SelectedRequirementIds = requirement.LinkedRequirements.Select(r => r.Id).ToList();
         else
             throw new Exception("Error.");
     }
@@ -121,7 +121,7 @@ public class TestCasesModel(
     private async Task AddRequirementsDropdown(TestCases testcase)
     {
         // Initialize the collection if null
-        testcase.Requirements = new List<Requirements>();
+        testcase.LinkedRequirements = new List<Requirements>();
 
         // Load all selected requirements in one query
         var selectedRequirements = await _dbContext.Requirements
@@ -132,7 +132,7 @@ public class TestCasesModel(
             throw new Exception("One or more selected requirements were not found");
 
         // Add all requirements at once
-        foreach (var requirement in selectedRequirements) testcase.Requirements.Add(requirement);
+        foreach (var requirement in selectedRequirements) testcase.LinkedRequirements.Add(requirement);
     }
 
 
@@ -146,14 +146,14 @@ public class TestCasesModel(
 
         var existingTestCase = await _dbContext.TestCases
             .AsSplitQuery()
-            .Include(tc => tc.Requirements)
+            .Include(tc => tc.LinkedRequirements)
             .Include(testCases => testCases.TestSteps)
             .FirstOrDefaultAsync(tc => tc.Id == testCases.Id);
 
         if (existingTestCase == null) throw new Exception("Test case not found.");
 
         // Update the navigation property directly
-        existingTestCase.Requirements = await _dbContext.Requirements
+        existingTestCase.LinkedRequirements = await _dbContext.Requirements
             .Where(r => SelectedRequirementIds.Contains(r.Id))
             .ToListAsync();
 

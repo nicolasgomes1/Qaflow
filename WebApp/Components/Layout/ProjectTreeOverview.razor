@@ -12,9 +12,9 @@
                         {
                             <RadzenTreeItem Text="@requirement.Name">
                                 <ChildContent>
-                                    @if (requirement.TestCases != null)
+                                    @if (requirement.LinkedTestCases != null)
                                     {
-                                        foreach (var testCase in requirement.TestCases)
+                                        foreach (var testCase in requirement.LinkedTestCases)
                                         {
                                             <RadzenTreeItem Text="@testCase.Name"/>
                                         }
@@ -32,7 +32,7 @@
                         {
                             <RadzenTreeItem Text="@testPlan.Name">
                                 <ChildContent>
-                                    @foreach (var testCase in testPlan.TestCases)
+                                    @foreach (var testCase in testPlan.LinkedTestCases)
                                     {
                                         <RadzenTreeItem Text="@testCase.Name"/>
                                     }
@@ -69,7 +69,7 @@
                 <RadzenTreeItem Text="Test Plans" Data="_testPlans">
                     <RadzenTreeItem Text="Test Plans With Test Cases">
                         <ChildContent>
-                            @foreach (var testPlan in _testPlans.Where(tc => tc.TestCases.Count > 0))
+                            @foreach (var testPlan in _testPlans.Where(tc => tc.LinkedTestCases.Count > 0))
                             {
                                 <RadzenTreeItem Text="@testPlan.Name">
                                 </RadzenTreeItem>
@@ -78,7 +78,7 @@
                     </RadzenTreeItem>
                     <RadzenTreeItem Text="Test Without Test Cases">
                         <ChildContent>
-                            @foreach (var testPlan in _testPlans.Where(tc => tc.TestCases.Count == 0))
+                            @foreach (var testPlan in _testPlans.Where(tc => tc.LinkedTestCases.Count == 0))
                             {
                                 <RadzenTreeItem Text="@testPlan.Name">
                                 </RadzenTreeItem>
@@ -121,7 +121,7 @@
     {
         await using var db = await DbContext.CreateDbContextAsync();
         return await db.TestPlans
-            .Include(tp => tp.TestCases)
+            .Include(tp => tp.LinkedTestCases)
             .Where(p => p.ProjectsId == ProjectStateService.ProjectId)
             .ToListAsync();
     }
