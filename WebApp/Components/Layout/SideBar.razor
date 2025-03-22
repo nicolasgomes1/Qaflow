@@ -5,40 +5,51 @@
 
 @if (_isAuthenticated && ProjectStateService.ProjectId != 0)
 {
-    <!-- Top left floating Radzen button -->
-    @*<div style="position: fixed; top: 10px; left: 10px; z-index: 1000;">
-        <RadzenButton Icon="menu" @onmouseover="OnMouseOver" />
-    </div>*@
-
-    <!-- RadzenSidebar with dynamic width -->
-    <RadzenSidebar @onmouseover="OnMouseOver"
-                   @onmouseout="OnMouseOut"
-                   Style="@GetSidebarStyle()">
-        <RadzenPanelMenu>
+    <RadzenSidebar Responsive="false" Style="width: max-content">
+        <RadzenPanelMenu
+            DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"
+            ShowArrow="false">
             <RadzenPanelMenuItem Text="@Loc["Home"]" Icon="dashboard" data-testid="sidebar_dashboard"
+                                 MouseEnter="@(args => ShowTooltip(args, "Dashboard", new TooltipOptions { Position = TooltipPosition.Right }))"
+                                 MouseLeave="CloseTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}", true))"/>
-            <RadzenPanelMenuItem Text="@Loc["Requirements"]" Icon="description" data-testid="sidebar_requirements"
-                                 IconColor="orange"
+            <RadzenPanelMenuItem Text="@Loc["Requirements"]" Icon="assignment" data-testid="sidebar_requirements"
+                                 MouseEnter="@(args => ShowTooltip(args, "Requirements", new TooltipOptions { Position = TooltipPosition.Right }))"
+                                 MouseLeave="CloseTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements", true))"/>
-            <RadzenPanelMenuItem Text="@Loc["TestCases"]" Icon="assignment" data-testid="sidebar_testcases"
+            <RadzenPanelMenuItem Text="@Loc["TestCases"]" Icon="science" data-testid="sidebar_testcases"
+                                 MouseEnter="@(args => ShowTooltip(args, "Test Cases", new TooltipOptions { Position = TooltipPosition.Right }))"
+                                 MouseLeave="CloseTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases", true))"/>
+
             <RadzenPanelMenuItem Text="@Loc["TestPlans"]" Icon="description" data-testid="sidebar_testplans"
+                                 MouseEnter="@(args => ShowTooltip(args, "Test Plans", new TooltipOptions { Position = TooltipPosition.Right }))"
+                                 MouseLeave="CloseTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testplans", true))"/>
-            <RadzenPanelMenuItem Text="@Loc["TestExecutions"]" Icon="description" data-testid="sidebar_testexecutions"
+            <RadzenPanelMenuItem Text="@Loc["TestExecutions"]" Icon="play_circle" data-testid="sidebar_testexecutions"
+                                 MouseEnter="@(args => ShowTooltip(args, "Test Executions", new TooltipOptions { Position = TooltipPosition.Right }))"
+                                 MouseLeave="CloseTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution", true))"/>
             <RadzenPanelMenuItem Text="@Loc["Bugs"]" Icon="bug_report" data-testid="sidebar_bugs"
+                                 MouseEnter="@(args => ShowTooltip(args, "Bugs", new TooltipOptions { Position = TooltipPosition.Right }))"
+                                 MouseLeave="CloseTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs", true))"/>
-            <RadzenPanelMenuItem Text="@Loc["Reports"]" Icon="analytics" data-testid="sidebar_reports"
+            <RadzenPanelMenuItem Text="@Loc["Reports"]" Icon="bar_chart" data-testid="sidebar_reports"
+                                 MouseEnter="@(args => ShowTooltip(args, "Reports", new TooltipOptions { Position = TooltipPosition.Right }))"
+                                 MouseLeave="CloseTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/reports", true))"/>
-            <RadzenPanelMenuItem Text="@Loc["Milestones"]" Icon="analytics" data-testid="sidebar_milestones"
+            <RadzenPanelMenuItem Text="@Loc["Milestones"]" Icon="flag" data-testid="sidebar_milestones"
+                                 MouseEnter="@(args => ShowTooltip(args, "Milestones", new TooltipOptions { Position = TooltipPosition.Right }))"
+                                 MouseLeave="CloseTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/milestones", true))"/>
         </RadzenPanelMenu>
+
     </RadzenSidebar>
 }
 
 @code {
     private bool _isAuthenticated;
-    private string _sidebarWidth = "0px"; // Initially collapsed
+    bool _sidebarExpanded = false;
 
     [Parameter] public int ProjectId { get; set; } // Capture projectId from the URL
 
@@ -46,26 +57,18 @@
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        _isAuthenticated = authState.User.Identity?.IsAuthenticated ?? false;
+        _isAuthenticated = authState.User.Identity?.IsAuthenticated ?? true;
         ProjectId = ProjectStateService.ProjectId;
     }
 
-    // Expand sidebar when mouse hovers over the indicator or sidebar
-    private void OnMouseOver()
+    void ShowTooltip(ElementReference elementReference, string message, TooltipOptions options)
     {
-        _sidebarWidth = "250px"; // Expand to full width
+        TooltipService.Open(elementReference, message, options);
     }
 
-    // Collapse sidebar when mouse leaves
-    private void OnMouseOut()
+    void CloseTooltip()
     {
-        _sidebarWidth = "0px"; // Collapse to hidden
-    }
-
-    // Build the dynamic style for the sidebar
-    private string GetSidebarStyle()
-    {
-        return $"width: {_sidebarWidth}; transition: width 0.3s ease;";
+        TooltipService.Close();
     }
 
 }
