@@ -562,12 +562,17 @@ namespace WebApp.Data.Migrations
                     b.Property<int>("ProjectsId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("RequirementsSpecificationId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("WorkflowStatus")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectsId");
+
+                    b.HasIndex("RequirementsSpecificationId");
 
                     b.ToTable("Requirements");
                 });
@@ -611,6 +616,51 @@ namespace WebApp.Data.Migrations
                     b.HasIndex("RequirementsId");
 
                     b.ToTable("RequirementsFiles");
+                });
+
+            modelBuilder.Entity("WebApp.Data.RequirementsSpecification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ArchivedStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("ProjectsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectsId");
+
+                    b.ToTable("RequirementsSpecification");
                 });
 
             modelBuilder.Entity("WebApp.Data.TestCaseExecution", b =>
@@ -1285,6 +1335,10 @@ namespace WebApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("WebApp.Data.RequirementsSpecification", null)
+                        .WithMany("LinkedRequirements")
+                        .HasForeignKey("RequirementsSpecificationId");
+
                     b.Navigation("Projects");
                 });
 
@@ -1305,6 +1359,17 @@ namespace WebApp.Data.Migrations
                     b.Navigation("Projects");
 
                     b.Navigation("Requirements");
+                });
+
+            modelBuilder.Entity("WebApp.Data.RequirementsSpecification", b =>
+                {
+                    b.HasOne("WebApp.Data.Projects", "Projects")
+                        .WithMany()
+                        .HasForeignKey("ProjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Projects");
                 });
 
             modelBuilder.Entity("WebApp.Data.TestCaseExecution", b =>
@@ -1515,6 +1580,11 @@ namespace WebApp.Data.Migrations
             modelBuilder.Entity("WebApp.Data.Requirements", b =>
                 {
                     b.Navigation("LinkedRequirementsFiles");
+                });
+
+            modelBuilder.Entity("WebApp.Data.RequirementsSpecification", b =>
+                {
+                    b.Navigation("LinkedRequirements");
                 });
 
             modelBuilder.Entity("WebApp.Data.TestCaseExecution", b =>

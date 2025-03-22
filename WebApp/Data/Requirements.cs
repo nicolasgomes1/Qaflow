@@ -24,4 +24,6 @@ public class Requirements : BaseEntity
 
     public ICollection<TestCases>? LinkedTestCases { get; init; } = [];
     public ICollection<RequirementsFile> LinkedRequirementsFiles { get; set; } = [];
+
+    public RequirementsSpecification? RequirementsSpecification { get; set; }
 }

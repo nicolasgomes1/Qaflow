@@ -14,6 +14,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     public DbSet<Requirements> Requirements { get; set; }
     public DbSet<RequirementsFile> RequirementsFiles { get; set; }
+    public DbSet<RequirementsSpecification> RequirementsSpecification { get; set; }
 
     public DbSet<TestCases> TestCases { get; set; }
     public DbSet<TestCasesFile> TestCasesFiles { get; set; }
@@ -191,7 +192,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithMany()
             .HasForeignKey(tse => tse.TestStepsId)
             .OnDelete(DeleteBehavior.NoAction);
-        
+
         modelBuilder.Entity<TestExecution>()
             .HasMany<TestCaseExecution>(tce => tce.LinkedTestCaseExecutions)
             .WithOne()
@@ -201,6 +202,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasMany<TestStepsExecution>(tse => tse.LinkedTestStepsExecution)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
-
+        
+        modelBuilder.Entity<Requirements>()
+            .HasOne(r => r.RequirementsSpecification)
+            .WithMany()
+            .HasForeignKey(r => r.RequirementsSpecification)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

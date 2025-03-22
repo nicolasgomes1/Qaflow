@@ -1,4 +1,5 @@
 ﻿@page "/project/{ProjectId:int}/requirements/create"
+@using Microsoft.CodeAnalysis.Operations
 @rendermode InteractiveServer
 
 <h3 class="text-center text-primary mb-4">Create Requirement</h3>
@@ -20,6 +21,20 @@
                                                Name="name"/>
                                 <RadzenRequiredValidator Component="name" Text="Name is required"/>
                             </div>
+                        </div>
+
+                        <div class="row mb-4 col-12">
+                            <RadzenLabel Text="Requirements Specification"/>
+                            <RadzenDropDown id="requirements_specification"
+                                            TValue="int"
+                                            Data="@_requirementsSpecificationList"
+                                            TextProperty="Name"
+                                            ValueProperty="Id"
+                                            @bind-Value="_requirements.RequirementsSpecification"
+                                            AllowFiltering="true"
+                                            AllowVirtualization="true"
+                                            Name="requirementsSpecification"/>
+                            <RadzenRequiredValidator Component="requirementsSpecification" Text="Requirements Specification is required"/>
                         </div>
 
                         <div class="row mb-4">
@@ -92,6 +107,8 @@
 @code {
     [Parameter] public int ProjectId { get; set; }
 
+    private List<RequirementsSpecification> _requirementsSpecificationList = [];
+
     //TODO Add same approach to create new items
     private List<ApplicationUser> _usersList = [];
 
@@ -99,16 +116,16 @@
 
     private Requirements _requirements = new();
     private readonly List<IBrowserFile>? _uploadedFiles = [];
-
+    
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
+        _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(_requirements);
     }
 
     private async Task CreateNewRequirement()
     {
         _requirements = await RequirementsModel.AddRequirement(_requirements, _uploadedFiles);
-
         NavigationManager.NavigateTo($"project/{ProjectId}/requirements");
 
         StateHasChanged();

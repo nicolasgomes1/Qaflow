@@ -16,7 +16,6 @@ public class RequirementsModel(
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
 
-
     public async Task<List<Requirements>> DisplayRequirementsIndexPage(int projectId)
     {
         var requirements = await _dbContext.Requirements
@@ -73,7 +72,6 @@ public class RequirementsModel(
         // First, create the requirement
         _dbContext.Requirements.Add(requirement);
         requirement.ProjectsId = projectSateService.GetProjectIdAsync().Result;
-
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         UpdateArchivedStatus(requirement);
         await _dbContext.SaveChangesAsync();
@@ -130,5 +128,13 @@ public class RequirementsModel(
         requirement.ArchivedStatus = ArchivedStatus.Active;
         await _dbContext.SaveChangesAsync();
         return requirement;
+    }
+
+    public async Task<List<RequirementsSpecification>> GetAssociatedRequirementsSpecifications(
+        Requirements requirements)
+    {
+        var requirementsSpecifications =
+            await _dbContext.RequirementsSpecification.ToListAsync();
+        return requirementsSpecifications;
     }
 }

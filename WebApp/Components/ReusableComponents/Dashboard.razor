@@ -7,6 +7,10 @@
                               data-testid="d_requirements"
                               ButtonStyle="ButtonStyle.Warning"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements", true))"/>
+                <RadzenButton Text="@Loc["RequirementsSpecification"]"
+                              data-testid="d_requirementsSpecification"
+                              ButtonStyle="ButtonStyle.Warning"
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirementsspecification", true))"/>
             </RadzenStack>
 
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">

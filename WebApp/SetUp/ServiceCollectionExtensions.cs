@@ -1,4 +1,5 @@
 using WebApp.Api;
+using WebApp.Data;
 using WebApp.Models;
 using WebApp.Services;
 using WebApp.Services.TestData;
@@ -60,5 +61,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<TestPlansModel>();
         services.AddScoped<TestStepExecutionFileModel>();
         services.AddScoped<TestCasesJiraModel>();
+        services.AddScoped<RequirementsSpecificationModel>();
     }
 }
