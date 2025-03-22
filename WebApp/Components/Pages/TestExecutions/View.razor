@@ -1,6 +1,8 @@
 ﻿@page "/project/{ProjectId:int}/testexecution/viewv1/{Id:int}"
 @rendermode InteractiveServer
 @implements IDisposable
+@*Version 1*@
+
 @if (_isLoading)
 {
     <ProgressBar/>
@@ -20,7 +22,7 @@ else
     @if (!executionInProgress)
     {
         <!-- Past Test Executions Table -->
-        <PastTestExecutionsTable Id="Id"/>
+        <PastTestExecutionsTable Id="Id" ProjectId="ProjectId"/>
 
 
         <!-- Test Cases Table associated with the current TestExecution-->

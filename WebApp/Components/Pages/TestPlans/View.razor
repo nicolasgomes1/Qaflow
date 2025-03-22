@@ -2,9 +2,10 @@
 @using WebApp.Components.Pages.TestCases
 @rendermode InteractiveServer
 
-<RadzenSteps>
-    <Steps>
-        <RadzenStepsItem Text="Test Plan Details">
+
+<RadzenTabs RenderMode="TabRenderMode.Client">
+    <Tabs>
+        <RadzenTabsItem Text="Test Plans Details">
             <RadzenRow>
                 <RadzenCard Style="width: 50%; padding: 20px;">
 
@@ -30,13 +31,8 @@
                     </div>
                 </RadzenCard>
             </RadzenRow>
-        </RadzenStepsItem>
-
-        <RadzenStepsItem Text="@ContextFilesTitle()" Disabled="@TestPlansHasNoFiles">
-            <FileViewer Files="Files" EntityName="@nameof(TestPlansFile)"/>
-        </RadzenStepsItem>
-
-        <RadzenStepsItem Text="@ContextTestTitle()" Disabled="TestPlansHasNoTests">
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="@ContextTestTitle()" Disabled="TestPlansHasNoTests">
             @if (_testPlans.LinkedTestCases.Any())
             {
                 <RadzenDataGrid Data="_testPlans.LinkedTestCases" TItem="TestCases" Style="margin-top: 20px;">
@@ -71,9 +67,12 @@
             {
                 <p>No Test Cases linked to this Test Plan.</p>
             }
-        </RadzenStepsItem>
-    </Steps>
-</RadzenSteps>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@TestPlansHasNoFiles">
+            <FileViewer Files="Files" EntityName="@nameof(TestPlansFile)"/>
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
 
 
 <ViewEditActions EntityName="testplans" EntityId="_testPlans.Id"/>
