@@ -49,7 +49,7 @@
                         ValueProperty="Id"
                         class="input-style"
                         Name="testplan"/>
-        <RadzenRequiredValidator Component="testplan" Text="Test Plan is required"/>
+        <RadzenRequiredValidator Component="testplan" Text="Test Plan is required" DefaultValue="-1"/>
     </div>
 
     <div class="form-group mb-4">
@@ -76,6 +76,7 @@
 
     private List<TestPlans> _testPlansList = [];
     private readonly TestExecution _testExecution = new();
+
 
     private string CancelUrl()
     {

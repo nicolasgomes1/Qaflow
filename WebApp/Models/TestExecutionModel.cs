@@ -28,7 +28,7 @@ public class TestExecutionModel
 
     private TestPlans? TestPlans { get; set; } = new();
 
-    public int TestPlanId { get; set; }
+    public int TestPlanId { get; set; } = -1;
 
     public List<TestExecution> TestExecutionList = [];
 
@@ -560,17 +560,18 @@ public class TestExecutionModel
             .Where(te => te.IsActive == true && te.ProjectsId == projectId)
             .ToListAsync();
     }
-    
+
     public async Task<List<TestExecution>> GetTestExecutionsAssignedToAll(int projectId)
     {
         return await _dbContext.TestExecution
             .Where(te => te.IsActive == true && te.ProjectsId == projectId)
             .ToListAsync();
     }
-    
+
     public async Task<List<TestExecution>> GetTestExecutionsAssignedToCurrentUser(int projectId)
     {
         var currentUser = _userService.GetCurrentUserInfoAsync().Result.UserId;
-        return await _dbContext.TestExecution.Where(rp => rp.ProjectsId == projectId && rp.AssignedTo == currentUser).ToListAsync();
+        return await _dbContext.TestExecution.Where(rp => rp.ProjectsId == projectId && rp.AssignedTo == currentUser)
+            .ToListAsync();
     }
 }
