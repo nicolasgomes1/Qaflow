@@ -41,10 +41,38 @@
 
 @code {
     [Parameter] public string EntityName { get; set; } = string.Empty;
-    
-    private void ViewItem(TItem item)
+    [Parameter] public bool IsModal { get; set; }
+
+
+    private async Task ViewDialog(TItem item)
     {
-        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}/view/{GetId(item)}");
+        await DialogService.OpenAsync($"View {EntityName}", ds =>
+                @<div>
+                    <p>ID: @GetId(item)</p>
+                    <p>Name: @GetName(item)</p>
+                    <p>Description: @GetDescription(item)</p>
+                </div>,
+            new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
+    }
+
+
+    private async void ViewItem(TItem item)
+    {
+        try
+        {
+            if (IsModal)
+            {
+                await ViewDialog(item);
+            }
+            else if (!IsModal)
+            {
+                NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}/view/{GetId(item)}");
+            }
+        }
+        catch (Exception e)
+        {
+            await FormNotificationService.NotifyError(e.ToString());
+        }
     }
 
     private void EditItem(TItem item)
@@ -73,6 +101,20 @@
         var prop = typeof(TItem).GetProperty("Id");
         if (prop is null) throw new InvalidOperationException("The item does not have an 'Id' property.");
         return (int)(prop.GetValue(item) ?? 0);
+    }
+
+    private string GetName(TItem item)
+    {
+        var prop = typeof(TItem).GetProperty("Name");
+        if (prop is null) throw new InvalidOperationException("The item does not have an 'Name' property.");
+        return (string)(prop.GetValue(item) ?? 0);
+    }
+
+    private string GetDescription(TItem item)
+    {
+        var prop = typeof(TItem).GetProperty("Description");
+        if (prop is null) throw new InvalidOperationException("The item does not have an 'Description' property.");
+        return (string)(prop.GetValue(item) ?? 0);
     }
 
     private bool IsArchived(TItem item)
