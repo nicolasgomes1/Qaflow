@@ -203,11 +203,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
         
-        modelBuilder.Entity<Requirements>()
-            .HasOne(r => r.RequirementsSpecification)
-            .WithMany()
-            .HasForeignKey(r => r.RequirementsSpecification)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

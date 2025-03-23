@@ -30,7 +30,7 @@
                                             Data="@_requirementsSpecificationList"
                                             TextProperty="Name"
                                             ValueProperty="Id"
-                                            @bind-Value="_requirements.RequirementsSpecification"
+                                            @bind-Value="_selectedRequirementSpecificationId"
                                             AllowFiltering="true"
                                             AllowVirtualization="true"
                                             Name="requirementsSpecification"/>
@@ -108,6 +108,7 @@
     [Parameter] public int ProjectId { get; set; }
 
     private List<RequirementsSpecification> _requirementsSpecificationList = [];
+    private int _selectedRequirementSpecificationId;
 
     //TODO Add same approach to create new items
     private List<ApplicationUser> _usersList = [];
@@ -125,6 +126,7 @@
 
     private async Task CreateNewRequirement()
     {
+        _requirements.RequirementsSpecification = _requirementsSpecificationList.First(rs => rs.Id == _selectedRequirementSpecificationId);
         _requirements = await RequirementsModel.AddRequirement(_requirements, _uploadedFiles);
         NavigationManager.NavigateTo($"project/{ProjectId}/requirements");
 

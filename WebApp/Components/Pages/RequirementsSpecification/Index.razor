@@ -1,0 +1,55 @@
+@page "/project/{ProjectId:int}/requirementsspecification"
+@rendermode InteractiveServer
+
+<RadzenDataGrid Data="@_requirementsSpecification"
+                ColumnWidth="auto"
+                LogicalFilterOperator="LogicalFilterOperator.Or"
+                SelectionMode="DataGridSelectionMode.Single"
+                @bind-Value="@_selectedRequirementsSpecifications"
+                AllowVirtualization="true">
+
+    <HeaderTemplate>
+        <RequirementsSpecificationDialogCreate Title="Requirement Specification" ProjectId="ProjectId"
+                                               OnRequirementCreated="() => RefreshPage()"/>
+    </HeaderTemplate>
+
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(RequirementsSpecification.Id)" Filterable="false" Title="ID"
+                              Frozen="true"
+                              Width="80px" TextAlign="TextAlign.Center"/>
+        <RadzenDataGridColumn Property="@nameof(RequirementsSpecification.Name)" Title="Name" Frozen="true"
+                              Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(RequirementsSpecification.Description)" Title="Description"
+                              Width="auto"/>
+
+
+        <!-- Action Buttons column -->
+        <IndexActions TItem="RequirementsSpecification" EntityName="RequirementsSpecification"/>
+    </Columns>
+</RadzenDataGrid>
+
+
+
+@code{
+    [Parameter] public int ProjectId { get; set; }
+
+
+    private IList<RequirementsSpecification> _selectedRequirementsSpecifications = [];
+    private IEnumerable<RequirementsSpecification> _requirementsSpecification = [];
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshPage();
+    }
+
+
+    /// <summary>
+    /// Gets or refreshes the page
+    /// </summary>
+    private async Task RefreshPage()
+    {
+        _requirementsSpecification = await RequirementsSpecificationModel.GetRequirementsSpecificationListAsync(ProjectId);
+    }
+
+}
