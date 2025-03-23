@@ -41,7 +41,7 @@
         _requirements = new RequirementsSpecification();
 
         var result = await DialogService.OpenAsync("Create Requirement", ds =>
-            @<RadzenStack Gap="1.5rem" Style="height: 600px;">
+            @<RadzenStack Gap="1.5rem" Style="height: 300px;">
                 <RadzenTemplateForm Data="_requirements" TItem="RequirementsSpecification"
                                     Submit="@CreateNewRequirement">
                     <ValidationSummary class="alert alert-danger"/>
@@ -70,7 +70,7 @@
                                   ButtonType="ButtonType.Submit"
                                   Style="margin-bottom: 10px;"/>
                 </RadzenTemplateForm>
-            </RadzenStack>);
+            </RadzenStack>, new DialogOptions() { Draggable = true, CloseDialogOnOverlayClick = true });
     }
 
 }
