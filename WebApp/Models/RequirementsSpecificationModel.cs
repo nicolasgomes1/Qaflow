@@ -26,6 +26,7 @@ public class RequirementsSpecificationModel(
 
     public async Task<List<RequirementsSpecification>> GetRequirementsSpecificationListAsync(int projectId)
     {
-        return await _dbContext.RequirementsSpecification.Where(rs => rs.ProjectsId == projectId).ToListAsync();
+        return await _dbContext.RequirementsSpecification.Include(ts => ts.LinkedRequirements)
+            .Where(rs => rs.ProjectsId == projectId).ToListAsync();
     }
 }

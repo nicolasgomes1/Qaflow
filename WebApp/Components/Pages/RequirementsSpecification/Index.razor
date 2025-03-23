@@ -26,7 +26,16 @@
                               Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(RequirementsSpecification.Description)" Title="Description"
                               Width="auto"/>
-
+        <RadzenDataGridColumn Property="@nameof(RequirementsSpecification.LinkedRequirements)"
+                              Title="Associated Requirements"
+                              Width="auto">
+            <Template Context="requirement">
+                @foreach (var req in requirement.LinkedRequirements)
+                {
+                    <a>@req.Name</a>
+                }
+            </Template>
+        </RadzenDataGridColumn>
 
         <!-- Action Buttons column -->
         <IndexActions TItem="RequirementsSpecification" EntityName="RequirementsSpecification" IsModal="true"/>
