@@ -1,7 +1,7 @@
 @inject DialogService DialogService
 
 
-<RadzenButton Text="@Title" Icon="edit"
+<RadzenButton Icon="edit"
               Disabled="@IsDisabled"
               ButtonStyle="ButtonStyle.Warning" Click="@EditInlineDialog"/>
 
@@ -9,8 +9,6 @@
     private RequirementsSpecification _requirements = new();
 
     [EditorRequired] [Parameter] public EventCallback OnRequirementCreated { get; set; }
-
-    [EditorRequired] [Parameter] public string Title { get; set; } = string.Empty;
 
     /// <summary>
     /// Default value is false

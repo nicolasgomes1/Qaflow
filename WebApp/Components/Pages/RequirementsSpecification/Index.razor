@@ -40,13 +40,13 @@
         <RadzenDataGridColumn TItem="RequirementsSpecification">
             <Template Context="current">
                 <RequirementsSpecificationDialogEdit Id="current.Id" ProjectId="ProjectId"
-                                                     OnRequirementCreated="() => RefreshPage()" Title="zz"/>
+                                                     OnRequirementCreated="() => RefreshPage()"/>
             </Template>
         </RadzenDataGridColumn>
 
 
         <!-- Action Buttons column -->
-        <IndexActions TItem="RequirementsSpecification" EntityName="RequirementsSpecification" IsModal="true"/>
+        <IndexActionsModal TItem="RequirementsSpecification" EntityName="RequirementsSpecification"/>
     </Columns>
 </RadzenDataGrid>
 
