@@ -1,0 +1,77 @@
+@inject DialogService DialogService
+
+
+<RadzenButton Text="@Title" Icon="edit"
+              Disabled="@IsDisabled"
+              ButtonStyle="ButtonStyle.Warning" Click="@EditInlineDialog"/>
+
+@code {
+    private RequirementsSpecification _requirements = new();
+
+    [EditorRequired] [Parameter] public EventCallback OnRequirementCreated { get; set; }
+
+    [EditorRequired] [Parameter] public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Default value is false
+    /// </summary>
+    [Parameter]
+    public bool IsDisabled { get; set; } = false;
+
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+    [EditorRequired] [Parameter] public int Id { get; set; }
+
+
+    private async Task UpdateNewRequirement()
+    {
+        // CreateBug should handle adding the bug and return a result
+        _requirements = await RequirementsSpecificationModel.UpdateRequirementsSpecificationAsync(Id);
+        DialogService.Close(_requirements);
+        StateHasChanged();
+        await FormNotificationService.NotifySuccess($"Requirement Updated successfully with id {_requirements.Id}");
+        // Notify the parent that the requirement was created
+        if (OnRequirementCreated.HasDelegate)
+        {
+            await OnRequirementCreated.InvokeAsync();
+        }
+    }
+
+
+    async Task EditInlineDialog()
+    {
+        _requirements = await RequirementsSpecificationModel.GetRequirementsSpecificationByIdAsync(Id);
+
+        var result = await DialogService.OpenAsync("Edit Requirement Specification", ds =>
+            @<RadzenStack Gap="1.5rem" Style="height: 300px;">
+                <RadzenTemplateForm Data="_requirements" TItem="RequirementsSpecification"
+                                    Submit="@UpdateNewRequirement">
+                    <ValidationSummary class="alert alert-danger"/>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Name"/>
+                        <RadzenTextBox id="name"
+                                       @bind-Value="_requirements.Name"
+                                       class="input-style"
+                                       Name="name"/>
+                        <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Description"/>
+                        <RadzenTextArea id="description"
+                                        @bind-Value="_requirements.Description"
+                                        class="input-style"
+                                        Name="description"/>
+                        <RadzenRequiredValidator Component="description" Text="Description is required"/>
+                    </div>
+
+
+                    <!-- Submit button inside the form -->
+                    <RadzenButton Icon="update" Text="Requirements Specification" ButtonStyle="ButtonStyle.Warning"
+                                  ButtonType="ButtonType.Submit"
+                                  Style="margin-bottom: 10px;"/>
+                </RadzenTemplateForm>
+            </RadzenStack>, new DialogOptions() { Draggable = true, CloseDialogOnOverlayClick = true });
+    }
+
+}

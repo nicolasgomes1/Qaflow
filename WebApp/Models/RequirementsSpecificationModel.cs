@@ -26,11 +26,31 @@ public class RequirementsSpecificationModel(
         return requirementsSpecification;
     }
 
+    public async Task<RequirementsSpecification> UpdateRequirementsSpecificationAsync(int requirementsSpecificationId)
+    {
+        var currentRequirement = await _dbContext.RequirementsSpecification.FindAsync(requirementsSpecificationId) ??
+                                 throw new Exception("No requirements Specification Found");
+        _dbContext.RequirementsSpecification.Update(currentRequirement);
+
+        currentRequirement.ModifiedAt = DateTime.UtcNow;
+        currentRequirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        await _dbContext.SaveChangesAsync();
+        return currentRequirement;
+    }
+
+
     public async Task<List<RequirementsSpecification>> GetRequirementsSpecificationListAsync(int projectId)
     {
         return await _dbContext.RequirementsSpecification
             .Include(r => r.LinkedRequirements)
             .Where(p => p.ProjectsId == projectId)
             .ToListAsync();
+    }
+
+    public async Task<RequirementsSpecification> GetRequirementsSpecificationByIdAsync(int requirementsSpecificationId)
+    {
+        var found = await _dbContext.RequirementsSpecification.FindAsync(requirementsSpecificationId) ??
+                    throw new Exception("No requirements Specification Found");
+        return found;
     }
 }
