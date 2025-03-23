@@ -15,7 +15,9 @@ public class RequirementsSpecificationModel(
     public async Task<RequirementsSpecification> AddRequirementsSpecification(
         RequirementsSpecification requirementsSpecification, int projectId)
     {
-        requirementsSpecification.CreatedAt = DateTime.UtcNow;
+        var currentTime = DateTime.UtcNow;
+        requirementsSpecification.CreatedAt = currentTime;
+        requirementsSpecification.ModifiedAt = currentTime;
         requirementsSpecification.ProjectsId = projectId;
         requirementsSpecification.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
@@ -26,7 +28,9 @@ public class RequirementsSpecificationModel(
 
     public async Task<List<RequirementsSpecification>> GetRequirementsSpecificationListAsync(int projectId)
     {
-        return await _dbContext.RequirementsSpecification.Include(ts => ts.LinkedRequirements)
-            .Where(rs => rs.ProjectsId == projectId).ToListAsync();
+        return await _dbContext.RequirementsSpecification
+            .Include(r => r.LinkedRequirements)
+            .Where(p => p.ProjectsId == projectId)
+            .ToListAsync();
     }
 }
