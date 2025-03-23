@@ -37,16 +37,10 @@
             </Template>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="RequirementsSpecification">
-            <Template Context="current">
-                <RequirementsSpecificationDialogEdit Id="current.Id" ProjectId="ProjectId"
-                                                     OnRequirementCreated="() => RefreshPage()"/>
-            </Template>
-        </RadzenDataGridColumn>
-
 
         <!-- Action Buttons column -->
-        <IndexActionsModal TItem="RequirementsSpecification" EntityName="RequirementsSpecification"/>
+        <IndexActionsModal TItem="RequirementsSpecification" EntityName="RequirementsSpecification"
+                           OnRequirementSpecificationUpdated="() => RefreshPage()"/>
     </Columns>
 </RadzenDataGrid>
 

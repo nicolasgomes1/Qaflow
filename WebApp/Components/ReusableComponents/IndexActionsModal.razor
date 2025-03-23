@@ -1,4 +1,5 @@
-﻿@typeparam TItem
+﻿@using WebApp.Components.Pages.RequirementsSpecification
+@typeparam TItem
 @inject TooltipService TooltipService
 
 <div style="display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: nowrap;">
@@ -12,16 +13,8 @@
                               MouseLeave="@AppTooltipService.HideTooltip"
                               Click="@(() => ViewItem(item))"
                               Size="ButtonSize.ExtraSmall"/>
-                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Style="color: green;"
-                              data-testid="edit"
-                              Disabled="@IsArchived(item)"
-                              MouseEnter="@(args =>
-                                          {
-                                              if (!IsArchived(item)) AppTooltipService.ShowTooltip(args, $"Edit {EntityName}");
-                                          })"
-                              MouseLeave="@AppTooltipService.HideTooltip"
-                              Click="@(() => EditItem(item))"
-                              Size="ButtonSize.ExtraSmall"/>
+                <RequirementsSpecificationDialogEdit Id="GetId(item)"
+                                                     OnRequirementSpecificationUpdated="OnRequirementSpecificationUpdated"/>
                 <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: red;"
                               data-testid="delete"
                               Disabled="@IsArchived(item)"
@@ -41,6 +34,7 @@
 
 @code {
     [Parameter] public string EntityName { get; set; } = string.Empty;
+    [EditorRequired] [Parameter] public EventCallback OnRequirementSpecificationUpdated { get; set; }
 
     private async Task ViewDialog(TItem item)
     {

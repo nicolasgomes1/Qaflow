@@ -3,12 +3,13 @@
 
 <RadzenButton Icon="edit"
               Disabled="@IsDisabled"
-              ButtonStyle="ButtonStyle.Warning" Click="@EditInlineDialog"/>
+              Size="ButtonSize.ExtraSmall"
+              ButtonStyle="ButtonStyle.Light" Click="@EditInlineDialog" Style="color: green;"/>
 
 @code {
     private RequirementsSpecification _requirements = new();
 
-    [EditorRequired] [Parameter] public EventCallback OnRequirementCreated { get; set; }
+    [EditorRequired] [Parameter] public EventCallback OnRequirementSpecificationUpdated { get; set; }
 
     /// <summary>
     /// Default value is false
@@ -16,7 +17,6 @@
     [Parameter]
     public bool IsDisabled { get; set; } = false;
 
-    [EditorRequired] [Parameter] public int ProjectId { get; set; }
     [EditorRequired] [Parameter] public int Id { get; set; }
 
 
@@ -28,9 +28,9 @@
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Requirement Updated successfully with id {_requirements.Id}");
         // Notify the parent that the requirement was created
-        if (OnRequirementCreated.HasDelegate)
+        if (OnRequirementSpecificationUpdated.HasDelegate)
         {
-            await OnRequirementCreated.InvokeAsync();
+            await OnRequirementSpecificationUpdated.InvokeAsync();
         }
     }
 
