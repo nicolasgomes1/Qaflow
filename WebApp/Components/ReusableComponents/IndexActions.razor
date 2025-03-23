@@ -60,13 +60,14 @@
     {
         try
         {
-            if (IsModal)
+            switch (IsModal)
             {
-                await ViewDialog(item);
-            }
-            else if (!IsModal)
-            {
-                NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}/view/{GetId(item)}");
+                case true:
+                    await ViewDialog(item);
+                    break;
+                case false:
+                    NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}/view/{GetId(item)}");
+                    break;
             }
         }
         catch (Exception e)

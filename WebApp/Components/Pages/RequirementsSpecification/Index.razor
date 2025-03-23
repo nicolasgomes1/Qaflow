@@ -3,6 +3,11 @@
 
 <RadzenDataGrid Data="@_requirementsSpecification"
                 ColumnWidth="auto"
+                AllowFiltering="true"
+                AllowSorting="true"
+                AllowPaging="true"
+                PageSize="10"
+                Density="Density.Compact"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
                 @bind-Value="@_selectedRequirementsSpecifications"
