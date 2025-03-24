@@ -94,7 +94,7 @@ else
                     </RadzenBadge>
                 </Template>
             </RadzenDataGridColumn>
-            <IndexActions TItem="TestPlans" EntityName="TestPlans"/>
+            <IndexActions TItem="TestPlans" EntityName="TestPlans" ProjectId="ProjectId"/>
 
         </Columns>
 
@@ -132,7 +132,7 @@ else
     {
         DataGridSettingsService.SetCurrentGridId(_gridId);
 
-        (_testplans, _selectedTestPlans) = await TestPlansModel.DisplayTestPlansIndexPage1();
+        (_testplans, _selectedTestPlans) = await TestPlansModel.DisplayTestPlansIndexPage1(ProjectId);
         //  await TestPlansModel.DisplayTestPlansIndexPage();
         _isLoading = false;
     }

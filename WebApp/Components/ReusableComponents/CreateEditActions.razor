@@ -28,13 +28,14 @@
     [Parameter]
     public required string EntityName { get; set; }
 
+    [Parameter] public int ProjectId { get; set; }
 
     private void CancelUrlLink()
     {
         switch (EntityName)
         {
             case "testcases" or "testplans" or "requirements" or "testexecution" or "bugs":
-                NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/{EntityName}", true);
+                NavigationManager.NavigateTo($"project/{ProjectId}/{EntityName}", true);
                 break;
 
             case "projects":

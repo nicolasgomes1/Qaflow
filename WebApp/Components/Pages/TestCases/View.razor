@@ -41,7 +41,7 @@ else
                                 @if (_testCases.LinkedRequirements != null && _testCases.LinkedRequirements.Any())
                                 {
                                     var requirementLinks = _testCases.LinkedRequirements
-                                        .Select(requirement => $"<a href=\"project/{ProjectStateService.ProjectId}/requirements/view/{requirement.Id}\">{requirement.Name}</a>")
+                                        .Select(requirement => $"<a href=\"project/{ProjectId}/requirements/view/{requirement.Id}\">{requirement.Name}</a>")
                                         .ToList();
 
                                     @((MarkupString)string.Join(", ", requirementLinks))
@@ -76,7 +76,7 @@ else
             </RadzenTabsItem>
             <RadzenTabsItem Text="@ContextTestStepsTitle()" Disabled="@IsTestStepsEmpty">
                 <RadzenRow>
-                    <TestStepsViewer TestStepsData="@_testCases.TestSteps"/>
+                    <TestStepsViewer TestStepsData="@_testCases.TestSteps" ProjectId="ProjectId"/>
                 </RadzenRow>
             </RadzenTabsItem>
 
@@ -111,7 +111,7 @@ else
 
     </RadzenTabs>
 
-    <ViewEditActions EntityName="testcases" EntityId="_testCases.Id"/>
+    <ViewEditActions EntityName="testcases" EntityId="_testCases.Id" ProjectId="ProjectId"/>
 }
 
 
@@ -120,7 +120,7 @@ else
 @code {
     [Parameter] public int Id { get; set; }
 
-    [Parameter] public int ProjectId { get; set; }
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     private TestCases _testCases = new();
     private bool _isLoading = true;
@@ -152,7 +152,8 @@ else
         await TestCasesModel.GetTestStepsForTestCase(Id);
 
         Files = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
-        _testCasesJira = await TestCasesJiraModel.GetSelectedJiraTickets(Id);;
+        _testCasesJira = await TestCasesJiraModel.GetSelectedJiraTickets(Id);
+        ;
         _isLoading = false;
     }
 
@@ -160,5 +161,5 @@ else
     private bool IsTestStepsEmpty => !_testCases.TestSteps.Any();
 
     private List<TestCasesJira> _testCasesJira = [];
-    
+
 }

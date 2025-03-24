@@ -9,7 +9,6 @@ namespace WebApp.Models;
 public class TestPlansModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory,
     UserService userService,
-    ProjectStateService projectStateService,
     TestPlansFilesModel testPlansFilesModel)
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
@@ -20,11 +19,11 @@ public class TestPlansModel(
 
 
     public async Task<(IEnumerable<TestPlans> TestPlans, IList<TestPlans> SelectedTestPlans)>
-        DisplayTestPlansIndexPage1()
+        DisplayTestPlansIndexPage1(int projectId)
     {
         var testplans = await _dbContext.TestPlans
             .Include(r => r.LinkedTestCases)
-            .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result)
+            .Where(tc => tc.ProjectsId == projectId)
             .ToListAsync();
 
         var selectedTestPlans = new List<TestPlans>();
@@ -35,10 +34,10 @@ public class TestPlansModel(
     }
 
 
-    public async Task<List<TestPlans>> GetallTestPlansWithWorkflowStatus(WorkflowStatus status)
+    public async Task<List<TestPlans>> GetallTestPlansWithWorkflowStatus(WorkflowStatus status, int projectId)
     {
         return await _dbContext.TestPlans
-            .Where(tp => tp.ProjectsId == projectStateService.ProjectId && tp.WorkflowStatus == status).ToListAsync();
+            .Where(tp => tp.ProjectsId == projectId && tp.WorkflowStatus == status).ToListAsync();
     }
 
 
@@ -64,11 +63,10 @@ public class TestPlansModel(
         SelectedTestCasesIds = testPlans.LinkedTestCases.Select(tc => tc.Id).ToList();
     }
 
-    public async Task<TestPlans> CreateTestPlanAsync(TestPlans testPlan, List<IBrowserFile>? files)
+    public async Task<TestPlans> CreateTestPlanAsync(TestPlans testPlan, List<IBrowserFile>? files, int projectId)
     {
         // Fetch current user and project ID asynchronously
         var currentUserInfo = userService.GetCurrentUserInfoAsync().Result.UserName;
-        var projectId = projectStateService.GetProjectIdAsync().Result;
 
         // Set test plan properties
         testPlan.CreatedBy = currentUserInfo;
@@ -95,7 +93,7 @@ public class TestPlansModel(
         return testPlan;
     }
 
-    public async Task UpdateTestPlan2(int testPlanId, List<IBrowserFile>? files)
+    public async Task UpdateTestPlan2(int testPlanId, List<IBrowserFile>? files, int projectId)
     {
         //find testplan with testcases
         var testplan = await _dbContext.TestPlans
@@ -105,7 +103,7 @@ public class TestPlansModel(
 
         _dbContext.Update(testplan);
         testplan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        testplan.ProjectsId = projectStateService.ProjectId;
+        testplan.ProjectsId = projectId;
 
         // Update test cases of testplan
         testplan.LinkedTestCases = await _dbContext.TestCases

@@ -18,15 +18,18 @@
     [Parameter]
     public int EntityId { get; set; }
 
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+
+
     private void CancelUrl()
     {
-        var url = $"project/{ProjectStateService.ProjectId}/{EntityName}";
+        var url = $"project/{ProjectId}/{EntityName}";
         NavigationManager.NavigateTo(url, true);
     }
 
     private void EditUrl()
     {
-        var url = $"project/{ProjectStateService.ProjectId}/{EntityName}/edit/{EntityId}";
+        var url = $"project/{ProjectId}/{EntityName}/edit/{EntityId}";
         NavigationManager.NavigateTo(url, true);
     }
 

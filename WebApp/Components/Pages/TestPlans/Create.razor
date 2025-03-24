@@ -86,7 +86,7 @@
     </RadzenTabs>
 
 
-    <CreateEditActions EntityName="testplans" CreateEdit="Create"/>
+    <CreateEditActions EntityName="testplans" CreateEdit="Create" ProjectId="ProjectId"/>
 </RadzenTemplateForm>
 
 @code {
@@ -111,7 +111,7 @@
     private async Task CreateNewTestPlan()
     {
         //await TestPlansModel.CreateTestPlan1(_testPlans, _uploadedFiles);
-        await TestPlansModel.CreateTestPlanAsync(_testPlans, _uploadedFiles);
+        await TestPlansModel.CreateTestPlanAsync(_testPlans, _uploadedFiles, ProjectId);
         NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testplans");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Plan with Id {_testPlans.Id} Created Successfully");

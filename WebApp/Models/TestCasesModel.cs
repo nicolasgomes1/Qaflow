@@ -10,7 +10,6 @@ namespace WebApp.Models;
 public class TestCasesModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory,
     UserService userService,
-    ProjectStateService projectStateService,
     TestCasesFilesModel testCasesFilesModel)
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
@@ -31,11 +30,11 @@ public class TestCasesModel(
 
 
     public async Task<(IEnumerable<TestCases> TestCases, IList<TestCases> SelectedTestCases)>
-        DisplayTestCasesIndexPage1()
+        DisplayTestCasesIndexPage1(int projectId)
     {
         var testcases = await _dbContext.TestCases
             .Include(r => r.LinkedRequirements)
-            .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result)
+            .Where(tc => tc.ProjectsId == projectId)
             .ToListAsync();
 
         var selectedTestCases = new List<TestCases>();
@@ -253,19 +252,19 @@ public class TestCasesModel(
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<List<TestCases>> GetTestCasesToValidateAgainstCsv()
+    public async Task<List<TestCases>> GetTestCasesToValidateAgainstCsv(int projectId)
     {
         return await _dbContext.TestCases
-            .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result)
+            .Where(tc => tc.ProjectsId == projectId)
             .Include(tc => tc.TestSteps)
             .ToListAsync();
     }
 
-    public async Task AddTestCasesFromCsv(TestCases testCase)
+    public async Task AddTestCasesFromCsv(TestCases testCase, int projectId)
     {
         _dbContext.TestCases.Add(testCase);
         testCase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        testCase.ProjectsId = projectStateService.GetProjectIdAsync().Result;
+        testCase.ProjectsId = projectId;
         testCase.WorkflowStatus = WorkflowStatus.New;
         testCase.CreatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
