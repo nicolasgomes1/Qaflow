@@ -7,12 +7,7 @@
                           Reorderable="false">
         <Template Context="item">
             <div style="display: flex; gap: 5px;">
-                <RadzenButton Icon="visibility" ButtonStyle="ButtonStyle.Light" Style="color: blue;"
-                              data-testid="view"
-                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"View {EntityName}"))"
-                              MouseLeave="@AppTooltipService.HideTooltip"
-                              Click="@(() => ViewItem(item))"
-                              Size="ButtonSize.ExtraSmall"/>
+                <RequirementsSpecificationDialogView Id="GetId(item)"/>
                 <RequirementsSpecificationDialogEdit Id="GetId(item)"
                                                      OnRequirementSpecificationUpdated="OnRequirementSpecificationUpdated"/>
                 <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: red;"
@@ -36,31 +31,6 @@
     [Parameter] public string EntityName { get; set; } = string.Empty;
     [EditorRequired] [Parameter] public EventCallback OnRequirementSpecificationUpdated { get; set; }
 
-    private async Task ViewDialog(TItem item)
-    {
-        await DialogService.OpenAsync($"View {EntityName}", ds =>
-                @<div>
-                    <p>ID: @GetId(item)</p>
-                    <p>Name: @GetStringProperties(item, "Name")</p>
-                    <p>Description: @GetStringProperties(item, "Description")</p>
-                    <p>Created At: @GetDatTimeProperties(item, "CreatedAt")</p>
-                    <p>Modified At: @GetDatTimeProperties(item, "ModifiedAt")</p>
-                    <p>Created By: @GetDatTimeProperties(item, "CreatedBy")</p>
-                    <p>Modified By: @GetDatTimeProperties(item, "ModifiedBy")</p>
-                </div>,
-            new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
-    }
-
-
-    private async void ViewItem(TItem item)
-    {
-        await ViewDialog(item);
-    }
-
-    private void EditItem(TItem item)
-    {
-        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}/edit/{GetId(item)}");
-    }
 
     private async Task DeleteItem(TItem item)
     {
@@ -85,20 +55,7 @@
         return (int)(prop.GetValue(item) ?? 0);
     }
 
-    private string GetStringProperties(TItem item, string property)
-    {
-        var prop = typeof(TItem).GetProperty(property);
-        if (prop is null) throw new InvalidOperationException($"The item does not have an {property} property.");
-        return (string)(prop.GetValue(item) ?? 0);
-    }
-
-
-    private string GetDatTimeProperties(TItem item, string property)
-    {
-        var prop = typeof(TItem).GetProperty(property);
-        if (prop is null) throw new InvalidOperationException($"The item does not have an {property} property.");
-        return prop.GetValue(item)?.ToString() ?? string.Empty;
-    }
+ 
 
     private bool IsArchived(TItem item)
     {
