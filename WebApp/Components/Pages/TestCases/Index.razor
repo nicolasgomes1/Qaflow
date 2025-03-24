@@ -32,7 +32,7 @@ else
         <HeaderTemplate>
             <RadzenButton Text="Test Case"
                           data-testid="create_testcase"
-                          Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases/create", true)'
+                          Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases/create", true)'
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create Test Case", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Size="ButtonSize.Medium"
@@ -47,14 +47,14 @@ else
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'/>
-            <UploadTestCasesCsv OnUploadCompleted="RefreshPage" ProjectId="ProjectId"></UploadTestCasesCsv>
+            <UploadTestCasesCsv OnUploadCompleted="RefreshPage"></UploadTestCasesCsv>
 
             @code{
 
                 private async Task RefreshPage()
                 {
                     //simply get the list of test cases for the current project
-                    _testcases = await TestCasesModel.GetTestCasesToValidateAgainstCsv(ProjectId);
+                    _testcases = await TestCasesModel.GetTestCasesToValidateAgainstCsv();
 
                     // Refresh the Home component (re-render it)
                     await InvokeAsync(StateHasChanged);
@@ -86,7 +86,7 @@ else
                     @if (testcase.LinkedRequirements != null && testcase.LinkedRequirements.Any())
                     {
                         var requirementLinks = testcase.LinkedRequirements
-                            .Select(requirement => $"<a href=\"project/{ProjectId}/requirements/view/{requirement.Id}\">{requirement.Name}</a>")
+                            .Select(requirement => $"<a href=\"project/{ProjectStateService.ProjectId}/requirements/view/{requirement.Id}\">{requirement.Name}</a>")
                             .ToList();
 
                         @((MarkupString)string.Join(", ", requirementLinks))
@@ -120,7 +120,7 @@ else
                     </RadzenBadge>
                 </Template>
             </RadzenDataGridColumn>
-            <IndexActions TItem="TestCases" EntityName="TestCases" ProjectId="ProjectId"/>
+            <IndexActions TItem="TestCases" EntityName="TestCases"/>
 
         </Columns>
 
@@ -133,7 +133,7 @@ else
 }
 
 @code {
-    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+    [Parameter] public int ProjectId { get; set; }
 
 
     private bool _isLoading = true;
@@ -154,7 +154,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         DataGridSettingsService.SetCurrentGridId(GridId);
-        (_testcases, _selectedTestCases) = await TestCasesModel.DisplayTestCasesIndexPage1(ProjectId);
+        (_testcases, _selectedTestCases) = await TestCasesModel.DisplayTestCasesIndexPage1();
         _isLoading = false;
     }
 

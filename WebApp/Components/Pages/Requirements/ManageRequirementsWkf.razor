@@ -11,7 +11,7 @@
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
         <RequirementsDialogCreate Title="@Loc["create.requirements"]"
-                                  OnRequirementCreated="@RefreshAssignedRequirementsFromDialog" ProjectId="ProjectId"/>
+                                  OnRequirementCreated="@RefreshAssignedRequirementsFromDialog"/>
         <RadzenButton Icon="list"
                       Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements", true))'/>
     </RadzenStack>
@@ -68,7 +68,7 @@
 </RadzenDropZoneContainer>
 
 @code {
-    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+    [Parameter] public int ProjectId { get; set; }
 
 
     private IList<Requirements>? _requirementsData = [];

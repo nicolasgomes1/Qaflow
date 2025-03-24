@@ -42,19 +42,18 @@
 @code {
     [Parameter] public string EntityName { get; set; } = string.Empty;
 
-    [EditorRequired] [Parameter] public int ProjectId { get; set; }
     /*
      * Component used for static pages No Modals
      */
 
     private void ViewItem(TItem item)
     {
-        NavigationManager.NavigateTo($"/project/{ProjectId}/{EntityName.ToLower()}/view/{GetId(item)}");
+        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}/view/{GetId(item)}");
     }
 
     private void EditItem(TItem item)
     {
-        NavigationManager.NavigateTo($"/project/{ProjectId}/{EntityName.ToLower()}/edit/{GetId(item)}");
+        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}/edit/{GetId(item)}");
     }
 
     private async Task DeleteItem(TItem item)
@@ -70,7 +69,7 @@
             await db.SaveChangesAsync();
         }
 
-        NavigationManager.NavigateTo($"/project/{ProjectId}/{EntityName.ToLower()}", true);
+        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}", true);
     }
 
     private int GetId(TItem item)
@@ -79,7 +78,7 @@
         if (prop is null) throw new InvalidOperationException("The item does not have an 'Id' property.");
         return (int)(prop.GetValue(item) ?? 0);
     }
-
+    
     private bool IsArchived(TItem item)
     {
         var prop = typeof(TItem).GetProperty("ArchivedStatus");

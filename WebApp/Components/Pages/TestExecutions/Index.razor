@@ -4,28 +4,25 @@
 <RadzenTabs @bind-SelectedIndex="@_selectedIndex">
     <Tabs>
         <RadzenTabsItem Text="All">
-            <TestExecutionTable OnInitializedMethod="TestExecutionModel.DisplayTestExecutionIndexPage"
-                                ProjectId="ProjectId"/>
+            <TestExecutionTable OnInitializedMethod="TestExecutionModel.DisplayTestExecutionIndexPage"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Passed">
             <TestExecutionTable
-                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Passed)"
-                ProjectId="ProjectId"/>
+                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Passed)"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Failed">
             <TestExecutionTable
-                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Failed)"
-                ProjectId="ProjectId"/>
+                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Failed)"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="No Runs">
             <TestExecutionTable
-                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.NotRun)"
-                ProjectId="ProjectId"/>
+                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.NotRun)"/>
         </RadzenTabsItem>
     </Tabs>
 </RadzenTabs>
 
 @code {
-    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+    [Parameter] public int ProjectId { get; set; }
+
     int _selectedIndex;
 }

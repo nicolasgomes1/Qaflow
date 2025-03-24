@@ -80,7 +80,7 @@ else
             </Tabs>
         </RadzenTabs>
 
-        <CreateEditActions EntityName="testplans" CreateEdit="Update" ProjectId="ProjectId"/>
+        <CreateEditActions EntityName="testplans" CreateEdit="Update"/>
 
     </RadzenTemplateForm>
 }
@@ -121,7 +121,7 @@ else
 
     private async Task UpdateTestPlan()
     {
-        await TestPlansModel.UpdateTestPlan2(Id, _uploadedFiles, ProjectId);
+        await TestPlansModel.UpdateTestPlan2(Id, _uploadedFiles);
         NavigationManager.NavigateTo($"project/{ProjectId}/testplans");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Plan with Id {_testPlans.Id} Updated Successfully");

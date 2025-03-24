@@ -55,7 +55,7 @@
                             <Template Context="testcases">
                                 <div class="btn-group">
                                     <RadzenButton Text="View"
-                                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases/view/{testcases.Id}", true))"
+                                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases/view/{testcases.Id}", true))"
                                                   Size="ButtonSize.Small"
                                                   Icon="visibility"/>
                                 </div>
@@ -68,13 +68,13 @@
     </Tabs>
 </RadzenTabs>
 
-<ViewEditActions EntityName="requirements" EntityId="_requirements.Id" ProjectId="ProjectId"/>
+<ViewEditActions EntityName="requirements" EntityId="_requirements.Id"/>
 
 
 @code {
     [Parameter] public int Id { get; set; }
 
-    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+    [Parameter] public int ProjectId { get; set; }
 
     private List<RequirementsFile>? Files { get; set; }
 

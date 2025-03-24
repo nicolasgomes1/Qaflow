@@ -12,7 +12,7 @@
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
         <TestCasesDialogCreate Title="@Loc["create.testcases"]"
-                               OnTestCaseCreated="@RefreshAssignedTestCasesFromDialog" ProjectId="ProjectId"/>
+                               OnTestCaseCreated="@RefreshAssignedTestCasesFromDialog"/>
         <RadzenButton Icon="list"
                       Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases", true))'/>
     </RadzenStack>
@@ -70,7 +70,7 @@
 </RadzenDropZoneContainer>
 
 @code {
-    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+    [Parameter] public int ProjectId { get; set; }
 
 
     private async Task RefreshAssignedTestCasesFromDialog()

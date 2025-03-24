@@ -34,8 +34,7 @@
                                             AllowFiltering="true"
                                             AllowVirtualization="true"
                                             Name="requirementsSpecification"/>
-                            <RadzenRequiredValidator Component="requirementsSpecification"
-                                                     Text="Requirements Specification is required"/>
+                            <RadzenRequiredValidator Component="requirementsSpecification" Text="Requirements Specification is required"/>
                         </div>
 
                         <div class="row mb-4">
@@ -102,7 +101,7 @@
         </Tabs>
     </RadzenTabs>
 
-    <CreateEditActions EntityName="requirements" CreateEdit="Create" ProjectId="ProjectId"/>
+    <CreateEditActions EntityName="requirements" CreateEdit="Create"/>
 </RadzenTemplateForm>
 
 @code {
@@ -118,7 +117,7 @@
 
     private Requirements _requirements = new();
     private readonly List<IBrowserFile>? _uploadedFiles = [];
-
+    
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();

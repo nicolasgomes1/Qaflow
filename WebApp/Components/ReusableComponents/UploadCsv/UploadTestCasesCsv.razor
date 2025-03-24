@@ -1,4 +1,3 @@
-@using Microsoft.CodeAnalysis
 <RadzenButton Icon="csv" Click="OpenFileUpload"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Upload test cases data from csv", TooltipPosition.Bottom))"
               MouseLeave="@AppTooltipService.HideTooltip"/>
@@ -12,8 +11,6 @@
     /// </summary>
     [Parameter]
     public EventCallback OnUploadCompleted { get; set; }
-
-    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     private async Task OpenFileUpload()
     {
@@ -55,7 +52,7 @@
         var csvlines = _fileContent.Split('\n').Skip(1);
         _totalLines = csvlines.Count();
 
-        _testCases = await TestCasesModel.GetTestCasesToValidateAgainstCsv(ProjectId);
+        _testCases = await TestCasesModel.GetTestCasesToValidateAgainstCsv();
 
         _currentLine = 0;
         _validLines = 0;
@@ -99,7 +96,7 @@
                 continue;
             }
 
-            await TestCasesModel.AddTestCasesFromCsv(testCases, ProjectId);
+            await TestCasesModel.AddTestCasesFromCsv(testCases);
             _validLines++;
         }
 

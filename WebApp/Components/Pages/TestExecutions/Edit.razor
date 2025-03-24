@@ -63,7 +63,7 @@ else
             <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
         </div>
 
-        <CreateEditActions EntityName="testexecution" CreateEdit="Update" ProjectId="ProjectId"/>
+        <CreateEditActions EntityName="testexecution" CreateEdit="Update"/>
     </RadzenTemplateForm>
 }
 
@@ -88,7 +88,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _testPlansList = await TestPlansModel.GetallTestPlansWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
+        _testPlansList = await TestPlansModel.GetallTestPlansWithWorkflowStatus(WorkflowStatus.Completed);
         _usersList = await UserService.GetUsersList();
 
         _testExecution = await TestExecutionModel.GetTestExecutionData(Id);

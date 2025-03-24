@@ -37,7 +37,7 @@ else
 
         <HeaderTemplate>
             <RadzenButton Text="Requirement"
-                          Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements/create", true)'
+                          Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/requirements/create", true)'
                           Size="ButtonSize.Medium"
                           Icon="add"
                           data-testid="create_requirement"
@@ -119,7 +119,7 @@ else
             </RadzenDataGridColumn>
 
             <!-- Action Buttons column -->
-            <IndexActions TItem="Requirements" EntityName="Requirements" ProjectId="ProjectId"/>
+            <IndexActions TItem="Requirements" EntityName="Requirements"/>
         </Columns>
 
         <!-- Footer Template for the Totals Row -->

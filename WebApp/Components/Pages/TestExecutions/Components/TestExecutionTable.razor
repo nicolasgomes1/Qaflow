@@ -86,14 +86,13 @@
             </Template>
         </RadzenDataGridColumn>
 
-        <IndexActions TItem="TestExecution" EntityName="TestExecution" ProjectId="ProjectId"/>
+        <IndexActions TItem="TestExecution" EntityName="TestExecution"/>
 
     </Columns>
 </RadzenDataGrid>
 
 @code {
     [Parameter] public Func<Task>? OnInitializedMethod { get; set; }
-    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     //   private BadgeStyle _badgeStyle = new();
 
