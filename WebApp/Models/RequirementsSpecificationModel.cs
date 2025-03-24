@@ -53,4 +53,26 @@ public class RequirementsSpecificationModel(
                     throw new Exception("No requirements Specification Found");
         return found;
     }
+
+    public async Task DeleteRequirementsSpecification(int requirementSpecificationId)
+    {
+        var logger = LoggerService.Logger;
+        var found = await _dbContext.RequirementsSpecification.FindAsync(requirementSpecificationId);
+        if (found == null) throw new Exception();
+        var hasReq = found.LinkedRequirements.Any();
+        if (!hasReq)
+        {
+            _dbContext.Remove(found);
+            await _dbContext.SaveChangesAsync();
+            logger.LogInformation("Removed Record");
+
+        }
+
+        if (hasReq)
+        {
+            logger.LogInformation("Can't remove record has it has linekd requirements"); 
+        }
+
+
+    }
 }
