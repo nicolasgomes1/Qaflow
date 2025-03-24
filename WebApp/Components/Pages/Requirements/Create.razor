@@ -121,12 +121,12 @@
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
-        _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(_requirements);
+        _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
     }
 
     private async Task CreateNewRequirement()
     {
-        _requirements.RequirementsSpecification = _requirementsSpecificationList.First(rs => rs.Id == _selectedRequirementSpecificationId);
+        _requirements.RequirementsSpecification = _requirementsSpecificationList.First(rs => rs.Id == _selectedRequirementSpecificationId && rs.ProjectsId == ProjectId);
         _requirements = await RequirementsModel.AddRequirement(_requirements, _uploadedFiles);
         NavigationManager.NavigateTo($"project/{ProjectId}/requirements");
 

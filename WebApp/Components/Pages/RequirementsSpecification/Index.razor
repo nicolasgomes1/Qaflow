@@ -72,7 +72,19 @@
 
         if (confirmed is true)
         {
-            await RequirementsSpecificationModel.DeleteRequirementsSpecification(item);
+            var hey = await RequirementsSpecificationModel.DeleteRequirementsSpecification(item);
+
+            switch (hey)
+            {
+                case true:
+                    await FormNotificationService.NotifyError("Can't delete Requirements Specification has it has children");
+                    break;
+                case false:
+                    await FormNotificationService.NotifySuccess($"Requirements Specification with Id {item} was successfully deleted");
+                    break;
+            }
+            
+
             await RefreshPage();
         }
     }

@@ -54,25 +54,29 @@ public class RequirementsSpecificationModel(
         return found;
     }
 
-    public async Task DeleteRequirementsSpecification(int requirementSpecificationId)
+    public async Task<bool> DeleteRequirementsSpecification(int requirementSpecificationId)
     {
+        var noExceptions = 0;
+        
         var logger = LoggerService.Logger;
         var found = await _dbContext.RequirementsSpecification.FindAsync(requirementSpecificationId);
         if (found == null) throw new Exception();
         var hasReq = found.LinkedRequirements.Any();
-        if (!hasReq)
+        switch (hasReq)
         {
-            _dbContext.Remove(found);
-            await _dbContext.SaveChangesAsync();
-            logger.LogInformation("Removed Record");
-
+            case false:
+                noExceptions = 0;
+                _dbContext.Remove(found);
+                await _dbContext.SaveChangesAsync();
+                logger.LogInformation("Removed Record");
+                break;
+            case true:
+                noExceptions = 1;
+                logger.LogInformation("Can't remove record has it has linked requirements");
+                break;
         }
 
-        if (hasReq)
-        {
-            logger.LogInformation("Can't remove record has it has linekd requirements"); 
-        }
-
-
+        if (noExceptions == 0) return false;
+        return true;
     }
 }

@@ -131,10 +131,10 @@ public class RequirementsModel(
     }
 
     public async Task<List<RequirementsSpecification>> GetAssociatedRequirementsSpecifications(
-        Requirements requirements)
+        int projectId)
     {
         var requirementsSpecifications =
-            await _dbContext.RequirementsSpecification.ToListAsync();
+            await _dbContext.RequirementsSpecification.Where(p => p.ProjectsId == projectId).ToListAsync();
         return requirementsSpecifications;
     }
 }
