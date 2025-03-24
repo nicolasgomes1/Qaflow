@@ -72,7 +72,7 @@
 
 @code {
     [Parameter] public int Id { get; set; }
-    [Parameter] public int ProjectId { get; set; }
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     private IEnumerable<TestExecution> _testexecution = [];
 
