@@ -16,6 +16,7 @@ public class RequirementsModelTest : TestBase
     private readonly RequirementsModel _rm;
     private readonly ProjectStateService _ps;
     private readonly ProjectModel _pm;
+
     public RequirementsModelTest(TestFixture fixture) : base(fixture)
     {
         _fixture = fixture;
@@ -25,9 +26,8 @@ public class RequirementsModelTest : TestBase
         _rm = _fixture.ServiceProvider.GetRequiredService<RequirementsModel>();
         _ps = _fixture.ServiceProvider.GetRequiredService<ProjectStateService>();
         _pm = _fixture.ServiceProvider.GetRequiredService<ProjectModel>();
-
     }
-    
+
     private async Task<int> GetRequirementCountAsync()
     {
         return await _db.Requirements.CountAsync();
@@ -47,13 +47,13 @@ public class RequirementsModelTest : TestBase
         _ps.SetProjectId(project.Id);
         return project;
     }
-    
+
     [Fact]
     public async Task RequirementsModel_AddRequirement()
     {
         var project = await CreateAndSetProject();
-        
-        var newRequirement = new Data.Requirements
+
+        var newRequirement = new Requirements
         {
             Name = "sample",
             Description = "Description",
@@ -62,11 +62,10 @@ public class RequirementsModelTest : TestBase
 
         var initialCount = await GetRequirementCountAsync();
 
-        await _rm.AddRequirement(newRequirement, null);
+        await _rm.AddRequirement(newRequirement, null, project.Id);
 
         var finalCount = await GetRequirementCountAsync();
         Assert.Equal(initialCount + 1, finalCount);
-        
     }
 
     [Fact]
@@ -75,14 +74,14 @@ public class RequirementsModelTest : TestBase
         var project = await CreateAndSetProject();
 
 
-        var newRequirement = new Data.Requirements
+        var newRequirement = new Requirements
         {
             Name = "original",
             Description = "original description",
             ProjectsId = project.Id
         };
 
-        await _rm.AddRequirement(newRequirement, null);
+        await _rm.AddRequirement(newRequirement, null, project.Id);
 
         newRequirement.Name = "updated";
         newRequirement.Description = "updated description";
@@ -93,5 +92,4 @@ public class RequirementsModelTest : TestBase
         Assert.Equal("updated", updatedRequirement.Name);
         Assert.Equal("updated description", updatedRequirement.Description);
     }
-    
 }

@@ -10,16 +10,8 @@
                 <RequirementsSpecificationDialogView Id="GetId(item)"/>
                 <RequirementsSpecificationDialogEdit Id="GetId(item)"
                                                      OnRequirementSpecificationUpdated="OnRequirementSpecificationUpdated"/>
-                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: red;"
-                              data-testid="delete"
-                              Disabled="@IsArchived(item)"
-                              MouseEnter="@(args =>
-                                          {
-                                              if (!IsArchived(item)) AppTooltipService.ShowTooltip(args, $"Delete {EntityName}");
-                                          })"
-                              MouseLeave="@AppTooltipService.HideTooltip"
-                              Click="@(() => DeleteItem(item))"
-                              Size="ButtonSize.ExtraSmall"/>
+                <RequirementsSpecificationDialogDelete Id="GetId(item)"
+                                                       OnRequirementDeleted="OnRequirementSpecificationUpdated"/>
             </div>
         </Template>
     </RadzenDataGridColumn>
@@ -32,22 +24,6 @@
     [EditorRequired] [Parameter] public EventCallback OnRequirementSpecificationUpdated { get; set; }
 
 
-    private async Task DeleteItem(TItem item)
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-
-        var confirmed = await DialogService.Confirm($"Are you sure you want to delete this {EntityName}?", $"Delete {EntityName}");
-
-        if (confirmed is true)
-        {
-            if (item is null) throw new Exception($"{item} is null");
-            db.Remove(item);
-            await db.SaveChangesAsync();
-        }
-
-        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/{EntityName.ToLower()}", true);
-    }
-
     private int GetId(TItem item)
     {
         var prop = typeof(TItem).GetProperty("Id");
@@ -55,7 +31,6 @@
         return (int)(prop.GetValue(item) ?? 0);
     }
 
- 
 
     private bool IsArchived(TItem item)
     {

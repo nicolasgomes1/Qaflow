@@ -1,0 +1,37 @@
+<RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: red;"
+              data-testid="delete"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Delete {nameof(RequirementsSpecification)}"))"
+              MouseLeave="@AppTooltipService.HideTooltip"
+              Click="@(() => DeleteItem(Id))"
+              Size="ButtonSize.ExtraSmall"/>
+
+@code {
+    [EditorRequired] [Parameter] public int Id { get; set; }
+    [EditorRequired] [Parameter] public EventCallback OnRequirementDeleted { get; set; }
+
+    private async Task DeleteItem(int item)
+    {
+        var confirmed = await DialogService.Confirm($"Are you sure you want to delete this {nameof(RequirementsSpecification)}?", $"Delete {nameof(RequirementsSpecification)}");
+
+        if (confirmed is true)
+        {
+            var hey = await RequirementsSpecificationModel.DeleteRequirementsSpecification(item);
+
+            if (OnRequirementDeleted.HasDelegate)
+            {
+                await OnRequirementDeleted.InvokeAsync();
+            }
+            
+            switch (hey)
+            {
+                case true:
+                    await FormNotificationService.NotifyError("Can't delete Requirements Specification has it has children");
+                    break;
+                case false:
+                    await FormNotificationService.NotifySuccess($"Requirements Specification with Id {item} was successfully deleted");
+                    break;
+            }
+        }
+    }
+
+}

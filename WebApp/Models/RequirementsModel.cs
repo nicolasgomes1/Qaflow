@@ -67,11 +67,11 @@ public class RequirementsModel(
         return requirement;
     }
 
-    public async Task<Requirements> AddRequirement(Requirements requirement, List<IBrowserFile>? files)
+    public async Task<Requirements> AddRequirement(Requirements requirement, List<IBrowserFile>? files, int projectId)
     {
         // First, create the requirement
         _dbContext.Requirements.Add(requirement);
-        requirement.ProjectsId = projectSateService.GetProjectIdAsync().Result;
+        requirement.ProjectsId = projectId;
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         UpdateArchivedStatus(requirement);
         await _dbContext.SaveChangesAsync();
