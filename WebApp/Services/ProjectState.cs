@@ -26,19 +26,19 @@ public class ProjectState
     }
 
     // Retrieve the current project ID from local storage
-    public async Task<string> GetCurrentProjectAsync()
+    public async Task<int> GetCurrentProjectAsync()
     {
         if (_currentProject.HasValue)
-            return _currentProject.Value.ToString(); // Return cached value if available
+            return _currentProject.Value; // Return cached value if available
 
         var storedValue = await _jsRuntime.InvokeAsync<string>("window.localStorage.getItem", StorageKey);
         if (int.TryParse(storedValue, out var projectId))
         {
             _currentProject = projectId;
-            return projectId.ToString();
+            return projectId;
         }
 
-        return 0.ToString(); // Default to 0 if nothing is stored
+        return 0; // Default to 0 if nothing is stored
     }
 
 
