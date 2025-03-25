@@ -134,7 +134,8 @@ public class RequirementsModel(
         int projectId)
     {
         var requirementsSpecifications =
-            await _dbContext.RequirementsSpecification.Where(p => p.ProjectsId == projectId).ToListAsync();
+            await _dbContext.RequirementsSpecification.Where(p => p.ProjectsId == projectId)
+                .ToListAsync() ?? new List<RequirementsSpecification>();
         return requirementsSpecifications;
     }
 }
