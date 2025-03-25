@@ -14,14 +14,14 @@
 
         void ReturnToHome()
         {
-            if (ProjectStateService.ProjectId is 0)
+            if (ProjectId is 0)
             {
                 NavigationManager.NavigateTo("/");
                 FormNotificationService.NotifyInfo("Returning to the Hub Home Page as no Project is selected");
                 return;
             }
 
-            NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}");
+            NavigationManager.NavigateTo($"/project/{ProjectId}");
             FormNotificationService.NotifyInfo("Returning to Home Page");
         }
 
@@ -81,7 +81,7 @@
                     </RadzenMenuItem>
                 </RadzenMenu>
             }
-            <RadzenMenuItem Click=GoToProjects Text="@ProjectStateService.ProjectId.ToString()" Icon="hub"
+            <RadzenMenuItem Click=GoToProjects Text="@ProjectId.ToString()" Icon="hub"
                             IconColor="orange"
                             MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Return to Hub", TooltipPosition.Bottom))"
                             MouseLeave="@AppTooltipService.HideTooltip"/>
@@ -105,8 +105,19 @@
     private bool _isAdmin; // Flag to check if the user is an Admin
     private bool _isUser; // Flag to check if the user is a User
     private bool _isManager; // Flag to check if the user is a Manager
+    private bool _firstRender = true; // Track first render
 
     [Parameter] public int ProjectId { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _firstRender = false; // Set to false so it doesn't run again
+            ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
+            StateHasChanged(); // Ensure UI updates
+        }
+    }
 
 
     protected override async Task OnInitializedAsync()
@@ -115,8 +126,9 @@
         NavigationManager.LocationChanged += OnLocationChanged;
     }
 
-    void GoToProjects()
+    async Task GoToProjects()
     {
+        await ProjectState.ResetCurrentProjectAsync();
         ProjectStateService.ClearProjectId();
         NavigationManager.NavigateTo("/", true);
     }
