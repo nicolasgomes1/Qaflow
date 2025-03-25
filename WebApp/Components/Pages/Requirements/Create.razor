@@ -34,7 +34,8 @@
                                             AllowFiltering="true"
                                             AllowVirtualization="true"
                                             Name="requirementsSpecification"/>
-                            <RadzenRequiredValidator Component="requirementsSpecification" Text="Requirements Specification is required"/>
+                            <RadzenRequiredValidator Component="requirementsSpecification"
+                                                     Text="Requirements Specification is required"/>
                         </div>
 
                         <div class="row mb-4">
@@ -117,7 +118,7 @@
 
     private Requirements _requirements = new();
     private readonly List<IBrowserFile>? _uploadedFiles = [];
-    
+
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
@@ -126,7 +127,7 @@
 
     private async Task CreateNewRequirement()
     {
-        _requirements.RequirementsSpecification = _requirementsSpecificationList.First(rs => rs.Id == _selectedRequirementSpecificationId && rs.ProjectsId == ProjectId);
+        _requirements.RequirementsSpecification = _requirementsSpecificationList.FirstOrDefault(rs => rs.Id == _selectedRequirementSpecificationId && rs.ProjectsId == ProjectId);
         _requirements = await RequirementsModel.AddRequirement(_requirements, _uploadedFiles);
         NavigationManager.NavigateTo($"project/{ProjectId}/requirements");
 
