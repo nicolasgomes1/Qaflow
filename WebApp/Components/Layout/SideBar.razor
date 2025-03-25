@@ -3,7 +3,7 @@
 
 @rendermode InteractiveServer
 
-@if (_isAuthenticated && ProjectStateService.ProjectId != 0)
+@if (_isAuthenticated && ProjectId != 0)
 {
     <RadzenSidebar Responsive="false" Style="width: max-content">
         <RadzenPanelMenu
@@ -50,15 +50,25 @@
 @code {
     private bool _isAuthenticated;
     bool _sidebarExpanded = false;
+    private bool _firstRender = true; // Track first render
 
     [Parameter] public int ProjectId { get; set; } // Capture projectId from the URL
 
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _firstRender = false; // Set to false so it doesn't run again
+            ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
+            StateHasChanged(); // Ensure UI updates
+        }
+    }
+    
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _isAuthenticated = authState.User.Identity?.IsAuthenticated ?? true;
-        ProjectId = ProjectStateService.ProjectId;
     }
 
     void ShowTooltip(ElementReference elementReference, string message, TooltipOptions options)
