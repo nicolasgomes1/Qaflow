@@ -113,8 +113,9 @@
         NavigationManager.NavigateTo("/projects/create", true);
     }
 
-    void GoToProject(int projectId)
+    async Task GoToProject(int projectId)
     {
+        await ProjectState.SetCurrentProjectAsync(projectId);
         NavigationManager.NavigateTo($"/project/{projectId}", true);
         ProjectStateService.SetProjectId(projectId);
     }

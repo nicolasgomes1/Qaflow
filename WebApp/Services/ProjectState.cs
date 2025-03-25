@@ -1,17 +1,6 @@
 namespace WebApp.Services;
 
-using System.Security.Claims;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.JSInterop;
-using System.Threading;
 using System.Threading.Tasks;
 
 public class ProjectState
