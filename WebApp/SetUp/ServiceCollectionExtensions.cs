@@ -1,4 +1,5 @@
 using WebApp.Api;
+using WebApp.Api.Dto;
 using WebApp.Data;
 using WebApp.Models;
 using WebApp.Services;
@@ -19,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<EnumService>();
         services.AddScoped<FormNotificationService>();
         services.AddSingleton<ProjectStateService>();
+        services.AddScoped<ProjectState>();
         services.AddScoped<StylesService>();
         services.AddScoped<TestCaseExecutionTimerService>();
         services.AddScoped<TestExecutionTimerService>();
