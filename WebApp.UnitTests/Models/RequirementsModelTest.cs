@@ -86,7 +86,7 @@ public class RequirementsModelTest : TestBase
         newRequirement.Name = "updated";
         newRequirement.Description = "updated description";
 
-        await _rm.UpdateRequirement(newRequirement.Id, null);
+        await _rm.UpdateRequirement(newRequirement.Id, null, project.Id);
 
         var updatedRequirement = await _rm.GetRequirementByIdAsync(newRequirement.Id);
         Assert.Equal("updated", updatedRequirement.Name);

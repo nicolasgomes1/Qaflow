@@ -129,7 +129,7 @@
     async Task GoToProjects()
     {
         await ProjectState.ResetCurrentProjectAsync();
-        ProjectStateService.ClearProjectId();
+        //  ProjectStateService.ClearProjectId();
         NavigationManager.NavigateTo("/", true);
     }
 

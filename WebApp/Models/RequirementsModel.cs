@@ -11,8 +11,7 @@ namespace WebApp.Models;
 public class RequirementsModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory,
     RequirementsFilesModel requirementsFilesModel,
-    UserService userService,
-    ProjectStateService projectSateService)
+    UserService userService)
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
 
@@ -43,10 +42,11 @@ public class RequirementsModel(
     /// Returns a list of requirements for the project with default workflow status completed
     /// </summary>
     /// <returns></returns>
-    public async Task<List<Requirements>> GetRequirementsWithWorkflowStatus(WorkflowStatus workflowStatus)
+    public async Task<List<Requirements>> GetRequirementsWithWorkflowStatus(WorkflowStatus workflowStatus,
+        int projectId)
     {
         return await _dbContext.Requirements
-            .Where(r => r.ProjectsId == projectSateService.GetProjectIdAsync().Result)
+            .Where(r => r.ProjectsId == projectId)
             .Where(r => r.WorkflowStatus == workflowStatus)
             .ToListAsync();
     }
@@ -77,12 +77,13 @@ public class RequirementsModel(
         await _dbContext.SaveChangesAsync();
 
         // If there are files, attempt to save them
-        if (files != null && files.Count != 0) await requirementsFilesModel.SaveFilesToDb(files, requirement.Id);
+        if (files != null && files.Count != 0)
+            await requirementsFilesModel.SaveFilesToDb(files, requirement.Id, projectId);
 
         return requirement;
     }
 
-    public async Task UpdateRequirement(int requirementId, List<IBrowserFile>? files)
+    public async Task UpdateRequirement(int requirementId, List<IBrowserFile>? files, int projectId)
     {
         var requirement = await _dbContext.Requirements.FindAsync(requirementId);
         if (requirement == null) throw new Exception("Requirement not found");
@@ -96,7 +97,8 @@ public class RequirementsModel(
         await _dbContext.SaveChangesAsync();
 
         // If there are files, attempt to save them
-        if (files != null && files.Count != 0) await requirementsFilesModel.SaveFilesToDb(files, requirementId);
+        if (files != null && files.Count != 0)
+            await requirementsFilesModel.SaveFilesToDb(files, requirementId, projectId);
     }
 
     /// <summary>
@@ -109,22 +111,21 @@ public class RequirementsModel(
             requirement.ArchivedStatus = ArchivedStatus.Archived;
     }
 
-    public async Task<List<Requirements>> GetRequirementsToValidateAgainstCsv()
+    public async Task<List<Requirements>> GetRequirementsToValidateAgainstCsv(int projectId)
     {
         return await _dbContext.Requirements
-            .Where(r => r.ProjectsId == projectSateService.GetProjectIdAsync().Result)
+            .Where(r => r.ProjectsId == projectId)
             .ToListAsync();
     }
 
-    public async Task<Requirements> AddRequirementFromCsv(Requirements requirement)
+    public async Task<Requirements> AddRequirementFromCsv(Requirements requirement, int projectId)
     {
         _dbContext.Requirements.Add(requirement);
-        requirement.ProjectsId = projectSateService.GetProjectIdAsync().Result;
+        requirement.ProjectsId = projectId;
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         requirement.WorkflowStatus = WorkflowStatus.New;
         requirement.CreatedAt = DateTime.UtcNow;
         requirement.ModifiedAt = DateTime.UtcNow;
-        requirement.ProjectsId = projectSateService.GetProjectIdAsync().Result;
         requirement.ArchivedStatus = ArchivedStatus.Active;
         await _dbContext.SaveChangesAsync();
         return requirement;

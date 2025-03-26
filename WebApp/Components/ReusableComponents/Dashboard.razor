@@ -3,14 +3,21 @@
         <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
                      AlignItems="AlignItems.Center">
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
-                <RadzenButton Text="@Loc["Requirements"]"
-                              data-testid="d_requirements"
-                              ButtonStyle="ButtonStyle.Warning"
-                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements", true))"/>
-                <RadzenButton Text="@Loc["RequirementsSpecification"]"
-                              data-testid="d_requirementsSpecification"
-                              ButtonStyle="ButtonStyle.Warning"
-                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirementsspecification", true))"/>
+                <RadzenButton
+                    data-testid="d_requirementsSpecification"
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Requirements Specifications", TooltipPosition.Right))"
+                    MouseLeave="@AppTooltipService.HideTooltip"
+                    Icon="library_books"
+                    ButtonStyle="ButtonStyle.Warning"
+                    Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirementsspecification", true))"/>
+                <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
+                <RadzenButton
+                    data-testid="d_requirements"
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Requirements", TooltipPosition.Right))"
+                    MouseLeave="@AppTooltipService.HideTooltip"
+                    ButtonStyle="ButtonStyle.Warning"
+                    Icon="assignment"
+                    Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements", true))"/>
             </RadzenStack>
 
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">

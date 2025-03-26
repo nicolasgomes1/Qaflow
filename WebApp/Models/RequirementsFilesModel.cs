@@ -6,8 +6,7 @@ using WebApp.Services;
 namespace WebApp.Models;
 
 public class RequirementsFilesModel(
-    IDbContextFactory<ApplicationDbContext> dbContextFactory,
-    ProjectStateService projectSateService)
+    IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
 
@@ -15,7 +14,7 @@ public class RequirementsFilesModel(
 
     public List<RequirementsFile> ExistingFiles = [];
 
-    public async Task SaveFilesToDb(List<IBrowserFile>? files, int requirementId)
+    public async Task SaveFilesToDb(List<IBrowserFile>? files, int requirementId, int projectId)
     {
         if (files != null && files.Count != 0)
         {
@@ -25,17 +24,14 @@ public class RequirementsFilesModel(
                 await file.OpenReadStream().CopyToAsync(memoryStream);
 
                 //Validation at server side
-                if (file.Size > MaxFileSize)
-                {
-                    throw new Exception("File size is too large. Maximum file size is 100KB");
-                }
+                if (file.Size > MaxFileSize) throw new Exception("File size is too large. Maximum file size is 100KB");
                 var requirementsFile = new RequirementsFile
                 {
                     FileName = file.Name,
                     FileContent = memoryStream.ToArray(),
                     UploadedAt = DateTime.UtcNow,
                     RequirementsId = requirementId,
-                    ProjectsId = projectSateService.ProjectId
+                    ProjectsId = projectId
                 };
 
                 _dbContext.RequirementsFiles.Add(requirementsFile);
@@ -52,7 +48,8 @@ public class RequirementsFilesModel(
     /// <returns></returns>
     public async Task<List<RequirementsFile>> GetFilesByRequirementId(int requirementId)
     {
-        ExistingFiles = await _dbContext.RequirementsFiles.Where(rf => rf.RequirementsId == requirementId).ToListAsync();
+        ExistingFiles = await _dbContext.RequirementsFiles.Where(rf => rf.RequirementsId == requirementId)
+            .ToListAsync();
         return ExistingFiles;
     }
 }

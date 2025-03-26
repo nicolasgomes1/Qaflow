@@ -13,6 +13,8 @@
     [Parameter]
     public EventCallback OnUploadCompleted { get; set; }
 
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+
     private async Task OpenFileUpload()
     {
         await DialogService.OpenAsync($"Import {nameof(Requirements)} from CSV", ds =>
@@ -53,7 +55,7 @@
         var csvlines = _fileContent.Split('\n').Skip(1);
         _totalLines = csvlines.Count();
 
-        _requirements = await RequirementsModel.GetRequirementsToValidateAgainstCsv();
+        _requirements = await RequirementsModel.GetRequirementsToValidateAgainstCsv(ProjectId);
 
         _currentLine = 0;
         _validLines = 0;
@@ -95,7 +97,7 @@
                 continue;
             }
 
-            await RequirementsModel.AddRequirementFromCsv(requirements);
+            await RequirementsModel.AddRequirementFromCsv(requirements, ProjectId);
             _validLines++;
         }
 

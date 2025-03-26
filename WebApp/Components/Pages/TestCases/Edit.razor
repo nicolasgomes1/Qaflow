@@ -136,7 +136,7 @@ else
     {
         _usersList = await UserService.GetUsersList();
 
-        _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed);
+        _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
         _testCases = await TestCasesModel.GetTestCaseData(Id);
 
         await TestCasesModel.GetAssociatedRequirements(_testCases);
@@ -163,7 +163,6 @@ else
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Case with Id {_testCases.Id} Updated Successfully");
     }
-
 
 
 }
