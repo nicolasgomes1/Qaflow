@@ -93,7 +93,7 @@
 </RadzenTree>
 
 @code {
-
+    [Parameter] public int ProjectId { get; set; }
 
     private IEnumerable<Projects> _projects = new List<Projects>();
     private IEnumerable<TestCases> _testCases = new List<TestCases>();
@@ -103,7 +103,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _projects = await ProjectModel.GetProjectsData(); // Ensure this fetches both Requirements and TestPlans
+        _projects = await ProjectModel.GetProjectsData(ProjectId); // Ensure this fetches both Requirements and TestPlans
         _testCases = await GetTestCases(); // Ensure this fetches both TestCases and TestPlans
         _testPlans = await GetTestPlans(); // Ensure this fetches both TestPlans and TestCases
     }
@@ -113,7 +113,7 @@
         await using var db = await DbContext.CreateDbContextAsync();
         return await db.TestCases
             .Include(tc => tc.TestPlans)
-            .Where(p => p.ProjectsId == ProjectStateService.ProjectId)
+            .Where(p => p.ProjectsId == ProjectId)
             .ToListAsync();
     }
 
@@ -122,7 +122,7 @@
         await using var db = await DbContext.CreateDbContextAsync();
         return await db.TestPlans
             .Include(tp => tp.LinkedTestCases)
-            .Where(p => p.ProjectsId == ProjectStateService.ProjectId)
+            .Where(p => p.ProjectsId == ProjectId)
             .ToListAsync();
     }
 

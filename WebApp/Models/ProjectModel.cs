@@ -85,14 +85,12 @@ public class ProjectModel
             .Where(p => p.Id == projectId) // Ensure filtering is done early
             .AsSplitQuery() // Helps optimize loading related data
             .Include(p => p.TestPlans)
-                .ThenInclude(tp => tp.LinkedTestCases)
+            .ThenInclude(tp => tp.LinkedTestCases)
             .ToListAsync();
     }
 
-    
-    
 
-    public async Task<List<Projects>> GetProjectsData()
+    public async Task<List<Projects>> GetProjectsData(int projectId)
     {
         // Check if ProjectId is set
         if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
@@ -104,7 +102,7 @@ public class ProjectModel
             .ThenInclude(r => r.LinkedTestCases)
             .Include(p => p.TestPlans)
             .ThenInclude(r => r.LinkedTestCases)
-            .Where(p => p.Id == _projectStateService.ProjectId) // Filter by ProjectId
+            .Where(p => p.Id == projectId) // Filter by ProjectId
             .ToListAsync();
     }
 

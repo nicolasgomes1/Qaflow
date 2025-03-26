@@ -52,7 +52,7 @@
     bool _sidebarExpanded = false;
     private bool _firstRender = true; // Track first render
 
-    [Parameter] public int ProjectId { get; set; } // Capture projectId from the URL
+    private int ProjectId { get; set; } // Capture projectId from the URL
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -64,7 +64,7 @@
             StateHasChanged(); // Ensure UI updates
         }
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();

@@ -1,17 +1,22 @@
 @inject DialogService DialogService
 
 <div style="position: fixed; bottom: 60px; right: 10px; z-index: 1000;">
-    <RadzenButton Icon="menu" ButtonStyle="ButtonStyle.Secondary" Click="@OpenSideDialog"/>
+    <RadzenButton Icon="menu" ButtonStyle="ButtonStyle.Secondary" Click="@(() => OpenSideDialog(ProjectId))"/>
 </div>
 
 @code {
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
-    async Task OpenSideDialog()
+    async Task OpenSideDialog(int projectId)
     {
         // Hardcoding options for right position, mask enabled, and close on overlay click
         await DialogService.OpenSideAsync<ProjectTreeOverview>(
             "Side Panel",
-            options: new SideDialogOptions
+            new Dictionary<string, object>
+            {
+                { "ProjectId", projectId }
+            },
+            new SideDialogOptions
             {
                 CloseDialogOnOverlayClick = true,
                 Position = DialogPosition.Right,
@@ -19,4 +24,7 @@
             });
     }
 
+
 }
+
+
