@@ -50,7 +50,6 @@
 @code {
     private bool _isAuthenticated;
     bool _sidebarExpanded = false;
-    private bool _firstRender = true; // Track first render
 
     private int ProjectId { get; set; } // Capture projectId from the URL
 
@@ -59,7 +58,6 @@
     {
         if (firstRender)
         {
-            _firstRender = false; // Set to false so it doesn't run again
             ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
             StateHasChanged(); // Ensure UI updates
         }

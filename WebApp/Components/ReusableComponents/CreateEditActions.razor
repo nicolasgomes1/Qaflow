@@ -30,13 +30,10 @@
 
     private int _projectId;
     
-    bool _firstRender = true; // Track first render
-    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _firstRender = false; // Set to false so it doesn't run again
             _projectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
             StateHasChanged(); // Ensure UI updates
         }

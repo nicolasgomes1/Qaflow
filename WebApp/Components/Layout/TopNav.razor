@@ -105,15 +105,12 @@
     private bool _isAdmin; // Flag to check if the user is an Admin
     private bool _isUser; // Flag to check if the user is a User
     private bool _isManager; // Flag to check if the user is a Manager
-    private bool _firstRender = true; // Track first render
-
     [Parameter] public int ProjectId { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _firstRender = false; // Set to false so it doesn't run again
             ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
             StateHasChanged(); // Ensure UI updates
         }
