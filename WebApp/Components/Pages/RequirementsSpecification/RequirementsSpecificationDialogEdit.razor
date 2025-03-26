@@ -4,6 +4,7 @@
 <RadzenButton Icon="edit"
               Disabled="@IsDisabled"
               Size="ButtonSize.ExtraSmall"
+              data-testid="edit"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Edit {nameof(RequirementsSpecification)}"))"
               MouseLeave="@AppTooltipService.HideTooltip"
               ButtonStyle="ButtonStyle.Light" Click="@EditInlineDialog" Style="color: green;"/>

@@ -1,6 +1,7 @@
 <RadzenButton Icon="visibility"
               Disabled="@IsDisabled"
               Size="ButtonSize.ExtraSmall"
+              data-testid="view"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"View {nameof(RequirementsSpecification)}"))"
               ButtonStyle="ButtonStyle.Light" Click="@ViewInlineDialog" Style="color: blue;"/>
 
