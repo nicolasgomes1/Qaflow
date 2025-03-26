@@ -12,11 +12,16 @@
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
                 @bind-Value="@_selectedRequirementsSpecifications"
+                @ref="_dataGrid"
                 AllowVirtualization="true">
 
     <HeaderTemplate>
         <RequirementsSpecificationDialogCreate Title="Requirement Specification" ProjectId="ProjectId"
                                                OnRequirementCreated="() => RefreshPage()"/>
+        <DeleteallDataForModel EntityName="@(nameof(RequirementsSpecification))"
+                               EntityList="_requirementsSpecification"/>
+        <ExportGridDataCsv Grid="@_dataGrid"/>
+
     </HeaderTemplate>
 
     <Columns>
@@ -30,13 +35,10 @@
         <RadzenDataGridColumn Property="@nameof(RequirementsSpecification.LinkedRequirements)"
                               Title="Associated Requirements"
                               Sortable="false"
-                              Filterable="false"
+                              Filterable="true"
                               Width="auto">
             <Template Context="requirement">
-                @foreach (var req in requirement.LinkedRequirements)
-                {
-                    <a>@req.Name</a>
-                }
+                @string.Join(", ", requirement.LinkedRequirements.Select(req => req.Name))
             </Template>
         </RadzenDataGridColumn>
 
@@ -54,6 +56,7 @@
 
     private IList<RequirementsSpecification> _selectedRequirementsSpecifications = [];
     private IEnumerable<RequirementsSpecification> _requirementsSpecification = [];
+    private RadzenDataGrid<RequirementsSpecification> _dataGrid = new();
 
 
     protected override async Task OnInitializedAsync()
