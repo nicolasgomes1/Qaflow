@@ -89,12 +89,20 @@
             <RealTimeClock/>
 
             <div class="nav-item px-3">
-                <form action="/Account/Logout" method="post" style="display:inline;">
+                <form action="/Account/Logout" method="post" style="display:inline;" id="logoutForm">
                     <AntiforgeryToken/>
                     <input type="hidden" name="ReturnUrl"/>
                     <RadzenButton data-testid="logout" Icon="logout" ButtonType="ButtonType.Submit"/>
                 </form>
             </div>
+
+            <script>
+                document.getElementById("logoutForm").addEventListener("submit", function () {
+                    // Clear localStorage when the logout form is submitted
+                    localStorage.clear();
+                });
+            </script>
+
 
         </div>
     }
