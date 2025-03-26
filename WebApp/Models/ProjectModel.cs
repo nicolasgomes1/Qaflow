@@ -82,12 +82,15 @@ public class ProjectModel
     public async Task<List<Projects>> GetProjectsTestplansTestCases(int projectId)
     {
         return await _dbContext.Projects
-            .AsSplitQuery()
+            .Where(p => p.Id == projectId) // Ensure filtering is done early
+            .AsSplitQuery() // Helps optimize loading related data
             .Include(p => p.TestPlans)
-            .ThenInclude(r => r.LinkedTestCases)
-            .Where(p => p.Id == projectId) // Filter by ProjectId
+                .ThenInclude(tp => tp.LinkedTestCases)
             .ToListAsync();
     }
+
+    
+    
 
     public async Task<List<Projects>> GetProjectsData()
     {

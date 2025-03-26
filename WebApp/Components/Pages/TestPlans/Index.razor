@@ -28,7 +28,7 @@ else
         <HeaderTemplate>
             <RadzenButton Text="Test Plan"
                           data-testid="create-testplan"
-                          Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testplans/create", true)'
+                          Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testplans/create", true)'
                           Size="ButtonSize.Medium"
                           Icon="add"/>
             <RadzenButton Icon="autorenew"
@@ -132,7 +132,7 @@ else
     {
         DataGridSettingsService.SetCurrentGridId(_gridId);
 
-        (_testplans, _selectedTestPlans) = await TestPlansModel.DisplayTestPlansIndexPage1();
+        (_testplans, _selectedTestPlans) = await TestPlansModel.DisplayTestPlansIndexPage1(ProjectId);
         //  await TestPlansModel.DisplayTestPlansIndexPage();
         _isLoading = false;
     }

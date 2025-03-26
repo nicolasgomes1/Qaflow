@@ -20,11 +20,11 @@ public class TestPlansModel(
 
 
     public async Task<(IEnumerable<TestPlans> TestPlans, IList<TestPlans> SelectedTestPlans)>
-        DisplayTestPlansIndexPage1()
+        DisplayTestPlansIndexPage1(int projectId)
     {
         var testplans = await _dbContext.TestPlans
             .Include(r => r.LinkedTestCases)
-            .Where(tc => tc.ProjectsId == projectStateService.GetProjectIdAsync().Result)
+            .Where(tc => tc.ProjectsId == projectId)
             .ToListAsync();
 
         var selectedTestPlans = new List<TestPlans>();
@@ -64,11 +64,10 @@ public class TestPlansModel(
         SelectedTestCasesIds = testPlans.LinkedTestCases.Select(tc => tc.Id).ToList();
     }
 
-    public async Task<TestPlans> CreateTestPlanAsync(TestPlans testPlan, List<IBrowserFile>? files)
+    public async Task<TestPlans> CreateTestPlanAsync(TestPlans testPlan, List<IBrowserFile>? files, int projectId)
     {
         // Fetch current user and project ID asynchronously
         var currentUserInfo = userService.GetCurrentUserInfoAsync().Result.UserName;
-        var projectId = projectStateService.GetProjectIdAsync().Result;
 
         // Set test plan properties
         testPlan.CreatedBy = currentUserInfo;

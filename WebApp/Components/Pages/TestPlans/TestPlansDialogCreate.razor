@@ -27,7 +27,7 @@
     private async Task CreateNewTestPlan()
     {
         // CreateBug should handle adding the bug and return a result
-        var result = await TestPlansModel.CreateTestPlanAsync(_testPlans, _uploadedFiles);
+        var result = await TestPlansModel.CreateTestPlanAsync(_testPlans, _uploadedFiles, ProjectId);
 
         DialogService.Close(result);
         StateHasChanged();
