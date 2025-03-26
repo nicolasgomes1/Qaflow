@@ -37,53 +37,6 @@ async function filterRequirements(page: Page, requirementName: string) {
     await page.waitForLoadState('load');
 }
 
-async function closeModal(page: Page)
-{
-    await page.evaluate(() => {
-        (function() {
-            const selector = '[data-testid="submit_dialog"]'; // Replace with your selector
-
-            const element = document.querySelector(selector);
-            if (!element) {
-                console.error(`Element with data-testid="${selector}" not found.`);
-                return;
-            }
-
-            // 1. Simulate Hover (to show the hand cursor)
-            const mouseEnterEvent = new MouseEvent('mouseenter', {
-                bubbles: true,
-                cancelable: true,
-                view: window
-            });
-            element.dispatchEvent(mouseEnterEvent);
-
-            // 2. Simulate Click (mousedown + mouseup to trigger click)
-            const mouseDownEvent = new MouseEvent('mousedown', {
-                bubbles: true,
-                cancelable: true,
-                view: window
-            });
-
-            const mouseUpEvent = new MouseEvent('mouseup', {
-                bubbles: true,
-                cancelable: true,
-                view: window
-            });
-
-            element.dispatchEvent(mouseDownEvent); // Simulate the mouse button being pressed
-            element.dispatchEvent(mouseUpEvent);   // Simulate the mouse button being released
-
-            // Optionally, trigger a final click event for browsers that require it
-            const clickEvent = new MouseEvent('click', {
-                bubbles: true,
-                cancelable: true,
-                view: window
-            });
-            element.dispatchEvent(clickEvent);
-        })();
-    });
-}
-
 
 test('Create New Requirement Specification', async ({ page })=> {
     test.slow();
@@ -103,7 +56,7 @@ test('Create New Requirement Specification', async ({ page })=> {
     await actions.fill_input(page, 'requirements_specification_description', description);
     await actions.validate_input(page, 'requirements_specification_description', description);
 
-await closeModal(page);
+    await actions.closeModal(page, "submit_dialog");
     await actions.validate_button(page, 'requirements_specification_create');
     
     await filterRequirements(page, 'Test Requirement Playwright' + Random);
@@ -133,7 +86,7 @@ test('View New Requirement Specification', async ({ page })=> {
     const description ='Test Requirement Playwright Description' + Random;
     await actions.fill_input(page, 'requirements_specification_description',description );
 
-await closeModal(page);
+    await actions.closeModal(page, "submit_dialog");
 
     await actions.validate_button(page, 'requirements_specification_create');
 
