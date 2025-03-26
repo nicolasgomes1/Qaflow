@@ -6,8 +6,7 @@ using WebApp.Services;
 namespace WebApp.Models;
 
 public class BugsFilesModel(
-    IDbContextFactory<ApplicationDbContext> dbContextFactory,
-    ProjectStateService projectSateService)
+    IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
 
@@ -15,7 +14,7 @@ public class BugsFilesModel(
 
     public List<BugsFiles> ExistingFiles = [];
 
-    public async Task SaveFilesToDb(List<IBrowserFile>? files, int bugId)
+    public async Task SaveFilesToDb(List<IBrowserFile>? files, int bugId, int projectId)
     {
         if (files != null && files.Count != 0)
         {
@@ -36,7 +35,7 @@ public class BugsFilesModel(
                     FileContent = memoryStream.ToArray(),
                     UploadedAt = DateTime.UtcNow,
                     BugId = bugId,
-                    ProjectsId = projectSateService.ProjectId
+                    ProjectsId = projectId
                 };
 
                 _dbContext.BugsFiles.Add(bugsFile);

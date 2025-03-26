@@ -9,7 +9,6 @@ namespace WebApp.Models;
 public class BugsModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory,
     UserService userService,
-    ProjectStateService projectSateService,
     BugsFilesModel bugsFilesModel)
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
@@ -18,9 +17,9 @@ public class BugsModel(
 
     public List<int> SelectedTestCasesIds { get; set; } = [];
 
-    public async Task<List<Bugs>> GetBugsAsync()
+    public async Task<List<Bugs>> GetBugsAsync(int projectId)
     {
-        return await _dbContext.Bugs.Where(bp => bp.ProjectsId == projectSateService.ProjectId).ToListAsync();
+        return await _dbContext.Bugs.Where(bp => bp.ProjectsId == projectId).ToListAsync();
     }
 
     public async Task<Bugs> GetBugByIdAsync(int id)
@@ -41,11 +40,11 @@ public class BugsModel(
         return bug.TestCases.ToList();
     }
 
-    public async Task<Bugs> AddBug(Bugs bug, List<IBrowserFile>? files)
+    public async Task<Bugs> AddBug(Bugs bug, List<IBrowserFile>? files, int projectId)
     {
         bug.CreatedAt = DateTime.UtcNow;
         bug.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        bug.ProjectsId = projectSateService.ProjectId;
+        bug.ProjectsId = projectId;
         bug.TestCases = new List<TestCases>();
 
         // Fetch and add test cases asynchronously
@@ -67,13 +66,13 @@ public class BugsModel(
         // If there are files, attempt to save them
         if (files != null && files.Count != 0)
         {
-            await bugsFilesModel.SaveFilesToDb(files, bug.Id);
+            await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
         }
 
         return bug;
     }
 
-    public async Task UpdateBugAsync(Bugs bug, List<IBrowserFile>? files)
+    public async Task UpdateBugAsync(Bugs bug, List<IBrowserFile>? files, int projectId)
     {
         _dbContext.Bugs.Update(bug);
         Bugs.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
@@ -83,7 +82,7 @@ public class BugsModel(
         // If there are files, attempt to save them
         if (files != null && files.Count != 0)
         {
-            await bugsFilesModel.SaveFilesToDb(files, bug.Id);
+            await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
         }
     }
 }

@@ -103,7 +103,7 @@
 
     private async Task UpdateBug()
     {
-        await BugsModel.UpdateBugAsync(_bugs, _uploadedFiles);
+        await BugsModel.UpdateBugAsync(_bugs, _uploadedFiles, ProjectId);
         NavigationManager.NavigateTo($"/project/{ProjectId}/bugs");
         await FormNotificationService.NotifySuccess($"Bug updated successfully with id {_bugs.Id}");
     }

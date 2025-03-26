@@ -80,7 +80,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _bugs = await BugsModel.GetBugsAsync();
+        _bugs = await BugsModel.GetBugsAsync(ProjectId);
     }
 
 

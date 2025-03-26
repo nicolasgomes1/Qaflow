@@ -126,7 +126,7 @@
 
     private async Task CreateNewBug()
     {
-        await BugsModel.AddBug(_bugs, _uploadedFiles);
+        await BugsModel.AddBug(_bugs, _uploadedFiles, ProjectId);
         NavigationManager.NavigateTo($"/project/{ProjectId}/bugs");
         await FormNotificationService.NotifySuccess($"Bug created successfully with id {_bugs.Id}");
     }
