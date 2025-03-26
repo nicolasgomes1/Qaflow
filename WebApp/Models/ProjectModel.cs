@@ -69,31 +69,23 @@ public class ProjectModel
     ///     cases.
     /// </summary>
     /// <returns>A list of projects with their requirements and test cases.</returns>
-    public async Task<List<Projects>> GetProjectsTestCasesRequirements()
+    public async Task<List<Projects>> GetProjectsTestCasesRequirements(int projectId)
     {
-        // Check if ProjectId is set
-        if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
-
-        // If ProjectId is set, return the specific project with its requirements and test cases
         return await _dbContext.Projects
             .AsSplitQuery()
             .Include(p => p.Requirements)
             .ThenInclude(r => r.LinkedTestCases)
-            .Where(p => p.Id == _projectStateService.ProjectId) // Filter by ProjectId
+            .Where(p => p.Id == projectId) // Filter by ProjectId
             .ToListAsync();
     }
 
-    public async Task<List<Projects>> GetProjectsTestplansTestCases()
+    public async Task<List<Projects>> GetProjectsTestplansTestCases(int projectId)
     {
-        // Check if ProjectId is set
-        if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
-
-        // If ProjectId is set, return the specific project with its requirements and test cases
         return await _dbContext.Projects
             .AsSplitQuery()
             .Include(p => p.TestPlans)
             .ThenInclude(r => r.LinkedTestCases)
-            .Where(p => p.Id == _projectStateService.ProjectId) // Filter by ProjectId
+            .Where(p => p.Id == projectId) // Filter by ProjectId
             .ToListAsync();
     }
 

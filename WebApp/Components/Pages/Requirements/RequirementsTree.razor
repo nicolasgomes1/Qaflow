@@ -21,11 +21,12 @@
 
 @code {
     private IEnumerable<Projects> _projects = new List<Projects>();
+    [Parameter] public int ProjectId { get; set; } // Capture projectId from the URL
 
 
     protected override async Task OnInitializedAsync()
     {
-        _projects = await ProjectModel.GetProjectsTestCasesRequirements();
+        _projects = await ProjectModel.GetProjectsTestCasesRequirements(ProjectId);
     }
 
 

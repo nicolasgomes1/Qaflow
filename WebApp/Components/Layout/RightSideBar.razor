@@ -10,7 +10,7 @@
 
                 <!-- Floating button to toggle the sidebar -->
                 <div style="position: fixed; bottom: 60px; right: 10px; z-index: 1000;">
-                    <RadzenButton Icon="menu" Click="@(() => OpenSideDialog())"/>
+                    <RadzenButton Icon="menu" Click="@(() => OpenSideDialog(ProjectId))"/>
                 </div>
             </div>
         }
@@ -19,7 +19,7 @@
             <div style="position: absolute; top: 60px; right: 0; bottom: 50px; z-index: 999; overflow-y: auto;">
                 <RadzenSidebar Style="@GetSidebarStyle()">
                     <RadzenPanelMenu Style="background-color: #f0f0f0; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                        <TestPlansTree/>
+                        <TestPlansTree ProjectId="ProjectId"/>
                     </RadzenPanelMenu>
                 </RadzenSidebar>
 
@@ -39,6 +39,20 @@
 
 
 @code {
+    [Parameter] public int ProjectId { get; set; }
+    private bool _firstRender = true; // Track first render
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _firstRender = false; // Set to false so it doesn't run again
+            ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
+            StateHasChanged(); // Ensure UI updates
+        }
+    }
+
+
     private bool _rightSidebarExpanded = false; // Track the sidebar state
 
     // Build the dynamic style for the sidebar based on the state
@@ -65,7 +79,8 @@
         return uri.Contains("testplans", StringComparison.OrdinalIgnoreCase);
     }
 
-    async Task OpenSideDialog()
+    /*
+    async Task OpenSideDialog(int projectId)
     {
         // Hardcoding options for right position, mask enabled, and close on overlay click
         await DialogService.OpenSideAsync<RequirementsTree>(
@@ -77,5 +92,28 @@
                 ShowMask = true
             });
     }
+    */
+
+    async Task OpenSideDialog(int projectId)
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            { "ProjectId", projectId } // Passing ProjectId to RequirementsTree
+        };
+
+        var options = new SideDialogOptions
+        {
+            CloseDialogOnOverlayClick = true,
+            Position = DialogPosition.Right,
+            ShowMask = true
+        };
+
+        await DialogService.OpenSideAsync<RequirementsTree>(
+            "Project Requirements",
+            parameters, // First pass parameters
+            options // Then pass the options
+        );
+    }
+
 
 }

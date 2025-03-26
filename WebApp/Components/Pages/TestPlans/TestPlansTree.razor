@@ -24,10 +24,27 @@
     private IEnumerable<Projects> _projects = new List<Projects>();
 
 
-    protected override async Task OnInitializedAsync()
+    private bool _firstRender = true; // Track first render
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _projects = await ProjectModel.GetProjectsTestplansTestCases();
+        if (firstRender)
+        {
+            _firstRender = false; // Set to false so it doesn't run again
+            ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
+            _projects = await ProjectModel.GetProjectsTestplansTestCases(ProjectId);
+
+            StateHasChanged(); // Ensure UI updates
+        }
     }
+
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+
+
+    //   protected override async Task OnInitializedAsync()
+    //   {
+    //      _projects = await ProjectModel.GetProjectsTestplansTestCases(ProjectId);
+    //  }
 
 
     // Handle the context menu for each tree item
