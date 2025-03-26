@@ -93,7 +93,7 @@ public class ProjectModel
     public async Task<List<Projects>> GetProjectsData(int projectId)
     {
         // Check if ProjectId is set
-        if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
+    //    if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
 
         // If ProjectId is set, return the specific project with its requirements and test cases
         return await _dbContext.Projects
