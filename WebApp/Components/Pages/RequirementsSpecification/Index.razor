@@ -3,6 +3,7 @@
 
 <RadzenDataGrid Data="@_requirementsSpecification"
                 ColumnWidth="auto"
+                TItem="RequirementsSpecification"
                 AllowFiltering="true"
                 AllowSorting="true"
                 AllowPaging="true"
@@ -28,6 +29,8 @@
                               Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(RequirementsSpecification.LinkedRequirements)"
                               Title="Associated Requirements"
+                              Sortable="false"
+                              Filterable="false"
                               Width="auto">
             <Template Context="requirement">
                 @foreach (var req in requirement.LinkedRequirements)
