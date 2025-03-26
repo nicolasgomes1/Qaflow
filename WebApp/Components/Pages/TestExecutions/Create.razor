@@ -86,7 +86,7 @@
     protected override async Task OnInitializedAsync()
     {
         //   _testPlansList = await TestPlansModel.GetallTestPlans();
-        _testPlansList = await TestPlansModel.GetallTestPlansWithWorkflowStatus(WorkflowStatus.Completed);
+        _testPlansList = await TestPlansModel.GetallTestPlansWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
         _usersList = await UserService.GetUsersList();
     }
 

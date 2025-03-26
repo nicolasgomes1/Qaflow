@@ -121,7 +121,7 @@ else
 
     private async Task UpdateTestPlan()
     {
-        await TestPlansModel.UpdateTestPlan2(Id, _uploadedFiles);
+        await TestPlansModel.UpdateTestPlan2(Id, _uploadedFiles, ProjectId);
         NavigationManager.NavigateTo($"project/{ProjectId}/testplans");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Plan with Id {_testPlans.Id} Updated Successfully");
