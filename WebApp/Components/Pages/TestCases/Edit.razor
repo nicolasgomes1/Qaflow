@@ -157,7 +157,7 @@ else
 
     private async Task UpdateTestCase()
     {
-        await TestCasesModel.UpdateTestCase(_testCases, _uploadedFiles);
+        await TestCasesModel.UpdateTestCase(_testCases, _uploadedFiles, ProjectId);
         NavigationManager.NavigateTo($"/project/{ProjectId}/testcases");
 
         StateHasChanged();

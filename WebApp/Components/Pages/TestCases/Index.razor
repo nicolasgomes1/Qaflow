@@ -47,14 +47,14 @@ else
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'/>
-            <UploadTestCasesCsv OnUploadCompleted="RefreshPage"></UploadTestCasesCsv>
+            <UploadTestCasesCsv OnUploadCompleted="RefreshPage" ProjectId="ProjectId"/>
 
             @code{
 
                 private async Task RefreshPage()
                 {
                     //simply get the list of test cases for the current project
-                    _testcases = await TestCasesModel.GetTestCasesToValidateAgainstCsv();
+                    _testcases = await TestCasesModel.GetTestCasesToValidateAgainstCsv(ProjectId);
 
                     // Refresh the Home component (re-render it)
                     await InvokeAsync(StateHasChanged);
@@ -86,7 +86,7 @@ else
                     @if (testcase.LinkedRequirements != null && testcase.LinkedRequirements.Any())
                     {
                         var requirementLinks = testcase.LinkedRequirements
-                            .Select(requirement => $"<a href=\"project/{ProjectStateService.ProjectId}/requirements/view/{requirement.Id}\">{requirement.Name}</a>")
+                            .Select(requirement => $"<a href=\"project/{ProjectId}/requirements/view/{requirement.Id}\">{requirement.Name}</a>")
                             .ToList();
 
                         @((MarkupString)string.Join(", ", requirementLinks))
@@ -154,7 +154,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         DataGridSettingsService.SetCurrentGridId(GridId);
-        (_testcases, _selectedTestCases) = await TestCasesModel.DisplayTestCasesIndexPage1();
+        (_testcases, _selectedTestCases) = await TestCasesModel.DisplayTestCasesIndexPage1(ProjectId);
         _isLoading = false;
     }
 

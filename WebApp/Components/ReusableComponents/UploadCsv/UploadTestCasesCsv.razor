@@ -5,6 +5,7 @@
 @code {
     private IEnumerable<TestCases> _testCases = [];
     private string _fileContent = string.Empty;
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     /// <summary>
     /// Event callback to be invoked when the upload is completed. It will refresh the page on parent component.
@@ -52,7 +53,7 @@
         var csvlines = _fileContent.Split('\n').Skip(1);
         _totalLines = csvlines.Count();
 
-        _testCases = await TestCasesModel.GetTestCasesToValidateAgainstCsv();
+        _testCases = await TestCasesModel.GetTestCasesToValidateAgainstCsv(ProjectId);
 
         _currentLine = 0;
         _validLines = 0;
@@ -96,7 +97,7 @@
                 continue;
             }
 
-            await TestCasesModel.AddTestCasesFromCsv(testCases);
+            await TestCasesModel.AddTestCasesFromCsv(testCases, ProjectId);
             _validLines++;
         }
 
