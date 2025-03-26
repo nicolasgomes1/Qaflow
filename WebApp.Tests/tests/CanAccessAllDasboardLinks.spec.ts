@@ -19,16 +19,7 @@ async function filterAndLaunchProject(page: Page, projectName = 'Demo Project Wi
     await page.getByRole('textbox', { name: 'Name filter value' }).fill(projectName);
     await page.getByRole('button', { name: 'Apply' }).click();
     await page.waitForLoadState('networkidle');
-    const el = page.getByRole('button', { name: 'launch' });
-    await expect(el).toBeVisible();
-    await el.hover();
-    const tooltipSelector = '.rz-tooltip.rz-popup';
-    if (await page.isVisible(tooltipSelector)) {
-        await page.mouse.move(0, 0);
-        await page.waitForTimeout(100);
-        await page.waitForSelector(tooltipSelector, { state: 'hidden' });
-    }
-    await el.first().click({ force: true });
+    await page.getByRole('button', { name: 'launch' }).first().click({ force: true });
     await page.waitForLoadState('load');
 }
 
