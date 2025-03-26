@@ -4,19 +4,19 @@
 <RadzenTabs @bind-SelectedIndex="@_selectedIndex">
     <Tabs>
         <RadzenTabsItem Text="Test Execution">
-            <ViewTestExecutionData Id="Id"/>
+            <ViewTestExecutionData Id="Id" ProjectId="ProjectId"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Past Test Execution">
             <PastTestExecutionsTable Id="Id" ProjectId="ProjectId"/>
         </RadzenTabsItem>
 
         <RadzenTabsItem Text="Associated Test Cases">
-            <AssociatedTestCasesTable Id="Id"/>
+            <AssociatedTestCasesTable Id="Id" ProjectId="ProjectId"/>
         </RadzenTabsItem>
 
 
         <RadzenTabsItem Text="Results">
-            <ViewTestCaseExecution Id="Id"/>
+            <ViewTestCaseExecution Id="Id" ProjectId="ProjectId"/>
         </RadzenTabsItem>
 
     </Tabs>

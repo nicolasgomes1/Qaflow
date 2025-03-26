@@ -15,7 +15,7 @@
                         <div class="btn-group">
                             <RadzenButton
                                 Icon="visibility"
-                                Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases/view/{testcases.Id}", true))"
+                                Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases/view/{testcases.Id}", true))"
                                 Size="ButtonSize.Small"
                                 MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "View Test Case"))"
                                 MouseLeave="@AppTooltipService.HideTooltip"/>
@@ -37,6 +37,7 @@ else
 @code
 {
     [Parameter] public int Id { get; set; }
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     private List<TestCases> _testCases = [];
 

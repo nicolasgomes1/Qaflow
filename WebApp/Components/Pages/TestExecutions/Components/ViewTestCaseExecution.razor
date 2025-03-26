@@ -98,6 +98,7 @@ else
 
 @code{
     [Parameter] public int Id { get; set; }
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     private TestExecution _testExecution = new();
     private List<TestCaseExecution> _associatedTestCasesExecution = [];
@@ -144,7 +145,7 @@ else
     {
         await using var db = await DbContext.CreateDbContextAsync();
         return await db.TestStepsExecutionFiles
-            .Where(tsef => tsef.TSEFProjectId == ProjectStateService.ProjectId)
+            .Where(tsef => tsef.TSEFProjectId == ProjectId)
             .ToListAsync();
     }
 
