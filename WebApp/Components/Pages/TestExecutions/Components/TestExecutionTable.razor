@@ -17,7 +17,7 @@
     <HeaderTemplate>
         <RadzenButton Text="Test Execution"
                       data-testid="create-testexecutions"
-                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution/create")'
+                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/create")'
                       Size="ButtonSize.Medium"
                       Icon="add"/>
         <DeleteallDataForModel EntityName="@(nameof(TestExecutionModel.TestExecution))"
@@ -26,7 +26,7 @@
         <RadzenButton Icon="assessment"
                       MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
                       MouseLeave="@AppTooltipService.HideTooltip"
-                      Click='() => NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/testexecutions/manage")'/>
+                      Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecutions/manage")'/>
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn Property="@nameof(TestExecution.Id)" Filterable="false" Title="ID" Frozen="true"
