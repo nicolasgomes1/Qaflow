@@ -28,13 +28,25 @@
     [Parameter]
     public required string EntityName { get; set; }
 
-
+    private int _projectId;
+    
+    private bool _firstRender = true; // Track first render
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _firstRender = false; // Set to false so it doesn't run again
+            _projectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
+            StateHasChanged(); // Ensure UI updates
+        }
+    }
     private void CancelUrlLink()
     {
         switch (EntityName)
         {
             case "testcases" or "testplans" or "requirements" or "testexecution" or "bugs":
-                NavigationManager.NavigateTo($"project/{ProjectStateService.ProjectId}/{EntityName}", true);
+                NavigationManager.NavigateTo($"project/{_projectId}/{EntityName}", true);
                 break;
 
             case "projects":

@@ -80,7 +80,7 @@
 
     private string CancelUrl()
     {
-        return $"project/{ProjectStateService.ProjectId}/testexecution";
+        return $"project/{ProjectId}/testexecution";
     }
 
     protected override async Task OnInitializedAsync()
@@ -95,7 +95,7 @@
         _testExecution.EstimatedTime = TimeSpan.FromMinutes(int.TryParse(_estimatedTimeInput, out var minutes) ? minutes : 0);
 
         await TestExecutionModel.CreateTestExecution(_testExecution);
-        NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution", true);
+        NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution", true);
     }
 
 }

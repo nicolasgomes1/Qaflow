@@ -43,10 +43,10 @@ else
 
     <div style="margin-top: 10px;">
         <RadzenButton Text="Edit"
-                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution/edit/{_testExecution.Id}")'
+                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/edit/{_testExecution.Id}")'
                       Disabled="@(_testExecution.IsActive == false || executionInProgress)"/>
         <RadzenButton Text="Back"
-                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testexecution")'
+                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution")'
                       Disabled="@(executionInProgress)"/>
     </div>
 }

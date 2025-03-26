@@ -18,15 +18,29 @@
     [Parameter]
     public int EntityId { get; set; }
 
+
+    private int _projectId;
+    
+    private bool _firstRender = true; // Track first render
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _firstRender = false; // Set to false so it doesn't run again
+            _projectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
+            StateHasChanged(); // Ensure UI updates
+        }
+    }
     private void CancelUrl()
     {
-        var url = $"project/{ProjectStateService.ProjectId}/{EntityName}";
+        var url = $"project/{_projectId}/{EntityName}";
         NavigationManager.NavigateTo(url, true);
     }
 
     private void EditUrl()
     {
-        var url = $"project/{ProjectStateService.ProjectId}/{EntityName}/edit/{EntityId}";
+        var url = $"project/{_projectId}/{EntityName}/edit/{EntityId}";
         NavigationManager.NavigateTo(url, true);
     }
 

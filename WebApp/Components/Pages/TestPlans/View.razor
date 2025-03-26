@@ -52,7 +52,7 @@
                             <Template Context="testcases">
                                 <div class="btn-group">
                                     <RadzenButton
-                                        Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectStateService.ProjectId}/testcases/view/{testcases.Id}", true))"
+                                        Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases/view/{testcases.Id}", true))"
                                         Size="ButtonSize.Small"
                                         Icon="visibility"
                                         MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "View Test Case"))"
