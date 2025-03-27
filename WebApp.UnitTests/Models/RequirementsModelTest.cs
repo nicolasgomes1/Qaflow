@@ -14,7 +14,6 @@ public class RequirementsModelTest : TestBase
     private readonly TestFixture _fixture;
     private readonly ApplicationDbContext _db;
     private readonly RequirementsModel _rm;
-    private readonly ProjectStateService _ps;
     private readonly ProjectModel _pm;
 
     public RequirementsModelTest(TestFixture fixture) : base(fixture)
@@ -24,7 +23,6 @@ public class RequirementsModelTest : TestBase
         // Resolve services via ServiceProvider
         _db = _fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         _rm = _fixture.ServiceProvider.GetRequiredService<RequirementsModel>();
-        _ps = _fixture.ServiceProvider.GetRequiredService<ProjectStateService>();
         _pm = _fixture.ServiceProvider.GetRequiredService<ProjectModel>();
     }
 
@@ -44,7 +42,6 @@ public class RequirementsModelTest : TestBase
         await _pm.AddProject(newProject);
         var project = newProject;
 
-        _ps.SetProjectId(project.Id);
         return project;
     }
 

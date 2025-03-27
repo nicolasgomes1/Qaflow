@@ -30,7 +30,7 @@
     private async Task CreateNewTestExecution()
     {
         // CreateBug should handle adding the bug and return a result
-        var result = await TestExecutionModel.CreateTestExecution(_testExecution);
+        var result = await TestExecutionModel.CreateTestExecution(_testExecution, ProjectId);
 
         DialogService.Close(result);
         StateHasChanged();

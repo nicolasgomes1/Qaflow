@@ -11,17 +11,12 @@ public class TestExecutionModel
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
     private readonly ApplicationDbContext _dbContext;
     private readonly UserService _userService;
-    private readonly ProjectStateService _projectSateService;
-    private readonly UserManager<ApplicationUser> _userManager;
 
-    public TestExecutionModel(IDbContextFactory<ApplicationDbContext> dbContextFactory, UserService userService,
-        ProjectStateService projectSateService, UserManager<ApplicationUser> userManager)
+    public TestExecutionModel(IDbContextFactory<ApplicationDbContext> dbContextFactory, UserService userService)
     {
         _dbContextFactory = dbContextFactory;
         _dbContext = _dbContextFactory.CreateDbContext();
         _userService = userService;
-        _projectSateService = projectSateService;
-        _userManager = userManager;
     }
 
     public TestExecution TestExecution { get; set; } = new();
@@ -40,13 +35,13 @@ public class TestExecutionModel
     /// This is to be used when creazting a new TestExecution
     /// </summary>
     /// <returns></returns>
-    public async Task<TestExecution> CreateTestExecution(TestExecution testExecution)
+    public async Task<TestExecution> CreateTestExecution(TestExecution testExecution, int projectId)
     {
-        await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
+        // await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
 
 
         testExecution.CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName;
-        testExecution.ProjectsId = _projectSateService.ProjectId;
+        testExecution.ProjectsId = projectId;
 
 
         // var assignedUser = await _userManager.FindByIdAsync(testExecution.AssignedTo); // Get user by ID
@@ -260,7 +255,7 @@ public class TestExecutionModel
     /// </summary>
     /// <param name="testExecution"></param>
     /// <returns>The New Execution</returns>
-    public async Task<TestExecution?> CreateNewExecutionAsync(TestExecution testExecution)
+    public async Task<TestExecution?> CreateNewExecutionAsync(TestExecution testExecution, int projectId)
     {
         await using var db = await _dbContextFactory.CreateDbContextAsync();
 
@@ -285,7 +280,7 @@ public class TestExecutionModel
             EstimatedTime = testExecution.EstimatedTime,
             AssignedTo = testExecution.AssignedTo,
             CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName,
-            ProjectsId = _projectSateService.ProjectId,
+            ProjectsId = projectId,
             Priority = testExecution.Priority
         };
 
@@ -360,13 +355,13 @@ public class TestExecutionModel
     }
 
 
-    public async Task DisplayTestExecutionIndexPage()
+    public async Task DisplayTestExecutionIndexPage(int projectId)
     {
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
         testexecution = await dbContext.TestExecution
             .Include(te => te.TestPlan) // Include the TestPlan navigation property
-            .Where(te => te.ProjectsId == _projectSateService.ProjectId)
+            .Where(te => te.ProjectsId == projectId)
             .ToListAsync();
 
         if (testexecution != null && testexecution.Any()) // Check if there are any elements
@@ -375,14 +370,14 @@ public class TestExecutionModel
             selectedExecution = new List<TestExecution>(); // Handle the case where there are no test executions
     }
 
-    public async Task DisplayTestExecutionIndexPageWithStatus(ExecutionStatus status)
+    public async Task DisplayTestExecutionIndexPageWithStatus(ExecutionStatus status, int projectId)
     {
-        await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
+        //  await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
 
         testexecution = await _dbContext.TestExecution
             .Where(te => te.ExecutionStatus == status) // Compare the status directly
             .Include(te => te.TestPlan) // Include the TestPlan navigation property
-            .Where(te => te.ProjectsId == _projectSateService.ProjectId)
+            .Where(te => te.ProjectsId == projectId)
             .ToListAsync();
 
         if (testexecution != null && testexecution.Any()) // Check if there are any elements
@@ -497,12 +492,12 @@ public class TestExecutionModel
     /// returns the list of TetsExecutions with the status of Completed and IsActive, so it was not yet executed
     /// </summary>
     /// <returns></returns>
-    public async Task<List<TestExecution>> GetActiveTestExecutionsAsync()
+    public async Task<List<TestExecution>> GetActiveTestExecutionsAsync(int projectId)
     {
         return await _dbContext.TestExecution
             .Include(te => te.TestPlan)
             .Where(te => te.IsActive && te.WorkflowStatus == WorkflowStatus.Completed)
-            .Where(te => te.ProjectsId == _projectSateService.ProjectId)
+            .Where(te => te.ProjectsId == projectId)
             .ToListAsync();
     }
 
@@ -513,11 +508,11 @@ public class TestExecutionModel
         return testCaseExecution;
     }
 
-    public async Task<int> GetTestExecutionsReadyToExecuteAsync()
+    public async Task<int> GetTestExecutionsReadyToExecuteAsync(int projectId)
     {
         return await _dbContext.TestExecution
             .Where(te => te.IsActive && te.WorkflowStatus == WorkflowStatus.Completed)
-            .Where(te => te.ProjectsId == _projectSateService.ProjectId)
+            .Where(te => te.ProjectsId == projectId)
             .CountAsync();
     }
 

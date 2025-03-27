@@ -5,22 +5,22 @@
 <RadzenTabs @bind-SelectedIndex="@_selectedIndex">
     <Tabs>
         <RadzenTabsItem Text="All">
-            <TestExecutionTable OnInitializedMethod="TestExecutionModel.DisplayTestExecutionIndexPage"
+            <TestExecutionTable OnInitializedMethod="()=>TestExecutionModel.DisplayTestExecutionIndexPage(ProjectId)"
                                 ProjectId="ProjectId"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Passed">
             <TestExecutionTable
-                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Passed)"
+                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Passed, ProjectId)"
                 ProjectId="ProjectId"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Failed">
             <TestExecutionTable
-                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Failed)"
+                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.Failed, ProjectId)"
                 ProjectId="ProjectId"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="No Runs">
             <TestExecutionTable
-                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.NotRun)"
+                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPageWithStatus(ExecutionStatus.NotRun, ProjectId)"
                 ProjectId="ProjectId"/>
         </RadzenTabsItem>
     </Tabs>

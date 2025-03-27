@@ -86,7 +86,7 @@
 
     private async Task GetActiveTestExecutions()
     {
-        _testexecution = await TestExecutionModel.GetActiveTestExecutionsAsync();
+        _testexecution = await TestExecutionModel.GetActiveTestExecutionsAsync(ProjectId);
     }
 
 

@@ -27,7 +27,7 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<ProjectModel>();
         serviceCollection.AddScoped<AuthenticationStateProvider, TestAuthenticationStateProvider>();
         serviceCollection.AddScoped<UserService>();
-        serviceCollection.AddScoped<ProjectStateService>();
+        serviceCollection.AddScoped<ProjectState>();
         serviceCollection.AddScoped<RequirementsModel>();
         serviceCollection.AddScoped<RequirementsFilesModel>();
 

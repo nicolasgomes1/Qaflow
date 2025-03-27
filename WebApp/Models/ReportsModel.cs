@@ -144,8 +144,8 @@ public class ReportsModel
 
     private async Task<int> TotalRequirementsSpecifications(int projectId)
     {
-        var projectRequirementsSpecifications = await _dbContext.Requirements.CountAsync(r =>
-            r.ProjectsId == projectId && r.RequirementsSpecification.LinkedRequirements.Any());
+        var projectRequirementsSpecifications = await _dbContext.Requirements
+            .CountAsync(r => r.ProjectsId == projectId && r.RequirementsSpecification.LinkedRequirements.Any());
         return projectRequirementsSpecifications;
     }
 

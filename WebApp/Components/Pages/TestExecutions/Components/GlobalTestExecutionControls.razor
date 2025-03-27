@@ -246,7 +246,7 @@
     private async Task CreateNewExecution()
     {
         {
-            var newExecution = await TestExecutionModel.CreateNewExecutionAsync(_testExecution);
+            var newExecution = await TestExecutionModel.CreateNewExecutionAsync(_testExecution, ProjectId);
 
             if (newExecution != null)
             {

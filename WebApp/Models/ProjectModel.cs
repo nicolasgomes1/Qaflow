@@ -4,23 +4,12 @@ using WebApp.Services;
 
 namespace WebApp.Models;
 
-public class ProjectModel
+public class ProjectModel(
+    IDbContextFactory<ApplicationDbContext> dbContextFactory,
+    UserService userService)
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
-    private readonly ProjectStateService _projectStateService;
-    private readonly UserService _userService;
+    private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
 
-    public ProjectModel(
-        IDbContextFactory<ApplicationDbContext> dbContextFactory,
-        UserService userService,
-        ProjectStateService projectStateService)
-    {
-        _userService = userService;
-        _projectStateService = projectStateService;
-        _dbContextFactory = dbContextFactory;
-        _dbContext = _dbContextFactory.CreateDbContext();
-    }
 
     /// <summary>
     ///     Get Project by Id
@@ -35,7 +24,7 @@ public class ProjectModel
     public async Task AddProject(Projects project)
     {
         _dbContext.Projects.Add(project);
-        project.CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName;
+        project.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         project.CreatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
     }
@@ -43,7 +32,7 @@ public class ProjectModel
     public async Task AddProjectFromCsv(Projects project)
     {
         _dbContext.Projects.Add(project);
-        project.CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName;
+        project.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         project.CreatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
     }
@@ -56,7 +45,7 @@ public class ProjectModel
     public async Task UpdateProject(int projectId)
     {
         var project = await _dbContext.Projects.FindAsync(projectId) ?? throw new Exception("Project is Null");
-        project.ModifiedBy = _userService.GetCurrentUserInfoAsync().Result.UserName;
+        project.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         project.ModifiedAt = DateTime.UtcNow;
         _dbContext.Projects.Update(project);
         await _dbContext.SaveChangesAsync();
@@ -93,7 +82,7 @@ public class ProjectModel
     public async Task<List<Projects>> GetProjectsData(int projectId)
     {
         // Check if ProjectId is set
-    //    if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
+        //    if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
 
         // If ProjectId is set, return the specific project with its requirements and test cases
         return await _dbContext.Projects
