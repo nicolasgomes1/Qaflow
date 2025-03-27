@@ -97,12 +97,18 @@ public class ReportsModel
             Math.Round(testExecutionNotRunPercentage, 2));
     }
 
-    public string LoadTotalRequirements(int projectId)
+    public async Task<string> LoadTotalRequirements(int projectId)
     {
-        var projectRequirements = _dbContext.Requirements.Count(r => r.ProjectsId == projectId)
-            .ToString();
+        var projectRequirementsCount = await TotalRequirements(projectId);
+        var projectReq = projectRequirementsCount.ToString();
 
-        return projectRequirements == "0" ? "No Requirements" : $"Requirements: {projectRequirements}";
+        return projectReq == "0" ? "No Requirements" : $"Requirements: {projectReq}";
+    }
+
+    private async Task<int> TotalRequirements(int projectId)
+    {
+        var projectRequirements = await _dbContext.Requirements.CountAsync(r => r.ProjectsId == projectId);
+        return projectRequirements;
     }
 
     public string LoadTotalTestCases(int projectId)
@@ -134,6 +140,36 @@ public class ReportsModel
         var projectBugs = _dbContext.Bugs.Count(b => b.ProjectsId == projectId).ToString();
         return projectBugs == "0" ? "No Bugs" : $"Bugs: {projectBugs}";
     }
+
+
+    private async Task<int> TotalRequirementsSpecifications(int projectId)
+    {
+        var projectRequirementsSpecifications = await _dbContext.Requirements.CountAsync(r =>
+            r.ProjectsId == projectId && r.RequirementsSpecification.LinkedRequirements.Any());
+        return projectRequirementsSpecifications;
+    }
+
+    public async Task<double> RequirementsCoveredBySpecifications(int projectId)
+    {
+        var projectRequirementsSpecifications = await TotalRequirementsSpecifications(projectId);
+        var projectRequirements = await TotalRequirements(projectId);
+        var projectRequirementsCoveredBySpecifications = projectRequirementsSpecifications == 0
+            ? 0
+            : (double)projectRequirementsSpecifications / projectRequirements * 100;
+        return Math.Round(projectRequirementsCoveredBySpecifications, 2);
+    }
+
+    public async Task<string> RequirementsWithRequirementspecifications(int projectId)
+    {
+        // Count the Requirements which are linked to at least one Requirementspecification in the given project.
+        var requirementsWithSpecificationsCount = await TotalRequirementsSpecifications(projectId);
+
+        // Return a message based on the count of Requirements linked to RequirementSpecifications.
+        return requirementsWithSpecificationsCount == 0
+            ? "No Requirements with Spec"
+            : $"Requirements with Spec: {requirementsWithSpecificationsCount}";
+    }
+
 
     public async Task<double> GetTestExecutionPassRateAsync(int projectId)
     {
