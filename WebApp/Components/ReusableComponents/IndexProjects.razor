@@ -104,7 +104,7 @@
     {
         _projectsList = await ProjectModel.GetProjects();
 
-        ProjectStateService.SetProjectId(0);
+        await ProjectState.ResetCurrentProjectAsync();
     }
 
 
