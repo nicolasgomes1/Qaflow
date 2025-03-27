@@ -104,7 +104,7 @@
     protected override async Task OnInitializedAsync()
     {
         _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
-        Files = await TestPlansFilesModel.GetFilesByTestPlanId(Id);
+        Files = await TestPlansFilesModel.GetFilesByTestPlanId(Id, ProjectId);
     }
 
 }

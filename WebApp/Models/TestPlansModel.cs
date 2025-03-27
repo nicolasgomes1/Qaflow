@@ -88,7 +88,7 @@ public class TestPlansModel(
         await _dbContext.SaveChangesAsync();
 
         // Save associated files if provided
-        if (files?.Any() == true) await testPlansFilesModel.SaveFilesToDb(files, testPlan.Id);
+        if (files?.Any() == true) await testPlansFilesModel.SaveFilesToDb(files, testPlan.Id, projectId);
 
         return testPlan;
     }
@@ -112,6 +112,6 @@ public class TestPlansModel(
 
         await _dbContext.SaveChangesAsync();
 
-        if (files != null && files.Count != 0) await testPlansFilesModel.SaveFilesToDb(files, testPlanId);
+        if (files != null && files.Count != 0) await testPlansFilesModel.SaveFilesToDb(files, testPlanId, projectId);
     }
 }

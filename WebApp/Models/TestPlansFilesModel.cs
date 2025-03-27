@@ -6,16 +6,15 @@ using WebApp.Services;
 namespace WebApp.Models;
 
 public class TestPlansFilesModel(
-    IDbContextFactory<ApplicationDbContext> dbContextFactory,
-    ProjectStateService projectSateService)
+    IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
-    
-    const int MaxFileSize = 10 * 1024 * 1024; // 10MB
-    
+
+    private const int MaxFileSize = 10 * 1024 * 1024; // 10MB
+
     public List<TestPlansFile> ExistingFiles = [];
-    
-    public async Task SaveFilesToDb(List<IBrowserFile>? files, int testPlanId)
+
+    public async Task SaveFilesToDb(List<IBrowserFile>? files, int testPlanId, int projectId)
     {
         if (files != null && files.Count != 0)
         {
@@ -23,32 +22,29 @@ public class TestPlansFilesModel(
             {
                 using var memoryStream = new MemoryStream();
                 await file.OpenReadStream().CopyToAsync(memoryStream);
-                
+
                 //Validation at server side
-                if (file.Size > MaxFileSize)
-                {
-                    throw new Exception("File size is too large. Maximum file size is 100KB");
-                }
+                if (file.Size > MaxFileSize) throw new Exception("File size is too large. Maximum file size is 100KB");
                 var testPlansFile = new TestPlansFile
                 {
                     FileName = file.Name,
                     FileContent = memoryStream.ToArray(),
                     UploadedAt = DateTime.UtcNow,
                     TestPlanId = testPlanId,
-                    ProjectsId = projectSateService.ProjectId
+                    ProjectsId = projectId
                 };
-                
+
                 _dbContext.TestPlansFiles.Add(testPlansFile);
             }
-            
+
             await _dbContext.SaveChangesAsync();
         }
     }
-    
-    public async Task<List<TestPlansFile>> GetFilesByTestPlanId(int testPlanId)
+
+    public async Task<List<TestPlansFile>> GetFilesByTestPlanId(int testPlanId, int projectId)
     {
-        ExistingFiles = await _dbContext.TestPlansFiles.Where(tpf => tpf.TestPlanId == testPlanId && tpf.ProjectsId == projectSateService.ProjectId).ToListAsync();
+        ExistingFiles = await _dbContext.TestPlansFiles
+            .Where(tpf => tpf.TestPlanId == testPlanId && tpf.ProjectsId == projectId).ToListAsync();
         return ExistingFiles;
     }
-    
 }

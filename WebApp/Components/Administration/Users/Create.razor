@@ -1,5 +1,5 @@
 ﻿@page "/Users/Create"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin")]
 @inject ILogger<Create> Logger
 
 @rendermode InteractiveServer

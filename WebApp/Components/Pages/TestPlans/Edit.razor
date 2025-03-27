@@ -109,7 +109,7 @@ else
         _testCasesList = await TestCasesModel.GetTestCasesWithWorkflowStatus(ProjectId);
         _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
         await TestPlansModel.GetAssociatedTestCases(Id);
-        await TestPlansFilesModel.GetFilesByTestPlanId(Id);
+        await TestPlansFilesModel.GetFilesByTestPlanId(Id, ProjectId);
 
         if (_testPlans.ArchivedStatus.Equals(ArchivedStatus.Archived))
         {

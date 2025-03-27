@@ -59,6 +59,7 @@
         await IntegrationsModel.UpdateIntegration(_integrations);
         NavigationManager.NavigateTo("/integrations");
         await FormNotificationService.NotifySuccess("Integration updated successfully");
+        Logger.LogInformation("Integration was updated");
     }
 
 }

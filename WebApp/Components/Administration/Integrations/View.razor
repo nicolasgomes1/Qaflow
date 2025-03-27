@@ -43,6 +43,7 @@
     protected override async Task OnInitializedAsync()
     {
         Integrations = await IntegrationsModel.GetIntegrationByIdAsync(Id);
+        Logger.LogInformation("Integration was viewed");
     }
 
 }
