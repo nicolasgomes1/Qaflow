@@ -103,8 +103,6 @@
     protected override async Task OnInitializedAsync()
     {
         _projectsList = await ProjectModel.GetProjects();
-
-        await ProjectState.ResetCurrentProjectAsync();
     }
 
 

@@ -28,6 +28,15 @@
 
 @code {
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ProjectState.ResetCurrentProjectAsync();
+        }
+    }
+
+
     void GoToLogin()
     {
         NavigationManager.NavigateTo("/Account/Login");

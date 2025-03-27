@@ -1,9 +1,4 @@
-﻿//function updateTimeElapsed(timeElapsed) {
-//    var timeElapsedLabel = document.getElementById('timeElapsedLabel');
-//    timeElapsedLabel.innerText = timeElapsed;
-//}
-
-function saveAsFile(filename, fileData) {
+﻿function saveAsFile(filename, fileData) {
     // Create a download link
     var element = document.createElement('a');
     element.setAttribute('href', fileData);
@@ -19,11 +14,5 @@ function saveAsFile(filename, fileData) {
     document.body.removeChild(element);
 
     console.log("arrived");
-};
+}
 
-//function saveAsFile(filename, bytesBase64) {
-//    var link = document.createElement('a');
-//    link.href = bytesBase64;
-//    link.download = filename;
-//    link.click();
-//}
