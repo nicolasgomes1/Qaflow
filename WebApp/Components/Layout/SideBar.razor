@@ -21,7 +21,6 @@
                                  MouseEnter="@(args => ShowTooltip(args, "Test Cases", new TooltipOptions { Position = TooltipPosition.Right }))"
                                  MouseLeave="CloseTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases", true))"/>
-
             <RadzenPanelMenuItem Text="@Loc["TestPlans"]" Icon="description" data-testid="sidebar_testplans"
                                  MouseEnter="@(args => ShowTooltip(args, "Test Plans", new TooltipOptions { Position = TooltipPosition.Right }))"
                                  MouseLeave="CloseTooltip"

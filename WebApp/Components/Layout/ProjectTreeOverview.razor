@@ -41,11 +41,8 @@
                         }
                     </ChildContent>
                 </RadzenTreeItem>
-
-                @{
-                }
-
-                <RadzenTreeItem Text="@_testCasesCount" Data="_testCases">
+                
+                <RadzenTreeItem Text="@TestCasesCount" Data="_testCases">
                     <RadzenTreeItem Text="Test Cases With Test Plans">
                         <ChildContent>
                             @foreach (var testCase in _testCases.Where(tc => tc.TestPlans.Count > 0))
@@ -98,32 +95,14 @@
     private IEnumerable<Projects> _projects = new List<Projects>();
     private IEnumerable<TestCases> _testCases = new List<TestCases>();
     private IEnumerable<TestPlans> _testPlans = new List<TestPlans>();
-    private string _testCasesCount => $"Test Cases {_testCases.Count()}";
+    private string TestCasesCount => $"Test Cases {_testCases.Count()}";
 
 
     protected override async Task OnInitializedAsync()
     {
         _projects = await ProjectModel.GetProjectsData(ProjectId); // Ensure this fetches both Requirements and TestPlans
-        _testCases = await GetTestCases(); // Ensure this fetches both TestCases and TestPlans
-        _testPlans = await GetTestPlans(); // Ensure this fetches both TestPlans and TestCases
-    }
-
-    private async Task<List<TestCases>> GetTestCases()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestCases
-            .Include(tc => tc.TestPlans)
-            .Where(p => p.ProjectsId == ProjectId)
-            .ToListAsync();
-    }
-
-    private async Task<List<TestPlans>> GetTestPlans()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestPlans
-            .Include(tp => tp.LinkedTestCases)
-            .Where(p => p.ProjectsId == ProjectId)
-            .ToListAsync();
+        _testCases = await TestCasesModel.GetTestCasesForProjectTree(ProjectId);
+        _testPlans = await TestPlansModel.GetTestPlansProjectTree(ProjectId); // Ensure this fetches both TestPlans and TestCases
     }
 
 

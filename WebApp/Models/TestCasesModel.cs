@@ -269,4 +269,13 @@ public class TestCasesModel(
         testCase.CreatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
     }
+
+
+    public async Task<List<TestCases>> GetTestCasesForProjectTree(int projectId)
+    {
+        return await _dbContext.TestCases
+            .Where(p => p.ProjectsId == projectId)
+            .Include(tc => tc.TestPlans)
+            .ToListAsync();
+    }
 }

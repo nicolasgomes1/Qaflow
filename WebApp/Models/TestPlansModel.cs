@@ -114,4 +114,12 @@ public class TestPlansModel(
 
         if (files != null && files.Count != 0) await testPlansFilesModel.SaveFilesToDb(files, testPlanId, projectId);
     }
+
+    public async Task<List<TestPlans>> GetTestPlansProjectTree(int projectId)
+    {
+        return await _dbContext.TestPlans
+            .Where(p => p.ProjectsId == projectId)
+            .Include(tp => tp.LinkedTestCases)
+            .ToListAsync();
+    }
 }
