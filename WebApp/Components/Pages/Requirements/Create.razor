@@ -1,5 +1,5 @@
 ﻿@page "/project/{ProjectId:int}/requirements/create"
-@using Microsoft.CodeAnalysis.Operations
+@attribute [Authorize]
 @rendermode InteractiveServer
 
 <h3 class="text-center text-primary mb-4">Create Requirement</h3>

@@ -1,4 +1,5 @@
-﻿
+﻿@attribute [Authorize]
+
 @code {
     [Parameter] public int Id { get; set; }
     [EditorRequired] [Parameter] public int ProjectId { get; set; }

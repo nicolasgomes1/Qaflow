@@ -1,4 +1,5 @@
-﻿
+﻿@attribute [Authorize]
+
 @switch (_testExecution.IsActive)
 {
     case true when ExecutionInProgress == false:

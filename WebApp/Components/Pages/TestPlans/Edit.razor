@@ -1,5 +1,6 @@
 ﻿@page "/project/{ProjectId:int}/testplans/edit/{Id:int}"
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 @if (_isLoading)
 {

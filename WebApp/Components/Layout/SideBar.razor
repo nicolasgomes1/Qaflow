@@ -1,9 +1,7 @@
-﻿@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager NavigationManager
-
+﻿@attribute [Authorize]
 @rendermode InteractiveServer
 
-@if (_isAuthenticated && ProjectId != 0)
+@if (ProjectId != 0)
 {
     <RadzenSidebar Responsive="false" Style="width: max-content">
         <RadzenPanelMenu
@@ -12,42 +10,41 @@
             <RadzenPanelMenuItem Text="@Loc["Home"]" Icon="dashboard" data-testid="sidebar_dashboard"
                                  MouseEnter="@(args => ShowTooltip(args, "Dashboard", new TooltipOptions { Position = TooltipPosition.Right }))"
                                  MouseLeave="CloseTooltip"
-                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}", true))"/>
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}"))"/>
             <RadzenPanelMenuItem Text="@Loc["Requirements"]" Icon="assignment" data-testid="sidebar_requirements"
                                  MouseEnter="@(args => ShowTooltip(args, "Requirements", new TooltipOptions { Position = TooltipPosition.Right }))"
                                  MouseLeave="CloseTooltip"
-                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements", true))"/>
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements"))"/>
             <RadzenPanelMenuItem Text="@Loc["TestCases"]" Icon="science" data-testid="sidebar_testcases"
                                  MouseEnter="@(args => ShowTooltip(args, "Test Cases", new TooltipOptions { Position = TooltipPosition.Right }))"
                                  MouseLeave="CloseTooltip"
-                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases", true))"/>
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases"))"/>
             <RadzenPanelMenuItem Text="@Loc["TestPlans"]" Icon="description" data-testid="sidebar_testplans"
                                  MouseEnter="@(args => ShowTooltip(args, "Test Plans", new TooltipOptions { Position = TooltipPosition.Right }))"
                                  MouseLeave="CloseTooltip"
-                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testplans", true))"/>
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testplans"))"/>
             <RadzenPanelMenuItem Text="@Loc["TestExecutions"]" Icon="play_circle" data-testid="sidebar_testexecutions"
                                  MouseEnter="@(args => ShowTooltip(args, "Test Executions", new TooltipOptions { Position = TooltipPosition.Right }))"
                                  MouseLeave="CloseTooltip"
-                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution", true))"/>
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution"))"/>
             <RadzenPanelMenuItem Text="@Loc["Bugs"]" Icon="bug_report" data-testid="sidebar_bugs"
                                  MouseEnter="@(args => ShowTooltip(args, "Bugs", new TooltipOptions { Position = TooltipPosition.Right }))"
                                  MouseLeave="CloseTooltip"
-                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs", true))"/>
+                                 Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs"))"/>
             <RadzenPanelMenuItem Text="@Loc["Reports"]" Icon="bar_chart" data-testid="sidebar_reports"
                                  MouseEnter="@(args => ShowTooltip(args, "Reports", new TooltipOptions { Position = TooltipPosition.Right }))"
                                  MouseLeave="CloseTooltip"
-                                 Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/reports", true))"/>
+                                 Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/reports"))"/>
             <RadzenPanelMenuItem Text="@Loc["Milestones"]" Icon="flag" data-testid="sidebar_milestones"
                                  MouseEnter="@(args => ShowTooltip(args, "Milestones", new TooltipOptions { Position = TooltipPosition.Right }))"
                                  MouseLeave="CloseTooltip"
-                                 Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/milestones", true))"/>
+                                 Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/milestones"))"/>
         </RadzenPanelMenu>
 
     </RadzenSidebar>
 }
 
 @code {
-    private bool _isAuthenticated;
     bool _sidebarExpanded = false;
 
     private int ProjectId { get; set; } // Capture projectId from the URL
@@ -60,12 +57,6 @@
             ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
             StateHasChanged(); // Ensure UI updates
         }
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        _isAuthenticated = authState.User.Identity?.IsAuthenticated ?? true;
     }
 
     void ShowTooltip(ElementReference elementReference, string message, TooltipOptions options)

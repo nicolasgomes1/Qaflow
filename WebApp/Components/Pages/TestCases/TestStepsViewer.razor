@@ -1,4 +1,6 @@
-﻿<RadzenDataGrid Data="@TestStepsData" TItem="TestSteps" Style="margin-top: 10px;">
+﻿@attribute [Authorize]
+
+<RadzenDataGrid Data="@TestStepsData" TItem="TestSteps" Style="margin-top: 10px;">
     <HeaderTemplate>
         <h4 class="text-center text-primary mb-4">View Test Steps</h4>
     </HeaderTemplate>

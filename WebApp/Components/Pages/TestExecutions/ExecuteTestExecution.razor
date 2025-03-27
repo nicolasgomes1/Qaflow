@@ -1,4 +1,6 @@
 @page "/project/{ProjectId:int}/testexecution/execution/{Id:int}"
+@attribute [Authorize]
+
 @rendermode InteractiveServer
 @implements IDisposable
 @if (_isLoading)

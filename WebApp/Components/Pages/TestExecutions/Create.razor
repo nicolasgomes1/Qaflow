@@ -1,5 +1,7 @@
 ﻿@page "/project/{ProjectId:int}/testexecution/create"
 @rendermode InteractiveServer
+@attribute [Authorize]
+
 <RadzenTemplateForm Data="@_testExecution" TItem="TestExecution" Submit="CreateExecution">
     <h3 class="text-center text-primary mb-4">Create Test Execution</h3>
     <ValidationSummary class="alert alert-danger"/>

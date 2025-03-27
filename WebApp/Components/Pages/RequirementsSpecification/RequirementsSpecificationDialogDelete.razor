@@ -1,3 +1,5 @@
+@attribute [Authorize]
+
 <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: red;"
               data-testid="delete"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Delete {nameof(RequirementsSpecification)}"))"
@@ -21,7 +23,7 @@
             {
                 await OnRequirementDeleted.InvokeAsync();
             }
-            
+
             switch (hey)
             {
                 case true:

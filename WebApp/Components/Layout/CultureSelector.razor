@@ -1,22 +1,27 @@
-<div style="position: relative;">
-    <RadzenButton Icon="language"
-                  Click="ToggleDropdown" Style="background-color: initial"/>
+@attribute [Authorize]
 
-    @if (_isDropdownVisible)
-    {
-        <div style="position: absolute; top: 40px; right: 0; z-index: 1000;">
-            <RadzenDropDown
-                @bind-Value="_selectedCulture"
-                TValue="CultureInfo"
-                Data="_culturesWithDisplayNames"
-                TextProperty="DisplayName"
-                ValueProperty="Culture"
-                Change="ApplySelectedCultureAndClose"
-                OpenPopupOnFocus="true"
-                Style="width: 150px;"/>
-        </div>
-    }
-</div>
+<AuthorizeView>
+    <div style="position: relative;">
+        <RadzenButton Icon="language"
+                      Click="ToggleDropdown" Style="background-color: initial"/>
+
+        @if (_isDropdownVisible)
+        {
+            <div style="position: absolute; top: 40px; right: 0; z-index: 1000;">
+                <RadzenDropDown
+                    @bind-Value="_selectedCulture"
+                    TValue="CultureInfo"
+                    Data="_culturesWithDisplayNames"
+                    TextProperty="DisplayName"
+                    ValueProperty="Culture"
+                    Change="ApplySelectedCultureAndClose"
+                    OpenPopupOnFocus="true"
+                    Style="width: 150px;"/>
+            </div>
+        }
+    </div>
+</AuthorizeView>
+
 
 @code
 

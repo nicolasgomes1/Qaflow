@@ -1,5 +1,6 @@
 @page "/project/{ProjectId:int}/requirementsspecification"
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 <RadzenDataGrid Data="@_requirementsSpecification"
                 ColumnWidth="auto"

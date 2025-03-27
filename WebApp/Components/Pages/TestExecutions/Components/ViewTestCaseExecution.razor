@@ -1,4 +1,5 @@
 ﻿<!-- Test Cases Execution with Test Step Execution-->
+@attribute [Authorize]
 
 @if (_testExecution.ExecutionStatus != EnumService.GetSingleEnum<ExecutionStatus>(ExecutionStatus.NotRun))
 {

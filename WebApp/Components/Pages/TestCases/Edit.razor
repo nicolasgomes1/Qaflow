@@ -1,5 +1,7 @@
 ﻿@page "/project/{ProjectId:int}/testcases/edit/{Id:int}"
 @rendermode InteractiveServer
+@attribute [Authorize]
+
 @if (_isLoading)
 {
     <ProgressBar/>

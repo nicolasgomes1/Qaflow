@@ -1,6 +1,6 @@
 @page "/project/{ProjectId:int}/requirements/view/{Id:int}"
 @rendermode InteractiveServer
-
+@attribute [Authorize]
 
 <RadzenTabs RenderMode="TabRenderMode.Client">
     <Tabs>

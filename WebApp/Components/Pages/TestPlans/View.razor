@@ -1,6 +1,7 @@
 ﻿@page "/project/{ProjectId:int}/testplans/view/{Id:int}"
 @using WebApp.Components.Pages.TestCases
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 
 <RadzenTabs RenderMode="TabRenderMode.Client">

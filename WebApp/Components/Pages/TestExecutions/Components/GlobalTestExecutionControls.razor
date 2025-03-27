@@ -1,4 +1,6 @@
-﻿<RadzenCard
+﻿@attribute [Authorize]
+
+<RadzenCard
     Style="flex: 1; padding: 20px; display: flex; justify-content: center; align-items: center; flex-direction: column;"
     class="rz-shadow-10">
     @switch (_testExecution.IsActive)

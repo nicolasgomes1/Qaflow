@@ -1,5 +1,7 @@
 @page "/project/{ProjectId:int}/testexecution/active"
 @rendermode InteractiveServer
+@attribute [Authorize]
+
 <RadzenDataGrid AllowFiltering="true"
                 AllowColumnResize="true"
                 AllowAlternatingRows="false"

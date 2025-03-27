@@ -1,5 +1,7 @@
 @page "/project/{ProjectId:int}/testexecution/view/{Id:int}"
 @rendermode InteractiveServer
+@attribute [Authorize]
+
 @*Version 2*@
 <RadzenTabs @bind-SelectedIndex="@_selectedIndex">
     <Tabs>

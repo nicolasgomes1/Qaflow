@@ -1,5 +1,6 @@
 ﻿@page "/project/{ProjectId:int}/testcases/view/{Id:int}"
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 @if (_isLoading)
 {
@@ -152,7 +153,8 @@ else
         await TestCasesModel.GetTestStepsForTestCase(Id);
 
         Files = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
-        _testCasesJira = await TestCasesJiraModel.GetSelectedJiraTickets(Id);;
+        _testCasesJira = await TestCasesJiraModel.GetSelectedJiraTickets(Id);
+        ;
         _isLoading = false;
     }
 
@@ -160,5 +162,5 @@ else
     private bool IsTestStepsEmpty => !_testCases.TestSteps.Any();
 
     private List<TestCasesJira> _testCasesJira = [];
-    
+
 }

@@ -1,5 +1,6 @@
 ﻿@rendermode InteractiveServer
 @inject ContextMenuService ContextMenuService
+@attribute [Authorize]
 
 <RadzenTree Style="height: 100%; overflow: auto;" Data="@_projects" ItemContextMenu="ItemContextMenu">
     <!-- Project level -->
