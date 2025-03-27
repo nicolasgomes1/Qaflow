@@ -15,7 +15,7 @@ test.afterEach('Logout User',async ({ page }) => {
 
 test('Create a new Project', async ({ page }) => {
     test.slow();
-    const Random = Math.floor(Math.random() * 1000);
+    const Random = Math.floor(Math.random() * 1000000);
     
     await actions.click_button(page, 'create_project');
 
@@ -38,10 +38,12 @@ test('Create a new Project', async ({ page }) => {
     await page.getByLabel('Name filter value').fill(project_name);
     await page.getByRole('button', { name: 'Apply' }).click();
     await expect(page.locator('tr', { hasText: project_name })).toBeVisible();
+
+    await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
+    await page.getByRole('button', { name: 'delete' }).first().click({ force: true });
+
     
-    // Delete the project
-    await page.getByRole('button', { name: 'delete' }).first().hover();
-    await page.getByRole('button', { name: 'delete' }).first().click();
+    
     await expect(page.locator('#rz-dialog-0-label')).toContainText('All underlying Data will be lost');
     await page.getByRole('button', { name: 'Ok' }).click();
     await expect(page.getByRole('table')).not.toContainText(project_name);
@@ -50,7 +52,7 @@ test('Create a new Project', async ({ page }) => {
 
 test('View a new Project', async ({ page }) => {
     test.slow();
-    const Random = Math.floor(Math.random() * 1000);
+    const Random = Math.floor(Math.random() * 1000000);
 
     await actions.click_button(page, 'create_project');
 
@@ -84,7 +86,7 @@ test('View a new Project', async ({ page }) => {
 
 test('Edit a new Project', async ({ page }) => {
     test.slow();
-    const Random = Math.floor(Math.random() * 1000);
+    const Random = Math.floor(Math.random() * 1000000);
 
     await actions.click_button(page, 'create_project');
 

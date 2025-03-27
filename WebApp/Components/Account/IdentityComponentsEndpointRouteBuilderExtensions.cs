@@ -19,6 +19,9 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
+        using var factory = LoggerFactory.Create(builder => builder.AddConsole());
+        var logger = factory.CreateLogger("Identity");
+
         var accountGroup = endpoints.MapGroup("/Account");
 
         accountGroup.MapPost("/PerformExternalLogin", (
@@ -48,6 +51,7 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
             [FromForm] string returnUrl) =>
         {
             await signInManager.SignOutAsync();
+            logger.LogInformation("User logged out.");
             return TypedResults.LocalRedirect($"~/{returnUrl}");
         });
 

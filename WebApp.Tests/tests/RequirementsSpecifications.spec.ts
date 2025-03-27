@@ -29,7 +29,7 @@ async function filterRequirements(page: Page, requirementName: string) {
 
 test('Create New Requirement Specification', async ({ page })=> {
     test.slow();
-    const Random = Math.floor(Math.random() * 1000);
+    const Random = Math.floor(Math.random() * 1000000);
 
     await actions.LaunchProject(page, 'Demo Project Without Data' );
 
@@ -61,7 +61,7 @@ test('Create New Requirement Specification', async ({ page })=> {
 
 test('View New Requirement Specification', async ({ page })=> {
     test.slow();
-    const Random = Math.floor(Math.random() * 1000);
+    const Random = Math.floor(Math.random() * 1000000);
 
     await actions.LaunchProject(page, 'Demo Project Without Data' );
 

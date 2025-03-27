@@ -28,7 +28,7 @@ async function filterTestCase(page: Page, testcaseName: string) {
 
 test('Create New Test Case With Main Information', async ({ page })=> {
     test.slow();
-    const Random = Math.floor(Math.random() * 1000);
+    const Random = Math.floor(Math.random() * 1000000);
     const testcase_name = 'Test Case Playwright' + Random;
     await actions.LaunchProject(page, 'Demo Project Without Data' );
 
