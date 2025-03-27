@@ -9,6 +9,7 @@ async function click_button(page: Page, id: string)
     const el = page.getByTestId(id).first();
     await el.waitFor({ state: 'visible' });
     await el.hover();
+    await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
     await el.click({ force: true, delay: 100 });
     await page.waitForLoadState('networkidle');
 }
@@ -116,5 +117,36 @@ async function closeModal(page: Page, dataTestId: string) {
     }, dataTestId); // Pass the parameter to page.evaluate
 }
 
+async function LaunchProject(page: Page, project: string)
+{
+    // Hover and click the "Name sort filter_alt" icon to open the filter
+    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
+    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
 
-export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal };
+    // Fill in the project name in the filter textbox
+    await page.getByRole('textbox', { name: 'Name filter value' }).click();
+    await page.getByRole('textbox', { name: 'Name filter value' }).fill(project);
+
+    // Click the "Apply" button
+    await page.getByRole('button', { name: 'Apply' }).click();
+
+    // Wait for the network to idle (ensure the page loads and updates)
+    await page.waitForLoadState('networkidle');
+
+    // Wait for the tooltip or popup (rz-tooltip rz-popup) to disappear before continuing
+    await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
+
+    // Wait for the tbody to have only one row after applying the filter
+    await page.waitForFunction(() => {
+        const tbody = document.querySelector('tbody');
+        return tbody && tbody.rows.length === 1; // Wait until there is only one row in tbody
+    }, { timeout: 5000 }); // Set a timeout for this check (5 seconds in this example)
+
+    // Now click the "launch" button
+    await page.getByRole('button', { name: 'launch' }).first().click({ force: true });
+
+    // Wait for the page to load after the click
+    await page.waitForLoadState('load');
+}
+
+export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject };

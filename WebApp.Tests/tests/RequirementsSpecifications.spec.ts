@@ -13,17 +13,6 @@ test.afterEach('Logout User',async ({ page }) => {
     await expect(guest_user).toBeVisible();
 });
 
-async function filterAndLaunchProject(page: Page, projectName = 'Demo Project Without Data') {
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
-    await page.getByRole('textbox', { name: 'Name filter value' }).click();
-    await page.getByRole('textbox', { name: 'Name filter value' }).fill(projectName);
-    await page.getByRole('button', { name: 'Apply' }).click();
-    await page.waitForLoadState('networkidle');
-    await page.getByRole('button', { name: 'launch' }).first().click({ force: true });
-    await page.waitForLoadState('load');
-}
-
 async function filterRequirements(page: Page, requirementName: string) {
     await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
     await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
@@ -42,7 +31,7 @@ test('Create New Requirement Specification', async ({ page })=> {
     test.slow();
     const Random = Math.floor(Math.random() * 1000);
 
-    await filterAndLaunchProject(page);
+    await actions.LaunchProject(page, 'Demo Project Without Data' );
 
     await actions.click_button(page, 'd_requirementsSpecification');
     
@@ -74,7 +63,7 @@ test('View New Requirement Specification', async ({ page })=> {
     test.slow();
     const Random = Math.floor(Math.random() * 1000);
 
-    await filterAndLaunchProject(page);
+    await actions.LaunchProject(page, 'Demo Project Without Data' );
 
     await actions.click_button(page, 'd_requirementsSpecification');
 
