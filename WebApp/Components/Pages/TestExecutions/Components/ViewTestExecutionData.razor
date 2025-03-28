@@ -30,7 +30,7 @@
         <RadzenLabel Text="@_testExecution.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
 
         <RadzenLabel Text="Assigned To:" Style="font-weight: bold;"/>
-        <RadzenLabel Text="@_testExecution.AssignedTo"/>
+        <RadzenLabel Text="@_user"/>
 
         <RadzenLabel Text="Priority:" Style="font-weight: bold;"/>
         <RadzenLabel Text="@_testExecution.Priority.ToString()" Style="font-weight: bold;"/>
@@ -63,12 +63,14 @@
     [Parameter] public int Id { get; set; }
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
+    private string _user = string.Empty;
 
     private TestExecution _testExecution = new();
 
     protected override async Task OnInitializedAsync()
     {
         _testExecution = await TestExecutionModel.GetTestExecutionbyIdAsync(Id);
+        _user = await UserService.GetUserNameFromUserIdAsync(_testExecution.AssignedTo);
     }
 
     private string CalculateTimeDifference()

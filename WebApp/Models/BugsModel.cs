@@ -28,7 +28,7 @@ public class BugsModel(
         if (bug == null) throw new Exception("Bug not found");
         return bug;
     }
-    
+
     public async Task<List<TestCases>> GetTestCasesAssociatedWithBugAsync(int bugId)
     {
         var bug = await _dbContext.Bugs
@@ -59,15 +59,12 @@ public class BugsModel(
 
         // Save the bug
         await _dbContext.Bugs.AddAsync(bug);
-        
-        
+
+
         await _dbContext.SaveChangesAsync();
 
         // If there are files, attempt to save them
-        if (files != null && files.Count != 0)
-        {
-            await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
-        }
+        if (files != null && files.Count != 0) await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
 
         return bug;
     }
@@ -80,9 +77,6 @@ public class BugsModel(
         await _dbContext.SaveChangesAsync();
 
         // If there are files, attempt to save them
-        if (files != null && files.Count != 0)
-        {
-            await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
-        }
+        if (files != null && files.Count != 0) await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
     }
 }

@@ -5,8 +5,7 @@ using WebApp.Services;
 
 namespace WebApp.Models;
 
-public class BugsFilesModel(
-    IDbContextFactory<ApplicationDbContext> dbContextFactory)
+public class BugsFilesModel(IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
 
@@ -24,10 +23,7 @@ public class BugsFilesModel(
                 await file.OpenReadStream().CopyToAsync(memoryStream);
 
                 //Validation at server side
-                if (file.Size > MaxFileSize)
-                {
-                    throw new Exception("File size is too large. Maximum file size is 100KB");
-                }
+                if (file.Size > MaxFileSize) throw new Exception("File size is too large. Maximum file size is 100KB");
 
                 var bugsFile = new BugsFiles
                 {
