@@ -1,4 +1,5 @@
-﻿@inject ILogger<DeleteallDataForModel> Logger
+﻿@using Microsoft.Data.SqlClient
+@inject ILogger<DeleteallDataForModel> Logger
 
 <RadzenButton Icon="delete_forever"
               Click="@(DeleteAllModelData)"
@@ -17,7 +18,7 @@
     [Parameter] public IEnumerable<object> EntityList { get; set; } = new List<object>();
 
     private int _projectId;
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -26,7 +27,7 @@
             StateHasChanged(); // Ensure UI updates
         }
     }
-    
+
     private async Task DeleteAllModelData()
     {
         var entityName = EntityName.ToLower();
@@ -37,38 +38,45 @@
         var confirmed = await DialogService.Confirm($"Are you sure you want to delete all {EntityName}?", $"Delete All {EntityName}");
         if (confirmed == true)
         {
-            db.RemoveRange(EntityList);
-
-
-            switch (entityName)
+            try
             {
-                // Check if the entity being deleted is 'Requirement'
-                case "requirements":
-                {
-                    Logger.LogInformation($"{UserInfo} deleted all Requirements on Time: {DateTime.Now}");
+                db.RemoveRange(EntityList);
 
-                    break;
-                }
-                case "testcases":
+
+                switch (entityName)
                 {
-                    Logger.LogInformation($"{UserInfo} deleted all TestCases on Time: {DateTime.Now}");
-                    break;
-                }
-                case "tesplans":
-                {
-                    Logger.LogInformation($"{UserInfo} deleted all TestPlans on Time: {DateTime.Now}");
-                    break;
+                    // Check if the entity being deleted is 'Requirement'
+                    case "requirements":
+                    {
+                        Logger.LogInformation($"{UserInfo} deleted all Requirements on Time: {DateTime.Now}");
+
+                        break;
+                    }
+                    case "testcases":
+                    {
+                        Logger.LogInformation($"{UserInfo} deleted all TestCases on Time: {DateTime.Now}");
+                        break;
+                    }
+                    case "tesplans":
+                    {
+                        Logger.LogInformation($"{UserInfo} deleted all TestPlans on Time: {DateTime.Now}");
+                        break;
+                    }
+
+                    case "bugs":
+                    {
+                        Logger.LogInformation($"{UserInfo} deleted all Bugs on Time: {DateTime.Now}");
+                        break;
+                    }
                 }
 
-                case "bugs":
-                {
-                    Logger.LogInformation($"{UserInfo} deleted all Bugs on Time: {DateTime.Now}");
-                    break;
-                }
+                await db.SaveChangesAsync();
+                NavigationManager.NavigateTo($"/project/{project}/{entityName}", true);
             }
-
-            await db.SaveChangesAsync();
-            NavigationManager.NavigateTo($"/project/{project}/{entityName}", true);
+            catch (Exception e)
+            {
+                await FormNotificationService.NotifyError($"Error {e}");
+            }
         }
     }
 

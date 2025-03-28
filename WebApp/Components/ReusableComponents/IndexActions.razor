@@ -59,18 +59,25 @@
 
     private async Task DeleteItem(TItem item)
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-
-        var confirmed = await DialogService.Confirm($"Are you sure you want to delete this {EntityName}?", $"Delete {EntityName}");
-
-        if (confirmed is true)
+        try
         {
-            if (item is null) throw new Exception($"{item} is null");
-            db.Remove(item);
-            await db.SaveChangesAsync();
-        }
+            await using var db = await DbContext.CreateDbContextAsync();
 
-        NavigationManager.NavigateTo($"/project/{ProjectId}/{EntityName.ToLower()}", true);
+            var confirmed = await DialogService.Confirm($"Are you sure you want to delete this {EntityName}?", $"Delete {EntityName}");
+
+            if (confirmed is true)
+            {
+                if (item is null) throw new Exception($"{item} is null");
+                db.Remove(item);
+                await db.SaveChangesAsync();
+            }
+
+            NavigationManager.NavigateTo($"/project/{ProjectId}/{EntityName.ToLower()}", true);
+        }
+        catch (Exception e)
+        {
+            await FormNotificationService.NotifyError(e.ToString());
+        }
     }
 
     private int GetId(TItem item)
