@@ -83,9 +83,11 @@ else
                     </RadzenBadge>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Title="Has Test Cases" Width="auto">
+            <RadzenDataGridColumn Title="Has Test Cases" Width="auto"
+                                  Property="@nameof(Requirements.HasTestCasesText)"
+                                  Sortable="true" FilterOperator="FilterOperator.Equals">
                 <Template Context="requirement">
-                    @if (requirement.LinkedTestCases != null && requirement.LinkedTestCases.Any())
+                    @if (requirement.HasTestCases)
                     {
                         <span>Yes</span>
                     }
@@ -95,6 +97,7 @@ else
                     }
                 </Template>
             </RadzenDataGridColumn>
+
             <RadzenDataGridColumn Property="@nameof(Requirements.WorkflowStatus)" Title="Status" Width="auto">
                 <Template Context="requirement">
                     <RadzenBadge BadgeStyle="@StylesService.GetBadgeStyleWorkflowStatus(requirement.WorkflowStatus)">
