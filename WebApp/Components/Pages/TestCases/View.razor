@@ -2,6 +2,17 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 
+<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
+             Size="AlertSize.Small" Variant="Variant.Filled"
+             Shade="Shade.Default" Icon="visibility"
+             Text="@(req)"/>
+
+@code{
+    private string req => $"Viewing test case {Id}";
+
+}
+
+
 @if (_isLoading)
 {
     <ProgressBar Template="Loading"/>

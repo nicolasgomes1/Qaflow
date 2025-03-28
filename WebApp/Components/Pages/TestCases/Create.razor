@@ -2,7 +2,14 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 
-<h3 class="text-center text-primary mb-4">Create Test Case</h3>
+<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
+             Size="AlertSize.Small" Variant="Variant.Filled"
+             Shade="Shade.Default" Icon="add"
+             Text="@(Req)"/>
+
+@code{
+    private string Req => $"Creating new Test Case";
+}
 
 <RadzenTemplateForm Data="@_testCases" TItem="TestCases" Submit="CreateTestCase">
     <ValidationSummary class="alert alert-danger"/>

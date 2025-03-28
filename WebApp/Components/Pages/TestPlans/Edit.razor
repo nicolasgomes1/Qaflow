@@ -2,14 +2,25 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 
+<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
+             Size="AlertSize.Small" Variant="Variant.Filled"
+             Shade="Shade.Default" Icon="edit"
+             Text="@(req)"/>
+
+@code{
+    private string req => $"Editing test plan {Id}";
+
+}
+
+
+
+
 @if (_isLoading)
 {
     <ProgressBar/>
 }
 else
 {
-    <h3 class="text-center text-primary mb-4">Edit Test Plan</h3>
-
     <RadzenTemplateForm Data="@_testPlans" TItem="TestPlans" Submit="UpdateTestPlan">
         <ValidationSummary class="alert alert-danger"/>
         <RadzenTabs RenderMode="TabRenderMode.Client">

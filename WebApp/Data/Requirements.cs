@@ -26,6 +26,9 @@ public class Requirements : BaseEntity
     public ICollection<RequirementsFile> LinkedRequirementsFiles { get; set; } = [];
 
     public RequirementsSpecification? RequirementsSpecification { get; set; }
-    public bool HasTestCases => LinkedTestCases != null && LinkedTestCases.Any();
+
+
+    //Filtering properties
+    public virtual bool HasTestCases => LinkedTestCases != null && LinkedTestCases.Any();
     public string HasTestCasesText => HasTestCases ? "Yes" : "No";
 }
