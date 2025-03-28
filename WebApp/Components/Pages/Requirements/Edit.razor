@@ -51,6 +51,23 @@ else
 
                             <div class="row mb-4">
                                 <div class="col-12">
+                                    <RadzenLabel Text="Requirements Specification"/>
+                                    <RadzenDropDown id="requirements_specification"
+                                                    class="w-100"
+                                                    Data="@_requirementsSpecificationList"
+                                                    TextProperty="Name"
+                                                    ValueProperty="Id"
+                                                    @bind-Value="_selectedRequirementSpecificationId"
+                                                    AllowFiltering="true"
+                                                    AllowVirtualization="true"
+                                                    Name="requirementsSpecification"/>
+                                    <RadzenRequiredValidator Component="requirementsSpecification"
+                                                             Text="Requirements Specification is required"/>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-12">
                                     <RadzenLabel Text="Priority"/>
                                     <RadzenDropDown class="w-100"
                                                     data-testid="requirement_priority"
@@ -108,6 +125,8 @@ else
 
     [Parameter] public int ProjectId { get; set; }
     private List<ApplicationUser> _usersList = [];
+    private List<RequirementsSpecification> _requirementsSpecificationList = [];
+    private int _selectedRequirementSpecificationId;
 
 
     int _selectedIndex;
@@ -122,7 +141,8 @@ else
         _usersList = await UserService.GetUsersList();
 
         _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
-
+        _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
+        _selectedRequirementSpecificationId = _requirements.RequirementsSpecification.Id;
         if (_requirements.ArchivedStatus.Equals(ArchivedStatus.Archived))
         {
             NavigationManager.NavigateTo($"project/{ProjectId}/requirements", true);
@@ -137,6 +157,7 @@ else
 
     private async Task UpdateRequirement()
     {
+        _requirements.RequirementsSpecification = _requirementsSpecificationList.FirstOrDefault(rs => rs.Id == _selectedRequirementSpecificationId && rs.ProjectsId == ProjectId);
         await RequirementsModel.UpdateRequirement(Id, _uploadedFiles, ProjectId);
 
         NavigationManager.NavigateTo($"/project/{ProjectId}/requirements");
