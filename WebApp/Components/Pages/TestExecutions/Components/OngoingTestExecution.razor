@@ -250,7 +250,7 @@
                               Disabled="@IsTestCaseNotRunning(testCaseExecution.TestCaseId)"/>
 
                 <BugDialogCreate TestCaseExecutionId="@testCaseExecution.Id"
-                                 IsDisabled="@IsTestCaseNotRunning(testCaseExecution.TestCaseId)"/>
+                                 IsDisabled="@IsTestCaseNotRunning(testCaseExecution.TestCaseId)" ProjectId="@ProjectId"/>
             </Template>
         </RadzenDataGridColumn>
     </Columns>

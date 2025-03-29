@@ -52,7 +52,7 @@ test('Create New Requirement Specification', async ({ page })=> {
     
     await actions.click_button(page, 'delete');
 
-    await page.getByRole('button', { name: 'Ok' }).click();
+    await page.getByRole('button', { name: 'Ok' }).first().click();
     await expect(page.getByRole('table')).not.toContainText('Test Requirement Playwright' + Random);
 });
 

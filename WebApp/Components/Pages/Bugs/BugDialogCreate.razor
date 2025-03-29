@@ -22,7 +22,7 @@
     [Parameter]
     public bool IsDisabled { get; set; } = false;
 
-    [Parameter] public int ProjectId { get; set; }
+    [EditorRequired][Parameter] public int ProjectId { get; set; }
 
     [Parameter] public int? TestCaseExecutionId { get; set; } = null;
 
