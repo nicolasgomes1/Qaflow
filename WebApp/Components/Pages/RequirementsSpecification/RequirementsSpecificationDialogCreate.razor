@@ -2,17 +2,22 @@
 @attribute [Authorize]
 
 
-<RadzenButton Text="@Title" Icon="add"
+<RadzenButton Text="@Title"
               data-testid="requirements_specification_create"
               Disabled="@IsDisabled"
-              ButtonStyle="ButtonStyle.Warning" Click="@ShowInlineDialog"/>
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.requirementsspecification"], TooltipPosition.Right))"
+              MouseLeave="@AppTooltipService.HideTooltip"
+              ButtonStyle="ButtonStyle.Warning" Click="@ShowInlineDialog">
+    <RadzenIcon Icon="add"/>
+    <RadzenIcon Icon="library_books"/>
+</RadzenButton>
 
 @code {
     private RequirementsSpecification _requirements = new();
 
     [EditorRequired] [Parameter] public EventCallback OnRequirementCreated { get; set; }
 
-    [EditorRequired] [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public string Title { get; set; } = string.Empty;
 
     /// <summary>
     /// Default value is false

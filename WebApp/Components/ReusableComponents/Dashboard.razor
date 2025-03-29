@@ -38,13 +38,20 @@
         </RadzenStack>
     </RadzenCard>
 
-    <RadzenCard Style="max-width: 200px; flex: 1 1 420px; margin: 10px;">
+    <RadzenCard Style="max-width: 300px; flex: 1 1 420px; margin: 10px;">
         <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
                      AlignItems="AlignItems.Center">
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
-                <RadzenButton Text="@Loc["TestCases"]"
-                              data-testid="d_testcases"
+                <RadzenButton data-testid="d_testcases"
+                              Icon="science"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Test Cases", TooltipPosition.Right))"
+                              MouseLeave="@AppTooltipService.HideTooltip"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases", true))"/>
+                <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="category"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Test Cases Worflow", TooltipPosition.Right))"
+                              MouseLeave="@AppTooltipService.HideTooltip"
+                              Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'/>
             </RadzenStack>
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_testCasesCount" class="rz-ms-2"/>
@@ -52,14 +59,24 @@
         </RadzenStack>
     </RadzenCard>
 
-    <RadzenCard Style="max-width: 200px; flex: 1 1 420px; margin: 10px;">
+    <RadzenCard Style="max-width: 300px; flex: 1 1 420px; margin: 10px;">
         <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
                      AlignItems="AlignItems.Center">
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
-                <RadzenButton Text="@Loc["TestPlans"]"
+
+                <RadzenButton Icon="description"
                               data-testid="d_testplans"
-                              Shade="Shade.Light"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["TestPlans"], TooltipPosition.Right))"
+                              MouseLeave="@AppTooltipService.HideTooltip"
+                              ButtonStyle="ButtonStyle.Info"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans", true))"/>
+                <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
+                <RadzenButton Icon="category"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["manage.testplans"], TooltipPosition.Right))"
+                              MouseLeave="@AppTooltipService.HideTooltip"
+                              ButtonStyle="ButtonStyle.Info"
+                              Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")'></RadzenButton>
+
             </RadzenStack>
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_testPlansCount"/>
@@ -70,31 +87,57 @@
     </RadzenCard>
 
 
-    <RadzenCard Style="max-width: 200px; flex: 1 1 420px; margin: 10px;">
+    <RadzenCard Style="max-width: 300px; flex: 1 1 420px; margin: 10px;">
 
         <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
                      AlignItems="AlignItems.Center">
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
-                <RadzenButton Text="@Loc["TestExecutions"]"
-                              data-testid="d_testexecutions"
+                <RadzenButton data-testid="d_testexecutions"
+                              Icon="play_circle"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["TestExecutions"], TooltipPosition.Right))"
+                              MouseLeave="@AppTooltipService.HideTooltip"
                               ButtonStyle="ButtonStyle.Success"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution", true))"/>
+                <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
+                <RadzenButton Icon="category"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["manage.testexecutions"], TooltipPosition.Right))"
+                              MouseLeave="@AppTooltipService.HideTooltip"
+                              ButtonStyle="ButtonStyle.Success"
+                              Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecutions/manage")'/>
+                <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
+
+                <RadzenButton Icon="play_arrow"
+                              ButtonStyle="ButtonStyle.Success"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["start.testexecutions"], TooltipPosition.Right))"
+                              MouseLeave="@AppTooltipService.HideTooltip"
+                              Disabled="@_testExecutionsReady.Equals(0)"
+                              Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution/active")'></RadzenButton>
             </RadzenStack>
-            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Vertical">
                 <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_testExecutionsCount"/>
+                <RadzenBadge IsPill="true" Text=@($"Test Execution Ready {_testExecutionsReady}")/>
             </RadzenStack>
         </RadzenStack>
     </RadzenCard>
 
 
-    <RadzenCard Style="max-width: 200px; flex: 1 1 420px; margin: 10px;">
+    <RadzenCard Style="max-width: 300px; flex: 1 1 420px; margin: 10px;">
         <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
                      AlignItems="AlignItems.Center">
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
-                <RadzenButton Text="@Loc["Bugs"]"
-                              data-testid="d_bugs"
+                <RadzenButton
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["Bugs"], TooltipPosition.Right))"
+                    MouseLeave="@AppTooltipService.HideTooltip"
+                    Icon="bug_report"
+                    data-testid="d_bugs"
+                    ButtonStyle="ButtonStyle.Danger"
+                    Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs", true))"/>
+                <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
+                <RadzenButton Icon="category"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["manage.bugs"], TooltipPosition.Right))"
+                              MouseLeave="@AppTooltipService.HideTooltip"
                               ButtonStyle="ButtonStyle.Danger"
-                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs", true))"/>
+                              Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs/manage")'></RadzenButton>
             </RadzenStack>
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_bugsCount"/>
@@ -102,7 +145,7 @@
         </RadzenStack>
     </RadzenCard>
 
-    <RadzenCard Style="max-width: 200px; flex: 1 1 420px; margin: 10px;">
+    <RadzenCard Style="max-width: 300px; flex: 1 1 420px; margin: 10px;">
         <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
                      AlignItems="AlignItems.Center">
             <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
@@ -116,7 +159,7 @@
         </RadzenStack>
     </RadzenCard>
 
-    <RadzenCard Style="max-width: 200px; flex: 1 1 420px; margin: 10px;">
+    <RadzenCard Style="max-width: 300px; flex: 1 1 420px; margin: 10px;">
         <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
                      AlignItems="AlignItems.Center">
             <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
@@ -143,6 +186,7 @@
     private string _bugsCount = string.Empty;
     private string _requirementsWithSpec = string.Empty;
     private double req;
+    private int _testExecutionsReady;
 
     protected override async Task OnInitializedAsync()
     {
@@ -152,6 +196,8 @@
         _testPlansCount = ReportsModel.LoadTotalTestPlans(ProjectId);
         _testExecutionsCount = ReportsModel.LoadTotalTestExecutions(ProjectId);
         _bugsCount = ReportsModel.LoadTotalBugs(ProjectId);
+        _testExecutionsReady = await TestExecutionModel.GetTestExecutionsReadyToExecuteAsync(ProjectId);
+
         req = await ReportsModel.RequirementsCoveredBySpecifications(ProjectId);
     }
 

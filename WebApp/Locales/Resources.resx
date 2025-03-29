@@ -86,4 +86,19 @@
     <data name="create.testcases" xml:space="preserve">
         <value>Create Test Case</value>
     </data>
+    <data name="manage.testplans" xml:space="preserve">
+        <value>Manage Test Plans</value>
+    </data>
+    <data name="manage.testexecutions" xml:space="preserve">
+        <value>Manage Test Executions</value>
+    </data>
+    <data name="start.testexecutions" xml:space="preserve">
+        <value>Test Executions Ready!</value>
+    </data>
+    <data name="manage.bugs" xml:space="preserve">
+        <value>Manage Bugs</value>
+    </data>
+    <data name="create.requirementsspecification" xml:space="preserve">
+        <value>Create Requirement Specification</value>
+    </data>
 </root>

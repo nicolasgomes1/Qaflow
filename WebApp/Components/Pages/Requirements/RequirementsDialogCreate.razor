@@ -2,12 +2,15 @@
 @attribute [Authorize]
 
 
-<RadzenButton Text="@Title" Icon="add"
-              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create New Requirement", TooltipPosition.Left))"
+<RadzenButton Text="@Title"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.requirements"], TooltipPosition.Left))"
               MouseLeave="@AppTooltipService.HideTooltip"
               Disabled="@IsDisabled"
               ButtonStyle="ButtonStyle.Warning"
-              Click="@ShowInlineDialog"/>
+              Click="@ShowInlineDialog">
+    <RadzenIcon Icon="add"/>
+    <RadzenIcon Icon="assignment"/>
+</RadzenButton>
 
 @code {
     private Requirements _requirements = new();

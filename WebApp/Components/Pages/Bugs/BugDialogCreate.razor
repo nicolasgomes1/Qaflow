@@ -3,7 +3,12 @@
 
 <RadzenButton Text="@Title" Icon="add"
               Disabled="@IsDisabled"
-              ButtonStyle="ButtonStyle.Danger" Click="@ShowInlineDialog"/>
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.bug"], TooltipPosition.Left))"
+              MouseLeave="@AppTooltipService.HideTooltip"
+              ButtonStyle="ButtonStyle.Danger" Click="@ShowInlineDialog">
+    <RadzenIcon Icon="add"/>
+    <RadzenIcon Icon="bug_report"/>
+</RadzenButton>
 
 @code {
     private Bugs _bugs = new();

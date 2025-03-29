@@ -2,9 +2,14 @@
 @attribute [Authorize]
 
 
-<RadzenButton Text="@Title" Icon="add"
+<RadzenButton Text="@Title"
               Disabled="@IsDisabled"
-              ButtonStyle="ButtonStyle.Success" Click="@ShowInlineDialog"/>
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.testexecution"], TooltipPosition.Left))"
+              ButtonStyle="ButtonStyle.Success" Click="@ShowInlineDialog">
+    <RadzenIcon Icon="add"/>
+    <RadzenIcon Icon="play_circle"/>
+
+</RadzenButton>
 
 @code {
     private TestExecution _testExecution = new();

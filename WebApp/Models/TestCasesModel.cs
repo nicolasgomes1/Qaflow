@@ -140,6 +140,8 @@ public class TestCasesModel(
         _dbContext.Update(testCases);
 
 
+        //adjust the active or not based on the workfllow
+        if (testCases.WorkflowStatus == WorkflowStatus.Completed) testCases.ArchivedStatus = ArchivedStatus.Archived;
         testCases.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         testCases.ModifiedAt = DateTime.UtcNow;
 

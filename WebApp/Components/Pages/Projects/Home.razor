@@ -1,4 +1,5 @@
 ﻿@page "/project/{ProjectId:int}"
+@using WebApp.Components.Pages.RequirementsSpecification
 
 
 @rendermode InteractiveServer
@@ -7,9 +8,12 @@
 <PageTitle>Home</PageTitle>
 <AuthorizeView>
     <Authorized>
+
         <div style="text-align: center; font-size: larger;">
             <strong>
-                @Loc["Welcome"], @UserService.GetCurrentUserInfoAsync().Result.UserName!
+                <RadzenBadge Shade="Shade.Default" Variant="Variant.Outlined">
+                    @Loc["Welcome"], @UserService.GetCurrentUserInfoAsync().Result.UserName!
+                </RadzenBadge>
             </strong>
         </div>
 
@@ -21,42 +25,18 @@
         <ProjectTree ProjectId="ProjectId"/>
 
         <RadzenStack Orientation="Orientation.Horizontal">
-            <RadzenStack Orientation="Orientation.Vertical" Wrap="FlexWrap.Wrap" JustifyContent="JustifyContent.Center"
+            <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap"
+                         JustifyContent="JustifyContent.Center"
                          AlignItems="AlignItems.Center"
                          Style="margin-top: 20px; border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-
-                <RadzenLabel Text="Create New Items"></RadzenLabel>
-                <TestCasesDialogCreate Title="@Loc["create.testcases"]"/>
-                <TestPlansDialogCreate Title="@Loc["create.testplans"]"/>
-                <TestExecutionDialogCreate Title="@Loc["create.testexecution"]"/>
-                <BugDialogCreate Title="@Loc["create.bug"]"/>
+                <RequirementsSpecificationDialogCreate ProjectId="ProjectId" OnRequirementCreated="StateHasChanged"/>
+                <RequirementsDialogCreate Title="" ProjectId="ProjectId"/>
+                <TestCasesDialogCreate Title="" ProjectId="ProjectId"/>
+                <TestPlansDialogCreate Title="" ProjectId="ProjectId"/>
+                <TestExecutionDialogCreate Title="" ProjectId="ProjectId"/>
+                <BugDialogCreate Title="" ProjectId="ProjectId"/>
             </RadzenStack>
 
-            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center"
-                         JustifyContent="JustifyContent.Center"
-                         Style="margin-top: 20px; border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
-                         Wrap="FlexWrap.Wrap">
-                <RadzenLabel Text="Workflow Management"></RadzenLabel>
-
-
-                <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="category" Text="Test Cases"
-                              Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'></RadzenButton>
-                <RadzenButton Icon="category" Text="Test Plans" Shade="Shade.Light"
-                              Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")'></RadzenButton>
-                <RadzenButton Icon="category" Text="Test Executions" ButtonStyle="ButtonStyle.Success"
-                              Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecutions/manage")'></RadzenButton>
-                <RadzenButton Icon="category" Text="Bugs" ButtonStyle="ButtonStyle.Danger"
-                              Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs/manage")'></RadzenButton>
-            </RadzenStack>
-            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center"
-                         JustifyContent="JustifyContent.Center"
-                         Style="margin-top: 20px; border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
-                         Wrap="FlexWrap.Wrap">
-                <RadzenLabel Text="View Test Executions Ready for execution"></RadzenLabel>
-                <RadzenButton Text="Test Executions" Icon="task" ButtonStyle="ButtonStyle.Success"
-                              Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution/active")'></RadzenButton>
-                <RadzenBadge Shade="Shade.Darker" Text="@_testExecutionsReady.ToString()"></RadzenBadge>
-            </RadzenStack>
         </RadzenStack>
     </Authorized>
 </AuthorizeView>

@@ -5,14 +5,22 @@
 <AuthorizeView>
     <Authorized>
         <div style="text-align: center; font-size: larger;">
-            <strong>@Loc["Welcome"], @UserService.GetCurrentUserInfoAsync().Result.UserName!</strong>
+            <strong>
+                <RadzenBadge Shade="Shade.Default" Variant="Variant.Outlined">
+                    @Loc["Welcome"], @UserService.GetCurrentUserInfoAsync().Result.UserName!
+                </RadzenBadge>
+            </strong>
         </div>
         <IndexProjects/>
 
     </Authorized>
     <NotAuthorized>
         <div style="text-align: center; font-size: larger;">
-            <strong>Welcome, Guest User!</strong>
+            <strong>
+                <RadzenBadge Shade="Shade.Default" Variant="Variant.Outlined">
+                    Welcome, Guest User!
+                </RadzenBadge>
+            </strong>
         </div>
     </NotAuthorized>
 </AuthorizeView>
