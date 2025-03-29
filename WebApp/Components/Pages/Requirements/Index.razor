@@ -74,10 +74,10 @@ else
         <Columns>
             <RadzenDataGridColumn Property="@nameof(Requirements.Id)" Filterable="false" Title="ID" Frozen="true"
                                   Width="80px" TextAlign="TextAlign.Center"/>
-            <RadzenDataGridColumn Property="@nameof(Requirements.RequirementsSpecification)" Title="Linked Spec"
+            <RadzenDataGridColumn Property="@nameof(Requirements.RequirementsSpecificationName)" Title="Linked Spec"
                                   Width="auto">
                 <Template Context="ctx">
-                    @ctx.RequirementsSpecification?.Name
+                    @ctx.RequirementsSpecificationName
                 </Template>
             </RadzenDataGridColumn>
 

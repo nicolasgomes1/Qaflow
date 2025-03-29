@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using WebApp.Data.enums;
 
 namespace WebApp.Data;
@@ -31,4 +32,6 @@ public class Requirements : BaseEntity
     //Filtering properties
     public virtual bool HasTestCases => LinkedTestCases != null && LinkedTestCases.Any();
     public string HasTestCasesText => HasTestCases ? "Yes" : "No";
+
+    [NotMapped] public string RequirementsSpecificationName => RequirementsSpecification?.Name ?? "";
 }
