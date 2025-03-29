@@ -74,11 +74,19 @@ else
         <Columns>
             <RadzenDataGridColumn Property="@nameof(Requirements.Id)" Filterable="false" Title="ID" Frozen="true"
                                   Width="80px" TextAlign="TextAlign.Center"/>
+            <RadzenDataGridColumn Property="@nameof(Requirements.RequirementsSpecification)" Title="Linked Spec"
+                                  Width="auto">
+                <Template Context="ctx">
+                    @ctx.RequirementsSpecification?.Name
+                </Template>
+            </RadzenDataGridColumn>
+
+
             <RadzenDataGridColumn Property="@nameof(Requirements.Name)" Title="Name" Frozen="true" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(Requirements.Description)" Title="Description" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(Requirements.Priority)" Title="Priority" Width="auto">
                 <Template Context="requirement">
-                    <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(requirement.Priority)">
+                    <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(requirement.Priority)" IsPill="true">
                         @requirement.Priority
                     </RadzenBadge>
                 </Template>

@@ -142,7 +142,7 @@ else
 
         _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
         _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
-        _selectedRequirementSpecificationId = _requirements.RequirementsSpecification.Id;
+        if (_requirements.RequirementsSpecification != null) _selectedRequirementSpecificationId = _requirements.RequirementsSpecification.Id;
         if (_requirements.ArchivedStatus.Equals(ArchivedStatus.Archived))
         {
             NavigationManager.NavigateTo($"project/{ProjectId}/requirements", true);
