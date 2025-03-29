@@ -43,10 +43,10 @@ else
                           Icon="add"
                           data-testid="create_requirement"
                           ButtonStyle="ButtonStyle.Warning"
-                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create new Requirement", TooltipPosition.Bottom))"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create new Requirement"))"
                           MouseLeave="@AppTooltipService.HideTooltip"/>
             <RadzenButton Icon="autorenew"
-                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All", TooltipPosition.Bottom))"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All"))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Size="ButtonSize.Medium"
                           Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
@@ -54,7 +54,7 @@ else
                                    EntityList="_requirements"/>
             <ExportGridDataCsv Grid="@_dataGrid"/>
             <RadzenButton Icon="assessment"
-                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment"))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")'/>
             <UploadRequirementsCsv OnUploadCompleted="RefreshPage" ProjectId="ProjectId"/>

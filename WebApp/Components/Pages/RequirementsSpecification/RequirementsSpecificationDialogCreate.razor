@@ -5,7 +5,7 @@
 <RadzenButton Text="@Title"
               data-testid="requirements_specification_create"
               Disabled="@IsDisabled"
-              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.requirementsspecification"], TooltipPosition.Right))"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.requirementsspecification"]))"
               MouseLeave="@AppTooltipService.HideTooltip"
               ButtonStyle="ButtonStyle.Warning" Click="@ShowInlineDialog">
     <RadzenIcon Icon="add"/>

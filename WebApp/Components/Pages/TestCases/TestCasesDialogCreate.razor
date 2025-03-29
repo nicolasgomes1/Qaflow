@@ -4,7 +4,7 @@
 
 <RadzenButton Text="@Title"
               Disabled="@IsDisabled"
-              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.testcases"], TooltipPosition.Left))"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.testcases"]))"
               MouseLeave="@AppTooltipService.HideTooltip"
               ButtonStyle="ButtonStyle.Primary" Click="@ShowInlineDialog">
     <RadzenIcon Icon="add"/>

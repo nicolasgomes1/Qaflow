@@ -10,10 +10,10 @@
                       Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs/create", true)'
                       Size="ButtonSize.Medium"
                       Icon="add"
-                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create new Bug", TooltipPosition.Bottom))"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create new Bug"))"
                       MouseLeave="@AppTooltipService.HideTooltip"/>
         <RadzenButton Icon="autorenew"
-                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All", TooltipPosition.Bottom))"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All"))"
                       MouseLeave="@AppTooltipService.HideTooltip"
                       Size="ButtonSize.Medium"
                       Click="@(() => DataGridSettingsService.ClearSettingsAsync())"/>

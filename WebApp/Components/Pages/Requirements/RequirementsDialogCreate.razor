@@ -3,7 +3,7 @@
 
 
 <RadzenButton Text="@Title"
-              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.requirements"], TooltipPosition.Left))"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.requirements"]))"
               MouseLeave="@AppTooltipService.HideTooltip"
               Disabled="@IsDisabled"
               ButtonStyle="ButtonStyle.Warning"

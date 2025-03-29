@@ -22,7 +22,7 @@
                              JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" Gap="1rem">
                     <!-- Start Execution Button -->
                     <RadzenButton
-                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Start Test Execution", TooltipPosition.Top))"
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Start Test Execution"))"
                         MouseLeave="@AppTooltipService.HideTooltip"
                         Click="@(StartExecution)"
                         Size="ButtonSize.Large"
@@ -31,7 +31,7 @@
 
                     <!-- Pause Execution Button -->
                     <RadzenButton
-                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Pause Test Execution", TooltipPosition.Top))"
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Pause Test Execution"))"
                         MouseLeave="@AppTooltipService.HideTooltip"
                         Size="ButtonSize.Large"
                         Click="@(() => PauseExecution())"
@@ -40,7 +40,7 @@
 
                     <!-- Resume Execution Button -->
                     <RadzenButton
-                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Resume Test Execution", TooltipPosition.Top))"
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Resume Test Execution"))"
                         MouseLeave="@AppTooltipService.HideTooltip"
                         Size="ButtonSize.Large"
                         Click="@(() => ResumeExecution())"
@@ -49,7 +49,7 @@
 
                     <!-- End Execution Button -->
                     <RadzenButton
-                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "End Current Test Execution", TooltipPosition.Top))"
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "End Current Test Execution"))"
                         MouseLeave="@AppTooltipService.HideTooltip"
                         Size="ButtonSize.Large"
                         Disabled="@(!ExecutionInProgress || IsPaused)"
@@ -58,7 +58,7 @@
 
                     <!-- Cancel Execution Button -->
                     <RadzenButton
-                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Cancel Current Test Execution", TooltipPosition.Top))"
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Cancel Current Test Execution"))"
                         MouseLeave="@AppTooltipService.HideTooltip"
                         ButtonType="ButtonType.Reset"
                         Size="ButtonSize.Large"
@@ -69,7 +69,7 @@
 
                     <!-- Suspend Execution Button -->
                     <RadzenButton
-                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Suspend Current Test Execution", TooltipPosition.Top))"
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Suspend Current Test Execution"))"
                         MouseLeave="@AppTooltipService.HideTooltip"
                         Size="ButtonSize.Large"
                         Click="@(() => SuspendExecution())"
@@ -78,7 +78,7 @@
                     <!-- Resume Execution Button -->
 
                     <RadzenButton
-                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Resume From Suspended Execution", TooltipPosition.Top))"
+                        MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Resume From Suspended Execution"))"
                         MouseLeave="@AppTooltipService.HideTooltip"
                         Size="ButtonSize.Large"
                         Click="@(() => ResumeFromSuspendedExecution())"

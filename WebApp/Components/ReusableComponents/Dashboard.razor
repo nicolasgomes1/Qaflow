@@ -5,7 +5,7 @@
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenButton
                     data-testid="d_requirementsSpecification"
-                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Requirements Specifications", TooltipPosition.Right))"
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Requirements Specifications"))"
                     MouseLeave="@AppTooltipService.HideTooltip"
                     Icon="library_books"
                     ButtonStyle="ButtonStyle.Warning"
@@ -13,7 +13,7 @@
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton
                     data-testid="d_requirements"
-                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Requirements", TooltipPosition.Right))"
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Requirements"))"
                     MouseLeave="@AppTooltipService.HideTooltip"
                     ButtonStyle="ButtonStyle.Warning"
                     Icon="assignment"
@@ -21,7 +21,7 @@
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton
                     data-testid="d_requirementsworkflow"
-                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Requirements Workflow", TooltipPosition.Right))"
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Requirements Workflow"))"
                     MouseLeave="@AppTooltipService.HideTooltip"
                     ButtonStyle="ButtonStyle.Warning"
                     Icon="category"
@@ -44,12 +44,12 @@
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenButton data-testid="d_testcases"
                               Icon="science"
-                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Test Cases", TooltipPosition.Right))"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Test Cases"))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases", true))"/>
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="category"
-                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Test Cases Worflow", TooltipPosition.Right))"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Test Cases Worflow"))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'/>
             </RadzenStack>
@@ -66,13 +66,13 @@
 
                 <RadzenButton Icon="description"
                               data-testid="d_testplans"
-                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["TestPlans"], TooltipPosition.Right))"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["TestPlans"]))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               ButtonStyle="ButtonStyle.Info"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans", true))"/>
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton Icon="category"
-                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["manage.testplans"], TooltipPosition.Right))"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["manage.testplans"]))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               ButtonStyle="ButtonStyle.Info"
                               Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")'></RadzenButton>
@@ -94,13 +94,13 @@
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenButton data-testid="d_testexecutions"
                               Icon="play_circle"
-                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["TestExecutions"], TooltipPosition.Right))"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["TestExecutions"]))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               ButtonStyle="ButtonStyle.Success"
                               Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution", true))"/>
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton Icon="category"
-                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["manage.testexecutions"], TooltipPosition.Right))"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["manage.testexecutions"]))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               ButtonStyle="ButtonStyle.Success"
                               Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecutions/manage")'/>
@@ -108,7 +108,7 @@
 
                 <RadzenButton Icon="play_arrow"
                               ButtonStyle="ButtonStyle.Success"
-                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["start.testexecutions"], TooltipPosition.Right))"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["start.testexecutions"]))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               Disabled="@_testExecutionsReady.Equals(0)"
                               Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution/active")'></RadzenButton>
@@ -126,7 +126,7 @@
                      AlignItems="AlignItems.Center">
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenButton
-                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["Bugs"], TooltipPosition.Right))"
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["Bugs"]))"
                     MouseLeave="@AppTooltipService.HideTooltip"
                     Icon="bug_report"
                     data-testid="d_bugs"
@@ -134,7 +134,7 @@
                     Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs", true))"/>
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton Icon="category"
-                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["manage.bugs"], TooltipPosition.Right))"
+                              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["manage.bugs"]))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               ButtonStyle="ButtonStyle.Danger"
                               Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs/manage")'></RadzenButton>

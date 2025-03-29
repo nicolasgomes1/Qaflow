@@ -2,14 +2,14 @@
 
 <RadzenButton Icon="wrap_text"
               Click="GenerateCsv"
-              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Export Table to CSV", TooltipPosition.Bottom))"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Export Table to CSV"))"
               MouseLeave="@AppTooltipService.HideTooltip"/>
 
 @if (!string.IsNullOrEmpty(DownloadUrl))
 {
     <a href="@DownloadUrl" download="@FileName" style="text-decoration: none; color: inherit;">
         <RadzenButton Icon="download" Style="margin-left: 10px;"
-                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Download Data", TooltipPosition.Bottom))"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Download Data"))"
                       MouseLeave="@AppTooltipService.HideTooltip"
                       Click="() => ExportFile()"
                       Visible="@_isFileNotExported"/>

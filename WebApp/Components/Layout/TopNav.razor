@@ -83,7 +83,7 @@
             }
             <RadzenMenuItem Click=GoToProjects Text="@ProjectId.ToString()" Icon="hub"
                             IconColor="orange"
-                            MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Return to Hub", TooltipPosition.Bottom))"
+                            MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Return to Hub"))"
                             MouseLeave="@AppTooltipService.HideTooltip"/>
 
             <RealTimeClock/>

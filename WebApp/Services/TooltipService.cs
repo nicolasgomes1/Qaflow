@@ -12,14 +12,12 @@ public class AppTooltipService
         _tooltipService = tooltipService;
     }
 
-    public void ShowTooltip(ElementReference elementReference, string text,
-        TooltipPosition position = TooltipPosition.Left)
+    public void ShowTooltip(ElementReference elementReference, string text)
     {
         var options = new TooltipOptions
         {
-            Position = position, // Automatically adjusts based on space
             Style =
-                "overflow: hidden; text-overflow: ellipsis;" // Prevent overflow
+                "overflow: hidden; text-overflow: ellipsis; position: relative" // Prevent overflow
         };
 
         _tooltipService.Open(elementReference, text, options);

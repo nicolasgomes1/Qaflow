@@ -19,7 +19,7 @@
                       Icon="add"
                       data-testid="create_project"
                       Text="@Loc["create.project"]"
-                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.project.tooltip"], TooltipPosition.Bottom))"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.project.tooltip"]))"
                       MouseLeave="@AppTooltipService.HideTooltip"
                       Style="margin-bottom: 20px"/>
         <UploadProjectsCsv OnUploadCompleted="RefreshPage"></UploadProjectsCsv>

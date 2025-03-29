@@ -34,18 +34,18 @@ else
             <RadzenButton Text="Test Case"
                           data-testid="create_testcase"
                           Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases/create", true)'
-                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create Test Case", TooltipPosition.Bottom))"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create Test Case"))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Size="ButtonSize.Medium"
                           Icon="add"/>
             <RadzenButton Icon="autorenew"
-                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All", TooltipPosition.Bottom))"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All"))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Size="ButtonSize.Medium" Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
             <DeleteallDataForModel EntityName="@(nameof(TestCases))" EntityList="_testcases"/>
             <ExportGridDataCsv Grid="@_dataGrid"/>
             <RadzenButton Icon="assessment"
-                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment", TooltipPosition.Bottom))"
+                          MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment"))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'/>
             <UploadTestCasesCsv OnUploadCompleted="RefreshPage" ProjectId="ProjectId"/>

@@ -7,7 +7,7 @@
                 <Template Context="pointer">
                     <RadzenStack AlignItems="AlignItems.Start" Gap="0" Style="margin-top: -70%;">
                         <RadzenText
-                            MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Desired", TooltipPosition.Left))"
+                            MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Desired"))"
                             MouseLeave="@AppTooltipService.HideTooltip"
                             class="rz-m-0" Style="color: green;">
                             <strong>@pointer.Value%</strong>
@@ -20,7 +20,7 @@
                 <Template Context="pointer">
                     <RadzenStack AlignItems="AlignItems.Start" Gap="0" Style="margin-bottom:0%;">
                         <RadzenText
-                            MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Attained", TooltipPosition.Right))"
+                            MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Attained"))"
                             MouseLeave="@AppTooltipService.HideTooltip"
                             class="rz-m-0" Style="color: blue;">
                             <strong>@pointer.Value%</strong>
