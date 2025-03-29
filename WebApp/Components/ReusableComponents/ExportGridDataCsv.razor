@@ -1,4 +1,5 @@
-﻿@typeparam TItem
+﻿@using System.Reflection
+@typeparam TItem
 
 <RadzenButton Icon="wrap_text"
               Click="GenerateCsv"
@@ -41,7 +42,8 @@
         // Write headers
         foreach (var column in Grid.ColumnsCollection)
         {
-            csv.Append($"{column.Title},");
+            if (column.Title != "Actions")
+                csv.Append($"{column.Title},");
         }
 
         csv.AppendLine();

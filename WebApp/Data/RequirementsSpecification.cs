@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 
 namespace WebApp.Data;
 
@@ -15,4 +17,6 @@ public class RequirementsSpecification : BaseEntity
     public int ProjectsId { get; set; }
 
     public Projects? Projects { get; init; }
+
+    [NotMapped] public string LinkedRequirementsName => string.Join(", ", LinkedRequirements.Select(t => t.Name));
 }

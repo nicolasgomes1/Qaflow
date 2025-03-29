@@ -4,7 +4,7 @@
 
 <div style="display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: nowrap;">
     <RadzenDataGridColumn TItem="TItem" Sortable="false" Filterable="false" Resizable="false" Width="100px"
-                          Reorderable="false">
+                          Reorderable="false" Title="Actions" Pickable="false">
         <Template Context="item">
             <div style="display: flex; gap: 5px;">
                 <RequirementsSpecificationDialogView Id="GetId(item)"/>

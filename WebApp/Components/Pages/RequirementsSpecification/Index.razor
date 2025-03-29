@@ -12,6 +12,7 @@
                 AllowFiltering="true"
                 AllowSorting="true"
                 AllowPaging="true"
+                AllowColumnPicking="true"
                 PageSize="10"
                 Density="Density.Compact"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
@@ -38,13 +39,13 @@
                               Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(RequirementsSpecification.Description)" Title="Description"
                               Width="auto"/>
-        <RadzenDataGridColumn Property="@nameof(RequirementsSpecification.LinkedRequirements)"
+        <RadzenDataGridColumn Property="@nameof(RequirementsSpecification.LinkedRequirementsName)"
                               Title="Associated Requirements"
                               Sortable="false"
                               Filterable="true"
                               Width="auto">
             <Template Context="requirement">
-                @string.Join(", ", requirement.LinkedRequirements.Select(req => req.Name))
+                @string.Join(", ", requirement.LinkedRequirementsName)
             </Template>
         </RadzenDataGridColumn>
 
