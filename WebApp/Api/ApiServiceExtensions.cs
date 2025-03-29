@@ -14,6 +14,9 @@ public static class ApiServiceExtensions
 {
     public static void MapOwnAppApiEndpoints(this IEndpointRouteBuilder app)
     {
+        app.MapGet("/{**catchAll}", () => Results.NotFound("This route does not exist."))
+            .WithDisplayName("NotFoundHandler");
+        
         app.MapGet("/api/testcases", async (FetchApiData fetchApiData) =>
         {
             var allTestCases = await fetchApiData.Api_GetListTestCases();
