@@ -2,6 +2,10 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 
+<div style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
+    <RequirementsDialogCreate Title=""/>
+</div>
+
 <RadzenDataGrid Data="@_requirementsSpecification"
                 ColumnWidth="auto"
                 TItem="RequirementsSpecification"
@@ -24,6 +28,7 @@
         <ExportGridDataCsv Grid="@_dataGrid"/>
 
     </HeaderTemplate>
+
 
     <Columns>
         <RadzenDataGridColumn Property="@nameof(RequirementsSpecification.Id)" Filterable="false" Title="ID"

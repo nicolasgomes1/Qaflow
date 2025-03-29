@@ -26,7 +26,6 @@
                          Style="margin-top: 20px; border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
 
                 <RadzenLabel Text="Create New Items"></RadzenLabel>
-                <RequirementsDialogCreate Title="@Loc["create.requirements"]"/>
                 <TestCasesDialogCreate Title="@Loc["create.testcases"]"/>
                 <TestPlansDialogCreate Title="@Loc["create.testplans"]"/>
                 <TestExecutionDialogCreate Title="@Loc["create.testexecution"]"/>
@@ -39,8 +38,7 @@
                          Wrap="FlexWrap.Wrap">
                 <RadzenLabel Text="Workflow Management"></RadzenLabel>
 
-                <RadzenButton ButtonStyle="ButtonStyle.Warning" Icon="category" Text="Requirements"
-                              Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")'></RadzenButton>
+
                 <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="category" Text="Test Cases"
                               Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'></RadzenButton>
                 <RadzenButton Icon="category" Text="Test Plans" Shade="Shade.Light"

@@ -18,13 +18,21 @@
                     ButtonStyle="ButtonStyle.Warning"
                     Icon="assignment"
                     Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements", true))"/>
-                <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@($" {req}%")"/>
+                <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
+                <RadzenButton
+                    data-testid="d_requirementsworkflow"
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Requirements Workflow", TooltipPosition.Right))"
+                    MouseLeave="@AppTooltipService.HideTooltip"
+                    ButtonStyle="ButtonStyle.Warning"
+                    Icon="category"
+                    Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage"))"/>
             </RadzenStack>
 
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal"
                          JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
                 <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_requirementsCount"/>
                 <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_requirementsWithSpec"/>
+                <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@($" {req}%")"/>
 
             </RadzenStack>
         </RadzenStack>

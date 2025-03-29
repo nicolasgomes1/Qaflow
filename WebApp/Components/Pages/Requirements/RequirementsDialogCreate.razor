@@ -3,8 +3,11 @@
 
 
 <RadzenButton Text="@Title" Icon="add"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create New Requirement", TooltipPosition.Left))"
+              MouseLeave="@AppTooltipService.HideTooltip"
               Disabled="@IsDisabled"
-              ButtonStyle="ButtonStyle.Warning" Click="@ShowInlineDialog"/>
+              ButtonStyle="ButtonStyle.Warning"
+              Click="@ShowInlineDialog"/>
 
 @code {
     private Requirements _requirements = new();
