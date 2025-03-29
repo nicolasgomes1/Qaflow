@@ -46,6 +46,9 @@
                 csv.Append($"{column.Title},");
         }
 
+        if (csv.Length > 0)
+            csv.Remove(csv.Length - 1, 1);
+
         csv.AppendLine();
 
         // Write data rows for all columns
@@ -53,9 +56,13 @@
         {
             foreach (var column in Grid.ColumnsCollection)
             {
+                if (column.Title == "Actions") continue;
+
                 var value = column.GetValue(item)?.ToString();
                 csv.Append($"{value},");
             }
+            if (csv.Length > 0)
+                csv.Remove(csv.Length - 1, 1);
 
             csv.AppendLine();
         }
