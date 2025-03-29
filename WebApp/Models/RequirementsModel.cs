@@ -53,13 +53,15 @@ public class RequirementsModel(
 
     /// <summary>
     /// Load Requirement by Id
+    /// With Test Cases and Linked RequirementsSpecifications
     /// </summary>
     /// <param name="requirementId"></param>
-    /// <returns></returns>
+    /// <returns>Requirements</returns>
     public async Task<Requirements> GetRequirementByIdAsync(int requirementId)
     {
         var requirement = await _dbContext.Requirements
             .Include(r => r.LinkedTestCases)
+            .Include(r => r.RequirementsSpecification)
             .FirstOrDefaultAsync(r => r.Id == requirementId);
 
         if (requirement == null) throw new Exception("Requirement not found");

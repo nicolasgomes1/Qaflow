@@ -28,6 +28,9 @@
                         <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
                         <RadzenLabel Text="@_requirements.Description"/>
 
+                        <RadzenLabel Text="Requirements Specification:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_specificationName"/>
+
                         <RadzenLabel Text="Priority:" Style="font-weight: bold;"/>
                         <RadzenLabel Text="@_requirements.Priority.ToString()"/>
 
@@ -99,12 +102,15 @@
     }
 
     private Requirements _requirements = new();
+    private string _specificationName = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         Files = await RequirementsFilesModel.GetFilesByRequirementId(Id);
         _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
+        _specificationName = _requirements.RequirementsSpecification?.Name ?? string.Empty;
     }
+
 
     private bool RequirementHasNoFiles => !RequirementsFilesModel.ExistingFiles.Any();
 
