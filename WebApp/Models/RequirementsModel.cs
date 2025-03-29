@@ -19,6 +19,7 @@ public class RequirementsModel(
     {
         var requirements = await _dbContext.Requirements
             .Include(r => r.LinkedTestCases)
+            .Include(r => r.RequirementsSpecification)
             .Where(tc => tc.ProjectsId == projectId)
             .ToListAsync();
 
