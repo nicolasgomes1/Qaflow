@@ -52,6 +52,7 @@
     {
         _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
         _usersList = await UserService.GetUsersList();
+        _selectedRequirementSpecificationId = -1;
         _requirements = new Requirements();
 
         var result = await DialogService.OpenAsync("Create Requirement", ds =>
