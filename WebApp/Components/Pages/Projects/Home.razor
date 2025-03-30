@@ -17,27 +17,27 @@
             </strong>
         </div>
 
-        <div>
-            <Dashboard ProjectId="ProjectId"/>
-
-        </div>
-
-        <ProjectTree ProjectId="ProjectId"/>
-
-        <RadzenStack Orientation="Orientation.Horizontal">
-            <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap"
-                         JustifyContent="JustifyContent.Center"
-                         AlignItems="AlignItems.Center"
-                         Style="margin-top: 20px; border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap"
+                     JustifyContent="JustifyContent.Center"
+                     AlignItems="AlignItems.Center">
+            <RadzenCard>
                 <RequirementsSpecificationDialogCreate ProjectId="ProjectId" OnRequirementCreated="StateHasChanged"/>
                 <RequirementsDialogCreate Title="" ProjectId="ProjectId"/>
                 <TestCasesDialogCreate Title="" ProjectId="ProjectId"/>
                 <TestPlansDialogCreate Title="" ProjectId="ProjectId"/>
                 <TestExecutionDialogCreate Title="" ProjectId="ProjectId"/>
                 <BugDialogCreate Title="" ProjectId="ProjectId"/>
-            </RadzenStack>
+            </RadzenCard>
 
         </RadzenStack>
+
+
+        <div>
+            <Dashboard ProjectId="ProjectId"/>
+        </div>
+
+        <ProjectTree ProjectId="ProjectId"/>
+        
     </Authorized>
 </AuthorizeView>
 
