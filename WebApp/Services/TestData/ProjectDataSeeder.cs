@@ -13,14 +13,17 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        ILogger logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("SeedingLogger");
+
         using var scope = serviceProvider.CreateScope();
         var dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
         await using var
             dbContext =
                 await dbContextFactory.CreateDbContextAsync(cancellationToken); // Use using for context disposal
-
+        logger.LogInformation("Starting ProjectDataSeeder");
         // Seeding process
         await SeedDataAsync(dbContext);
+        logger.LogInformation("Finished Seeding ProjectDataSeeder");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -48,35 +51,45 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         await GetOrCreateProjectAsync(dbContext, "Demo Project Without Data");
 
 
+        //Create or get Requirements Specification
+        var requirementsSpecification1 =
+            await GetOrCreateRequirementsSpecificationAsync(dbContext, project.Id, "Requirements Specification 1");
+        var requirementsSpecification2 =
+            await GetOrCreateRequirementsSpecificationAsync(dbContext, project.Id, "Requirements Specification 2");
+        var requirementsSpecification3 =
+            await GetOrCreateRequirementsSpecificationAsync(dbContext, project.Id, "Requirements Specification 3");
+
         // Create or get requirement
         var requirement =
-            await GetOrCreateRequirementAsync(dbContext, project.Id, "Requirement A", "requirement is A", USER);
-        await GetOrCreateRequirementAsync(dbContext, project.Id, "Requirement B", "requirement is B", MANAGER);
+            await GetOrCreateRequirementAsync(dbContext, project, "Requirement A", "requirement is A", USER,
+                requirementsSpecification1);
+
+        await GetOrCreateRequirementAsync(dbContext, project, "Requirement B", "requirement is B", MANAGER);
 
         for (var i = 1; i <= 100; i++)
-            await GetOrCreateRequirementAsync(dbContext, project.Id, $"Requirement {i}", $"requirement number is {i}",
+            await GetOrCreateRequirementAsync(dbContext, project, $"Requirement {i}", $"requirement number is {i}",
                 MANAGER);
 
         // Create or get test cases
         var testCase1 =
-            await GetOrCreateTestCaseAsync(dbContext, project.Id, "Test Case 1", "Sample test case 1", USER, null);
+            await GetOrCreateTestCaseAsync(dbContext, project, "Test Case 1", "Sample test case 1", USER, null);
         var testCase2 =
-            await GetOrCreateTestCaseAsync(dbContext, project.Id, "Test Case 2", "Sample test case 2", MANAGER, null);
-        await GetOrCreateTestCaseAsync(dbContext, project.Id, "Test Case 3", "Sample test case ", USER, requirement);
+            await GetOrCreateTestCaseAsync(dbContext, project, "Test Case 2", "Sample test case 2", MANAGER, null);
+        await GetOrCreateTestCaseAsync(dbContext, project, "Test Case 3", "Sample test case ", USER, requirement);
 
         for (var i = 1; i <= 100; i++)
-            await GetOrCreateTestCaseAsync(dbContext, project.Id, $"Test Case {i}.", $"Test Case number is {i}.", USER,
+            await GetOrCreateTestCaseAsync(dbContext, project, $"Test Case {i}.", $"Test Case number is {i}.", USER,
                 null);
 
         await GetOrCreateTestCaseWithStepsAsync(dbContext, project.Id, "Test Case 4", "Sample test case 4", null,
             testSteps);
 
         // Create or get test plans associated with the test cases
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", "Alpha", USER, testCase1,
+        await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Alpha", "Alpha", USER, testCase1,
             WorkflowStatus.Completed);
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", "Beta", MANAGER, testCase2,
+        await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Alpha", "Beta", MANAGER, testCase2,
             WorkflowStatus.InReview);
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Beta", "no tests", USER, null,
+        await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Beta", "no tests", USER, null,
             WorkflowStatus.New);
 
         await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 1", "Bug 1 Description", USER);
@@ -88,62 +101,51 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
     private static async Task<Projects> GetOrCreateProjectAsync(ApplicationDbContext dbContext, string projectName)
     {
-        var existingProject = await dbContext.Projects.FirstOrDefaultAsync(p => p.Name == projectName);
-        if (existingProject != null) return existingProject; // Return existing project
+        ILogger logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("ProjectDataSeederLogger");
+        var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.Name == projectName)
+                      ??
+                      new Projects
+                      {
+                          Name = projectName,
+                          Description = "Project A Description",
+                          CreatedBy = USER,
+                          ArchivedStatus = ArchivedStatus.Active
+                      };
 
-        // Create a new project if it doesn't exist
-        var newProject = new Projects
+        if (project.Id != 0)
         {
-            Name = projectName,
-            Description = "Project A Description",
-            CreatedBy = USER
-        };
+            logger.LogInformation("Project {ProjectName} already exists", projectName);
+            return project;
+        }
 
-        await dbContext.Projects.AddAsync(newProject);
-        await dbContext.SaveChangesAsync(); // Save to get the Id
-        return newProject;
+        await dbContext.Projects.AddAsync(project);
+        await dbContext.SaveChangesAsync();
+        logger.LogInformation("Project {ProjectName} created", projectName);
+        return project;
     }
 
-    private static async Task<Requirements> GetOrCreateRequirementAsync(ApplicationDbContext dbContext, int projectId,
-        string name, string description, string assignedUserName)
+
+    private static async Task<Requirements> GetOrCreateRequirementAsync(ApplicationDbContext dbContext,
+        Projects projects,
+        string name, string description, string assignedUserName, RequirementsSpecification? reqSpec = null)
     {
         var assignedUserId = await AssignedUserId(dbContext, assignedUserName);
 
         // Check if the requirement already exists
         var existingRequirement = await dbContext.Requirements
-            .FirstOrDefaultAsync(r => r.ProjectsId == projectId && r.Name == name);
+            .FirstOrDefaultAsync(r => r.Projects == projects && r.Name == name);
 
-        if (existingRequirement != null)
-        {
-            var isModified = false;
-
-            // Update description if it has changed
-            if (existingRequirement.Description != description)
-            {
-                existingRequirement.Description = description;
-                isModified = true;
-            }
-
-            // Update AssignedTo if it has changed
-            if (existingRequirement.AssignedTo != assignedUserId)
-            {
-                existingRequirement.AssignedTo = assignedUserId;
-                isModified = true;
-            }
-
-            if (isModified) await dbContext.SaveChangesAsync();
-
-            return existingRequirement;
-        }
+        if (existingRequirement != null) return existingRequirement; // Return existing requirement
 
         // Create new requirement if it doesn't exist
         var newRequirement = new Requirements
         {
             Name = name,
             Description = description,
-            ProjectsId = projectId,
+            Projects = projects,
             AssignedTo = assignedUserId,
-            CreatedBy = assignedUserName
+            CreatedBy = ADMIN,
+            RequirementsSpecification = reqSpec
         };
 
         await dbContext.Requirements.AddAsync(newRequirement);
@@ -162,6 +164,26 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
         var assignedUserId = assignedUser.Id;
         return assignedUserId;
+    }
+
+
+    private static async Task<RequirementsSpecification> GetOrCreateRequirementsSpecificationAsync(
+        ApplicationDbContext dbContext, int projectId, string name)
+    {
+        var currentSpecification = await dbContext.RequirementsSpecification
+            .FirstOrDefaultAsync(rs => rs.ProjectsId == projectId && rs.Name == name);
+        if (currentSpecification != null) return currentSpecification;
+
+        var newSpecification = new RequirementsSpecification
+        {
+            Name = name,
+            Description = "This is a description for the requirements specification",
+            ProjectsId = projectId,
+            CreatedBy = USER
+        };
+        await dbContext.RequirementsSpecification.AddAsync(newSpecification);
+        await dbContext.SaveChangesAsync();
+        return newSpecification;
     }
 
 
@@ -192,7 +214,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
     }
 
 
-    private static async Task<TestCases> GetOrCreateTestCaseAsync(ApplicationDbContext dbContext, int projectId,
+    private static async Task<TestCases> GetOrCreateTestCaseAsync(ApplicationDbContext dbContext, Projects projects,
         string name, string description, string assignedUserName, Requirements? requirements)
     {
         var assignedUserId = await AssignedUserId(dbContext, assignedUserName);
@@ -200,7 +222,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         // Check if the test case already exists
         var existingTestCase = await dbContext.TestCases
             .Include(tc => tc.LinkedRequirements) // Include Requirements to avoid lazy loading
-            .FirstOrDefaultAsync(tc => tc.Name == name && tc.ProjectsId == projectId);
+            .FirstOrDefaultAsync(tc => tc.Name == name && tc.Projects == projects);
 
         if (existingTestCase != null) return existingTestCase; // Return existing test case
 
@@ -209,7 +231,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         {
             Name = name,
             Description = description,
-            ProjectsId = projectId,
+            Projects = projects,
             CreatedBy = USER,
             AssignedTo = assignedUserId,
             WorkflowStatus = WorkflowStatus.Completed
@@ -285,14 +307,14 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
     }
 
 
-    private static async Task GetOrCreateTestPlanAsync(ApplicationDbContext dbContext, int projectId, string name,
+    private static async Task GetOrCreateTestPlanAsync(ApplicationDbContext dbContext, Projects projects, string name,
         string description, string assignedUserName,
         TestCases? testCase, WorkflowStatus status = WorkflowStatus.Completed)
     {
         // Check if a test plan already exists
         var existingTestPlan = await dbContext.TestPlans
             .Include(tp => tp.LinkedTestCases) // Include test cases to avoid lazy loading
-            .FirstOrDefaultAsync(tp => tp.ProjectsId == projectId && tp.Name == name);
+            .FirstOrDefaultAsync(tp => tp.Projects == projects && tp.Name == name);
 
         var assignedUserId = await AssignedUserId(dbContext, assignedUserName);
 
@@ -307,7 +329,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
                 {
                     Name = name,
                     Description = description,
-                    ProjectsId = projectId,
+                    Projects = projects,
                     CreatedBy = USER,
                     AssignedTo = assignedUserId,
                     WorkflowStatus = status
@@ -339,7 +361,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         {
             Name = name,
             Description = description,
-            ProjectsId = projectId,
+            Projects = projects,
             CreatedBy = USER,
             AssignedTo = assignedUserId,
             WorkflowStatus = status

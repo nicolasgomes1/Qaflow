@@ -14,9 +14,10 @@ public static class ApiServiceExtensions
 {
     public static void MapOwnAppApiEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/{**catchAll}", () => Results.NotFound("This route does not exist."))
+        app.MapGet("/{**catchAll}", () =>
+                Results.NotFound("Not Found."))
             .WithDisplayName("NotFoundHandler");
-        
+
         app.MapGet("/api/testcases", async (FetchApiData fetchApiData) =>
         {
             var allTestCases = await fetchApiData.Api_GetListTestCases();
@@ -60,16 +61,17 @@ public static class ApiServiceExtensions
             return requirement != null ? Results.Ok(requirement) : Results.NotFound();
         }).WithOpenApi();
 
-        app.MapDelete("/api/requirements/delete/{id}", 
+        app.MapDelete("/api/requirements/delete/{id}",
             async (ApplicationDbContext dbContext, int id) =>
-        {
-            var requirement = await dbContext.Requirements.FindAsync(id);
-            if (requirement == null) return Results.NotFound();
-            dbContext.Requirements.Remove(requirement);
-            await dbContext.SaveChangesAsync();
-            return Results.Ok($"Requirement {id} deleted");
-        }).WithOpenApi().RequireAuthorization(new AuthorizeAttribute {AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme});
-        
+            {
+                var requirement = await dbContext.Requirements.FindAsync(id);
+                if (requirement == null) return Results.NotFound();
+                dbContext.Requirements.Remove(requirement);
+                await dbContext.SaveChangesAsync();
+                return Results.Ok($"Requirement {id} deleted");
+            }).WithOpenApi().RequireAuthorization(new AuthorizeAttribute
+            { AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme });
+
         // Endpoint to create a new requirement
         app.MapPost("/api/requirements", async (ApplicationDbContext dbContext, RequirementsDto dto) =>
         {
