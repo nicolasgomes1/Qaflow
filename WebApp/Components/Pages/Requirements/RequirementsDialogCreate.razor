@@ -16,6 +16,8 @@
     private Requirements _requirements = new();
     private readonly List<IBrowserFile>? _uploadedFiles = [];
     private List<ApplicationUser> _usersList = [];
+    private List<RequirementsSpecification> _requirementsSpecificationList = [];
+    private int _selectedRequirementSpecificationId;
 
     [Parameter] public EventCallback OnRequirementCreated { get; set; }
 
@@ -27,12 +29,13 @@
     [Parameter]
     public bool IsDisabled { get; set; } = false;
 
-    [Parameter] public int ProjectId { get; set; }
+    [EditorRequired][Parameter] public int ProjectId { get; set; }
 
 
     private async Task CreateNewRequirement()
     {
         // CreateBug should handle adding the bug and return a result
+        _requirements.RequirementsSpecification = _requirementsSpecificationList.FirstOrDefault(rs => rs.Id == _selectedRequirementSpecificationId && rs.ProjectsId == ProjectId);
         var result = await RequirementsModel.AddRequirement(_requirements, _uploadedFiles, ProjectId);
         DialogService.Close(result);
         StateHasChanged();
@@ -47,6 +50,7 @@
 
     async Task ShowInlineDialog()
     {
+        _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
         _usersList = await UserService.GetUsersList();
         _requirements = new Requirements();
 
@@ -91,6 +95,22 @@
                                         class="input-style"
                                         Name="status"/>
                         <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+                    </div>
+
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Requirements Specification"/>
+                        <RadzenDropDown id="requirements_specification"
+                                        class="w-100"
+                                        Data="@_requirementsSpecificationList"
+                                        @bind-Value="_selectedRequirementSpecificationId"
+                                        TextProperty="Name"
+                                        ValueProperty="Id"
+                                        AllowFiltering="true"
+                                        AllowVirtualization="true"
+                                        Name="requirementsSpecification"/>
+                        <RadzenRequiredValidator Component="requirementsSpecification"
+                                                 Text="Requirements Specification is required"/>
                     </div>
 
                     <div class="form-group mb-4">

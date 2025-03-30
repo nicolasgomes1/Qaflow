@@ -11,7 +11,7 @@
     </RadzenStack>
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
-        <TestExecutionDialogCreate Title="@Loc["create.testexecution"]"
+        <TestExecutionDialogCreate Title="@Loc["create.testexecution"]" ProjectId="ProjectId"
                                    OnTestExecutionCreated="@RefreshAssignedTestExecutionsFromDialog"/>
         <RadzenButton Icon="list"
                       Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution", true))'/>
