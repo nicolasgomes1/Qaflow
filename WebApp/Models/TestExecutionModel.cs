@@ -43,6 +43,9 @@ public class TestExecutionModel
         testExecution.CreatedBy = _userService.GetCurrentUserInfoAsync().Result.UserName;
         testExecution.ProjectsId = projectId;
 
+        if (testExecution.WorkflowStatus == WorkflowStatus.Completed)
+            testExecution.ArchivedStatus = ArchivedStatus.Archived;
+
 
         // var assignedUser = await _userManager.FindByIdAsync(testExecution.AssignedTo); // Get user by ID
         // if (assignedUser is { UserName: not null })

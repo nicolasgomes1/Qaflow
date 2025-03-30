@@ -32,7 +32,8 @@
     {
         <RadzenStack Orientation="Orientation.Horizontal"
                      Style="margin: 10px 0 10px 10px; width: calc(100% - 20px); justify-content: flex-start; align-items: center; gap: 10px;">
-            <div style="max-height: 50px; display: flex; align-items: center;" @onclick="ReturnToHome">
+            <div data-testid="logo" style="max-height: 50px; display: flex; align-items: center;"
+                 @onclick="ReturnToHome">
                 <Logo/>
             </div>
         </RadzenStack>

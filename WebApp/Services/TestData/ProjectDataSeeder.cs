@@ -44,7 +44,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
 
         // Create or get project
-        var project = await GetOrCreateProjectAsync(dbContext, "Demo Project");
+        var project = await GetOrCreateProjectAsync(dbContext, "Demo Project With Data");
         await GetOrCreateProjectAsync(dbContext, "Demo Project Without Data");
 
 
@@ -72,9 +72,12 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             testSteps);
 
         // Create or get test plans associated with the test cases
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", "Alpha", USER, testCase1);
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", "Beta", MANAGER, testCase2);
-        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Beta", "no tests", USER, null);
+        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", "Alpha", USER, testCase1,
+            WorkflowStatus.Completed);
+        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Alpha", "Beta", MANAGER, testCase2,
+            WorkflowStatus.InReview);
+        await GetOrCreateTestPlanAsync(dbContext, project.Id, "Test Plan Beta", "no tests", USER, null,
+            WorkflowStatus.New);
 
         await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 1", "Bug 1 Description", USER);
         await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 2", "Bug 2 Description", USER, BugStatus.Closed);
@@ -284,7 +287,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
     private static async Task GetOrCreateTestPlanAsync(ApplicationDbContext dbContext, int projectId, string name,
         string description, string assignedUserName,
-        TestCases? testCase)
+        TestCases? testCase, WorkflowStatus status = WorkflowStatus.Completed)
     {
         // Check if a test plan already exists
         var existingTestPlan = await dbContext.TestPlans
@@ -306,8 +309,12 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
                     Description = description,
                     ProjectsId = projectId,
                     CreatedBy = USER,
-                    AssignedTo = assignedUserId
+                    AssignedTo = assignedUserId,
+                    WorkflowStatus = status
                 };
+
+                if (newTestPlan.WorkflowStatus == WorkflowStatus.Completed)
+                    newTestPlan.ArchivedStatus = ArchivedStatus.Archived;
 
                 await dbContext.TestPlans.AddAsync(newTestPlan);
                 await dbContext.SaveChangesAsync();
@@ -334,8 +341,12 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             Description = description,
             ProjectsId = projectId,
             CreatedBy = USER,
-            AssignedTo = assignedUserId
+            AssignedTo = assignedUserId,
+            WorkflowStatus = status
         };
+
+        if (newTestPlanForCreation.WorkflowStatus == WorkflowStatus.Completed)
+            newTestPlanForCreation.ArchivedStatus = ArchivedStatus.Archived;
 
         await dbContext.TestPlans.AddAsync(newTestPlanForCreation);
         await dbContext.SaveChangesAsync(); // Save to get the Id

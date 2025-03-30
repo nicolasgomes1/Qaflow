@@ -6,8 +6,12 @@
 
 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
-        <RadzenButton Icon="assignment_ind" Text="My Assignments" Click="RefreshAssignedTestExecutions"/>
-        <RadzenButton Icon="assignment" Text="All Test Executions" Click="RefreshAllTestExecutions"/>
+        <RadzenButton Icon="assignment_ind"
+                      data-testid="my_assignment"
+                      Text="My Assignments" Click="RefreshAssignedTestExecutions"/>
+        <RadzenButton Icon="assignment"
+                      data-testid="all_assignment"
+                      Text="All Test Executions" Click="RefreshAllTestExecutions"/>
     </RadzenStack>
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">

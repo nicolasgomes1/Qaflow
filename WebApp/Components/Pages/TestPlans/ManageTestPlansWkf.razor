@@ -6,11 +6,15 @@
 
 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
-        <RadzenButton Icon="assignment_ind" Text="My Assignments" Click="RefreshAssignedTestPlans"/>
-        <RadzenButton Icon="assignment" Text="All Test Plans" Click="RefreshAllTestPlans"/>
+        <RadzenButton Icon="assignment_ind"
+                      data-testid="my_assignment"
+                      Text="My Assignments" Click="RefreshAssignedTestPlans"/>
+        <RadzenButton Icon="assignment"
+                      data-testid="all_assignment"
+                      Text="All Test Plans" Click="RefreshAllTestPlans"/>
     </RadzenStack>
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
-        <TestPlansDialogCreate Title="@Loc["create.testplans"]"  ProjectId="@ProjectId"
+        <TestPlansDialogCreate Title="@Loc["create.testplans"]" ProjectId="@ProjectId"
                                OnTestPlanCreated="RefreshAssignedTestPlansFromDialog"/>
         <RadzenButton Icon="list"
                       Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testplans", true))'/>

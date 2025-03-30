@@ -18,6 +18,7 @@
                 @bind-Value="@TestExecutionModel.selectedExecution">
 
     <HeaderTemplate>
+        <RadzenAlert Text="Test Execution Ready!" AllowClose="false" Variant="Variant.Flat"></RadzenAlert>
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn Property="@nameof(TestExecution.Id)" Filterable="false" Title="ID" Frozen="true"

@@ -9,6 +9,7 @@
     <div class="form-group mb-4">
         <RadzenLabel Text="Name"/>
         <RadzenTextBox id="name"
+                       data-testid="testexecution_name"
                        @bind-Value="_testExecution.Name"
                        class="input-style"
                        Name="name"/>
@@ -18,6 +19,7 @@
     <div class="form-group mb-4">
         <RadzenLabel Text="Description"/>
         <RadzenTextBox id="description"
+                       data-testid="testexecution_description"
                        @bind-Value="_testExecution.Description"
                        class="input-style"
                        Name="description"/>
@@ -27,15 +29,28 @@
     <div class="form-group mb-4">
         <RadzenLabel Text="Estimated Time (in minutes)"/>
         <RadzenTextBox id="estimatedTime"
+                       data-testid="testexecution_estimatedtime"
                        @bind-Value="_estimatedTimeInput"
                        Placeholder="Enter time in minutes"
                        class="input-style"
                        Name="estimatedTime"/>
     </div>
 
+    <div class="row mb-4 col-12">
+        <RadzenLabel Text="Status"/>
+        <RadzenDropDown id="status"
+                        data-testid="testexecution_workflowstatus"
+                        @bind-Value="_testExecution.WorkflowStatus"
+                        Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                        Name="status"/>
+        <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+    </div>
+
     <div class="form-group mb-4">
         <RadzenLabel Text="Priority"/>
-        <RadzenDropDown id="priority" @bind-Value="_testExecution.Priority"
+        <RadzenDropDown id="priority"
+                        data-testid="testexecution_priority"
+                        @bind-Value="_testExecution.Priority"
                         Data="EnumService.GetEnumValues<Priority>()"
                         class="input-style"
                         Name="priority"/>
@@ -45,6 +60,7 @@
     <div class="form-group mb-4">
         <RadzenLabel Text="Test Plan"/>
         <RadzenDropDown id="testplan"
+                        data-testid="testexecution_testplan"
                         Data="_testPlansList"
                         @bind-Value="TestExecutionModel.TestPlanId"
                         TextProperty="Name"
@@ -57,6 +73,7 @@
     <div class="form-group mb-4">
         <RadzenLabel Text="Assigned To"/>
         <RadzenDropDown id="assignedto"
+                        data-testid="testexecution_assignedto"
                         Data="@_usersList"
                         @bind-Value="_testExecution.AssignedTo"
                         TextProperty="UserName"
