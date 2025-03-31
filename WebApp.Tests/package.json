@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test --project=\"Google Chrome\" && npx playwright show-report",
+    "test": "playwright test --project=\"Google Chrome\" --headed && npx playwright show-report",
     "test:chromium": "playwright test --project=\"Google Chrome\" --headed",
     "test:headless": "playwright test --project=\"Google Chrome\" && npx playwright show-report",
     "posttest:requirements": "playwright test ./tests/Requirements.spec.ts --project=\"Google Chrome\" --headed",
     "posttest:dashboard": "playwright test ./tests/CanAccessAllDasboardLinks.spec.ts --project=\"Google Chrome\" --headed",
-    "posttest:requirementsspec": "playwright test ./tests/RequirementsSpecifications.spec.ts --project=\"Google Chrome\" --headed --retries=1",
+
     "posttest:projects": "playwright test ./tests/Projects.spec.ts --project=\"Google Chrome\" --headed",
     "posttest:Login": "playwright test ./tests/Login.spec.ts --project=\"Google Chrome\"",
-    "start": "npm run"
+    "start": "npm run posttest:Login"
   },
   "keywords": [],
   "author": "",
