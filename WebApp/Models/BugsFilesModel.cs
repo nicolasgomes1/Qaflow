@@ -22,9 +22,6 @@ public class BugsFilesModel(
 
         foreach (var file in files)
         {
-            if (file.Size > MaxFileSize)
-                throw new Exception($"File size is too large. Maximum file size is {MaxFileSize} bytes");
-
             using var compressedStream = await FileCompressing.CompressFileStream(files, file);
 
             var bugsFile = new BugsFiles

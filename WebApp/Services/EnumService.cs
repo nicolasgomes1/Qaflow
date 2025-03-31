@@ -1,6 +1,6 @@
 ﻿namespace WebApp.Services;
 
-public class EnumService
+public static class EnumService
 {
     public static List<T> GetEnumValues<T>()
     {

@@ -10,6 +10,8 @@ public static class FileCompressing
     public static async Task<MemoryStream> CompressFileStream(List<IBrowserFile> files, IBrowserFile file)
     {
         MemoryStream? compressedStream = null;
+        if (file.Size > MaxFileSize)
+            throw new Exception($"File size is too large. Maximum file size is {MaxFileSize} bytes");
         try
         {
             using var memoryStream = new MemoryStream();

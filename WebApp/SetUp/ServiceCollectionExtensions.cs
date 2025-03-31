@@ -17,7 +17,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<DataGridSettingsService>();
         services.AddSingleton<IEmailService, EmailService>();
-        services.AddScoped<EnumService>();
         services.AddScoped<FormNotificationService>();
         services.AddScoped<ProjectState>();
         services.AddScoped<StylesService>();
