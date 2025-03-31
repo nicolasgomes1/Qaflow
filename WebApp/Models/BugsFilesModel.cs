@@ -10,9 +10,7 @@ public class BugsFilesModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
-
-    private const int MaxFileSize = 10 * 1024 * 1024; // 10MB
-
+    
     public List<BugsFiles> ExistingFiles = [];
 
 
@@ -41,7 +39,6 @@ public class BugsFilesModel(
 
     public async Task<List<BugsFiles>> GetBugFilesById(int bugId)
     {
-        ExistingFiles = await _dbContext.BugsFiles.Where(bf => bf.BugId == bugId).ToListAsync();
-        return ExistingFiles;
+        return await _dbContext.BugsFiles.Where(bf => bf.BugId == bugId).ToListAsync();
     }
 }

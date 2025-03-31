@@ -5,7 +5,7 @@ using WebApp.Data.enums;
 
 namespace WebApp.Services;
 
-public class StylesService
+public static class StylesService
 {
     // Method to get the style based on ExecutionStatus
     private static string GetRowStyle(ExecutionStatus status)

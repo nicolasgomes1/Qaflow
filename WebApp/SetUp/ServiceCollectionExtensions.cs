@@ -19,7 +19,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IEmailService, EmailService>();
         services.AddScoped<FormNotificationService>();
         services.AddScoped<ProjectState>();
-        services.AddScoped<StylesService>();
         services.AddScoped<TestCaseExecutionTimerService>();
         services.AddScoped<TestExecutionTimerService>();
         services.AddScoped<TestExecutionTimerServicev2>();

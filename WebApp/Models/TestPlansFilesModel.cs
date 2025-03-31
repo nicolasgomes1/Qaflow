@@ -11,8 +11,6 @@ public class TestPlansFilesModel(
 {
     private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
 
-    private const int MaxFileSize = 10 * 1024 * 1024; // 10MB
-
     public List<TestPlansFile> ExistingFiles = [];
 
     public async Task SaveFilesToDb(List<IBrowserFile>? files, int testPlanId, int projectId)
