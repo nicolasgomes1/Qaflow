@@ -60,7 +60,7 @@ public class BugsFilesModel(
         memoryStream.Position = 0; // Reset stream position before compression
 
         using var compressedStream = new MemoryStream();
-        using (var gzipStream = new GZipStream(compressedStream, CompressionMode.Compress, true))
+        await using (var gzipStream = new GZipStream(compressedStream, CompressionMode.Compress, true))
         {
             await memoryStream.CopyToAsync(gzipStream);
         }

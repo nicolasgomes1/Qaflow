@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
@@ -16,30 +17,40 @@ public class TestPlansFilesModel(
 
     public async Task SaveFilesToDb(List<IBrowserFile>? files, int testPlanId, int projectId)
     {
-        if (files != null && files.Count != 0)
+        if (files == null || files.Count == 0) return;
+
+        foreach (var file in files)
         {
-            foreach (var file in files)
+            if (file.Size > MaxFileSize)
+                throw new Exception($"File size is too large. Maximum file size is {MaxFileSize} bytes");
+
+            using var memoryStream = new MemoryStream();
+            await file.OpenReadStream(MaxFileSize * files.Count).CopyToAsync(memoryStream);
+            memoryStream.Position = 0; // Reset stream position before compression
+
+            using var compressedStream = new MemoryStream();
+            await using (var gzipStream = new GZipStream(compressedStream, CompressionMode.Compress, true))
             {
-                using var memoryStream = new MemoryStream();
-                await file.OpenReadStream().CopyToAsync(memoryStream);
-
-                //Validation at server side
-                if (file.Size > MaxFileSize) throw new Exception("File size is too large. Maximum file size is 100KB");
-                var testPlansFile = new TestPlansFile
-                {
-                    FileName = file.Name,
-                    FileContent = memoryStream.ToArray(),
-                    UploadedAt = DateTime.UtcNow,
-                    TestPlanId = testPlanId,
-                    ProjectsId = projectId
-                };
-
-                _dbContext.TestPlansFiles.Add(testPlansFile);
+                await memoryStream.CopyToAsync(gzipStream);
             }
 
-            await _dbContext.SaveChangesAsync();
+            compressedStream.Position = 0;
+
+            var testplanFile = new TestPlansFile
+            {
+                FileName = file.Name,
+                FileContent = compressedStream.ToArray(),
+                UploadedAt = DateTime.UtcNow,
+                TestPlanId = testPlanId,
+                ProjectsId = projectId
+            };
+
+            _dbContext.TestPlansFiles.Add(testplanFile);
         }
+
+        await _dbContext.SaveChangesAsync();
     }
+
 
     public async Task<List<TestPlansFile>> GetFilesByTestPlanId(int testPlanId, int projectId)
     {
