@@ -10,7 +10,7 @@ using WebApp.Components.Account.Pages;
 using WebApp.Components.Account.Pages.Manage;
 using WebApp.Data;
 
-namespace Microsoft.AspNetCore.Routing;
+namespace WebApp.Components.Account;
 
 internal static class IdentityComponentsEndpointRouteBuilderExtensions
 {

@@ -15,8 +15,33 @@ public static class ApiServiceExtensions
     public static void MapOwnAppApiEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/{**catchAll}", () =>
-                Results.NotFound("Not Found."))
+            {
+                return Results.Content(@"
+        <html>
+            <head>
+                <title>Not Found</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 20px;
+                    }
+                    .error-message {
+                        color: red;
+                        font-size: 24px;
+                        font-weight: bold;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1 class='error-message d-flex align-items-center justify-content-center'>404 - Not Found</h1>
+                <p class='error-message d-flex align-items-center justify-content-center'>The page you're looking for cannot be found.</p>
+            </body>
+        </html>
+    ", "text/html");
+            })
             .WithDisplayName("NotFoundHandler");
+
 
         app.MapGet("/api/testcases", async (FetchApiData fetchApiData) =>
         {

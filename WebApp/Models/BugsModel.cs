@@ -25,7 +25,7 @@ public class BugsModel(
     public async Task<Bugs> GetBugByIdAsync(int id)
     {
         var bug = await _dbContext.Bugs.FindAsync(id);
-        if (bug == null) throw new Exception("Bug not found");
+        if (bug is null) throw new Exception("Bug not found");
         return bug;
     }
 
