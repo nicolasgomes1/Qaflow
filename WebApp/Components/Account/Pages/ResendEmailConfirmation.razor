@@ -16,28 +16,30 @@
 
 <PageTitle>Resend email confirmation</PageTitle>
 
-<h1>Resend email confirmation</h1>
-<h2>Enter your email.</h2>
-<hr/>
-<StatusMessage Message="@message"/>
-<div class="row">
+
+<StatusMessage Message="@_message"/>
+<h1 class="d-flex align-items-center justify-content-center">Reset Email</h1>
+<div class="d-flex justify-content-center align-items-center">
     <div class="col-md-4">
-        <EditForm Model="Input" FormName="resend-email-confirmation" OnValidSubmit="OnValidSubmitAsync" method="post">
-            <DataAnnotationsValidator/>
-            <ValidationSummary class="text-danger" role="alert"/>
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" aria-required="true"
-                           placeholder="name@example.com"/>
-                <label for="Input.Email" class="form-label">Email</label>
-                <ValidationMessage For="() => Input.Email" class="text-danger"/>
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Resend</button>
-        </EditForm>
+        <section class="card p-4 shadow-lg border rounded" style="background-color: #f8f9fa;">
+            <EditForm Model="Input" FormName="resend-email-confirmation" OnValidSubmit="OnValidSubmitAsync"
+                      method="post">
+                <DataAnnotationsValidator/>
+                <ValidationSummary class="text-danger" role="alert"/>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" aria-required="true"
+                               placeholder="name@example.com"/>
+                    <label for="Input.Email" class="form-label">Email</label>
+                    <ValidationMessage For="() => Input.Email" class="text-danger"/>
+                </div>
+                <button type="submit" class="w-100 btn btn-lg btn-primary">Resend</button>
+            </EditForm>
+        </section>
     </div>
 </div>
 
 @code {
-    private string? message;
+    private string? _message = string.Empty;
 
     [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
 
@@ -46,44 +48,28 @@
         var user = await UserManager.FindByEmailAsync(Input.Email!);
         if (user is null)
         {
-            message = "Verification email sent. Please check your email.";
+            _message = "Error: An error occurred";
             return;
         }
 
         var userId = await UserManager.GetUserIdAsync(user);
+
+
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
         var callbackUrl = NavigationManager.GetUriWithQueryParameters(
             NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
             new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code });
-        await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
+        //  await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
 
-        await SendEmailAsync(Input.Email, "Confirm your email", $"Please click <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>here</a> to confirm your email.");
+        await EmailService.SendUserEmailLinkAsync(Input.Email, "Confirm your email", $"Please click <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>here</a> to confirm your email.");
 
-        message = "Verification email sent. Please check your email.";
+        _message = "Verification email sent. Please check your email.";
     }
 
     private sealed class InputModel
     {
         [Required] [EmailAddress] public string Email { get; set; } = "";
-    }
-
-    private async Task SendEmailAsync(string email, string subject, string confirmlink)
-    {
-        using var message = new MailMessage();
-        using var smtpClient = new SmtpClient();
-        message.From = new MailAddress("testdotnet10@gmail.com");
-        message.To.Add(email);
-        message.Subject = subject;
-        message.IsBodyHtml = true;
-        message.Body = confirmlink;
-        smtpClient.Port = 587;
-        smtpClient.Host = "smtp.gmail.com";
-        smtpClient.EnableSsl = true;
-        smtpClient.UseDefaultCredentials = false;
-        smtpClient.Credentials = new NetworkCredential("testdotnet10@gmail.com", "rmrcmrpqgkcrfkgl");
-        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-        await smtpClient.SendMailAsync(message);
     }
 
 }

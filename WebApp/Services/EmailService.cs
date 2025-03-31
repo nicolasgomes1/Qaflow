@@ -11,6 +11,7 @@ public interface IEmailService
 
 public class EmailService : IEmailService
 {
+    /*
     private readonly SmtpClient _smtpClient = new("smtp.gmail.com")
     {
         Port = 587, // Replace with your SMTP port
@@ -35,6 +36,7 @@ public class EmailService : IEmailService
 
         await _smtpClient.SendMailAsync(mailMessage);
     }
+    */
 
     public async Task SendUserEmailLinkAsync(string email, string subject, string confirmlink)
     {
