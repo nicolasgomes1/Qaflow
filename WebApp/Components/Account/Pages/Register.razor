@@ -14,16 +14,15 @@
 
 <PageTitle>Register</PageTitle>
 
-<h1>Register</h1>
+<h1 class="d-flex align-items-center justify-content-center">Register</h1>
 
-<div class="row">
-    <div class="col-lg-6">
+<div class="d-flex justify-content-center align-items-center">
+    <div class="col-md-4">
+        <section class="card p-4 shadow-lg border rounded" style="background-color: #f8f9fa;">
         <StatusMessage Message="@Message"/>
         <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser"
                   FormName="register">
             <DataAnnotationsValidator/>
-            <h2>Create a new account.</h2>
-            <hr/>
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Input.Email"
@@ -56,6 +55,7 @@
                           Class="btn btn-primary btn-lg btn-block"/>
 
         </EditForm>
+        </section>
     </div>
 </div>
 
