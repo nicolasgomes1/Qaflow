@@ -20,15 +20,15 @@ using WebApp.Api;
 var builder = WebApplication.CreateBuilder(args);
 
 #if POSTGRES
-    builder.AddNpgsqlDbContext<ApplicationDbContext>("postgresdb");
+builder.AddNpgsqlDbContext<ApplicationDbContext>("postgresdb");
 #elif SQLSERVER
     builder.AddSqlServerDbContext<ApplicationDbContext>("qa");
 #endif
 
 // Add authentication
-    var key = builder.Configuration["Jwt:Key"]; // Store securely!
-    var issuer = builder.Configuration["Jwt:Issuer"];
-    var audience = builder.Configuration["Jwt:Audience"];
+var key = builder.Configuration["Jwt:Key"]; // Store securely!
+var issuer = builder.Configuration["Jwt:Issuer"];
+var audience = builder.Configuration["Jwt:Audience"];
 
 
 builder.AddServiceDefaults();
@@ -38,6 +38,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 #region AddIdentity
+
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
@@ -95,11 +96,12 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies(); // Identity cookies for Blazor UI authentication
 
-
 #endregion
 
 
-
+if (builder.Environment.IsDevelopment())
+    // Add seeding services to the container.
+    builder.Services.AddSeedingServices();
 
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>();
@@ -116,8 +118,6 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 builder.Services.AddRadzenComponents();
 
-// Add seeding services to the container.
-builder.Services.AddSeedingServices();
 
 //add additional services
 builder.Services.AddAppServices();
@@ -129,10 +129,7 @@ builder.Services.AddLocalization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-builder.Services.AddOpenApiExtensions(options =>
-{
-    options.AddServerUrls = true;
-});
+builder.Services.AddOpenApiExtensions(options => { options.AddServerUrls = true; });
 
 builder.Services.Configure<JiraApiOptions>(builder.Configuration.GetSection("JiraApi"));
 // Register JiraService with HttpClient for dependency injection
@@ -159,8 +156,8 @@ var app = builder.Build();
 // After building the app:
 //using (var scope = app.Services.CreateScope())
 //{
-   // var cleanupService = scope.ServiceProvider.GetRequiredService<ICleanUpPlaywrightTestsData>();
-  //  await cleanupService.DeleteAllPlaywrightProjectData();
+// var cleanupService = scope.ServiceProvider.GetRequiredService<ICleanUpPlaywrightTestsData>();
+//  await cleanupService.DeleteAllPlaywrightProjectData();
 //}
 
 var supportedCultures = new[] { "en-US", "fr-BE", "nl-BE" };
@@ -172,7 +169,6 @@ app.UseRequestLocalization(localizationOptions);
 
 app.MapDefaultEndpoints();
 
-await app.ConfigureDatabaseAsync();
 // Enable CORS
 app.UseCors("AllowBlazorClient");
 
@@ -184,17 +180,20 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
     app.UseMigrationsEndPoint();
     app.MapOpenApi();
+    await app.ConfigureDatabaseAsync();
 }
 else
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseExceptionHandler("/Error", true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 #region Api
+
 app.MapOwnAppApiEndpoints();
 app.MapJiraApiEndpoints();
+
 #endregion
 
 app.UseHttpsRedirection();

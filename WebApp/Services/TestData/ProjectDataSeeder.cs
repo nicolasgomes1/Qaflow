@@ -13,7 +13,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        ILogger logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("SeedingLogger");
+        var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("SeedingLogger");
 
         using var scope = serviceProvider.CreateScope();
         var dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
@@ -53,11 +53,11 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
         //Create or get Requirements Specification
         var requirementsSpecification1 =
-            await GetOrCreateRequirementsSpecificationAsync(dbContext, project.Id, "Requirements Specification 1");
+            await GetOrCreateRequirementsSpecificationAsync(dbContext, project, "Requirements Specification 1");
         var requirementsSpecification2 =
-            await GetOrCreateRequirementsSpecificationAsync(dbContext, project.Id, "Requirements Specification 2");
+            await GetOrCreateRequirementsSpecificationAsync(dbContext, project, "Requirements Specification 2");
         var requirementsSpecification3 =
-            await GetOrCreateRequirementsSpecificationAsync(dbContext, project.Id, "Requirements Specification 3");
+            await GetOrCreateRequirementsSpecificationAsync(dbContext, project, "Requirements Specification 3");
 
         // Create or get requirement
         var requirement =
@@ -81,7 +81,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             await GetOrCreateTestCaseAsync(dbContext, project, $"Test Case {i}.", $"Test Case number is {i}.", USER,
                 null);
 
-        await GetOrCreateTestCaseWithStepsAsync(dbContext, project.Id, "Test Case 4", "Sample test case 4", null,
+        await GetOrCreateTestCaseWithStepsAsync(dbContext, project, "Test Case 4", "Sample test case 4", null,
             testSteps);
 
         // Create or get test plans associated with the test cases
@@ -92,16 +92,17 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Beta", "no tests", USER, null,
             WorkflowStatus.New);
 
-        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 1", "Bug 1 Description", USER);
-        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 2", "Bug 2 Description", USER, BugStatus.Closed);
-        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 3", "Bug 3 Description", USER, BugStatus.InProgress);
-        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 4", "Bug 4 Description", MANAGER, BugStatus.InReview);
-        await GetOrCreateBugsAsync(dbContext, project.Id, "Bug 5", "Bug 5 Description", MANAGER, BugStatus.Open);
+        await GetOrCreateBugsAsync(dbContext, project, "Bug 1", "Bug 1 Description", USER);
+        await GetOrCreateBugsAsync(dbContext, project, "Bug 2", "Bug 2 Description", USER, BugStatus.Closed);
+        await GetOrCreateBugsAsync(dbContext, project, "Bug 3", "Bug 3 Description", USER, BugStatus.InProgress);
+        await GetOrCreateBugsAsync(dbContext, project, "Bug 4", "Bug 4 Description", MANAGER, BugStatus.InReview);
+        await GetOrCreateBugsAsync(dbContext, project, "Bug 5", "Bug 5 Description", MANAGER, BugStatus.Open);
     }
 
     private static async Task<Projects> GetOrCreateProjectAsync(ApplicationDbContext dbContext, string projectName)
     {
-        ILogger logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("ProjectDataSeederLogger");
+        var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("Projects");
+
         var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.Name == projectName)
                       ??
                       new Projects
@@ -168,17 +169,17 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
 
     private static async Task<RequirementsSpecification> GetOrCreateRequirementsSpecificationAsync(
-        ApplicationDbContext dbContext, int projectId, string name)
+        ApplicationDbContext dbContext, Projects projects, string name)
     {
         var currentSpecification = await dbContext.RequirementsSpecification
-            .FirstOrDefaultAsync(rs => rs.ProjectsId == projectId && rs.Name == name);
+            .FirstOrDefaultAsync(rs => rs.Projects == projects && rs.Name == name);
         if (currentSpecification != null) return currentSpecification;
 
         var newSpecification = new RequirementsSpecification
         {
             Name = name,
             Description = "This is a description for the requirements specification",
-            ProjectsId = projectId,
+            Projects = projects,
             CreatedBy = USER
         };
         await dbContext.RequirementsSpecification.AddAsync(newSpecification);
@@ -187,14 +188,14 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
     }
 
 
-    private static async Task<Bugs> GetOrCreateBugsAsync(ApplicationDbContext dbContext, int projectId, string name,
+    private static async Task<Bugs> GetOrCreateBugsAsync(ApplicationDbContext dbContext, Projects projects, string name,
         string description, string assignedUserName, BugStatus status = BugStatus.Open)
     {
         var assignedUserId = await AssignedUserId(dbContext, assignedUserName);
 
 
         var existingBug = await dbContext.Bugs
-            .FirstOrDefaultAsync(b => b.ProjectsId == projectId && b.Name == name);
+            .FirstOrDefaultAsync(b => b.Projects == projects && b.Name == name);
 
         if (existingBug != null) return existingBug;
 
@@ -202,7 +203,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         {
             Name = name,
             Description = description,
-            ProjectsId = projectId,
+            Projects = projects,
             CreatedBy = USER,
             BugStatus = status,
             AssignedTo = assignedUserId
@@ -252,7 +253,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
     private static async Task<TestCases> GetOrCreateTestCaseWithStepsAsync(
         ApplicationDbContext dbContext,
-        int projectId,
+        Projects projects,
         string name,
         string description,
         Requirements? requirements,
@@ -264,7 +265,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             .AsSplitQuery()
             .Include(tc => tc.LinkedRequirements) // Include Requirements to avoid lazy loading
             .Include(tc => tc.TestSteps) // Include TestSteps to avoid lazy loading
-            .FirstOrDefaultAsync(tc => tc.Name == name && tc.ProjectsId == projectId);
+            .FirstOrDefaultAsync(tc => tc.Name == name && tc.Projects == projects);
 
         if (existingTestCase != null) return existingTestCase; // Return existing test case
 
@@ -273,7 +274,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         {
             Name = name,
             Description = description,
-            ProjectsId = projectId,
+            Projects = projects,
             CreatedBy = USER,
             WorkflowStatus = WorkflowStatus.Completed
         };
