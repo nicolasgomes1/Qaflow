@@ -5,7 +5,8 @@ namespace WebApp.Services;
 
 public interface IEmailService
 {
-    Task SendEmailAsync(string toEmail, string subject, string body);
+    //Task SendEmailAsync(string toEmail, string subject, string body);
+    Task SendUserEmailLinkAsync(string email, string subject, string confirmlink);
 }
 
 public class EmailService : IEmailService
@@ -20,7 +21,7 @@ public class EmailService : IEmailService
     // Replace with your SMTP port
 
 
-    public async Task SendEmailAsync(string toEmail, string subject, string body)
+    private async Task SendEmailAsync(string toEmail, string subject, string body)
     {
         var mailMessage = new MailMessage
         {
@@ -33,5 +34,23 @@ public class EmailService : IEmailService
         mailMessage.To.Add(toEmail);
 
         await _smtpClient.SendMailAsync(mailMessage);
+    }
+
+    public async Task SendUserEmailLinkAsync(string email, string subject, string confirmlink)
+    {
+        var message = new MailMessage();
+        var smtpClient = new SmtpClient();
+        message.From = new MailAddress("testdotnet10@gmail.com");
+        message.To.Add(email);
+        message.Subject = subject;
+        message.IsBodyHtml = true;
+        message.Body = confirmlink;
+        smtpClient.Port = 587;
+        smtpClient.Host = "smtp.gmail.com";
+        smtpClient.EnableSsl = true;
+        smtpClient.UseDefaultCredentials = false;
+        smtpClient.Credentials = new NetworkCredential("testdotnet10@gmail.com", "rmrcmrpqgkcrfkgl");
+        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+        await smtpClient.SendMailAsync(message);
     }
 }

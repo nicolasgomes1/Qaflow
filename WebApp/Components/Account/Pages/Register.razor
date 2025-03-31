@@ -7,7 +7,6 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject IUserStore<ApplicationUser> UserStore
 @inject SignInManager<ApplicationUser> SignInManager
-@inject IEmailSender<ApplicationUser> EmailSender
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
@@ -19,42 +18,42 @@
 <div class="d-flex justify-content-center align-items-center">
     <div class="col-md-4">
         <section class="card p-4 shadow-lg border rounded" style="background-color: #f8f9fa;">
-        <StatusMessage Message="@Message"/>
-        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser"
-                  FormName="register">
-            <DataAnnotationsValidator/>
-            <ValidationSummary class="text-danger" role="alert"/>
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email"
-                           data-testid="register_emailform"
-                           id="Input.Email" class="form-control" autocomplete="username" aria-required="true"
-                           placeholder="name@example.com"/>
-                <label for="Input.Email">Email</label>
-                <ValidationMessage For="() => Input.Email" class="text-danger"/>
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password"
-                           data-testid="register_passwordform"
-                           id="Input.Password" class="form-control" autocomplete="new-password" aria-required="true"
-                           placeholder="password"/>
-                <label for="Input.Password">Password</label>
-                <ValidationMessage For="() => Input.Password" class="text-danger"/>
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword"
-                           data-testid="register_confirmpasswordform"
-                           id="Input.ConfirmPassword" class="form-control" autocomplete="new-password"
-                           aria-required="true" placeholder="password"/>
-                <label for="Input.ConfirmPassword">Confirm Password</label>
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger"/>
-            </div>
+            <StatusMessage Message="@Message"/>
+            <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser"
+                      FormName="register">
+                <DataAnnotationsValidator/>
+                <ValidationSummary class="text-danger" role="alert"/>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Email"
+                               data-testid="register_emailform"
+                               id="Input.Email" class="form-control" autocomplete="username" aria-required="true"
+                               placeholder="name@example.com"/>
+                    <label for="Input.Email">Email</label>
+                    <ValidationMessage For="() => Input.Email" class="text-danger"/>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText type="password" @bind-Value="Input.Password"
+                               data-testid="register_passwordform"
+                               id="Input.Password" class="form-control" autocomplete="new-password" aria-required="true"
+                               placeholder="password"/>
+                    <label for="Input.Password">Password</label>
+                    <ValidationMessage For="() => Input.Password" class="text-danger"/>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText type="password" @bind-Value="Input.ConfirmPassword"
+                               data-testid="register_confirmpasswordform"
+                               id="Input.ConfirmPassword" class="form-control" autocomplete="new-password"
+                               aria-required="true" placeholder="password"/>
+                    <label for="Input.ConfirmPassword">Confirm Password</label>
+                    <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger"/>
+                </div>
 
-            <RadzenButton ButtonType="ButtonType.Submit"
-                          data-testid="register_submitform"
-                          Text="Register" Icon="person" IconPosition="IconPosition.Left"
-                          Class="btn btn-primary btn-lg btn-block"/>
+                <RadzenButton ButtonType="ButtonType.Submit"
+                              data-testid="register_submitform"
+                              Text="Register" Icon="person" IconPosition="IconPosition.Left"
+                              Class="btn btn-primary btn-lg btn-block"/>
 
-        </EditForm>
+            </EditForm>
         </section>
     </div>
 </div>
@@ -101,7 +100,7 @@
             new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
 
         await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
-        await SendEmailAsync(Input.Email, "Confirm your email", $"Please click <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>here</a> to confirm your email.");
+        await EmailService.SendUserEmailLinkAsync(Input.Email, "Confirm your email", $"Please click <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>here</a> to confirm your email.");
         if (UserManager.Options.SignIn.RequireConfirmedAccount)
         {
             RedirectManager.RedirectTo(
@@ -153,24 +152,6 @@
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = "";
-    }
-
-    private async Task SendEmailAsync(string email, string subject, string confirmlink)
-    {
-        var message = new MailMessage();
-        var smtpClient = new SmtpClient();
-        message.From = new MailAddress("testdotnet10@gmail.com");
-        message.To.Add(email);
-        message.Subject = subject;
-        message.IsBodyHtml = true;
-        message.Body = confirmlink;
-        smtpClient.Port = 587;
-        smtpClient.Host = "smtp.gmail.com";
-        smtpClient.EnableSsl = true;
-        smtpClient.UseDefaultCredentials = false;
-        smtpClient.Credentials = new NetworkCredential("testdotnet10@gmail.com", "rmrcmrpqgkcrfkgl");
-        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-        await smtpClient.SendMailAsync(message);
     }
 
 }
