@@ -1,3 +1,4 @@
+@using System.IO.Compression
 @typeparam TItem
 
 <RadzenDataList TItem="TItem" Data="Files">
@@ -5,6 +6,9 @@
         <RadzenRow>
             <RadzenColumn>
                 @((string)(typeof(TItem).GetProperty("FileName")?.GetValue(file, null) ?? string.Empty))
+            </RadzenColumn>
+            <RadzenColumn>
+                 @((typeof(TItem).GetProperty("FileContent")?.GetValue(file, null) is byte[] content && content.Length > 0 ? $"{content.Length / 1024.0:F2} KB" : string.Empty))
             </RadzenColumn>
             <RadzenColumn>
                 <RadzenButton Text="Download"
@@ -33,11 +37,21 @@
     {
         // Accessing properties via reflection to avoid type constraints
         var fileName = typeof(TItem).GetProperty("FileName")?.GetValue(file, null)?.ToString();
-        var fileContent = typeof(TItem).GetProperty("FileContent")?.GetValue(file, null) as byte[];
+        var fileContentCompressed = typeof(TItem).GetProperty("FileContent")?.GetValue(file, null) as byte[];
 
-        if (fileContent == null)
+        if (fileContentCompressed == null || fileContentCompressed.Length == 0)
         {
-            return; // Handle the case where FileContent is null
+            return; // Handle the case where FileContent is null or empty
+        }
+
+        // Decompress the file content
+        byte[] fileContent;
+        using (var compressedStream = new MemoryStream(fileContentCompressed))
+        using (var gzipStream = new GZipStream(compressedStream, CompressionMode.Decompress))
+        using (var decompressedStream = new MemoryStream())
+        {
+            await gzipStream.CopyToAsync(decompressedStream);
+            fileContent = decompressedStream.ToArray();
         }
 
         const string mimeType = "application/octet-stream"; // Default MIME type
@@ -46,5 +60,6 @@
 
         await JS.InvokeVoidAsync("saveAsFile", fileName, fileDataUrl);
     }
+
 
 }

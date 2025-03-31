@@ -1,7 +1,7 @@
 <RadzenButton Text="Comment" Icon="add" IconColor="red" Shade="Shade.Light" Variant="Variant.Outlined"
               ButtonStyle="ButtonStyle.Primary" Click="@ShowInlineDialog"/>
 
-<RadzenDataList AllowVirtualization="true"
+<RadzenDataList AllowVirtualization="false"
                 WrapItems="true" AllowPaging="true"
                 Data="@_comments" TItem="BugsComments" PageSize="5" PagerHorizontalAlign="HorizontalAlign.Left"
                 ShowPagingSummary="true" @ref="_listgrid">
@@ -93,7 +93,7 @@
                                   ButtonType="ButtonType.Submit"
                                   Style="margin-bottom: 10px;"/>
                 </RadzenTemplateForm>
-            </RadzenStack>);
+            </RadzenStack>, new DialogOptions(){Draggable = true});
     }
 
 }

@@ -1,9 +1,10 @@
 @page "/project/{ProjectId:int}/bugs/view/{Id:int}"
 @rendermode InteractiveServer
 
-<RadzenSteps CanChange="@CanChange">
-    <Steps>
-        <RadzenStepsItem Text="Bug Details">
+
+<RadzenTabs RenderMode="TabRenderMode.Client">
+    <Tabs>
+        <RadzenTabsItem Text="Bug Details">
             <RadzenRow>
                 <RadzenCard Style="width: 50%; padding: 20px; margin-bottom:20px">
                     <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
@@ -65,37 +66,35 @@
                                 <RadzenLink Text="@testCase.Id.ToString()"
                                             Path="@TestCaseLink(testCase.Id)"></RadzenLink>
 
-                                @code
+                                    @code
 
-                                {
-                                    private string TestCaseLink(int id)
                                     {
-                                        return $"/project/{ProjectId}/testcases/view/{id}";
+                                        private string TestCaseLink(int id)
+                                        {
+                                            return $"/project/{ProjectId}/testcases/view/{id}";
+                                        }
                                     }
                                 }
-                            }
                         }
                     </div>
                 </RadzenCard>
             </RadzenRow>
-        </RadzenStepsItem>
-
-        <RadzenStepsItem Text="@ContextFilesTitle()" Disabled="@BugsHasNoFiles">
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@BugsHasNoFiles">
             <FileViewer Files="Files"
                         EntityName="@nameof(BugsFiles)"/>
-        </RadzenStepsItem>
-
-        <RadzenStepsItem Text="Comments">
+        </RadzenTabsItem>
+        
+        <RadzenTabsItem Text="Comments">
             <Comments Id="Id"/>
-        </RadzenStepsItem>
-
-    </Steps>
-</RadzenSteps>
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
 
 
 
 @code{
-    [Parameter] public int ProjectId { get; set; }
+    [EditorRequired][Parameter] public int ProjectId { get; set; }
     [Parameter] public int Id { get; set; }
 
     private List<BugsFiles>? Files { get; set; }
@@ -121,14 +120,5 @@
         return BugsHasNoFiles ? Loc["files.nofiles"] : Loc["files.existingfiles"];
     }
 
-
-    private static Task CanChange(StepsCanChangeEventArgs args)
-    {
-        return args.SelectedIndex switch
-        {
-            0 or 1 => Task.CompletedTask,
-            _ => Task.CompletedTask
-        };
-    }
-
+    
 }
