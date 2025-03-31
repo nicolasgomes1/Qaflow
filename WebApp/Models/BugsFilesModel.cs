@@ -15,73 +15,32 @@ public class BugsFilesModel(
 
     public List<BugsFiles> ExistingFiles = [];
 
-    public async Task SaveFilesToDb1(List<IBrowserFile>? files, int bugId, int projectId )
-    {
-        if (files != null && files.Count != 0)
-        {
-            foreach (var file in files)
-            {
-                using var memoryStream = new MemoryStream();
-                await file.OpenReadStream().CopyToAsync(memoryStream);
 
-                //Validation at server side
-                if (file.Size > MaxFileSize)
-                {
-                    throw new Exception("File size is too large. Maximum file size is 100KB");
-                }
-
-                var bugsFile = new BugsFiles
-                {
-                    FileName = file.Name,
-                    FileContent = memoryStream.ToArray(),
-                    UploadedAt = DateTime.UtcNow,
-                    BugId = bugId,
-                    ProjectsId = projectId
-                };
-
-                _dbContext.BugsFiles.Add(bugsFile);
-            }
-
-            await _dbContext.SaveChangesAsync();
-        }
-    }
-    
     public async Task SaveFilesToDb(List<IBrowserFile>? files, int bugId, int projectId)
-{
-    if (files == null || files.Count == 0) return;
-
-    foreach (var file in files)
     {
-        if (file.Size > MaxFileSize)
-            throw new Exception($"File size is too large. Maximum file size is {MaxFileSize} bytes");
+        if (files == null || files.Count == 0) return;
 
-        using var memoryStream = new MemoryStream();
-        await file.OpenReadStream(MaxFileSize * files.Count).CopyToAsync(memoryStream);
-        memoryStream.Position = 0; // Reset stream position before compression
-
-        using var compressedStream = new MemoryStream();
-        await using (var gzipStream = new GZipStream(compressedStream, CompressionMode.Compress, true))
+        foreach (var file in files)
         {
-            await memoryStream.CopyToAsync(gzipStream);
+            if (file.Size > MaxFileSize)
+                throw new Exception($"File size is too large. Maximum file size is {MaxFileSize} bytes");
+
+            using var compressedStream = await FileCompressing.CompressFileStream(files, file);
+
+            var bugsFile = new BugsFiles
+            {
+                FileName = file.Name,
+                FileContent = compressedStream.ToArray(),
+                UploadedAt = DateTime.UtcNow,
+                BugId = bugId,
+                ProjectsId = projectId
+            };
+
+            _dbContext.BugsFiles.Add(bugsFile);
         }
 
-        compressedStream.Position = 0;
-
-        var bugsFile = new BugsFiles
-        {
-            FileName = file.Name,
-            FileContent = compressedStream.ToArray(),
-            UploadedAt = DateTime.UtcNow,
-            BugId = bugId,
-            ProjectsId = projectId
-        };
-
-        _dbContext.BugsFiles.Add(bugsFile);
+        await _dbContext.SaveChangesAsync();
     }
-
-    await _dbContext.SaveChangesAsync();
-}
-
 
     public async Task<List<BugsFiles>> GetBugFilesById(int bugId)
     {

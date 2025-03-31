@@ -9,7 +9,7 @@
                     MouseLeave="@AppTooltipService.HideTooltip"
                     Icon="library_books"
                     ButtonStyle="ButtonStyle.Warning"
-                    Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirementsspecification", true))"/>
+                    Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirementsspecification"))"/>
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton
                     data-testid="d_requirements"
@@ -17,7 +17,7 @@
                     MouseLeave="@AppTooltipService.HideTooltip"
                     ButtonStyle="ButtonStyle.Warning"
                     Icon="assignment"
-                    Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements", true))"/>
+                    Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements"))"/>
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton
                     data-testid="d_requirementsworkflow"
@@ -46,7 +46,7 @@
                               Icon="science"
                               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Test Cases"))"
                               MouseLeave="@AppTooltipService.HideTooltip"
-                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases", true))"/>
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases"))"/>
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="category"
                               data-testid="d_testcasesworkflow"
@@ -70,7 +70,7 @@
                               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["TestPlans"]))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               ButtonStyle="ButtonStyle.Info"
-                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans", true))"/>
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans"))"/>
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton Icon="category"
                               data-testid="d_testplansworkflow"
@@ -99,7 +99,7 @@
                               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["TestExecutions"]))"
                               MouseLeave="@AppTooltipService.HideTooltip"
                               ButtonStyle="ButtonStyle.Success"
-                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution", true))"/>
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/testexecution"))"/>
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton Icon="category"
                               data-testid="d_testexecutionsworkflow"
@@ -135,7 +135,7 @@
                     Icon="bug_report"
                     data-testid="d_bugs"
                     ButtonStyle="ButtonStyle.Danger"
-                    Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs", true))"/>
+                    Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs"))"/>
                 <RadzenIcon Icon="arrow_right_alt" Style="font-size: 32px;"/>
                 <RadzenButton Icon="category"
                               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["manage.bugs"]))"
@@ -155,7 +155,7 @@
             <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
                 <RadzenButton Text="@Loc["Reports"]"
                               data-testid="d_reports"
-                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/reports", true))"/>
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/reports"))"/>
             </RadzenStack>
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="Reports: 3" class="rz-ms-2"/>
@@ -169,7 +169,7 @@
             <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
                 <RadzenButton Text="@Loc["Milestones"]"
                               data-testid="d_milestones"
-                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/milestones", true))"/>
+                              Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/milestones"))"/>
             </RadzenStack>
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
                 <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="Milestones" class="rz-ms-2"/>

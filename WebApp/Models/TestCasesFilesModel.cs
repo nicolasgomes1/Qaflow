@@ -24,17 +24,8 @@ public class TestCasesFilesModel(IDbContextFactory<ApplicationDbContext> dbConte
             if (file.Size > MaxFileSize)
                 throw new Exception($"File size is too large. Maximum file size is {MaxFileSize} bytes");
 
-            using var memoryStream = new MemoryStream();
-            await file.OpenReadStream(MaxFileSize * files.Count).CopyToAsync(memoryStream);
-            memoryStream.Position = 0; // Reset stream position before compression
+            using var compressedStream = await FileCompressing.CompressFileStream(files, file);
 
-            using var compressedStream = new MemoryStream();
-            await using (var gzipStream = new GZipStream(compressedStream, CompressionMode.Compress, true))
-            {
-                await memoryStream.CopyToAsync(gzipStream);
-            }
-
-            compressedStream.Position = 0;
 
             var testcasesFile = new TestCasesFile
             {
