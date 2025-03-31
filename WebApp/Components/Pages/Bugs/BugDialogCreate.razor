@@ -44,7 +44,7 @@
     async Task ShowInlineDialog()
     {
         _bugs = new Bugs();
-
+        _uploadedFiles?.Clear();
         var result = await DialogService.OpenAsync("Create Bug", ds =>
             @<RadzenStack Gap="1.5rem" Style="height: 600px;">
                 <RadzenTemplateForm Data="_bugs" TItem="Bugs" Submit="@CreateNewBug">

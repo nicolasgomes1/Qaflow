@@ -55,6 +55,7 @@
         _estimatedTimeInput = string.Empty;
         _usersList = await UserService.GetUsersList();
         _testCases = new TestCases();
+        _uploadedFiles?.Clear();
         const string createModel = "Test Case";
         var result = await DialogService.OpenAsync(createModel, ds =>
             @<RadzenStack Gap="1.5rem" Style="height: 600px;">

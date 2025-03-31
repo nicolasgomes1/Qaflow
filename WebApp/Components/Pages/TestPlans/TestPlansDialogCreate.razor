@@ -55,7 +55,7 @@
     {
         _usersList = await UserService.GetUsersList();
         _testPlans = new TestPlans();
-
+        _uploadedFiles?.Clear();
         var result = await DialogService.OpenAsync("Create Test Plan", ds =>
             @<RadzenStack Gap="1.5rem" Style="height: 600px;">
                 <RadzenTemplateForm Data="_testPlans" TItem="TestPlans" Submit="@CreateNewTestPlan">

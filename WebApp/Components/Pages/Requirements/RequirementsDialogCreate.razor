@@ -54,6 +54,7 @@
         _usersList = await UserService.GetUsersList();
         _selectedRequirementSpecificationId = -1;
         _requirements = new Requirements();
+        _uploadedFiles?.Clear();
 
         var result = await DialogService.OpenAsync("Create Requirement", ds =>
             @<RadzenStack Gap="1.5rem" Style="height: 600px;">

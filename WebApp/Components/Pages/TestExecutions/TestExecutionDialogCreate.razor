@@ -57,7 +57,6 @@
     {
         _usersList = await UserService.GetUsersList();
         _testExecution = new TestExecution();
-
         var result = await DialogService.OpenAsync("Create Test Execution", ds =>
             @<RadzenStack Gap="1.5rem" Style="height: 600px;">
                 <RadzenTemplateForm Data="_testExecution" TItem="TestExecution" Submit="@CreateNewTestExecution">
@@ -123,7 +122,7 @@
                                         Name="assignedto"/>
                         <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
                     </div>
-
+                    
 
                     <!-- Submit button inside the form -->
                     <RadzenButton Text="Create Test Execution" ButtonStyle="ButtonStyle.Secondary"
