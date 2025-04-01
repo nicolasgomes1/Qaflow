@@ -32,18 +32,18 @@
 
                         <div class="row mb-4">
                             <div class="col-12">
-                            <RadzenLabel Text="Requirements Specification"/>
-                            <RadzenDropDown id="requirements_specification"
-                                            class="w-100"
-                                            Data="@_requirementsSpecificationList"
-                                            TextProperty="Name"
-                                            ValueProperty="Id"
-                                            @bind-Value="_selectedRequirementSpecificationId"
-                                            AllowFiltering="true"
-                                            AllowVirtualization="true"
-                                            Name="requirementsSpecification"/>
-                            <RadzenRequiredValidator Component="requirementsSpecification"
-                                                     Text="Requirements Specification is required"/>
+                                <RadzenLabel Text="Requirements Specification"/>
+                                <RadzenDropDown id="requirements_specification"
+                                                class="w-100"
+                                                Data="@_requirementsSpecificationList"
+                                                TextProperty="Name"
+                                                ValueProperty="Id"
+                                                @bind-Value="_selectedRequirementSpecificationId"
+                                                AllowFiltering="true"
+                                                AllowVirtualization="true"
+                                                Name="requirementsSpecification"/>
+                                <RadzenRequiredValidator Component="requirementsSpecification"
+                                                         Text="Requirements Specification is required"/>
                             </div>
                         </div>
 
@@ -100,7 +100,7 @@
             </RadzenTabsItem>
 
 
-            <RadzenTabsItem Text="Files">
+            <RadzenTabsItem Text="Files" data-testid="requirement_files">
                 <RadzenFieldset Text="Requirements Files">
                     <div class="container-fluid p-0">
                         <FileUpload UploadedFiles="_uploadedFiles"/>

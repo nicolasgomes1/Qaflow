@@ -1,6 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import * as actions from '../TestSteps/ReusableTestSteps';
 import * as login from '../TestSteps/LoginbyRole';
+import * as filter from '../TestSteps/FilterSteps';
 
 test.beforeEach('Login User',async ({ page }) => {
     login.LoginbyRole(page, login.Users.Admin);
@@ -14,18 +15,6 @@ test.afterEach('Logout User',async ({ page }) => {
 });
 
 
-async function filterRequirements(page: Page, requirementName: string) {
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
-    await page.getByRole('textbox', { name: 'Name filter value' }).click();
-    await page.getByRole('textbox', { name: 'Name filter value' }).fill(requirementName);
-    await page.getByRole('button', { name: 'Apply' }).click();
-    if (await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()) {
-        await page.locator('.rz-notification-item > div:nth-child(2)').click();
-    }
-    await expect(page.getByRole('table')).toContainText(requirementName);
-    await page.waitForLoadState('load');
-}
 
 test('Create New Requirement', async ({ page })=> {
     test.slow();
@@ -52,7 +41,7 @@ test('Create New Requirement', async ({ page })=> {
 
     await actions.validate_button(page, 'create_requirement');
     
-    await filterRequirements(page, 'Test Requirement Playwright' + Random);
+    await filter.filterTableModel(page, 'Test Requirement Playwright' + Random);
     
     await actions.click_button(page, 'delete');
 
@@ -84,7 +73,7 @@ test('View New Requirement', async ({ page })=> {
     await actions.validate_button(page, 'create_requirement');
 
 
-    await filterRequirements(page, name);
+    await filter.filterTableModel(page, name);
 
 
     await actions.click_button(page, 'view');
@@ -115,7 +104,7 @@ test('Edit New Requirement', async ({ page })=> {
     await actions.validate_button(page, 'create_requirement');
 
 
-    await filterRequirements(page, name);
+    await filter.filterTableModel(page, name);
 
 
     await actions.click_button(page, 'edit');
@@ -126,3 +115,45 @@ test('Edit New Requirement', async ({ page })=> {
     await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()
 
 });
+
+test('Create New Requirement with file', async ({ page })=> {
+    test.slow();
+    const Random = Math.floor(Math.random() * 1000000);
+
+    await actions.LaunchProject(page, 'Demo Project Without Data' );
+
+    await actions.click_button(page, 'd_requirements');
+
+    await actions.click_button(page, 'create_requirement');
+
+    const name = 'Test Requirement Playwright file' + Random;
+    await actions.fill_input(page, 'requirement_name', name);
+
+    await actions.fill_input(page, 'requirement_description', 'Test Requirement Playwright Description' + Random);
+
+    await actions.select_dropdown_option(page, 'requirement_priority', 'Medium');
+
+
+    await actions.select_dropdown_option(page,'requirement_status', 'New');
+
+    await actions.select_dropdown_option(page,'requirement_assignedto', 'user@example.com');
+
+    await page.evaluate(() => document.activeElement && (document.activeElement as HTMLElement).blur());
+
+    await actions.ClickTab(page, 'requirement_files');
+
+    await actions.UploadFile(page, 'fileupload');
+    
+    await actions.submit_form(page);
+
+    await actions.validate_button(page, 'create_requirement');
+
+    await filter.filterTableModel(page, name);
+    await actions.click_button(page, 'view');
+    await actions.ClickTab(page, 'requirement_files');
+    await actions.validate_page_has_text(page, 'testfile.png');
+
+
+});
+
+

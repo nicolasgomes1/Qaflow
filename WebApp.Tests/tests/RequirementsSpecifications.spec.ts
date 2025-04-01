@@ -1,6 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import * as actions from '../TestSteps/ReusableTestSteps';
 import * as login from '../TestSteps/LoginbyRole';
+import * as filter from '../TestSteps/FilterSteps';
 
 test.beforeEach('Login User',async ({ page }) => {
     login.LoginbyRole(page, login.Users.Admin);
@@ -13,18 +14,7 @@ test.afterEach('Logout User',async ({ page }) => {
     await expect(guest_user).toBeVisible();
 });
 
-async function filterRequirements(page: Page, requirementName: string) {
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
-    await page.getByRole('textbox', { name: 'Name filter value' }).click();
-    await page.getByRole('textbox', { name: 'Name filter value' }).fill(requirementName);
-    await page.getByRole('button', { name: 'Apply' }).click();
-    if (await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()) {
-        await page.locator('.rz-notification-item > div:nth-child(2)').click();
-    }
-    await expect(page.getByRole('table')).toContainText(requirementName);
-    await page.waitForLoadState('load');
-}
+
 
 
 test('Create New Requirement Specification', async ({ page })=> {
@@ -48,15 +38,13 @@ test('Create New Requirement Specification', async ({ page })=> {
     await actions.closeModal(page, "submit_dialog");
     await actions.validate_button(page, 'requirements_specification_create');
     
-    await filterRequirements(page, 'Test Requirement Playwright' + Random);
+    await filter.filterTableModel(page, 'Test Requirement Playwright' + Random);
     
     await actions.click_button(page, 'delete');
 
     await page.getByRole('button', { name: 'Ok' }).first().click();
     await expect(page.getByRole('table')).not.toContainText('Test Requirement Playwright' + Random);
 });
-
-
 
 
 test('View New Requirement Specification', async ({ page })=> {
@@ -79,7 +67,7 @@ test('View New Requirement Specification', async ({ page })=> {
 
     await actions.validate_button(page, 'requirements_specification_create');
 
-    await filterRequirements(page, name);
+    await filter.filterTableModel(page, name);
 
     await actions.click_button(page, 'view');
 

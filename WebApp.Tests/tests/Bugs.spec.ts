@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import * as actions from '../TestSteps/ReusableTestSteps';
 import * as login from '../TestSteps/LoginbyRole';
-
+import * as filter from '../TestSteps/FilterSteps';
 test.beforeEach('Login User',async ({ page }) => {
     login.LoginbyRole(page, login.Users.Admin);
 
@@ -13,19 +13,6 @@ test.afterEach('Logout User',async ({ page }) => {
     await expect(guest_user).toBeVisible();
 });
 
-
-async function filterBugs(page: Page, BugName: string) {
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
-    await page.getByRole('textbox', { name: 'Name filter value' }).click();
-    await page.getByRole('textbox', { name: 'Name filter value' }).fill(BugName);
-    await page.getByRole('button', { name: 'Apply' }).click();
-    if (await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()) {
-        await page.locator('.rz-notification-item > div:nth-child(2)').click();
-    }
-    await expect(page.getByRole('table')).toContainText(BugName);
-    await page.waitForLoadState('load');
-}
 
 async function CreateBug(page: Page, number: number)
 {
@@ -60,7 +47,7 @@ test('Create New Bug', async ({ page })=> {
 
     await CreateBug(page, Random);
     const name = 'Test Bug Playwright' + Random;
-    await filterBugs(page, name);
+    await filter.filterTableModel(page, name);
 
     await actions.click_button(page, 'delete');
 
@@ -81,7 +68,7 @@ test('View New Bug', async ({ page })=> {
 
     await CreateBug(page, Random);
     const name = 'Test Bug Playwright' + Random;
-    await filterBugs(page, name);
+    await filter.filterTableModel(page, name);
 
     await actions.click_button(page, 'view');
 
@@ -106,7 +93,7 @@ test('Edit New Bug', async ({ page })=> {
     const name = 'Test Bug Playwright' + Random;
     const description = 'Test Bug Playwright Description' + Random;
 
-    await filterBugs(page, name);
+    await filter.filterTableModel(page, name);
 
     await actions.click_button(page, 'edit');
 

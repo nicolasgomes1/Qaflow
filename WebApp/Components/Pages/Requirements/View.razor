@@ -49,7 +49,7 @@
                 </RadzenCard>
             </RadzenRow>
         </RadzenTabsItem>
-        <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@RequirementHasNoFiles">
+        <RadzenTabsItem data-testid="requirement_files" Text="@ContextFilesTitle()" Disabled="@RequirementHasNoFiles">
             <FileViewer Files="_existingFiles"
                         EntityName="@nameof(RequirementsFile)"/>
         </RadzenTabsItem>

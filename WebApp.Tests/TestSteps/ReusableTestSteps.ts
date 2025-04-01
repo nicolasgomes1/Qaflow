@@ -160,4 +160,48 @@ async function LaunchProject(page: Page, project: string)
     await page.waitForLoadState('load');
 }
 
-export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject };
+
+async function UploadFile(page: Page, id: string) {
+    const el = page.getByTestId(id);
+
+    // Ensure the element is visible before interacting
+    await el.waitFor({ state: 'visible' });
+
+    // Click the element (if it's a button triggering file input)
+    await el.click();
+
+    // Locate the actual file input and set the file
+    const fileInput = page.locator(`input[type="file"]`);
+    const filePath = 'C:/Users/nicol/source/repos/WebApp/WebApp.Tests/test_files/testfile.png';
+    await fileInput.setInputFiles(filePath);
+
+    console.log(`File uploaded: ${filePath}`);
+}
+
+async function ClickTab(page: Page, TabTestId: string) {
+
+    // Step 1: Unfocus any currently focused element to ensure we can interact freely
+    await page.evaluate(() => document.body.focus());
+
+    // Step 2: Locate the element by its data-testid
+    const tab = page.locator(`[data-testid="${TabTestId}"]`);
+
+    
+// Step 3a: Wait for the tab to be attached to the DOM
+    await tab.waitFor({state: 'attached'}).then(() => tab.scrollIntoViewIfNeeded());
+    // Step 3: Scroll the element into view, even if it's hidden or off-screen
+
+    // Step 4: Ensure the element is visible
+    const isVisible = await tab.isVisible();
+    if (!isVisible) {
+        console.log(`Element with data-testid="${TabTestId}" is not visible, but proceeding to click anyway.`);
+    }
+
+    // Step 5: Force click the element
+    await tab.click({ force: true });
+
+}
+
+
+
+export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject, UploadFile, ClickTab };

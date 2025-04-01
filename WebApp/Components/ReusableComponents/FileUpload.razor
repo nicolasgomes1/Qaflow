@@ -2,7 +2,9 @@
     <RadzenColumn Size="12" SizeMD="4">
         <RadzenCard Variant="Variant.Outlined">
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Files upload</RadzenText>
-            <RadzenUpload Multiple="true" Icon="upload" Change="@HandleFileSelected" Style="width: 100%"/>
+            <RadzenUpload
+                data-testid="fileupload"
+                Multiple="true" Icon="upload" Change="@HandleFileSelected" Style="width: 100%"/>
         </RadzenCard>
     </RadzenColumn>
 </RadzenRow>
@@ -21,7 +23,7 @@
     {
         if (UploadedFiles == null) return;
         UploadedFiles.Clear();
-    
+
         foreach (var file in args.Files)
         {
             switch (file.Size)
