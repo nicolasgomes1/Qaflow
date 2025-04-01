@@ -22,6 +22,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Name"/>
                     <RadzenTextBox id="name"
+                                   data-testid="bug_name"
                                    @bind-Value="_bugs.Name"
                                    class="input-style"
                                    Name="name"/>
@@ -31,6 +32,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Description"/>
                     <RadzenTextArea id="description"
+                                    data-testid="bug_description"
                                     @bind-Value="_bugs.Description"
                                     class="input-style"
                                     Name="description"/>
@@ -40,6 +42,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Priority"/>
                     <RadzenDropDown id="priority"
+                                    data-testid="bug_priority"
                                     @bind-Value="_bugs.Priority"
                                     Data="EnumService.GetEnumValues<Priority>()"
                                     class="input-style"
@@ -50,6 +53,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Severity"/>
                     <RadzenDropDown id="severity"
+                                    data-testid="bug_severity"
                                     @bind-Value="_bugs.Severity"
                                     Data="EnumService.GetEnumValues<Severity>()"
                                     class="input-style"
@@ -60,6 +64,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Bug Status"/>
                     <RadzenDropDown id="bug_status"
+                                    data-testid="bug_status"
                                     @bind-Value="_bugs.BugStatus"
                                     Data="EnumService.GetEnumValues<BugStatus>()"
                                     class="input-style"
@@ -68,8 +73,32 @@
                 </div>
 
                 <div class="form-group mb-4">
+                    <RadzenLabel Text="Status"/>
+                    <RadzenDropDown id="status"
+                                    data-testid="bug_wkfstatus"
+                                    @bind-Value="_bugs.WorkflowStatus"
+                                    Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                                    class="input-style"
+                                    Name="status"/>
+                    <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <RadzenLabel Text="Test Cases"/>
+                    <RadzenDropDown id="testcases"
+                                    Data="@_testCaseslist"
+                                    @bind-Value="BugsModel.SelectedTestCasesIds"
+                                    TextProperty="Name"
+                                    ValueProperty="Id"
+                                    Multiple="true"
+                                    class="input-style"
+                                    Name="Test Cases"/>
+                </div>
+
+                <div class="form-group mb-4">
                     <RadzenLabel Text="Assigned To"/>
                     <RadzenDropDown id="assignedto"
+                                    data-testid="bug_assignedto"
                                     Data="@_usersList"
                                     @bind-Value="_bugs.AssignedTo"
                                     TextProperty="UserName"
@@ -99,6 +128,7 @@
     [Parameter] public int Id { get; set; }
     private List<ApplicationUser> _usersList = [];
     private List<BugsFiles> _existingFiles = [];
+    private List<TestCases> _testCaseslist = [];
 
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
@@ -108,6 +138,7 @@
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
+        _testCaseslist = await TestCasesModel.GetTestCasesWithWorkflowStatus(ProjectId);
 
         _bugs = await BugsModel.GetBugByIdAsync(Id);
         _existingFiles = await BugsFilesModel.GetBugFilesById(Id);
