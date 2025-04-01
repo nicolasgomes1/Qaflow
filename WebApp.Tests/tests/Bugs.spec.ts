@@ -1,0 +1,118 @@
+import { test, expect, Page } from '@playwright/test';
+import * as actions from '../TestSteps/ReusableTestSteps';
+import * as login from '../TestSteps/LoginbyRole';
+
+test.beforeEach('Login User',async ({ page }) => {
+    login.LoginbyRole(page, login.Users.Admin);
+
+});
+
+test.afterEach('Logout User',async ({ page }) => {
+    await actions.click_button(page, 'logout');
+    const guest_user = page.locator('strong', { hasText: 'Welcome, Guest User!'});
+    await expect(guest_user).toBeVisible();
+});
+
+
+async function filterBugs(page: Page, BugName: string) {
+    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
+    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
+    await page.getByRole('textbox', { name: 'Name filter value' }).click();
+    await page.getByRole('textbox', { name: 'Name filter value' }).fill(BugName);
+    await page.getByRole('button', { name: 'Apply' }).click();
+    if (await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()) {
+        await page.locator('.rz-notification-item > div:nth-child(2)').click();
+    }
+    await expect(page.getByRole('table')).toContainText(BugName);
+    await page.waitForLoadState('load');
+}
+
+async function CreateBug(page: Page, number: number)
+{
+    const name = 'Test Bug Playwright' + number;
+    await actions.fill_input(page, 'bug_name', name);
+
+    const description = 'Test Bug Playwright Description' + number;
+    await actions.fill_input(page, 'bug_description', description);
+
+    await actions.select_dropdown_option(page, 'bug_priority', 'Medium');
+    await actions.select_dropdown_option(page,'bug_status', 'Open');
+    await actions.select_dropdown_option(page,'bug_wkfstatus', 'Completed');
+
+    await actions.select_dropdown_option(page,'bug_assignedto', 'user@example.com');
+
+    await actions.submit_form(page);
+
+    await actions.validate_button(page, 'create_bug');
+}
+
+
+test('Create New Bug', async ({ page })=> {
+    test.slow();
+    const Random = Math.floor(Math.random() * 1000000);
+
+    await actions.LaunchProject(page, 'Demo Project Without Data' );
+
+    await actions.click_button(page, 'd_bugs');
+
+    await actions.click_button(page, 'create_bug');
+
+
+    await CreateBug(page, Random);
+    const name = 'Test Bug Playwright' + Random;
+    await filterBugs(page, name);
+
+    await actions.click_button(page, 'delete');
+
+    await page.getByRole('button', { name: 'Ok' }).click();
+    await expect(page.getByRole('table')).not.toContainText(name);
+});
+
+test('View New Bug', async ({ page })=> {
+    test.slow();
+    const Random = Math.floor(Math.random() * 1000000);
+
+    await actions.LaunchProject(page, 'Demo Project Without Data' );
+
+    await actions.click_button(page, 'd_bugs');
+
+    await actions.click_button(page, 'create_bug');
+
+
+    await CreateBug(page, Random);
+    const name = 'Test Bug Playwright' + Random;
+    await filterBugs(page, name);
+
+    await actions.click_button(page, 'view');
+
+    const description = 'Test Bug Playwright Description' + Random;
+
+    expect(page.getByText(name)).toBeVisible();
+    expect(page.getByText(description)).toBeVisible();
+});
+
+test('Edit New Bug', async ({ page })=> {
+    test.slow();
+    const Random = Math.floor(Math.random() * 1000000);
+
+    await actions.LaunchProject(page, 'Demo Project Without Data' );
+
+    await actions.click_button(page, 'd_bugs');
+
+    await actions.click_button(page, 'create_bug');
+
+
+    await CreateBug(page, Random);
+    const name = 'Test Bug Playwright' + Random;
+    const description = 'Test Bug Playwright Description' + Random;
+
+    await filterBugs(page, name);
+
+    await actions.click_button(page, 'edit');
+
+    await actions.validate_input(page, 'bug_name', name);
+    await actions.validate_input(page, 'bug_description', description);
+
+    await actions.submit_form(page);
+    await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()
+})

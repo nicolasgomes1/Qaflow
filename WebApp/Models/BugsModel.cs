@@ -11,27 +11,31 @@ public class BugsModel(
     UserService userService,
     BugsFilesModel bugsFilesModel)
 {
-    private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
-
     public Bugs Bugs { get; set; } = new();
 
     public List<int> SelectedTestCasesIds { get; set; } = [];
 
     public async Task<List<Bugs>> GetBugsAsync(int projectId)
     {
-        return await _dbContext.Bugs.Where(bp => bp.ProjectsId == projectId).ToListAsync();
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.Bugs.Where(bp => bp.ProjectsId == projectId).ToListAsync();
     }
 
     public async Task<Bugs> GetBugByIdAsync(int id)
     {
-        var bug = await _dbContext.Bugs.FindAsync(id);
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var bug = await db.Bugs.FindAsync(id);
         if (bug is null) throw new Exception("Bug not found");
         return bug;
     }
 
     public async Task<List<TestCases>> GetTestCasesAssociatedWithBugAsync(int bugId)
     {
-        var bug = await _dbContext.Bugs
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var bug = await db.Bugs
             .Include(b => b.TestCases)
             .FirstOrDefaultAsync(b => b.Id == bugId);
 
@@ -42,6 +46,8 @@ public class BugsModel(
 
     public async Task<Bugs> AddBug(Bugs bug, List<IBrowserFile>? files, int projectId)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         bug.CreatedAt = DateTime.UtcNow;
         bug.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         bug.ProjectsId = projectId;
@@ -50,7 +56,7 @@ public class BugsModel(
         // Fetch and add test cases asynchronously
         foreach (var testCaseId in SelectedTestCasesIds)
         {
-            var testCase = await _dbContext.TestCases.FindAsync(testCaseId);
+            var testCase = await db.TestCases.FindAsync(testCaseId);
             if (testCase == null)
                 throw new Exception($"Test case with ID {testCaseId} not found.");
 
@@ -58,10 +64,10 @@ public class BugsModel(
         }
 
         // Save the bug
-        await _dbContext.Bugs.AddAsync(bug);
+        await db.Bugs.AddAsync(bug);
 
 
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
 
         // If there are files, attempt to save them
         if (files != null && files.Count != 0) await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
@@ -71,10 +77,12 @@ public class BugsModel(
 
     public async Task UpdateBugAsync(Bugs bug, List<IBrowserFile>? files, int projectId)
     {
-        _dbContext.Bugs.Update(bug);
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        db.Bugs.Update(bug);
         Bugs.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         Bugs.ModifiedAt = DateTime.UtcNow;
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
 
         // If there are files, attempt to save them
         if (files != null && files.Count != 0) await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);

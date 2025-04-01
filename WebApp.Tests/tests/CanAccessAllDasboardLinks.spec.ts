@@ -116,7 +116,7 @@ test('Access Bugs Index', async ({ page })=> {
     test.slow();
     await actions.LaunchProject(page, 'Demo Project Without Data' );
     await actions.click_button(page, 'd_bugs');
-    await actions.validate_button(page, 'create-bug');
+    await actions.validate_button(page, 'create_bug');
 })
 
 test('Access Reports Index', async ({ page })=> {

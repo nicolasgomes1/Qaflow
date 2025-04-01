@@ -3,10 +3,31 @@
 
 <RadzenDataGrid TItem="Bugs"
                 Data="_bugs"
+                Density="Density.Compact"
+                AllowFiltering="true"
+                AllowSorting="true"
+                ColumnWidth="auto"
+                AllowPaging="true"
+                AllowColumnPicking="true"
+                PageSize="10"
+                PagerHorizontalAlign="HorizontalAlign.Left"
+                ShowPagingSummary="true"
+                LogicalFilterOperator="LogicalFilterOperator.Or"
+                SelectionMode="DataGridSelectionMode.Single"
+                @bind-Value="@_selectedBugs"
                 @ref="_dataGrid">
+
+
+    @code{
+
+        private IList<Bugs> _selectedBugs = [];
+
+
+    }
+
     <HeaderTemplate>
         <RadzenButton Text="Bug"
-                      data-testid="create-bug"
+                      data-testid="create_bug"
                       Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs/create", true)'
                       Size="ButtonSize.Medium"
                       Icon="add"

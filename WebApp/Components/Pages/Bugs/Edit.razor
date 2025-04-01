@@ -1,6 +1,17 @@
 @page "/project/{ProjectId:int}/bugs/edit/{Id:int}"
 @rendermode InteractiveServer
-<h3 class="text-center text-primary mb-4">Edit Bug</h3>
+
+<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
+             Size="AlertSize.Small" Variant="Variant.Filled"
+             Shade="Shade.Default" Icon="edit"
+             Text="@(req)"/>
+
+@code{
+    private string req => $"Editing Bug {Id}";
+
+}
+
+
 
 <RadzenTemplateForm Data="@_bugs" Submit="@UpdateBug" TItem="Bugs">
     <ValidationSummary class="alert alert-danger"/>
@@ -73,7 +84,7 @@
             <RadzenTabsItem Text="Files">
                 <FileUploadEdit UploadedFiles="_uploadedFiles"
                                 EntityName="@nameof(BugsFiles)"
-                                ExistingFiles="@BugsFilesModel.ExistingFiles"/>
+                                ExistingFiles="@_existingFiles"/>
             </RadzenTabsItem>
         </Tabs>
     </RadzenTabs>
@@ -87,6 +98,7 @@
     [Parameter] public int ProjectId { get; set; }
     [Parameter] public int Id { get; set; }
     private List<ApplicationUser> _usersList = [];
+    private List<BugsFiles> _existingFiles = [];
 
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
@@ -98,7 +110,7 @@
         _usersList = await UserService.GetUsersList();
 
         _bugs = await BugsModel.GetBugByIdAsync(Id);
-        await BugsFilesModel.GetBugFilesById(Id);
+        _existingFiles = await BugsFilesModel.GetBugFilesById(Id);
     }
 
     private async Task UpdateBug()

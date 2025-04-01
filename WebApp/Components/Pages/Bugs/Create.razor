@@ -10,6 +10,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Name"/>
                     <RadzenTextBox id="name"
+                                   data-testid="bug_name"
                                    @bind-Value="_bugs.Name"
                                    class="input-style"
                                    Name="name"/>
@@ -19,6 +20,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Description"/>
                     <RadzenTextArea id="description"
+                                    data-testid="bug_description"
                                     @bind-Value="_bugs.Description"
                                     class="input-style"
                                     Name="description"/>
@@ -28,6 +30,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Priority"/>
                     <RadzenDropDown id="priority"
+                                    data-testid="bug_priority"
                                     @bind-Value="_bugs.Priority"
                                     Data="EnumService.GetEnumValues<Priority>()"
                                     class="input-style"
@@ -38,6 +41,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Severity"/>
                     <RadzenDropDown id="severity"
+                                    data-testid="bug_severity"
                                     @bind-Value="_bugs.Severity"
                                     Data="EnumService.GetEnumValues<Severity>()"
                                     class="input-style"
@@ -48,6 +52,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Bug Status"/>
                     <RadzenDropDown id="bug_status"
+                                    data-testid="bug_status"
                                     @bind-Value="_bugs.BugStatus"
                                     Data="EnumService.GetEnumValues<BugStatus>()"
                                     class="input-style"
@@ -58,6 +63,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Status"/>
                     <RadzenDropDown id="status"
+                                    data-testid="bug_wkfstatus"
                                     @bind-Value="_bugs.WorkflowStatus"
                                     Data="EnumService.GetEnumValues<WorkflowStatus>()"
                                     class="input-style"
@@ -80,6 +86,7 @@
                 <div class="form-group mb-4">
                     <RadzenLabel Text="Assigned To"/>
                     <RadzenDropDown id="assignedto"
+                                    data-testid="bug_assignedto"
                                     Data="@_usersList"
                                     @bind-Value="_bugs.AssignedTo"
                                     TextProperty="UserName"

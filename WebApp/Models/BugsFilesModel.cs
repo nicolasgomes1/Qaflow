@@ -9,13 +9,10 @@ namespace WebApp.Models;
 public class BugsFilesModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
-    private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
-    
-    public List<BugsFiles> ExistingFiles = [];
-
-
     public async Task SaveFilesToDb(List<IBrowserFile>? files, int bugId, int projectId)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         if (files == null || files.Count == 0) return;
 
         foreach (var file in files)
@@ -31,14 +28,16 @@ public class BugsFilesModel(
                 ProjectsId = projectId
             };
 
-            _dbContext.BugsFiles.Add(bugsFile);
+            db.BugsFiles.Add(bugsFile);
         }
 
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     public async Task<List<BugsFiles>> GetBugFilesById(int bugId)
     {
-        return await _dbContext.BugsFiles.Where(bf => bf.BugId == bugId).ToListAsync();
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.BugsFiles.Where(bf => bf.BugId == bugId).ToListAsync();
     }
 }

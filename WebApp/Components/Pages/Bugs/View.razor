@@ -66,25 +66,25 @@
                                 <RadzenLink Text="@testCase.Id.ToString()"
                                             Path="@TestCaseLink(testCase.Id)"></RadzenLink>
 
-                                    @code
+                                @code
 
+                                {
+                                    private string TestCaseLink(int id)
                                     {
-                                        private string TestCaseLink(int id)
-                                        {
-                                            return $"/project/{ProjectId}/testcases/view/{id}";
-                                        }
+                                        return $"/project/{ProjectId}/testcases/view/{id}";
                                     }
                                 }
+                            }
                         }
                     </div>
                 </RadzenCard>
             </RadzenRow>
         </RadzenTabsItem>
         <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@BugsHasNoFiles">
-            <FileViewer Files="Files"
+            <FileViewer Files="ExistingFiles"
                         EntityName="@nameof(BugsFiles)"/>
         </RadzenTabsItem>
-        
+
         <RadzenTabsItem Text="Comments">
             <Comments Id="Id"/>
         </RadzenTabsItem>
@@ -94,10 +94,11 @@
 
 
 @code{
-    [EditorRequired][Parameter] public int ProjectId { get; set; }
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
     [Parameter] public int Id { get; set; }
 
-    private List<BugsFiles>? Files { get; set; }
+
+    private List<BugsFiles>? ExistingFiles { get; set; }
 
     private Bugs _bug = new();
 
@@ -109,16 +110,16 @@
     {
         TestCasesList = await BugsModel.GetTestCasesAssociatedWithBugAsync(Id);
         _bug = await BugsModel.GetBugByIdAsync(Id);
-        Files = await BugsFilesModel.GetBugFilesById(Id);
+        ExistingFiles = await BugsFilesModel.GetBugFilesById(Id);
         _testCaseExecution = await TestExecutionModel.GetTestCaseExecutionByIdAsync(_bug.TestCaseExecutionId.HasValue ? _bug.TestCaseExecutionId.Value : 0) ?? new TestCaseExecution();
     }
 
-    private bool BugsHasNoFiles => !BugsFilesModel.ExistingFiles.Any();
+    private bool BugsHasNoFiles => ExistingFiles != null && !ExistingFiles.Any();
 
     private string ContextFilesTitle()
     {
         return BugsHasNoFiles ? Loc["files.nofiles"] : Loc["files.existingfiles"];
     }
 
-    
+
 }
