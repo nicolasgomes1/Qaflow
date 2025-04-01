@@ -4,15 +4,26 @@ import { expect, Page } from '@playwright/test';
  * @param {Page} page - The Playwright page object.
  * @param {string} id - data-testid to locate the element.
  */
-async function click_button(page: Page, id: string)
-{
+async function click_button(page: Page, id: string) {
     const el = page.getByTestId(id).first();
     await el.waitFor({ state: 'visible' });
     await el.hover();
-    await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
+
+    // Wait for either tooltip to appear or timeout (if it never shows up)
+    const tooltipSelector = '.rz-tooltip.rz-popup';
+    try {
+        await Promise.race([
+            page.waitForSelector(tooltipSelector, { state: 'visible', timeout: 3000 }),
+        ]);
+    } catch (e) {
+        // Ignore timeout errors
+    }
+
+    // Click the button even if the tooltip is visible
     await el.click({ force: true, delay: 100 });
     await page.waitForLoadState('networkidle');
 }
+
 
 /**
  * @param {Page} page - The Playwright page object.
