@@ -1335,11 +1335,13 @@ namespace WebApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("WebApp.Data.RequirementsSpecification", null)
+                    b.HasOne("WebApp.Data.RequirementsSpecification", "RequirementsSpecification")
                         .WithMany("LinkedRequirements")
                         .HasForeignKey("RequirementsSpecificationId");
 
                     b.Navigation("Projects");
+
+                    b.Navigation("RequirementsSpecification");
                 });
 
             modelBuilder.Entity("WebApp.Data.RequirementsFile", b =>
@@ -1364,9 +1366,9 @@ namespace WebApp.Data.Migrations
             modelBuilder.Entity("WebApp.Data.RequirementsSpecification", b =>
                 {
                     b.HasOne("WebApp.Data.Projects", "Projects")
-                        .WithMany()
+                        .WithMany("RequirementsSpecification")
                         .HasForeignKey("ProjectsId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Projects");
@@ -1563,6 +1565,8 @@ namespace WebApp.Data.Migrations
                     b.Navigation("Requirements");
 
                     b.Navigation("RequirementsFile");
+
+                    b.Navigation("RequirementsSpecification");
 
                     b.Navigation("TestCases");
 

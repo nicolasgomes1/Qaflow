@@ -9,65 +9,95 @@ public class RequirementsSpecificationModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory,
     UserService userService)
 {
-    private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
-
-
     public async Task<RequirementsSpecification> AddRequirementsSpecification(
         RequirementsSpecification requirementsSpecification, int projectId)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         var currentTime = DateTime.UtcNow;
         requirementsSpecification.CreatedAt = currentTime;
         requirementsSpecification.ModifiedAt = currentTime;
         requirementsSpecification.ProjectsId = projectId;
+
+        //assign for now username not id
         requirementsSpecification.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
-        await _dbContext.RequirementsSpecification.AddAsync(requirementsSpecification);
-        await _dbContext.SaveChangesAsync();
+        await db.RequirementsSpecification.AddAsync(requirementsSpecification);
+        await db.SaveChangesAsync();
         return requirementsSpecification;
     }
 
     public async Task<RequirementsSpecification> UpdateRequirementsSpecificationAsync(int requirementsSpecificationId)
     {
-        var currentRequirement = await _dbContext.RequirementsSpecification.FindAsync(requirementsSpecificationId) ??
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var currentRequirement = await db.RequirementsSpecification
+                                     .FindAsync(requirementsSpecificationId) ??
                                  throw new Exception("No requirements Specification Found");
-        _dbContext.RequirementsSpecification.Update(currentRequirement);
 
         currentRequirement.ModifiedAt = DateTime.UtcNow;
         currentRequirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        await _dbContext.SaveChangesAsync();
+        db.RequirementsSpecification.Update(currentRequirement);
+        await db.SaveChangesAsync();
         return currentRequirement;
     }
 
 
+    /// <summary>
+    /// Retrieves a list of requirements specifications associated with a specific project.
+    /// </summary>
+    /// <param name="projectId">The unique identifier of the project for which the requirements specifications are to be retrieved.</param>
+    /// <returns>A task representing an asynchronous operation. The task result contains a list of requirements specifications associated with the specified project.</returns>
     public async Task<List<RequirementsSpecification>> GetRequirementsSpecificationListAsync(int projectId)
     {
-        return await _dbContext.RequirementsSpecification
-            .Include(r => r.LinkedRequirements)
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.RequirementsSpecification
             .Where(p => p.ProjectsId == projectId)
+            .Include(r => r.LinkedRequirements)
             .ToListAsync();
     }
 
+    /// <summary>
+    /// Retrieves a specific requirements specification by its unique identifier.
+    /// </summary>
+    /// <param name="requirementsSpecificationId">
+    /// The unique identifier of the requirements specification to retrieve.
+    /// </param>
+    /// <returns>
+    /// A task representing an asynchronous operation. The task result contains the requirements specification associated with the provided identifier.
+    /// </returns>
     public async Task<RequirementsSpecification> GetRequirementsSpecificationByIdAsync(int requirementsSpecificationId)
     {
-        var found = await _dbContext.RequirementsSpecification.FindAsync(requirementsSpecificationId) ??
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var found = await db.RequirementsSpecification.FindAsync(requirementsSpecificationId) ??
                     throw new Exception("No requirements Specification Found");
         return found;
     }
 
+    /// <summary>
+    /// Deletes a specific requirements specification identified by its unique identifier.
+    /// </summary>
+    /// <param name="requirementSpecificationId">The unique identifier of the requirements specification to be deleted.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result is a boolean where true indicates the deletion was not possible due to linked requirements, and false indicates successful deletion.</returns>
     public async Task<bool> DeleteRequirementsSpecification(int requirementSpecificationId)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+
         var noExceptions = 0;
-        
+
         var logger = LoggerService.Logger;
-        var found = await _dbContext.RequirementsSpecification.FindAsync(requirementSpecificationId);
+        var found = await db.RequirementsSpecification.FindAsync(requirementSpecificationId);
         if (found == null) throw new Exception();
         var hasReq = found.LinkedRequirements.Any();
         switch (hasReq)
         {
             case false:
                 noExceptions = 0;
-                _dbContext.Remove(found);
-                await _dbContext.SaveChangesAsync();
+                db.Remove(found);
+                await db.SaveChangesAsync();
                 logger.LogInformation("Removed Record");
                 break;
             case true:

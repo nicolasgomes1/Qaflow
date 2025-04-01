@@ -11,21 +11,20 @@ public class Projects : BaseEntity
 
     [MaxLength(100)] [Required] public string Description { get; set; } = string.Empty;
 
-    
-    public ICollection<Requirements> Requirements { get; init; } = new List<Requirements>();
-    public ICollection<RequirementsFile> RequirementsFile { get; init; } = new List<RequirementsFile>();
-    public ICollection<TestPlans> TestPlans { get; init; } = new List<TestPlans>();
-    public ICollection<TestPlansFile> TestPlansFile { get; init; } = new List<TestPlansFile>();
 
-    public ICollection<TestCases> TestCases { get; init; } = new List<TestCases>();
+    public ICollection<Requirements> Requirements { get; init; } = [];
+    public ICollection<RequirementsFile> RequirementsFile { get; init; } = [];
+    public ICollection<RequirementsSpecification> RequirementsSpecification { get; init; } = [];
 
-    public ICollection<TestCasesFile> TestCasesFile { get; init; } = new List<TestCasesFile>();
-    public ICollection<TestExecution> TestExecution { get; init; } = new List<TestExecution>();
+    public ICollection<TestPlans> TestPlans { get; init; } = [];
+    public ICollection<TestPlansFile> TestPlansFile { get; init; } = [];
 
-    public ICollection<TestStepsExecutionFile> TestStepsExecutionFile { get; init; } =
-        new List<TestStepsExecutionFile>();
+    public ICollection<TestCases> TestCases { get; init; } = [];
+    public ICollection<TestCasesFile> TestCasesFile { get; init; } = [];
 
-    public ICollection<Bugs> Bugs { get; init; } = new List<Bugs>();
+    public ICollection<TestExecution> TestExecution { get; init; } = [];
+    public ICollection<TestStepsExecutionFile> TestStepsExecutionFile { get; init; } = [];
 
-    public ICollection<BugsFiles> BugsFile { get; init; } = new List<BugsFiles>();
+    public ICollection<Bugs> Bugs { get; init; } = [];
+    public ICollection<BugsFiles> BugsFile { get; init; } = [];
 }

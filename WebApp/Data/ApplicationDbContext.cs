@@ -59,13 +59,19 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             );
 
 
+        //Project Relationships
         modelBuilder.Entity<Projects>()
-            .HasMany(p => p.Requirements)
+            .HasMany(p => p.Bugs)
             .WithOne(r => r.Projects)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Projects>()
-            .HasMany(p => p.Bugs)
+            .HasMany(p => p.BugsFile)
+            .WithOne(r => r.Projects)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Projects>()
+            .HasMany(p => p.Requirements)
             .WithOne(r => r.Projects)
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -75,9 +81,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Projects>()
-            .HasMany(p => p.BugsFile)
-            .WithOne(r => r.Projects)
+            .HasMany(p => p.RequirementsSpecification)
+            .WithOne(p => p.Projects)
             .OnDelete(DeleteBehavior.Restrict);
+
 
         modelBuilder.Entity<Projects>()
             .HasMany(p => p.TestCasesFile)
@@ -105,10 +112,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithOne(r => r.Projects)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Projects>()
-            .HasMany(p => p.Bugs)
-            .WithOne(r => r.Projects)
-            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<TestCases>()
             .HasMany<TestCasesJira>()
@@ -202,6 +205,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasMany<TestStepsExecution>(tse => tse.LinkedTestStepsExecution)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
-        
     }
 }
