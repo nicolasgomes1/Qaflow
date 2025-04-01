@@ -102,7 +102,7 @@ else
                 <RadzenTabsItem Text="Files">
                     <FileUploadEdit EntityName="@nameof(TestCasesFile)"
                                     UploadedFiles="_uploadedFiles"
-                                    ExistingFiles="TestCasesFilesModel.ExistingFiles"/>
+                                    ExistingFiles="ExistingFiles"/>
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Integration">
                     <RadzenLabel Text="External Jira Id"/>
@@ -137,6 +137,7 @@ else
 
     int _selectedIndex;
     private readonly List<IBrowserFile>? _uploadedFiles = [];
+    public List<TestCasesFile>? ExistingFiles = [];
 
     private List<Requirements> _requirementsList = [];
 
@@ -150,7 +151,7 @@ else
         _testCases = await TestCasesModel.GetTestCaseData(Id);
 
         await TestCasesModel.GetAssociatedRequirements(_testCases);
-        await TestCasesFilesModel.GetFilesByTestCaseId(Id);
+        ExistingFiles = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
         //  TestCasesModel.JiraIntegrations = await JiraService.GetProjectIssuesAsync("MFLP");
         TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync("Jira-01", "MFLP");
 

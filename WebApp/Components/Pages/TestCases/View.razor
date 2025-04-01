@@ -83,7 +83,7 @@ else
                 </RadzenRow>
             </RadzenTabsItem>
             <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@TestCasesHasNoFiles">
-                <FileViewer Files="Files" EntityName="@nameof(TestCasesFile)"/>
+                <FileViewer Files="ExistingFiles" EntityName="@nameof(TestCasesFile)"/>
 
             </RadzenTabsItem>
             <RadzenTabsItem Text="@ContextTestStepsTitle()" Disabled="@IsTestStepsEmpty">
@@ -134,14 +134,16 @@ else
 
     [Parameter] public int ProjectId { get; set; }
 
+    public List<TestCasesFile>? ExistingFiles = [];
+
+    
     private TestCases _testCases = new();
     private bool _isLoading = true;
 
-    private bool TestCasesHasNoFiles => !TestCasesFilesModel.ExistingFiles.Any();
+    private bool TestCasesHasNoFiles => !ExistingFiles!.Any();
 
     private bool TestCasesHasNoExternalReferences => !_testCasesJira.Any();
 
-    private List<TestCasesFile>? Files { get; set; }
 
     private string ContextFilesTitle()
     {
@@ -163,7 +165,7 @@ else
         _testCases = await TestCasesModel.GetTestCaseData(Id);
         await TestCasesModel.GetTestStepsForTestCase(Id);
 
-        Files = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
+        ExistingFiles = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
         _testCasesJira = await TestCasesJiraModel.GetSelectedJiraTickets(Id);
         ;
         _isLoading = false;

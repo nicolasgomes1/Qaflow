@@ -6,20 +6,11 @@ using WebApp.Services;
 
 namespace WebApp.Models;
 
-public class ReportsModel
+public class ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFactor)
 {
-    private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
-    private readonly ApplicationDbContext _dbContext;
-
-    public ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFactory)
-    {
-        _dbContextFactory = dbContextFactory;
-        _dbContext = _dbContextFactory.CreateDbContext();
-    }
-
     public async Task<(double, double)> GetTestCasePercentagesAsync(int projectId)
     {
-        await using var db = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await dbContextFactor.CreateDbContextAsync();
 
         var totalTestCases = await db.TestCases
             .Where(tc => tc.ProjectsId == projectId)
@@ -27,7 +18,7 @@ public class ReportsModel
 
         var testCasesWithRequirements = await db.TestCases
             .Where(tc => tc.ProjectsId == projectId)
-            .CountAsync(tc => tc.LinkedRequirements.Any());
+            .CountAsync(tc => tc.LinkedRequirements!.Any());
 
         var testCasesWithoutRequirements = totalTestCases - testCasesWithRequirements;
 
@@ -45,7 +36,7 @@ public class ReportsModel
 
     public async Task<(double, double)> GetTestPlansPercentagesAsync(int projectId)
     {
-        await using var db = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await dbContextFactor.CreateDbContextAsync();
 
         var testPlans = await db.TestPlans
             .Where(tp => tp.ProjectsId == projectId)
@@ -71,7 +62,7 @@ public class ReportsModel
 
     public async Task<(double, double, double)> GetTestExecutionsPercentagesAsync(int projectId)
     {
-        await using var db = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await dbContextFactor.CreateDbContextAsync();
 
         var executionCounts = await db.TestExecution
             .Where(te => te.ProjectsId == projectId)
@@ -107,13 +98,17 @@ public class ReportsModel
 
     private async Task<int> TotalRequirements(int projectId)
     {
-        var projectRequirements = await _dbContext.Requirements.CountAsync(r => r.ProjectsId == projectId);
+        await using var db = await dbContextFactor.CreateDbContextAsync();
+
+        var projectRequirements = await db.Requirements.CountAsync(r => r.ProjectsId == projectId);
         return projectRequirements;
     }
 
     public string LoadTotalTestCases(int projectId)
     {
-        var projectTestCases = _dbContext.TestCases.Count(tc => tc.ProjectsId == projectId)
+        using var db = dbContextFactor.CreateDbContext();
+
+        var projectTestCases = db.TestCases.Count(tc => tc.ProjectsId == projectId)
             .ToString();
 
         return projectTestCases == "0" ? "No Test Cases" : $"Test Cases: {projectTestCases}";
@@ -121,7 +116,9 @@ public class ReportsModel
 
     public string LoadTotalTestPlans(int projectId)
     {
-        var projectTestPlans = _dbContext.TestPlans.Count(tp => tp.ProjectsId == projectId)
+        using var db = dbContextFactor.CreateDbContext();
+
+        var projectTestPlans = db.TestPlans.Count(tp => tp.ProjectsId == projectId)
             .ToString();
 
         return projectTestPlans == "0" ? "No Test Plans" : $"Test Plans: {projectTestPlans}";
@@ -129,7 +126,9 @@ public class ReportsModel
 
     public string LoadTotalTestExecutions(int projectId)
     {
-        var projectTestExecutions = _dbContext.TestExecution
+        using var db = dbContextFactor.CreateDbContext();
+
+        var projectTestExecutions = db.TestExecution
             .Count(te => te.ProjectsId == projectId).ToString();
 
         return projectTestExecutions == "0" ? "No Test Executions" : $"Test Executions: {projectTestExecutions}";
@@ -137,14 +136,18 @@ public class ReportsModel
 
     public string LoadTotalBugs(int projectId)
     {
-        var projectBugs = _dbContext.Bugs.Count(b => b.ProjectsId == projectId).ToString();
+        using var db = dbContextFactor.CreateDbContext();
+
+        var projectBugs = db.Bugs.Count(b => b.ProjectsId == projectId).ToString();
         return projectBugs == "0" ? "No Bugs" : $"Bugs: {projectBugs}";
     }
 
 
     private async Task<int> TotalRequirementsSpecifications(int projectId)
     {
-        var projectRequirementsSpecifications = await _dbContext.Requirements
+        await using var db = await dbContextFactor.CreateDbContextAsync();
+
+        var projectRequirementsSpecifications = await db.Requirements
             .Where(r => r.ProjectsId == projectId)
             .CountAsync(
                 r => r.RequirementsSpecification != null && r.RequirementsSpecification.LinkedRequirements.Any());
@@ -175,8 +178,8 @@ public class ReportsModel
 
     public async Task<double> GetTestExecutionPassRateAsync(int projectId)
     {
-        await using var db1 = await _dbContextFactory.CreateDbContextAsync();
-        await using var db2 = await _dbContextFactory.CreateDbContextAsync();
+        await using var db1 = await dbContextFactor.CreateDbContextAsync();
+        await using var db2 = await dbContextFactor.CreateDbContextAsync();
 
         var testExecutionsPassed = await db1.TestExecution
             .Where(te => te.ProjectsId == projectId)
