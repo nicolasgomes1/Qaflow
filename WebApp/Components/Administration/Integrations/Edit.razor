@@ -56,7 +56,7 @@
 
     private async Task UpdateIntegration()
     {
-        await IntegrationsModel.UpdateIntegration(_integrations);
+        await IntegrationsModel.UpdateIntegration(Id);
         NavigationManager.NavigateTo("/integrations");
         await FormNotificationService.NotifySuccess("Integration updated successfully");
         Logger.LogInformation("Integration was updated");
