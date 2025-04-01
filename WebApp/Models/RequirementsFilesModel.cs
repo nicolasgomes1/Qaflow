@@ -9,12 +9,10 @@ namespace WebApp.Models;
 public class RequirementsFilesModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
-    private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
-
-    public List<RequirementsFile> ExistingFiles = [];
-
     public async Task SaveFilesToDb(List<IBrowserFile>? files, int requirementId, int projectId)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         if (files == null || files.Count == 0) return;
 
         foreach (var file in files)
@@ -31,21 +29,23 @@ public class RequirementsFilesModel(
                 ProjectsId = projectId
             };
 
-            _dbContext.RequirementsFiles.Add(requirementsFile);
+            db.RequirementsFiles.Add(requirementsFile);
         }
 
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     /// <summary>
-    /// Return the list of files for a given requirement
+    /// Retrieves a list of files associated with a specific requirement ID.
     /// </summary>
-    /// <param name="requirementId"></param>
-    /// <returns></returns>
+    /// <param name="requirementId">The unique identifier of the requirement for which to retrieve associated files.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a list of <see cref="RequirementsFile"/> objects associated with the specified requirement ID.</returns>
     public async Task<List<RequirementsFile>> GetFilesByRequirementId(int requirementId)
     {
-        ExistingFiles = await _dbContext.RequirementsFiles.Where(rf => rf.RequirementsId == requirementId)
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var existingFiles = await db.RequirementsFiles.Where(rf => rf.RequirementsId == requirementId)
             .ToListAsync();
-        return ExistingFiles;
+        return existingFiles;
     }
 }

@@ -110,7 +110,7 @@ else
                 <RadzenTabsItem Text="Files">
                     <FileUploadEdit UploadedFiles="_uploadedFiles"
                                     EntityName="@nameof(RequirementsFile)"
-                                    ExistingFiles="@RequirementsFilesModel.ExistingFiles"/>
+                                    ExistingFiles="@_existingFiles"/>
                 </RadzenTabsItem>
             </Tabs>
         </RadzenTabs>
@@ -135,7 +135,7 @@ else
 
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
-
+    private List<RequirementsFile> _existingFiles = [];
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
@@ -149,7 +149,7 @@ else
         }
 
 
-        await RequirementsFilesModel.GetFilesByRequirementId(Id);
+        _existingFiles = await RequirementsFilesModel.GetFilesByRequirementId(Id);
 
         _isLoading = false;
     }

@@ -13,11 +13,11 @@ public class RequirementsModel(
     RequirementsFilesModel requirementsFilesModel,
     UserService userService)
 {
-    private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
-
     public async Task<List<Requirements>> DisplayRequirementsIndexPage(int projectId)
     {
-        var requirements = await _dbContext.Requirements
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var requirements = await db.Requirements
             .Include(r => r.LinkedTestCases)
             .Include(r => r.RequirementsSpecification)
             .Where(tc => tc.ProjectsId == projectId)
@@ -28,12 +28,16 @@ public class RequirementsModel(
 
     public async Task<List<Requirements>> GetRequirementsAssignedToAll(int projectId)
     {
-        return await _dbContext.Requirements.Where(rp => rp.ProjectsId == projectId).ToListAsync();
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.Requirements.Where(rp => rp.ProjectsId == projectId).ToListAsync();
     }
 
     public async Task<List<Requirements>> GetRequirementsAssignedToCurrentUser(int projectId)
     {
-        return await _dbContext.Requirements.Where(rp =>
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.Requirements.Where(rp =>
                 rp.ProjectsId == projectId && rp.AssignedTo == userService.GetCurrentUserInfoAsync().Result.UserId)
             .ToListAsync();
     }
@@ -46,7 +50,9 @@ public class RequirementsModel(
     public async Task<List<Requirements>> GetRequirementsWithWorkflowStatus(WorkflowStatus workflowStatus,
         int projectId)
     {
-        return await _dbContext.Requirements
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.Requirements
             .Where(r => r.ProjectsId == projectId)
             .Where(r => r.WorkflowStatus == workflowStatus)
             .ToListAsync();
@@ -60,7 +66,9 @@ public class RequirementsModel(
     /// <returns>Requirements</returns>
     public async Task<Requirements> GetRequirementByIdAsync(int requirementId)
     {
-        var requirement = await _dbContext.Requirements
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var requirement = await db.Requirements
             .Include(r => r.LinkedTestCases)
             .Include(r => r.RequirementsSpecification)
             .FirstOrDefaultAsync(r => r.Id == requirementId);
@@ -72,12 +80,14 @@ public class RequirementsModel(
 
     public async Task<Requirements> AddRequirement(Requirements requirement, List<IBrowserFile>? files, int projectId)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         // First, create the requirement
-        _dbContext.Requirements.Add(requirement);
+        db.Requirements.Add(requirement);
         requirement.ProjectsId = projectId;
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         UpdateArchivedStatus(requirement);
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
 
         // If there are files, attempt to save them
         if (files != null && files.Count != 0)
@@ -88,16 +98,18 @@ public class RequirementsModel(
 
     public async Task UpdateRequirement(int requirementId, List<IBrowserFile>? files, int projectId)
     {
-        var requirement = await _dbContext.Requirements.FindAsync(requirementId);
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var requirement = await db.Requirements.FindAsync(requirementId);
         if (requirement == null) throw new Exception("Requirement not found");
 
         // First, update the requirement
-        _dbContext.Requirements.Update(requirement);
+        db.Requirements.Update(requirement);
         UpdateArchivedStatus(requirement);
         requirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
         requirement.ModifiedAt = DateTime.UtcNow;
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
 
         // If there are files, attempt to save them
         if (files != null && files.Count != 0)
@@ -116,30 +128,36 @@ public class RequirementsModel(
 
     public async Task<List<Requirements>> GetRequirementsToValidateAgainstCsv(int projectId)
     {
-        return await _dbContext.Requirements
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.Requirements
             .Where(r => r.ProjectsId == projectId)
             .ToListAsync();
     }
 
     public async Task<Requirements> AddRequirementFromCsv(Requirements requirement, int projectId)
     {
-        _dbContext.Requirements.Add(requirement);
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         requirement.ProjectsId = projectId;
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         requirement.WorkflowStatus = WorkflowStatus.New;
         requirement.CreatedAt = DateTime.UtcNow;
         requirement.ModifiedAt = DateTime.UtcNow;
         requirement.ArchivedStatus = ArchivedStatus.Active;
-        await _dbContext.SaveChangesAsync();
+        db.Requirements.Add(requirement);
+        await db.SaveChangesAsync();
         return requirement;
     }
 
     public async Task<List<RequirementsSpecification>> GetAssociatedRequirementsSpecifications(
         int projectId)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         var requirementsSpecifications =
-            await _dbContext.RequirementsSpecification.Where(p => p.ProjectsId == projectId)
-                .ToListAsync() ?? new List<RequirementsSpecification>();
+            await db.RequirementsSpecification.Where(p => p.ProjectsId == projectId)
+                .ToListAsync();
         return requirementsSpecifications;
     }
 }
