@@ -237,6 +237,9 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             AssignedTo = assignedUserId,
             WorkflowStatus = WorkflowStatus.Completed
         };
+        
+        if (newTestCase.WorkflowStatus == WorkflowStatus.Completed)
+            newTestCase.ArchivedStatus = ArchivedStatus.Archived;
 
         if (requirements != null)
         {
