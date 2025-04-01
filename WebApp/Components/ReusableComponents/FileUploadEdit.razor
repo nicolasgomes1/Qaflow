@@ -1,7 +1,7 @@
 @typeparam TEntity
 <div class="form-group mb-4">
     <RadzenLabel Text="Upload Files"/>
-    <RadzenUpload Multiple="true" Change="HandleFileSelected" Progress="OnProgress" Style="width: 100%"/>
+    <RadzenUpload Multiple="true" Change="HandleFileSelected" Style="width: 100%"/>
 </div>
 
 <!-- Display existing files with delete option -->
@@ -31,6 +31,8 @@
 </div>
 
 @code {
+    private const int MaxFileSize = 10 * 1024 * 1024; // 10MB
+
 
     /// <summary>
     ///     List of files uploaded by the user to be used in Edit mode.
@@ -56,7 +58,15 @@
         UploadedFiles.Clear();
         foreach (var file in args.Files)
         {
-            UploadedFiles.Add(file);
+            switch (file.Size)
+            {
+                case <= MaxFileSize:
+                    UploadedFiles.Add(file);
+                    break;
+                case > MaxFileSize:
+                    FormNotificationService.NotifyError($"{file.Name} Exceeds 10MB and will not be added");
+                    break;
+            }
         }
     }
 
@@ -92,10 +102,4 @@
         ExistingFiles.Remove(file);
         StateHasChanged(); // Refresh the UI
     }
-
-    static void OnProgress(UploadProgressArgs args)
-    {
-        Console.WriteLine($@"{args.Progress}% - {args.Loaded}/{args.Total} bytes");
-    }
-
 }
