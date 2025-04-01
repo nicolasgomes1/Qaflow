@@ -51,7 +51,7 @@ public class CleanUpPlaywrightTestsData : ICleanUpPlaywrightTestsData
     private async Task DeletePlaywrightRequirementsData()
     {
         var data = await _dbContext.Requirements
-            .Where(p => p.Name.Contains("Playwright"))
+            .Where(p => p.Name != null && p.Name.Contains("Playwright"))
             .ToListAsync();
 
         foreach (var item in data) _dbContext.Requirements.Remove(item);
@@ -62,7 +62,7 @@ public class CleanUpPlaywrightTestsData : ICleanUpPlaywrightTestsData
     private async Task DeletePlaywrightTestExecutionData()
     {
         var data = await _dbContext.TestExecution
-            .Where(p => p.Name.Contains("Playwright"))
+            .Where(p => p.Name != null && p.Name.Contains("Playwright"))
             .ToListAsync();
 
         foreach (var item in data) _dbContext.TestExecution.Remove(item);

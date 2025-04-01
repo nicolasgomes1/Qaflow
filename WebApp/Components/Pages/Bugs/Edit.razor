@@ -110,7 +110,7 @@
 
 
             </RadzenTabsItem>
-            <RadzenTabsItem Text="Files">
+            <RadzenTabsItem Text="Files" data-testid="bug_files">
                 <FileUploadEdit UploadedFiles="_uploadedFiles"
                                 EntityName="@nameof(BugsFiles)"
                                 ExistingFiles="@_existingFiles"/>
@@ -146,7 +146,7 @@
 
     private async Task UpdateBug()
     {
-        await BugsModel.UpdateBugAsync(_bugs, _uploadedFiles, ProjectId);
+        await BugsModel.UpdateBugAsync(Id, _uploadedFiles, ProjectId);
         NavigationManager.NavigateTo($"/project/{ProjectId}/bugs");
         await FormNotificationService.NotifySuccess($"Bug updated successfully with id {_bugs.Id}");
     }

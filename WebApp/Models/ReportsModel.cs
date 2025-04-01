@@ -146,7 +146,8 @@ public class ReportsModel
     {
         var projectRequirementsSpecifications = await _dbContext.Requirements
             .Where(r => r.ProjectsId == projectId)
-            .CountAsync(r => r.RequirementsSpecification != null && r.RequirementsSpecification.LinkedRequirements.Any());
+            .CountAsync(
+                r => r.RequirementsSpecification != null && r.RequirementsSpecification.LinkedRequirements.Any());
         return projectRequirementsSpecifications;
     }
 

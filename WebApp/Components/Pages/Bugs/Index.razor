@@ -38,7 +38,7 @@
                       MouseLeave="@AppTooltipService.HideTooltip"
                       Size="ButtonSize.Medium"
                       Click="@(() => DataGridSettingsService.ClearSettingsAsync())"/>
-        <DeleteallDataForModel EntityName="@(nameof(BugsModel.Bugs))"
+        <DeleteallDataForModel EntityName="@(nameof(Bugs))"
                                EntityList="_bugs"/>
         <ExportGridDataCsv Grid="@_dataGrid"/>
     </HeaderTemplate>

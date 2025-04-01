@@ -187,7 +187,7 @@ async function ClickTab(page: Page, TabTestId: string) {
     const tab = page.locator(`[data-testid="${TabTestId}"]`);
 
     
-// Step 3a: Wait for the tab to be attached to the DOM
+    // Step 3a: Wait for the tab to be attached to the DOM
     await tab.waitFor({state: 'attached'}).then(() => tab.scrollIntoViewIfNeeded());
     // Step 3: Scroll the element into view, even if it's hidden or off-screen
 

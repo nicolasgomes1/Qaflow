@@ -1,7 +1,7 @@
-using System.Linq.Dynamic.Core;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
+using WebApp.Data.enums;
 using WebApp.Services;
 
 namespace WebApp.Models;
@@ -11,8 +11,6 @@ public class BugsModel(
     UserService userService,
     BugsFilesModel bugsFilesModel)
 {
-    public Bugs Bugs { get; set; } = new();
-
     public List<int> SelectedTestCasesIds { get; set; } = [];
 
     public async Task<List<Bugs>> GetBugsAsync(int projectId)
@@ -57,7 +55,7 @@ public class BugsModel(
         foreach (var testCaseId in SelectedTestCasesIds)
         {
             var testCase = await db.TestCases.FindAsync(testCaseId);
-            if (testCase == null)
+            if (testCase is null)
                 throw new Exception($"Test case with ID {testCaseId} not found.");
 
             bug.TestCases.Add(testCase);
@@ -75,16 +73,26 @@ public class BugsModel(
         return bug;
     }
 
-    public async Task UpdateBugAsync(Bugs bug, List<IBrowserFile>? files, int projectId)
+    public async Task UpdateBugAsync(int bugId, List<IBrowserFile>? files, int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
+        var bug = await db.Bugs.FindAsync(bugId);
+        if (bug is null) throw new Exception("Bug not found");
+
         db.Bugs.Update(bug);
-        Bugs.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        Bugs.ModifiedAt = DateTime.UtcNow;
+        UpdateArchivedStatus(bug);
+        bug.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        bug.ModifiedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
 
         // If there are files, attempt to save them
-        if (files != null && files.Count != 0) await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
+        if (files != null && files.Count != 0) await bugsFilesModel.SaveFilesToDb(files, bugId, projectId);
+    }
+
+    private static void UpdateArchivedStatus(Bugs bugs)
+    {
+        if (bugs.WorkflowStatus == WorkflowStatus.Completed)
+            bugs.ArchivedStatus = ArchivedStatus.Archived;
     }
 }

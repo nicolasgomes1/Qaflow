@@ -80,7 +80,9 @@
                 </RadzenCard>
             </RadzenRow>
         </RadzenTabsItem>
-        <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@BugsHasNoFiles">
+        <RadzenTabsItem
+            data-testid="bug_files"
+            Text="@ContextFilesTitle()" Disabled="@BugsHasNoFiles">
             <FileViewer Files="ExistingFiles"
                         EntityName="@nameof(BugsFiles)"/>
         </RadzenTabsItem>

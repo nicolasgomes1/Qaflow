@@ -107,7 +107,6 @@ public class RequirementsModel(
         db.Requirements.Update(requirement);
         UpdateArchivedStatus(requirement);
         requirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-
         requirement.ModifiedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
 
