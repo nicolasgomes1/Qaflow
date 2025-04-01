@@ -8,9 +8,6 @@ public class ProjectModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory,
     UserService userService)
 {
-    private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
-
-
     /// <summary>
     ///     Get Project by Id
     /// </summary>
@@ -18,23 +15,29 @@ public class ProjectModel(
     /// <returns>Returns the Project with the specified id.</returns>
     public async Task<Projects> GetProjectById(int projectId)
     {
-        return await _dbContext.Projects.FindAsync(projectId) ?? throw new Exception("Projects is null");
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.Projects.FindAsync(projectId) ?? throw new Exception("Projects is null");
     }
 
     public async Task AddProject(Projects project)
     {
-        _dbContext.Projects.Add(project);
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        db.Projects.Add(project);
         project.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         project.CreatedAt = DateTime.UtcNow;
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     public async Task AddProjectFromCsv(Projects project)
     {
-        _dbContext.Projects.Add(project);
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        db.Projects.Add(project);
         project.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         project.CreatedAt = DateTime.UtcNow;
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     /// <summary>
@@ -44,11 +47,13 @@ public class ProjectModel(
     /// <exception cref="Exception"></exception>
     public async Task UpdateProject(int projectId)
     {
-        var project = await _dbContext.Projects.FindAsync(projectId) ?? throw new Exception("Project is Null");
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var project = await db.Projects.FindAsync(projectId) ?? throw new Exception("Project is Null");
         project.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         project.ModifiedAt = DateTime.UtcNow;
-        _dbContext.Projects.Update(project);
-        await _dbContext.SaveChangesAsync();
+        db.Projects.Update(project);
+        await db.SaveChangesAsync();
     }
 
     /// <summary>
@@ -60,7 +65,9 @@ public class ProjectModel(
     /// <returns>A list of projects with their requirements and test cases.</returns>
     public async Task<List<Projects>> GetProjectsTestCasesRequirements(int projectId)
     {
-        return await _dbContext.Projects
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.Projects
             .AsSplitQuery()
             .Include(p => p.Requirements)
             .ThenInclude(r => r.LinkedTestCases)
@@ -70,7 +77,9 @@ public class ProjectModel(
 
     public async Task<List<Projects>> GetProjectsTestplansTestCases(int projectId)
     {
-        return await _dbContext.Projects
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.Projects
             .Where(p => p.Id == projectId) // Ensure filtering is done early
             .AsSplitQuery() // Helps optimize loading related data
             .Include(p => p.TestPlans)
@@ -81,17 +90,15 @@ public class ProjectModel(
 
     public async Task<List<Projects>> GetProjectsData(int projectId)
     {
-        // Check if ProjectId is set
-        //    if (_projectStateService.ProjectId == 0) throw new InvalidOperationException("ProjectId is not set.");
+        await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        // If ProjectId is set, return the specific project with its requirements and test cases
-        return await _dbContext.Projects
+        return await db.Projects
+            .Where(p => p.Id == projectId) // Filter by ProjectId
             .AsSplitQuery()
             .Include(p => p.Requirements)
             .ThenInclude(r => r.LinkedTestCases)
             .Include(p => p.TestPlans)
             .ThenInclude(r => r.LinkedTestCases)
-            .Where(p => p.Id == projectId) // Filter by ProjectId
             .ToListAsync();
     }
 
@@ -101,13 +108,17 @@ public class ProjectModel(
     /// <returns></returns>
     public async Task<List<Projects>> GetProjects()
     {
-        return await _dbContext.Projects.ToListAsync();
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.Projects.ToListAsync();
     }
 
     public async Task RemoveProject(int projectId)
     {
-        var project = await _dbContext.Projects.FindAsync(projectId) ?? throw new Exception("Project is Null");
-        _dbContext.Projects.Remove(project);
-        await _dbContext.SaveChangesAsync();
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var project = await db.Projects.FindAsync(projectId) ?? throw new Exception("Project is Null");
+        db.Projects.Remove(project);
+        await db.SaveChangesAsync();
     }
 }
