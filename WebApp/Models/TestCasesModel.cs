@@ -116,8 +116,8 @@ public class TestCasesModel(
 
     private async Task AddRequirementsDropdown(TestCases testcase)
     {
-        // Initialize the collection if null
-        testcase.LinkedRequirements = new List<Requirements>();
+        if (testcase.LinkedRequirements is null)
+            testcase.LinkedRequirements = [];
 
         // Load all selected requirements in one query
         var selectedRequirements = await _dbContext.Requirements
@@ -130,6 +130,38 @@ public class TestCasesModel(
         // Add all requirements at once
         foreach (var requirement in selectedRequirements) testcase.LinkedRequirements.Add(requirement);
     }
+    
+    private async Task UpdateRequirementsDropdown(TestCases testcase)
+    {
+        if (testcase.LinkedRequirements is null)
+            testcase.LinkedRequirements = [];
+
+        // Load all selected requirements
+        var selectedRequirements = await _dbContext.Requirements
+            .Where(r => SelectedRequirementIds.Contains(r.Id))
+            .ToListAsync();
+
+        if (selectedRequirements.Count != SelectedRequirementIds.Count)
+            throw new Exception("One or more selected requirements were not found");
+
+        // Remove unselected requirements
+        var toRemove = testcase.LinkedRequirements
+            .Where(r => !SelectedRequirementIds.Contains(r.Id))
+            .ToList();
+
+        foreach (var requirement in toRemove)
+        {
+            testcase.LinkedRequirements.Remove(requirement);
+        }
+
+        // Add missing ones
+        foreach (var requirement in selectedRequirements)
+        {
+            if (testcase.LinkedRequirements.All(r => r.Id != requirement.Id))
+                testcase.LinkedRequirements.Add(requirement);
+        }
+    }
+
 
 
     public async Task UpdateTestCase(TestCases testCases, List<IBrowserFile>? files, int projectId)
@@ -151,9 +183,7 @@ public class TestCasesModel(
         if (existingTestCase == null) throw new Exception("Test case not found.");
 
         // Update the navigation property directly
-        existingTestCase.LinkedRequirements = await _dbContext.Requirements
-            .Where(r => SelectedRequirementIds.Contains(r.Id))
-            .ToListAsync();
+        await UpdateRequirementsDropdown(testCases);
 
 
         // Update the ModifiedBy property for each test step
