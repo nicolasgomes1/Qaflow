@@ -48,7 +48,9 @@ public class TestCasesModel(
     public async Task<List<TestCases>> GetTestCasesWithWorkflowStatus(int projectId,
         WorkflowStatus workflowStatus = WorkflowStatus.Completed)
     {
-        return await _dbContext.TestCases
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestCases
             .Where(tc => tc.ProjectsId == projectId && tc.WorkflowStatus == workflowStatus)
             .ToListAsync();
     }
