@@ -99,7 +99,7 @@ else
                 <RadzenTabsItem Text="Test Steps">
                     <CreateEditTestSteps TestSteps="@_testCases.TestSteps"/>
                 </RadzenTabsItem>
-                <RadzenTabsItem Text="Files">
+                <RadzenTabsItem Text="Files" data-testid="testcase_files">
                     <FileUploadEdit EntityName="@nameof(TestCasesFile)"
                                     UploadedFiles="_uploadedFiles"
                                     ExistingFiles="ExistingFiles"/>

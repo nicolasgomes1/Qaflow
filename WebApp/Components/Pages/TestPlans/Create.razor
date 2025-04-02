@@ -24,6 +24,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Name"/>
                         <RadzenTextBox id="name"
+                                       data-testid="testplan_name"
                                        @bind-Value="_testPlans.Name"
                                        class="input-style"
                                        Name="name"/>
@@ -33,6 +34,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Description"/>
                         <RadzenTextBox id="description"
+                                       data-testid="testplan_description"
                                        @bind-Value="_testPlans.Description"
                                        class="input-style"
                                        Name="description"/>
@@ -43,6 +45,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Priority"/>
                         <RadzenDropDown id="priority"
+                                        data-testid="testplan_priority"
                                         @bind-Value="_testPlans.Priority"
                                         Data="EnumService.GetEnumValues<Priority>()"
                                         class="input-style"
@@ -54,6 +57,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Test Cases"/>
                         <RadzenDropDown id="testcases"
+                                        data-testid="testplan_testcases"
                                         Data="@_testCaseslist"
                                         @bind-Value="TestPlansModel.SelectedTestCasesIds"
                                         TextProperty="Name"
@@ -66,6 +70,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Status"/>
                         <RadzenDropDown id="status"
+                                        data-testid="testplan_status"
                                         @bind-Value="_testPlans.WorkflowStatus"
                                         Data="EnumService.GetEnumValues<WorkflowStatus>()"
                                         class="input-style"
@@ -76,6 +81,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Assigned To"/>
                         <RadzenDropDown id="assignedto"
+                                        data-testid="testplan_assignedto"
                                         Data="@_usersList"
                                         @bind-Value="_testPlans.AssignedTo"
                                         TextProperty="UserName"
@@ -87,7 +93,7 @@
                 </RadzenFieldset>
 
             </RadzenTabsItem>
-            <RadzenTabsItem Text="Files">
+            <RadzenTabsItem Text="Files" data-testid="testplan_files">
                 <FileUpload UploadedFiles="_uploadedFiles"/>
             </RadzenTabsItem>
         </Tabs>

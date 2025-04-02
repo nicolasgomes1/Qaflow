@@ -82,7 +82,7 @@ else
                     </RadzenCard>
                 </RadzenRow>
             </RadzenTabsItem>
-            <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@TestCasesHasNoFiles">
+            <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@TestCasesHasNoFiles" data-testid="testcase_files">
                 <FileViewer Files="ExistingFiles" EntityName="@nameof(TestCasesFile)"/>
 
             </RadzenTabsItem>
@@ -136,7 +136,7 @@ else
 
     public List<TestCasesFile>? ExistingFiles = [];
 
-    
+
     private TestCases _testCases = new();
     private bool _isLoading = true;
 

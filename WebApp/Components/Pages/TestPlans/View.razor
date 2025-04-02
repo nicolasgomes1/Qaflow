@@ -79,7 +79,9 @@
                 <p>No Test Cases linked to this Test Plan.</p>
             }
         </RadzenTabsItem>
-        <RadzenTabsItem Text="@ContextFilesTitle()" Disabled="@TestPlansHasNoFiles">
+        <RadzenTabsItem
+            data-testid="testplan_files"
+            Text="@ContextFilesTitle()" Disabled="@TestPlansHasNoFiles">
             <FileViewer Files="Files" EntityName="@nameof(TestPlansFile)"/>
         </RadzenTabsItem>
     </Tabs>

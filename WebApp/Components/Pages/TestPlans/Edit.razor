@@ -84,9 +84,11 @@ else
                     </RadzenFieldset>
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Files">
-                    <FileUploadEdit ExistingFiles="TestPlansFilesModel.ExistingFiles"
-                                    EntityName="@nameof(TestPlansFile)"
-                                    UploadedFiles="@_uploadedFiles"/>
+                    <FileUploadEdit
+                        data-testid="testplan_files"
+                        ExistingFiles="TestPlansFilesModel.ExistingFiles"
+                        EntityName="@nameof(TestPlansFile)"
+                        UploadedFiles="@_uploadedFiles"/>
                 </RadzenTabsItem>
 
             </Tabs>
