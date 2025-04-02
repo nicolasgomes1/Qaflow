@@ -32,7 +32,8 @@ public class TestCasesModel(
     /// </summary>
     public List<int> SelectedRequirementIds { get; set; } = [];
 
-    public string EstimatedTimeInput =  string.Empty;
+    public string EstimatedTimeInput = string.Empty;
+
     public async Task<List<TestCases>> DisplayTestCasesIndexPage(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
@@ -110,10 +111,10 @@ public class TestCasesModel(
 
         await AddRequirementsDropdown(testcase);
 
+        await AddJiraTickets(testcase);
+
         await _dbContext.SaveChangesAsync();
 
-
-        await StoreJiraTickets(testcase);
 
         // Process files
         if (files != null && files.Count != 0) await testCasesFilesModel.SaveFilesToDb(files, testcase.Id, projectId);
@@ -137,7 +138,7 @@ public class TestCasesModel(
         // Add all requirements at once
         foreach (var requirement in selectedRequirements) testcase.LinkedRequirements.Add(requirement);
     }
-    
+
     private async Task UpdateRequirementsDropdown(TestCases testcase)
     {
         if (testcase.LinkedRequirements is null)
@@ -156,19 +157,13 @@ public class TestCasesModel(
             .Where(r => !SelectedRequirementIds.Contains(r.Id))
             .ToList();
 
-        foreach (var requirement in toRemove)
-        {
-            testcase.LinkedRequirements.Remove(requirement);
-        }
+        foreach (var requirement in toRemove) testcase.LinkedRequirements.Remove(requirement);
 
         // Add missing ones
         foreach (var requirement in selectedRequirements)
-        {
             if (testcase.LinkedRequirements.All(r => r.Id != requirement.Id))
                 testcase.LinkedRequirements.Add(requirement);
-        }
     }
-
 
 
     public async Task UpdateTestCase(TestCases testCases, List<IBrowserFile>? files, int projectId)
@@ -191,6 +186,7 @@ public class TestCasesModel(
 
         // Update the navigation property directly
         await UpdateRequirementsDropdown(testCases);
+        await UpdateJiraTickets(testCases);
 
 
         // Update the ModifiedBy property for each test step
@@ -202,7 +198,6 @@ public class TestCasesModel(
 
         await _dbContext.SaveChangesAsync();
 
-        await UpdateJiraTickets(testCases);
 
         // If there are files, attempt to save them
         if (files != null && files.Count != 0) await testCasesFilesModel.SaveFilesToDb(files, testCases.Id, projectId);
@@ -225,19 +220,20 @@ public class TestCasesModel(
     /// TestCase Jira Tickets that accepts a TestCases object and stores the selected Jira tickets
     /// </summary>
     /// <param name="testcase"></param>
-    private async Task StoreJiraTickets(TestCases testcase)
+    private async Task AddJiraTickets(TestCases testcase)
     {
         var selectedJiraTickets = JiraIntegrations
             .Where(jira => SelectedJiraTicketIds.Contains(jira.Id.ToString()))
             .Select(jira => jira.Key)
             .ToList();
 
-        foreach (var testCaseJira in selectedJiraTickets.Select(jiraKey => new TestCasesJira
-                 {
-                     TestCases = testcase,
-                     Key = jiraKey,
-                     JiraId = Convert.ToInt32(JiraIntegrations.First(jira => jira.Key == jiraKey).Id.ToString())
-                 }))
+        foreach (var testCaseJira in selectedJiraTickets
+                     .Select(jiraKey => new TestCasesJira
+                     {
+                         TestCases = testcase,
+                         Key = jiraKey,
+                         JiraId = Convert.ToInt32(JiraIntegrations.First(jira => jira.Key == jiraKey).Id.ToString())
+                     }))
             _dbContext.TestCasesJira.Add(testCaseJira);
 
         await _dbContext.SaveChangesAsync();
