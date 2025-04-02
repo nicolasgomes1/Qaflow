@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace WebApp.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDatabase : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -670,8 +670,7 @@ namespace WebApp.Data.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     JiraId = table.Column<int>(type: "integer", nullable: false),
                     Key = table.Column<string>(type: "text", nullable: false),
-                    TestCasesJiraId = table.Column<int>(type: "integer", nullable: false),
-                    TestCasesId = table.Column<int>(type: "integer", nullable: true)
+                    TestCasesId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -679,11 +678,6 @@ namespace WebApp.Data.Migrations
                     table.ForeignKey(
                         name: "FK_TestCasesJira_TestCases_TestCasesId",
                         column: x => x.TestCasesId,
-                        principalTable: "TestCases",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_TestCasesJira_TestCases_TestCasesJiraId",
-                        column: x => x.TestCasesJiraId,
                         principalTable: "TestCases",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -920,11 +914,6 @@ namespace WebApp.Data.Migrations
                 name: "IX_TestCasesJira_TestCasesId",
                 table: "TestCasesJira",
                 column: "TestCasesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TestCasesJira_TestCasesJiraId",
-                table: "TestCasesJira",
-                column: "TestCasesJiraId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestCasesTestPlans_TestPlansId",

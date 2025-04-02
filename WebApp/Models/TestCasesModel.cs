@@ -113,7 +113,7 @@ public class TestCasesModel(
         foreach (var step in TestStepsList) step.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
 
-        await AddRequirementsDropdown(testcase);
+        await AddRequirementsDropdown(testcase, db);
 
         await AddJiraTickets(testcase);
 
@@ -126,17 +126,15 @@ public class TestCasesModel(
         return testcase;
     }
 
-    private async Task AddRequirementsDropdown(TestCases testcase)
+    private async Task AddRequirementsDropdown(TestCases testcase, ApplicationDbContext dbContext)
     {
-        await using var db = await dbContextFactory.CreateDbContextAsync();
-
         if (testcase.LinkedRequirements is null)
             testcase.LinkedRequirements = [];
 
         // Fetch and add requirements asynchronously
         foreach (var requirementId in SelectedRequirementIds)
         {
-            var requirement = await db.Requirements.FindAsync(requirementId);
+            var requirement = await dbContext.Requirements.FindAsync(requirementId);
             if (requirement == null)
                 throw new Exception($"Requirement with ID {requirementId} not found.");
 
@@ -144,15 +142,13 @@ public class TestCasesModel(
         }
     }
 
-    private async Task UpdateRequirementsDropdown(TestCases testcase)
+    private async Task UpdateRequirementsDropdown(TestCases testcase, ApplicationDbContext dbContext)
     {
-        await using var db = await dbContextFactory.CreateDbContextAsync();
-
         if (testcase.LinkedRequirements is null)
             testcase.LinkedRequirements = [];
 
         // Load all selected requirements
-        var selectedRequirements = await db.Requirements
+        var selectedRequirements = await dbContext.Requirements
             .Where(r => SelectedRequirementIds.Contains(r.Id))
             .ToListAsync();
 
@@ -194,7 +190,7 @@ public class TestCasesModel(
         if (existingTestCase == null) throw new Exception("Test case not found.");
 
         // Update the navigation property directly
-        await UpdateRequirementsDropdown(testCases);
+        await UpdateRequirementsDropdown(testCases, db);
         await UpdateJiraTickets(testCases);
 
 
