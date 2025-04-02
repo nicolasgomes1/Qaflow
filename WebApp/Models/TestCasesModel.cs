@@ -128,44 +128,49 @@ public class TestCasesModel(
 
     private async Task AddRequirementsDropdown(TestCases testcase, ApplicationDbContext dbContext)
     {
-        if (testcase.LinkedRequirements is null)
-            testcase.LinkedRequirements = [];
+        // Initialize the collection
+        testcase.LinkedRequirements = [];
 
-        // Fetch and add requirements asynchronously
-        foreach (var requirementId in SelectedRequirementIds)
-        {
-            var requirement = await dbContext.Requirements.FindAsync(requirementId);
-            if (requirement == null)
-                throw new Exception($"Requirement with ID {requirementId} not found.");
+        // Fetch all requirements in a single query
+        var requirements = await dbContext.Requirements
+            .Where(r => SelectedRequirementIds.Contains(r.Id))
+            .ToListAsync();
 
-            testcase.LinkedRequirements.Add(requirement);
-        }
+        // Verify all requirements were found
+        if (requirements.Count != SelectedRequirementIds.Count)
+            throw new Exception("One or more selected requirements were not found.");
+
+        // Assign all requirements at once
+        testcase.LinkedRequirements = requirements;
     }
 
     private async Task UpdateRequirementsDropdown(TestCases testcase, ApplicationDbContext dbContext)
     {
-        if (testcase.LinkedRequirements is null)
-            testcase.LinkedRequirements = [];
+        // Fetch the testcase with its linked requirements to ensure EF Core is tracking it
+        var existingTestCase = await dbContext.TestCases
+            .Include(tc => tc.LinkedRequirements) // Ensures navigation property is loaded
+            .FirstOrDefaultAsync(tc => tc.Id == testcase.Id);
 
-        // Load all selected requirements
+        if (existingTestCase is null)
+            throw new Exception($"TestCase with ID {testcase.Id} not found.");
+
+        // Load selected requirements from the database
         var selectedRequirements = await dbContext.Requirements
             .Where(r => SelectedRequirementIds.Contains(r.Id))
             .ToListAsync();
 
         if (selectedRequirements.Count != SelectedRequirementIds.Count)
-            throw new Exception("One or more selected requirements were not found");
+            throw new Exception("One or more selected requirements were not found.");
 
-        // Remove unselected requirements
-        var toRemove = testcase.LinkedRequirements
-            .Where(r => !SelectedRequirementIds.Contains(r.Id))
-            .ToList();
-
-        foreach (var requirement in toRemove) testcase.LinkedRequirements.Remove(requirement);
-
-        // Add missing ones
+        // **💡 Replace the collection instead of manually adding/removing**
+        existingTestCase.LinkedRequirements.Clear();
         foreach (var requirement in selectedRequirements)
-            if (testcase.LinkedRequirements.All(r => r.Id != requirement.Id))
-                testcase.LinkedRequirements.Add(requirement);
+        {
+            existingTestCase.LinkedRequirements.Add(requirement);
+        }
+
+        // Save changes - EF Core will detect what has changed and update the database accordingly
+        await dbContext.SaveChangesAsync();
     }
 
 
@@ -173,39 +178,25 @@ public class TestCasesModel(
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        db.Update(testCases);
+        // ✅ Attach `testCases` so EF Core tracks it properly
+        db.Entry(testCases).State = EntityState.Modified;
 
-
-        //adjust the active or not based on the workfllow
-        if (testCases.WorkflowStatus == WorkflowStatus.Completed) testCases.ArchivedStatus = ArchivedStatus.Archived;
-        testCases.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        testCases.ModifiedAt = DateTime.UtcNow;
-
-        var existingTestCase = await db.TestCases
-            .AsSplitQuery()
-            .Include(tc => tc.LinkedRequirements)
-            .Include(testCases => testCases.TestSteps)
-            .FirstOrDefaultAsync(tc => tc.Id == testCases.Id);
-
-        if (existingTestCase == null) throw new Exception("Test case not found.");
-
-        // Update the navigation property directly
+        // ✅ Ensure navigation properties are updated properly
         await UpdateRequirementsDropdown(testCases, db);
         await UpdateJiraTickets(testCases);
 
+        // ✅ Automatically update timestamps & user
+        if (testCases.WorkflowStatus == WorkflowStatus.Completed)
+            testCases.ArchivedStatus = ArchivedStatus.Archived;
+        testCases.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        testCases.ModifiedAt = DateTime.UtcNow;
 
-        // Update the ModifiedBy property for each test step
-        foreach (var step in existingTestCase.TestSteps)
-            if (step.ModifiedBy == null)
-                step.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-            else
-                step.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-
+        // ✅ Save changes - EF Core detects modified properties & updates the DB
         await db.SaveChangesAsync();
 
-
-        // If there are files, attempt to save them
-        if (files != null && files.Count != 0) await testCasesFilesModel.SaveFilesToDb(files, testCases.Id, projectId);
+        // ✅ If there are files, save them
+        if (files != null && files.Count > 0)
+            await testCasesFilesModel.SaveFilesToDb(files, testCases.Id, projectId);
     }
 
 
