@@ -26,6 +26,10 @@ public class TestCasesModel(
 
     public List<TestSteps> TestStepsList { get; set; } = [];
 
+    /// <summary>
+    /// List of identifiers for the requirements that have been selected.
+    /// These IDs correspond to the linked requirements associated with a test case.
+    /// </summary>
     public List<int> SelectedRequirementIds { get; set; } = [];
 
 
