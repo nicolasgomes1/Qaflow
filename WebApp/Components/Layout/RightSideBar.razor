@@ -42,6 +42,32 @@
 @code {
     [Parameter] public int ProjectId { get; set; }
 
+    
+    private bool _shouldRenderRequirementsSidebar;
+    private bool _shouldRenderTestCasesSideBar;
+    protected override void OnInitialized()
+    {
+        // Subscribe to location changes
+        NavigationManager.LocationChanged += OnLocationChanged;
+        _shouldRenderRequirementsSidebar = ShouldRenderRightSidebarTestPlans();
+        _shouldRenderTestCasesSideBar = ShouldRenderRightSidebarRequirements();
+    }
+
+    private void OnLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        StateHasChanged(); // Force re-render
+    }
+
+    private bool ShouldRenderRightSidebarRequirements()
+    {
+        return NavigationManager.Uri.Contains("requirements", StringComparison.OrdinalIgnoreCase);
+    }
+    
+    private bool ShouldRenderRightSidebarTestPlans()
+    {
+        return NavigationManager.Uri.Contains("testplans", StringComparison.OrdinalIgnoreCase);
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -60,23 +86,7 @@
         return $"width: {(_rightSidebarExpanded ? "300px" : "0px")}; transition: width 0.3s ease; height: 100%; background-color: #f0f0f0; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);";
     }
 
-    private bool ShouldRenderRightSidebarRequirements()
-    {
-        // Get the current URI
-        var uri = NavigationManager.Uri;
 
-        // Check if the URI contains "requirements"
-        return uri.Contains("requirements", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private bool ShouldRenderRightSidebarTestPlans()
-    {
-        // Get the current URI
-        var uri = NavigationManager.Uri;
-
-        // Check if the URI contains "requirements"
-        return uri.Contains("testplans", StringComparison.OrdinalIgnoreCase);
-    }
 
     /*
     async Task OpenSideDialog(int projectId)
