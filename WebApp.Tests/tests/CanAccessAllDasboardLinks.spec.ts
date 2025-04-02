@@ -56,7 +56,7 @@ test('Access Test Plan Index', async ({ page })=> {
     test.slow();
     await actions.LaunchProject(page, 'Demo Project Without Data' );
     await actions.click_button(page, 'd_testplans');
-    await actions.validate_button(page, 'create-testplan');
+    await actions.validate_button(page, 'create_testplan');
 })
 
 test('Access Test Plan Workflow Index', async ({ page })=> {
