@@ -12,7 +12,7 @@
     <!-- Requirements level (children of the project) -->
     <RadzenTreeLevel TextProperty="@nameof(TestPlans.Name)"
                      HasChildren="@(testplans => true)"
-                     ChildrenProperty="TestCases"
+                     ChildrenProperty="LinkedTestCases"
                      Template="@TestPlansTemplate"/>
 
     <!-- TestCases level (children of the requirement) -->
