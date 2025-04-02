@@ -114,9 +114,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
 
         modelBuilder.Entity<TestCases>()
-            .HasMany<TestCasesJira>()
-            .WithOne()
-            .HasForeignKey(tcj => tcj.TestCasesJiraId).OnDelete(DeleteBehavior.Cascade);
+            .HasMany(t => t.TestCasesJira)
+            .WithOne(t => t.TestCases)
+            .HasForeignKey(tcj => tcj.TestCasesId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TestCases>()
             .HasMany(tc => tc.LinkedTestCaseExecutions)

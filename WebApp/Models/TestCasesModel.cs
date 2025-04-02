@@ -234,7 +234,7 @@ public class TestCasesModel(
 
         foreach (var testCaseJira in selectedJiraTickets.Select(jiraKey => new TestCasesJira
                  {
-                     TestCasesJiraId = testcase.Id,
+                     TestCases = testcase,
                      Key = jiraKey,
                      JiraId = Convert.ToInt32(JiraIntegrations.First(jira => jira.Key == jiraKey).Id.ToString())
                  }))
@@ -252,7 +252,7 @@ public class TestCasesModel(
     {
         // Retrieve existing Jira ticket associations for the given TestCase
         var existingJiraTickets = await _dbContext.TestCasesJira
-            .Where(tcj => tcj.TestCasesJiraId == testcase.Id)
+            .Where(tcj => tcj.TestCases == testcase)
             .ToListAsync();
 
         // Get the selected Jira ticket keys to associate with the TestCase
@@ -269,7 +269,7 @@ public class TestCasesModel(
             .Where(jira => !existingJiraKeys.ContainsKey(jira.Key))
             .Select(jira => new TestCasesJira
             {
-                TestCasesJiraId = testcase.Id,
+                TestCases = testcase,
                 Key = jira.Key,
                 JiraId = jira.Value
             });

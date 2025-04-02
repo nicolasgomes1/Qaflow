@@ -7,5 +7,7 @@ public class TestCasesJira
     public int JiraId { get; set; }
     public string Key { get; set; } = string.Empty;
 
-    public int TestCasesJiraId { get; set; }
+    public int TestCasesId { get; set; }
+
+    public TestCases? TestCases { get; set; }
 }

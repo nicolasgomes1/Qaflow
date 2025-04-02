@@ -9,8 +9,8 @@ public class TestCasesJiraModel(IDbContextFactory<ApplicationDbContext> dbContex
 
 
     public async Task<List<TestCasesJira>> GetSelectedJiraTickets(int testCaseId)
-    {
-        return await _dbContext.TestCasesJira.Where(x => x.TestCasesJiraId == testCaseId).ToListAsync();
-    }
+{
+    return await _dbContext.TestCasesJira.Where(x => x.TestCases != null && x.TestCases.Id == testCaseId).ToListAsync();
+}
     
 }
