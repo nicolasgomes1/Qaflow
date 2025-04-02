@@ -9,12 +9,10 @@ namespace WebApp.Models;
 public class TestPlansFilesModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
-    private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
-
-    public List<TestPlansFile> ExistingFiles = [];
-
     public async Task SaveFilesToDb(List<IBrowserFile>? files, int testPlanId, int projectId)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         if (files == null || files.Count == 0) return;
 
         foreach (var file in files)
@@ -31,17 +29,19 @@ public class TestPlansFilesModel(
                 ProjectsId = projectId
             };
 
-            _dbContext.TestPlansFiles.Add(testplanFile);
+            db.TestPlansFiles.Add(testplanFile);
         }
 
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
 
     public async Task<List<TestPlansFile>> GetFilesByTestPlanId(int testPlanId, int projectId)
     {
-        ExistingFiles = await _dbContext.TestPlansFiles
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var files = await db.TestPlansFiles
             .Where(tpf => tpf.TestPlanId == testPlanId && tpf.ProjectsId == projectId).ToListAsync();
-        return ExistingFiles;
+        return files;
     }
 }

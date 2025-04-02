@@ -12,8 +12,6 @@ public class TestCasesModel(
     UserService userService,
     TestCasesFilesModel testCasesFilesModel)
 {
-    private readonly ApplicationDbContext _dbContext = dbContextFactory.CreateDbContext();
-
     /// <summary>
     /// List of jira tickets to be displayed in the UI that  are fetched with the Jira API
     /// </summary>
@@ -65,7 +63,9 @@ public class TestCasesModel(
     /// <exception cref="Exception"></exception>
     public async Task<TestCases> GetTestCaseData(int testCaseId)
     {
-        var testCase = await _dbContext.TestCases
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var testCase = await db.TestCases
             .AsSplitQuery()
             .Include(tc => tc.TestSteps)
             .Include(tc => tc.LinkedRequirements)
@@ -81,7 +81,9 @@ public class TestCasesModel(
     /// <exception cref="Exception"></exception>
     public async Task GetAssociatedRequirements(TestCases testCase)
     {
-        var requirement = await _dbContext.TestCases
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var requirement = await db.TestCases
             .Include(tc => tc.LinkedRequirements)
             .FirstOrDefaultAsync(tc => tc.Id == testCase.Id);
 
@@ -94,8 +96,10 @@ public class TestCasesModel(
 
     public async Task<TestCases> AddTestCases(TestCases testcase, List<IBrowserFile>? files, int projectId)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         //First create the test case
-        _dbContext.TestCases.Add(testcase);
+        db.TestCases.Add(testcase);
         testcase.ProjectsId = projectId;
 
         testcase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
@@ -113,7 +117,7 @@ public class TestCasesModel(
 
         await AddJiraTickets(testcase);
 
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
 
 
         // Process files
@@ -124,11 +128,13 @@ public class TestCasesModel(
 
     private async Task AddRequirementsDropdown(TestCases testcase)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         if (testcase.LinkedRequirements is null)
             testcase.LinkedRequirements = [];
 
         // Load all selected requirements in one query
-        var selectedRequirements = await _dbContext.Requirements
+        var selectedRequirements = await db.Requirements
             .Where(r => SelectedRequirementIds.Contains(r.Id))
             .ToListAsync();
 
@@ -141,11 +147,13 @@ public class TestCasesModel(
 
     private async Task UpdateRequirementsDropdown(TestCases testcase)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         if (testcase.LinkedRequirements is null)
             testcase.LinkedRequirements = [];
 
         // Load all selected requirements
-        var selectedRequirements = await _dbContext.Requirements
+        var selectedRequirements = await db.Requirements
             .Where(r => SelectedRequirementIds.Contains(r.Id))
             .ToListAsync();
 
@@ -168,7 +176,9 @@ public class TestCasesModel(
 
     public async Task UpdateTestCase(TestCases testCases, List<IBrowserFile>? files, int projectId)
     {
-        _dbContext.Update(testCases);
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        db.Update(testCases);
 
 
         //adjust the active or not based on the workfllow
@@ -176,7 +186,7 @@ public class TestCasesModel(
         testCases.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         testCases.ModifiedAt = DateTime.UtcNow;
 
-        var existingTestCase = await _dbContext.TestCases
+        var existingTestCase = await db.TestCases
             .AsSplitQuery()
             .Include(tc => tc.LinkedRequirements)
             .Include(testCases => testCases.TestSteps)
@@ -196,7 +206,7 @@ public class TestCasesModel(
             else
                 step.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
 
 
         // If there are files, attempt to save them
@@ -206,7 +216,9 @@ public class TestCasesModel(
 
     public async Task<List<TestSteps>> GetTestStepsForTestCase(int testCaseId)
     {
-        var testCase = await _dbContext.TestCases
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var testCase = await db.TestCases
             .Include(tc => tc.TestSteps)
             .FirstOrDefaultAsync(tc => tc.Id == testCaseId);
 
@@ -222,6 +234,8 @@ public class TestCasesModel(
     /// <param name="testcase"></param>
     private async Task AddJiraTickets(TestCases testcase)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         var selectedJiraTickets = JiraIntegrations
             .Where(jira => SelectedJiraTicketIds.Contains(jira.Id.ToString()))
             .Select(jira => jira.Key)
@@ -234,9 +248,9 @@ public class TestCasesModel(
                          Key = jiraKey,
                          JiraId = Convert.ToInt32(JiraIntegrations.First(jira => jira.Key == jiraKey).Id.ToString())
                      }))
-            _dbContext.TestCasesJira.Add(testCaseJira);
+            db.TestCasesJira.Add(testCaseJira);
 
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
 
@@ -246,8 +260,10 @@ public class TestCasesModel(
     /// <param name="testcase"></param>
     private async Task UpdateJiraTickets(TestCases testcase)
     {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
         // Retrieve existing Jira ticket associations for the given TestCase
-        var existingJiraTickets = await _dbContext.TestCasesJira
+        var existingJiraTickets = await db.TestCasesJira
             .Where(tcj => tcj.TestCases == testcase)
             .ToListAsync();
 
@@ -275,18 +291,20 @@ public class TestCasesModel(
             .Where(tcj => !selectedJiraKeys.ContainsKey(tcj.Key));
 
         // Add new Jira tickets to the context
-        _dbContext.TestCasesJira.AddRange(ticketsToAdd);
+        db.TestCasesJira.AddRange(ticketsToAdd);
 
         // Remove obsolete Jira tickets from the context
-        _dbContext.TestCasesJira.RemoveRange(ticketsToRemove);
+        db.TestCasesJira.RemoveRange(ticketsToRemove);
 
         // Save changes to the database
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     public async Task<List<TestCases>> GetTestCasesToValidateAgainstCsv(int projectId)
     {
-        return await _dbContext.TestCases
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestCases
             .Where(tc => tc.ProjectsId == projectId)
             .Include(tc => tc.TestSteps)
             .ToListAsync();
@@ -294,18 +312,22 @@ public class TestCasesModel(
 
     public async Task AddTestCasesFromCsv(TestCases testCase, int projectId)
     {
-        _dbContext.TestCases.Add(testCase);
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        db.TestCases.Add(testCase);
         testCase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         testCase.ProjectsId = projectId;
         testCase.WorkflowStatus = WorkflowStatus.New;
         testCase.CreatedAt = DateTime.UtcNow;
-        await _dbContext.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
 
     public async Task<List<TestCases>> GetTestCasesForProjectTree(int projectId)
     {
-        return await _dbContext.TestCases
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestCases
             .Where(p => p.ProjectsId == projectId)
             .Include(tc => tc.TestPlans)
             .ToListAsync();
