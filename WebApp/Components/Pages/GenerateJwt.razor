@@ -9,10 +9,18 @@
 
 <RadzenCard Style="width: 60%; padding: 1rem;">
     <pre Style="white-space: pre-wrap; word-break: break-all; margin: 0;">@JwtToken</pre>
+
+    <RadzenLabel Style="color: red">
+        Current Time @_currenttime
+        Expiration Date @_expiration
+    </RadzenLabel>
+
 </RadzenCard>
 
 @code {
     private string JwtToken = "";
+    private DateTime _expiration;
+    private DateTime _currenttime;
 
     private async Task GeneratenewJwt()
     {
@@ -20,6 +28,8 @@
         if (currentUser is not null)
         {
             JwtToken = await GenerateJwtToken.GenerateJwtTokenmethod(currentUser);
+            _expiration = GenerateJwtToken.CalculateExpirationTime().Result.TokenExpirationTime;
+            _currenttime = GenerateJwtToken.CalculateExpirationTime().Result.CurrentTime;
         }
         else
         {

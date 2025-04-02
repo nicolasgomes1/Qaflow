@@ -18,13 +18,24 @@ public class GenerateJwtToken
         };
 
         var token = new JwtSecurityToken(
-            issuer: "yourdomain.com",
-            audience: "yourdomain.com",
-            claims: claims,
+            "yourdomain.com",
+            "yourdomain.com",
+            claims,
             expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
         );
 
         return Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
+    }
+
+    private static DateTime TokenExpirationTime { get; set; }
+    private static DateTime CurrentTime { get; set; }
+
+    public static async Task<(DateTime TokenExpirationTime, DateTime CurrentTime)> CalculateExpirationTime()
+    {
+        CurrentTime = DateTime.UtcNow;
+        TokenExpirationTime = CurrentTime.AddHours(1);
+
+        return await Task.FromResult((TokenExpirationTime, CurrentTime));
     }
 }
