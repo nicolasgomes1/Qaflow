@@ -7,11 +7,15 @@
         @if (ShouldRenderRightSidebarRequirements())
         {
             <div style="position: absolute; top: 60px; right: 0; bottom: 50px; z-index: 999; overflow-y: auto;">
-
+                <RadzenSidebar Style="@GetSidebarStyle()">
+                    <RadzenPanelMenu Style="background-color: #f0f0f0; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                        <RequirementsTree ProjectId="ProjectId"/>
+                    </RadzenPanelMenu>
+                </RadzenSidebar>
 
                 <!-- Floating button to toggle the sidebar -->
                 <div style="position: fixed; bottom: 60px; right: 10px; z-index: 1000;">
-                    <RadzenButton Icon="menu" Click="@(() => OpenSideDialog(ProjectId))"/>
+                    <RadzenButton Icon="menu" Click="@(() => _rightSidebarExpanded = !_rightSidebarExpanded)"/>
                 </div>
             </div>
         }
@@ -42,9 +46,10 @@
 @code {
     [Parameter] public int ProjectId { get; set; }
 
-    
+
     private bool _shouldRenderRequirementsSidebar;
     private bool _shouldRenderTestCasesSideBar;
+
     protected override void OnInitialized()
     {
         // Subscribe to location changes
@@ -62,7 +67,7 @@
     {
         return NavigationManager.Uri.Contains("requirements", StringComparison.OrdinalIgnoreCase);
     }
-    
+
     private bool ShouldRenderRightSidebarTestPlans()
     {
         return NavigationManager.Uri.Contains("testplans", StringComparison.OrdinalIgnoreCase);
@@ -85,44 +90,5 @@
     {
         return $"width: {(_rightSidebarExpanded ? "300px" : "0px")}; transition: width 0.3s ease; height: 100%; background-color: #f0f0f0; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);";
     }
-
-
-
-    /*
-    async Task OpenSideDialog(int projectId)
-    {
-        // Hardcoding options for right position, mask enabled, and close on overlay click
-        await DialogService.OpenSideAsync<RequirementsTree>(
-            "Project Requirements",
-            options: new SideDialogOptions
-            {
-                CloseDialogOnOverlayClick = true,
-                Position = DialogPosition.Right,
-                ShowMask = true
-            });
-    }
-    */
-
-    async Task OpenSideDialog(int projectId)
-    {
-        var parameters = new Dictionary<string, object>
-        {
-            { "ProjectId", projectId } // Passing ProjectId to RequirementsTree
-        };
-
-        var options = new SideDialogOptions
-        {
-            CloseDialogOnOverlayClick = true,
-            Position = DialogPosition.Right,
-            ShowMask = true
-        };
-
-        await DialogService.OpenSideAsync<RequirementsTree>(
-            "Project Requirements",
-            parameters, // First pass parameters
-            options // Then pass the options
-        );
-    }
-
-
+    
 }
