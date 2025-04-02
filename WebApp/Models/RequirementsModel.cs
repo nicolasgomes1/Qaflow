@@ -13,6 +13,10 @@ public class RequirementsModel(
     RequirementsFilesModel requirementsFilesModel,
     UserService userService)
 {
+    
+    public int SelectedRequirementSpecificationId;
+
+    
     public async Task<List<Requirements>> DisplayRequirementsIndexPage(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
