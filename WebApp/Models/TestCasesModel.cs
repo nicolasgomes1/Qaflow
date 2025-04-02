@@ -32,7 +32,7 @@ public class TestCasesModel(
     /// </summary>
     public List<int> SelectedRequirementIds { get; set; } = [];
 
-
+    public string EstimatedTimeInput =  string.Empty;
     public async Task<List<TestCases>> DisplayTestCasesIndexPage(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
@@ -96,6 +96,7 @@ public class TestCasesModel(
         testcase.ProjectsId = projectId;
 
         testcase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        testcase.EstimatedTime = TimeSpan.FromMinutes(int.TryParse(EstimatedTimeInput, out var minutes) ? minutes : 0);
 
         //adjust the active or not based on the workfllow
         if (testcase.WorkflowStatus == WorkflowStatus.Completed) testcase.ArchivedStatus = ArchivedStatus.Archived;
