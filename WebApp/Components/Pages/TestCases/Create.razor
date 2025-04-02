@@ -42,7 +42,7 @@
                         <div class="row mb-4 col-12">
                             <RadzenLabel Text="Estimated Time (in minutes)"/>
                             <RadzenTextBox id="estimatedTime"
-                                           @bind-Value="_estimatedTimeInput"
+                                           @bind-Value="TestCasesModel.EstimatedTimeInput"
                                            Placeholder="Enter time in minutes"
                                            Name="estimatedTime"/>
                         </div>
@@ -154,8 +154,6 @@
 
     private List<Requirements> _requirementsList = [];
 
-    private string _estimatedTimeInput = string.Empty;
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -168,8 +166,6 @@
 
     private async Task CreateTestCase()
     {
-        _testCases.EstimatedTime = TimeSpan.FromMinutes(int.TryParse(_estimatedTimeInput, out var minutes) ? minutes : 0);
-
         await TestCasesModel.AddTestCases(_testCases, _uploadedFiles, ProjectId);
         NavigationManager.NavigateTo($"project/{ProjectId}/testcases");
         StateHasChanged();

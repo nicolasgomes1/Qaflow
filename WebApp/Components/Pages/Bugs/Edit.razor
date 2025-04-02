@@ -138,7 +138,7 @@
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
-        _testCaseslist = await TestCasesModel.GetTestCasesWithWorkflowStatus(ProjectId);
+        _testCaseslist = await TestCasesModel.GetTestCasesWithWorkflowStatus(ProjectId, WorkflowStatus.Completed);
 
         _bugs = await BugsModel.GetBugByIdAsync(Id);
         _existingFiles = await BugsFilesModel.GetBugFilesById(Id);

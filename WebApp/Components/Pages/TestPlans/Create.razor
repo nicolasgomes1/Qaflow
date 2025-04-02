@@ -119,7 +119,7 @@
         _usersList = await UserService.GetUsersList();
 
         // await TestCasesModel.GetTestCasesWithWorkflowStatus(WorkflowStatus.Completed);
-        _testCaseslist = await TestCasesModel.GetTestCasesWithWorkflowStatus(ProjectId);
+        _testCaseslist = await TestCasesModel.GetTestCasesWithWorkflowStatus(ProjectId, WorkflowStatus.Completed);
     }
 
     private async Task CreateNewTestPlan()
