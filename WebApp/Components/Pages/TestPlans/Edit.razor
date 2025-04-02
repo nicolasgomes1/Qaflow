@@ -83,10 +83,9 @@ else
                         </div>
                     </RadzenFieldset>
                 </RadzenTabsItem>
-                <RadzenTabsItem Text="Files">
+                <RadzenTabsItem Text="Files" data-testid="testplan_files">
                     <FileUploadEdit
-                        data-testid="testplan_files"
-                        ExistingFiles="TestPlansFilesModel.ExistingFiles"
+                        ExistingFiles="Files"
                         EntityName="@nameof(TestPlansFile)"
                         UploadedFiles="@_uploadedFiles"/>
                 </RadzenTabsItem>
@@ -105,6 +104,7 @@ else
     [Parameter] public int ProjectId { get; set; }
 
     private List<ApplicationUser> _usersList = [];
+    private List<TestPlansFile>? Files = [];
 
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
@@ -123,7 +123,7 @@ else
         _testCasesList = await TestCasesModel.GetTestCasesWithWorkflowStatus(ProjectId, WorkflowStatus.Completed);
         _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
         await TestPlansModel.GetAssociatedTestCases(Id);
-        await TestPlansFilesModel.GetFilesByTestPlanId(Id, ProjectId);
+        Files = await TestPlansFilesModel.GetFilesByTestPlanId(Id, ProjectId);
 
         if (_testPlans.ArchivedStatus.Equals(ArchivedStatus.Archived))
         {

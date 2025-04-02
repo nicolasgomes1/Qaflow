@@ -95,9 +95,9 @@
 
     [Parameter] public int ProjectId { get; set; }
 
-    private bool TestPlansHasNoFiles => !TestPlansFilesModel.ExistingFiles.Any();
+    private bool TestPlansHasNoFiles => !Files!.Any();
 
-    private List<TestPlansFile>? Files { get; set; }
+    private List<TestPlansFile>? Files { get; set; } = [];
 
 
     private bool TestPlansHasNoTests => !_testPlans.LinkedTestCases.Any();
