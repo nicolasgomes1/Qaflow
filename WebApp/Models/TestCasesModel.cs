@@ -29,19 +29,16 @@ public class TestCasesModel(
     public List<int> SelectedRequirementIds { get; set; } = [];
 
 
-    public async Task<(IEnumerable<TestCases> TestCases, IList<TestCases> SelectedTestCases)>
-        DisplayTestCasesIndexPage1(int projectId)
+    public async Task<List<TestCases>> DisplayTestCasesIndexPage(int projectId)
     {
-        var testcases = await _dbContext.TestCases
-            .Include(r => r.LinkedRequirements)
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var testcases = await db.TestCases
             .Where(tc => tc.ProjectsId == projectId)
+            .Include(r => r.LinkedRequirements)
             .ToListAsync();
 
-        var selectedTestCases = new List<TestCases>();
-        var selection = testcases.FirstOrDefault();
-        if (selection != null) selectedTestCases.Add(selection);
-
-        return (testcases, selectedTestCases);
+        return testcases;
     }
 
     public async Task<List<TestCases>> GetTestCasesWithWorkflowStatus(int projectId,

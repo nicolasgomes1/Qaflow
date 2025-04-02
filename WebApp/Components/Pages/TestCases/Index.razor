@@ -142,7 +142,7 @@ else
     private const string GridId = "testcases"; // Unique identifier for this grid
     private RadzenDataGrid<TestCases> _dataGrid = new();
 
-    private IEnumerable<TestCases>? _testcases;
+    private IEnumerable<TestCases> _testcases = [];
     private IList<TestCases> _selectedTestCases = [];
 
     private async Task OnPageSizeChanged(int newSize)
@@ -155,7 +155,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         DataGridSettingsService.SetCurrentGridId(GridId);
-        (_testcases, _selectedTestCases) = await TestCasesModel.DisplayTestCasesIndexPage1(ProjectId);
+        _testcases = await TestCasesModel.DisplayTestCasesIndexPage(ProjectId);
         _isLoading = false;
     }
 
