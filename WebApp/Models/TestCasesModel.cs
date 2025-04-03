@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Api.Jira;
 using WebApp.Data;
@@ -44,6 +45,12 @@ public class TestCasesModel(
         return testcases;
     }
 
+    /// <summary>
+    /// Value to be used in dropdowns
+    /// </summary>
+    /// <param name="projectId"></param>
+    /// <param name="workflowStatus"></param>
+    /// <returns></returns>
     public async Task<List<TestCases>> GetTestCasesWithWorkflowStatus(int projectId,
         WorkflowStatus workflowStatus = WorkflowStatus.Completed)
     {
@@ -98,14 +105,12 @@ public class TestCasesModel(
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        //First create the test case
         db.TestCases.Add(testcase);
-        testcase.ProjectsId = projectId;
 
+        testcase.ProjectsId = projectId;
         testcase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         testcase.EstimatedTime = TimeSpan.FromMinutes(int.TryParse(EstimatedTimeInput, out var minutes) ? minutes : 0);
 
-        //adjust the active or not based on the workfllow
         if (testcase.WorkflowStatus == WorkflowStatus.Completed) testcase.ArchivedStatus = ArchivedStatus.Archived;
 
         // Assign test steps to TestCases before saving
@@ -146,7 +151,6 @@ public class TestCasesModel(
 
     private async Task UpdateRequirementsDropdown(TestCases testcase, ApplicationDbContext dbContext)
     {
-        // Fetch the testcase with its linked requirements to ensure EF Core is tracking it
         var existingTestCase = await dbContext.TestCases
             .Include(tc => tc.LinkedRequirements) // Ensures navigation property is loaded
             .FirstOrDefaultAsync(tc => tc.Id == testcase.Id);
@@ -154,22 +158,17 @@ public class TestCasesModel(
         if (existingTestCase is null)
             throw new Exception($"TestCase with ID {testcase.Id} not found.");
 
-        // Load selected requirements from the database
         var selectedRequirements = await dbContext.Requirements
             .Where(r => SelectedRequirementIds.Contains(r.Id))
             .ToListAsync();
 
+
         if (selectedRequirements.Count != SelectedRequirementIds.Count)
             throw new Exception("One or more selected requirements were not found.");
 
-        // **💡 Replace the collection instead of manually adding/removing**
-        existingTestCase.LinkedRequirements.Clear();
-        foreach (var requirement in selectedRequirements)
-        {
-            existingTestCase.LinkedRequirements.Add(requirement);
-        }
+        // **💡 Replace the collection directly**
+        existingTestCase.LinkedRequirements = selectedRequirements;
 
-        // Save changes - EF Core will detect what has changed and update the database accordingly
         await dbContext.SaveChangesAsync();
     }
 
@@ -178,24 +177,22 @@ public class TestCasesModel(
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        // ✅ Attach `testCases` so EF Core tracks it properly
         db.Entry(testCases).State = EntityState.Modified;
 
-        // ✅ Ensure navigation properties are updated properly
+
+        TestStepsList = testCases.TestSteps;
+
         await UpdateRequirementsDropdown(testCases, db);
         await UpdateJiraTickets(testCases);
 
-        // ✅ Automatically update timestamps & user
         if (testCases.WorkflowStatus == WorkflowStatus.Completed)
             testCases.ArchivedStatus = ArchivedStatus.Archived;
         testCases.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         testCases.ModifiedAt = DateTime.UtcNow;
 
-        // ✅ Save changes - EF Core detects modified properties & updates the DB
         await db.SaveChangesAsync();
 
-        // ✅ If there are files, save them
-        if (files != null && files.Count > 0)
+        if (files is { Count: > 0 })
             await testCasesFilesModel.SaveFilesToDb(files, testCases.Id, projectId);
     }
 
