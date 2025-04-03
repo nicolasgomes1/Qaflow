@@ -133,8 +133,7 @@ else
     {
         DataGridSettingsService.SetCurrentGridId(_gridId);
 
-        (_testplans, _selectedTestPlans) = await TestPlansModel.DisplayTestPlansIndexPage1(ProjectId);
-        //  await TestPlansModel.DisplayTestPlansIndexPage();
+        _testplans = await TestPlansModel.DisplayTestPlansIndexPage(ProjectId);
         _isLoading = false;
     }
 

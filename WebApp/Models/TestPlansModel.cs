@@ -14,21 +14,15 @@ public class TestPlansModel(
     public List<int> SelectedTestCasesIds { get; set; } = [];
 
 
-    public async Task<(IEnumerable<TestPlans> TestPlans, IList<TestPlans> SelectedTestPlans)>
-        DisplayTestPlansIndexPage1(int projectId)
+    public async Task<List<TestPlans>> DisplayTestPlansIndexPage(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        var testplans = await db.TestPlans
-            .Include(r => r.LinkedTestCases)
-            .Where(tc => tc.ProjectsId == projectId)
-            .ToListAsync();
+        var testPlans = await db.TestPlans
+            .Where(p => p.ProjectsId == projectId)
+            .Include(tp => tp.LinkedTestCases).ToListAsync();
 
-        var selectedTestPlans = new List<TestPlans>();
-        var selection = testplans.FirstOrDefault();
-        if (selection != null) selectedTestPlans.Add(selection);
-
-        return (testplans, selectedTestPlans);
+        return testPlans;
     }
 
 
