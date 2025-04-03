@@ -35,30 +35,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<TestCases>()
-            .HasMany(tc => tc.LinkedRequirements)
-            .WithMany(r => r.LinkedTestCases)
-            .UsingEntity(j => j.ToTable("RequirementsTestCases")); // Optional: Configure junction table name
-
-        modelBuilder.Entity<TestPlans>()
-            .HasMany(tp => tp.LinkedTestCases)
-            .WithMany(tc => tc.TestPlans)
-            .UsingEntity<Dictionary<string, object>>(
-                "TestCasesTestPlans", // Name of the join table
-                j => j
-                    .HasOne<TestCases>()
-                    .WithMany()
-                    .HasForeignKey("TestCasesId")
-                    .OnDelete(DeleteBehavior.Restrict), // Restrict deletion if associated
-                j => j
-                    .HasOne<TestPlans>()
-                    .WithMany()
-                    .HasForeignKey("TestPlansId")
-                    .OnDelete(DeleteBehavior.Cascade) // Cascade delete for TestPlans
-            );
-
-
+        
         //Project Relationships
         modelBuilder.Entity<Projects>()
             .HasMany(p => p.Bugs)

@@ -71,44 +71,46 @@ public class TestPlansModel(
         // Set test plan properties
         testPlan.CreatedBy = currentUserInfo;
         testPlan.ProjectsId = projectId;
-        testPlan.LinkedTestCases = new List<TestCases>();
 
-        // Fetch and add test cases asynchronously
-        foreach (var testCaseId in SelectedTestCasesIds)
-        {
-            var testCase = await db.TestCases.FindAsync(testCaseId);
-            if (testCase == null)
-                throw new Exception($"Test case with ID {testCaseId} not found.");
 
-            testPlan.LinkedTestCases.Add(testCase);
-        }
+        testPlan.LinkedTestCases = [];
+
+        var testcases = await db.TestCases
+            .Where(tc => SelectedTestCasesIds.Contains(tc.Id))
+            .ToListAsync();
+
+
+        if (testcases.Count != SelectedTestCasesIds.Count)
+            throw new Exception("Not all test cases were found.");
+
+
+        testPlan.LinkedTestCases = testcases;
 
         // Save the test plan
         await db.TestPlans.AddAsync(testPlan);
         await db.SaveChangesAsync();
 
         // Save associated files if provided
-        if (files?.Any() == true) await testPlansFilesModel.SaveFilesToDb(files, testPlan.Id, projectId);
+        if (files !=null && files.Count !=0) await testPlansFilesModel.SaveFilesToDb(files, testPlan.Id, projectId);
 
         return testPlan;
     }
 
-    public async Task UpdateTestPlan2(int testPlanId, List<IBrowserFile>? files, int projectId)
+    public async Task UpdateTestPlan(int testPlanId, List<IBrowserFile>? files, int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        //find testplan with testcases
-        var testplan = await db.TestPlans
+        var testPlan = await db.TestPlans
             .Include(tp => tp.LinkedTestCases)
             .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
-        if (testplan == null) throw new Exception("Test plan not found");
+        if (testPlan is null) throw new Exception("Test plan not found");
 
-        db.Update(testplan);
-        testplan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        testplan.ProjectsId = projectId;
+        db.Update(testPlan);
+        testPlan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        testPlan.ProjectsId = projectId;
 
         // Update test cases of testplan
-        testplan.LinkedTestCases = await db.TestCases
+        testPlan.LinkedTestCases = await db.TestCases
             .Where(tc => SelectedTestCasesIds.Contains(tc.Id))
             .ToListAsync();
 

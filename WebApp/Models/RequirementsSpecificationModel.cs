@@ -31,15 +31,15 @@ public class RequirementsSpecificationModel(
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        var currentRequirement = await db.RequirementsSpecification
+        var requirementsSpecification = await db.RequirementsSpecification
                                      .FindAsync(requirementsSpecificationId) ??
                                  throw new Exception("No requirements Specification Found");
 
-        currentRequirement.ModifiedAt = DateTime.UtcNow;
-        currentRequirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        db.RequirementsSpecification.Update(currentRequirement);
+        requirementsSpecification.ModifiedAt = DateTime.UtcNow;
+        requirementsSpecification.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        db.RequirementsSpecification.Update(requirementsSpecification);
         await db.SaveChangesAsync();
-        return currentRequirement;
+        return requirementsSpecification;
     }
 
 

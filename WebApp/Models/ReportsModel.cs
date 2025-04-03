@@ -1,8 +1,6 @@
-﻿using System.Linq.Dynamic.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Data.enums;
-using WebApp.Services;
 
 namespace WebApp.Models;
 
