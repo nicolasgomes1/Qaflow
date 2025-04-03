@@ -1,19 +1,28 @@
 ﻿@attribute [Authorize]
 
-<RadzenDataGrid Data="@SortedTestSteps" TItem="TestSteps" Style="margin-top: 10px;">
+<RadzenDataGrid Data="@TestSteps" TItem="TestSteps" Style="margin-top: 10px;">
     <HeaderTemplate>
         <h4 class="text-center text-primary mb-4">View Test Steps</h4>
     </HeaderTemplate>
     <Columns>
-        <RadzenDataGridColumn Property="@nameof(TestSteps.Number)" Title="Step Number"/>
-        <RadzenDataGridColumn Property="@nameof(TestSteps.Description)" Title="Description"/>
-        <RadzenDataGridColumn Property="@nameof(TestSteps.ExpectedResult)" Title="Expected Result"/>
+        <RadzenDataGridColumn Property="@nameof(Data.TestSteps.Number)" Title="Step Number"/>
+        <RadzenDataGridColumn Property="@nameof(Data.TestSteps.Description)" Title="Description"/>
+        <RadzenDataGridColumn Property="@nameof(Data.TestSteps.ExpectedResult)" Title="Expected Result"/>
     </Columns>
 </RadzenDataGrid>
 
 @code {
-    [Parameter] public IEnumerable<TestSteps>? TestStepsData { get; set; }
+    private IEnumerable<TestSteps>? TestSteps { get; set; }
+    [EditorRequired] [Parameter] public int Id { get; set; }
 
-    private IEnumerable<TestSteps> SortedTestSteps => TestStepsData?.OrderBy(ts => ts.Number) ?? Enumerable.Empty<TestSteps>();
+
+    private IEnumerable<TestSteps> SortedTestSteps => TestSteps?.OrderBy(ts => ts.Number) ?? Enumerable.Empty<TestSteps>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        TestSteps = await TestCasesModel.GetTestStepsForTestCaseAsync(Id);
+    }
+
 
 }

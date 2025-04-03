@@ -98,7 +98,18 @@ else
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Test Steps">
                     <CreateEditTestSteps TestSteps="@TestCasesModel.TestStepsList"
-                                         OnTestStepsChanged="@UpdateTestStepsList"/>
+                                         OnTestStepsChanged="@UpdateTestStepsList"
+                                         RefreshPage="() => InvokeAsync(RetrieveCurrentTeststepsFromdb)"/>
+
+                    @code{
+
+                        async Task RetrieveCurrentTeststepsFromdb()
+                        {
+                            TestCasesModel.TestStepsList = await GetTestStepsForTestCase();
+                        }
+
+
+                    }
 
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Files" data-testid="testcase_files">
@@ -191,7 +202,7 @@ else
     async Task<List<TestSteps>> GetTestStepsForTestCase()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestSteps.Where(t => t.TestCasesId == Id).ToListAsync();
+        return await db.TestSteps.Where(t => t.TestCasesId == Id && t.ArchivedStatus == ArchivedStatus.Active).ToListAsync();
     }
 
 

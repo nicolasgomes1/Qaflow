@@ -88,7 +88,7 @@ else
             </RadzenTabsItem>
             <RadzenTabsItem Text="@ContextTestStepsTitle()" Disabled="@IsTestStepsEmpty">
                 <RadzenRow>
-                    <TestStepsViewer TestStepsData="@_testCases.TestSteps"/>
+                    <TestStepsViewer Id="Id"/>
                 </RadzenRow>
             </RadzenTabsItem>
 
@@ -163,11 +163,10 @@ else
     protected override async Task OnInitializedAsync()
     {
         _testCases = await TestCasesModel.GetTestCaseData(Id);
-        await TestCasesModel.GetTestStepsForTestCase(Id);
+       // await TestCasesModel.GetTestStepsForTestCase(Id);
 
         ExistingFiles = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
         _testCasesJira = await TestCasesJiraModel.GetSelectedJiraTickets(Id);
-        ;
         _isLoading = false;
     }
 

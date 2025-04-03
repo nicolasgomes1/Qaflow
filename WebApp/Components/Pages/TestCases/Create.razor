@@ -112,7 +112,7 @@
             </RadzenTabsItem>
             <RadzenTabsItem Text="Test Steps">
                 <!-- Test Step Form -->
-                <CreateEditTestSteps TestSteps="@TestCasesModel.TestStepsList"/>
+                <CreateEditTestSteps TestSteps="@TestCasesModel.TestStepsList" RefreshPage="StateHasChanged"/>
             </RadzenTabsItem>
             <RadzenTabsItem Text="Files" data-testid="testcase_files">
                 <FileUpload UploadedFiles="_uploadedFiles"/>

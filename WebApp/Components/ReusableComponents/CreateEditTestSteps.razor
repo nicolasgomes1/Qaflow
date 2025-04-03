@@ -133,6 +133,8 @@
     [EditorRequired] [Parameter] public List<TestSteps> TestSteps { get; set; } = [];
     [Parameter] public EventCallback<List<TestSteps>> OnTestStepsChanged { get; set; }
 
+    [Parameter] public EventCallback RefreshPage { get; set; }
+
     private RadzenDataGrid<TestSteps> _dataGrid = new();
     private TestSteps _newTestStep = new();
     private bool _isEditing = false;
@@ -181,16 +183,28 @@
         OnTestStepsChanged.InvokeAsync(new List<TestSteps>(TestSteps)); // Notify parent
     }
 
+    /// <summary>
+    /// This action will delete the test step from db and we will not have correct step numbering, The best is to soft delete.
+    /// In this case i will archive the step
+    /// </summary>
+    /// <param name="step"></param>
     private async Task RemoveTestStep(TestSteps step)
     {
         var confirmed = await DialogService.Confirm("Are you sure you want to delete this test step?", "Delete Test Step");
 
         if (confirmed == true)
         {
-            TestSteps.Remove(step); // Remove the step
+            await using var db = await DbContext.CreateDbContextAsync();
+            var foundStep = await db.TestSteps.FindAsync(step.Id);
+            if (foundStep is null) return;
+            foundStep.ArchivedStatus = ArchivedStatus.Archived;
+            await db.SaveChangesAsync();
             RenumberTestSteps(); // Renumber the remaining steps
             await _dataGrid.Reload(); // Refresh the DataGrid
-            await OnTestStepsChanged.InvokeAsync(new List<TestSteps>(TestSteps)); // Notify parent
+            if (RefreshPage.HasDelegate)
+            {
+                await RefreshPage.InvokeAsync();
+            }
         }
 
         ResetMaxLenghtValue();

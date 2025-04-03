@@ -196,7 +196,13 @@ public class TestCasesModel(
     }
 
 
-    public async Task<List<TestSteps>> GetTestStepsForTestCase(int testCaseId)
+    /// <summary>
+    /// only return active test cases
+    /// </summary>
+    /// <param name="testCaseId"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    private async Task<List<TestSteps>> GetTestStepsForTestCase(int testCaseId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
@@ -207,6 +213,14 @@ public class TestCasesModel(
         if (testCase == null) throw new Exception($"Test case with ID {testCaseId} was not found.");
 
         return testCase.TestSteps.OrderBy(s => s.Number).ToList();
+    }
+
+    public async Task<List<TestSteps>> GetTestStepsForTestCaseAsync(int testCaseId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestSteps.Where(s => s.TestCasesId == testCaseId && s.ArchivedStatus == ArchivedStatus.Active)
+            .ToListAsync();
     }
 
 
