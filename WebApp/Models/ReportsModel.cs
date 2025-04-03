@@ -176,22 +176,26 @@ public class ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFacto
     }
 
 
+    private async Task<int> GetTestExecutionWithStatusCountAsync(int projectId, ExecutionStatus executionStatus)
+    {
+        await using var db = await dbContextFactor.CreateDbContextAsync();
+        return await db.TestExecution
+            .Where(te => te.ProjectsId == projectId)
+            .Where(te => te.ExecutionStatus == executionStatus)
+            .Where(te => te.IsActive == false)
+            .CountAsync();
+    }
+    
+    
+    
     public async Task<double> GetTestExecutionPassRateAsync(int projectId)
     {
         await using var db1 = await dbContextFactor.CreateDbContextAsync();
         await using var db2 = await dbContextFactor.CreateDbContextAsync();
 
-        var testExecutionsPassed = await db1.TestExecution
-            .Where(te => te.ProjectsId == projectId)
-            .Where(te => te.ExecutionStatus == ExecutionStatus.Passed)
-            .Where(te => te.IsActive == false)
-            .CountAsync();
+        var testExecutionsPassed = await GetTestExecutionWithStatusCountAsync(projectId, ExecutionStatus.Passed);
 
-        var testExecutionsFailed = await db2.TestExecution
-            .Where(te => te.ProjectsId == projectId)
-            .Where(te => te.ExecutionStatus == ExecutionStatus.Failed)
-            .Where(te => te.IsActive == false)
-            .CountAsync();
+        var testExecutionsFailed = await GetTestExecutionWithStatusCountAsync(projectId, ExecutionStatus.Failed);
 
         var totalTestExecutions = testExecutionsPassed + testExecutionsFailed;
 

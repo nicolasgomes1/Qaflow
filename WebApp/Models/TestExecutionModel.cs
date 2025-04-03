@@ -497,7 +497,9 @@ public class TestExecutionModel
     /// <returns></returns>
     public async Task<List<TestExecution>> GetActiveTestExecutionsAsync(int projectId)
     {
-        return await _dbContext.TestExecution
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestExecution
             .Include(te => te.TestPlan)
             .Where(te => te.IsActive && te.WorkflowStatus == WorkflowStatus.Completed)
             .Where(te => te.ProjectsId == projectId)
@@ -506,14 +508,17 @@ public class TestExecutionModel
 
     public async Task<TestCaseExecution?> GetTestCaseExecutionByIdAsync(int testCaseExecutionId)
     {
-        var testCaseExecution = await _dbContext.TestCaseExecution.FindAsync(testCaseExecutionId);
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+
+        var testCaseExecution = await db.TestCaseExecution.FindAsync(testCaseExecutionId);
 
         return testCaseExecution;
     }
 
     public async Task<int> GetTestExecutionsReadyToExecuteAsync(int projectId)
     {
-        return await _dbContext.TestExecution
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+        return await db.TestExecution
             .Where(te => te.IsActive && te.WorkflowStatus == WorkflowStatus.Completed)
             .Where(te => te.ProjectsId == projectId)
             .CountAsync();
@@ -526,7 +531,9 @@ public class TestExecutionModel
     /// <returns></returns>
     public async Task<int> TestExecutionWIthPriority(Priority priority, int projectId)
     {
-        return await _dbContext.TestExecution
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestExecution
             .Where(te => te.Priority == priority)
             .Where(te => te.IsActive == false)
             .Where(te => te.ProjectsId == projectId)
@@ -536,7 +543,9 @@ public class TestExecutionModel
 
     public async Task<int> GetTotalTestExecutionsAsync(int projectId)
     {
-        return await _dbContext.TestExecution
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestExecution
             .Where(te => te.ProjectsId == projectId)
             .CountAsync();
     }
@@ -554,22 +563,28 @@ public class TestExecutionModel
 
     public async Task<List<TestExecution>> GetActiveTestExecutionsAsyncWkf(int projectId)
     {
-        return await _dbContext.TestExecution
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestExecution
             .Where(te => te.IsActive == true && te.ProjectsId == projectId)
             .ToListAsync();
     }
 
     public async Task<List<TestExecution>> GetTestExecutionsAssignedToAll(int projectId)
     {
-        return await _dbContext.TestExecution
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestExecution
             .Where(te => te.IsActive == true && te.ProjectsId == projectId)
             .ToListAsync();
     }
 
     public async Task<List<TestExecution>> GetTestExecutionsAssignedToCurrentUser(int projectId)
     {
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+
         var currentUser = _userService.GetCurrentUserInfoAsync().Result.UserId;
-        return await _dbContext.TestExecution.Where(rp => rp.ProjectsId == projectId && rp.AssignedTo == currentUser)
+        return await db.TestExecution.Where(rp => rp.ProjectsId == projectId && rp.AssignedTo == currentUser)
             .ToListAsync();
     }
 }

@@ -66,9 +66,14 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
         await GetOrCreateRequirementAsync(dbContext, project, "Requirement B", "requirement is B", MANAGER);
 
-        for (var i = 1; i <= 100; i++)
+        for (var i = 1; i <= 50; i++)
             await GetOrCreateRequirementAsync(dbContext, project, $"Requirement {i}", $"requirement number is {i}",
                 MANAGER);
+
+        for (var i = 1; i <= 5; i++)
+            await GetOrCreateRequirementAsync(dbContext, project, $"Requirement Cmpleted {i}",
+                $"requirement number is {i}",
+                MANAGER, null, WorkflowStatus.Completed);
 
         // Create or get test cases
         var testCase1 =
@@ -77,7 +82,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             await GetOrCreateTestCaseAsync(dbContext, project, "Test Case 2", "Sample test case 2", MANAGER, null);
         await GetOrCreateTestCaseAsync(dbContext, project, "Test Case 3", "Sample test case ", USER, requirement);
 
-        for (var i = 1; i <= 100; i++)
+        for (var i = 1; i <= 50; i++)
             await GetOrCreateTestCaseAsync(dbContext, project, $"Test Case {i}.", $"Test Case number is {i}.", USER,
                 null);
 
@@ -128,7 +133,8 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
     private static async Task<Requirements> GetOrCreateRequirementAsync(ApplicationDbContext dbContext,
         Projects projects,
-        string name, string description, string assignedUserName, RequirementsSpecification? reqSpec = null)
+        string name, string description, string assignedUserName, RequirementsSpecification? reqSpec = null,
+        WorkflowStatus status = WorkflowStatus.New)
     {
         var assignedUserId = await AssignedUserId(dbContext, assignedUserName);
 
@@ -146,7 +152,8 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             Projects = projects,
             AssignedTo = assignedUserId,
             CreatedBy = ADMIN,
-            RequirementsSpecification = reqSpec
+            RequirementsSpecification = reqSpec,
+            WorkflowStatus = status
         };
 
         await dbContext.Requirements.AddAsync(newRequirement);
@@ -237,7 +244,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             AssignedTo = assignedUserId,
             WorkflowStatus = WorkflowStatus.Completed
         };
-        
+
         if (newTestCase.WorkflowStatus == WorkflowStatus.Completed)
             newTestCase.ArchivedStatus = ArchivedStatus.Archived;
 
