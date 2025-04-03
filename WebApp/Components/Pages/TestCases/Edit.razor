@@ -97,7 +97,9 @@ else
                     </RadzenFieldset>
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Test Steps">
-                    <CreateEditTestSteps TestSteps="@_testCases.TestSteps"/>
+                    <CreateEditTestSteps TestSteps="@TestCasesModel.TestStepsList"
+                                         OnTestStepsChanged="@UpdateTestStepsList"/>
+
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Files" data-testid="testcase_files">
                     <FileUploadEdit EntityName="@nameof(TestCasesFile)"
@@ -147,6 +149,8 @@ else
     {
         _usersList = await UserService.GetUsersList();
 
+        TestCasesModel.TestStepsList = await GetTestStepsForTestCase();
+
         _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
         _testCases = await TestCasesModel.GetTestCaseData(Id);
 
@@ -166,13 +170,28 @@ else
         _isLoading = false;
     }
 
+
+    private void UpdateTestStepsList(List<TestSteps> updatedList)
+    {
+        TestCasesModel.TestStepsList = new List<TestSteps>(updatedList); // Create a new list reference
+        StateHasChanged(); // Notify Blazor to refresh the UI
+    }
+
+
     private async Task UpdateTestCase()
     {
+        UpdateTestStepsList(TestCasesModel.TestStepsList);
         await TestCasesModel.UpdateTestCase(_testCases, _uploadedFiles, ProjectId);
         NavigationManager.NavigateTo($"/project/{ProjectId}/testcases");
 
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Case with Id {_testCases.Id} Updated Successfully");
+    }
+
+    async Task<List<TestSteps>> GetTestStepsForTestCase()
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        return await db.TestSteps.Where(t => t.TestCasesId == Id).ToListAsync();
     }
 
 

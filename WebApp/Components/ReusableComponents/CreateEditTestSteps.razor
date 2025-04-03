@@ -131,6 +131,7 @@
 
 @code {
     [EditorRequired] [Parameter] public List<TestSteps> TestSteps { get; set; } = [];
+    [Parameter] public EventCallback<List<TestSteps>> OnTestStepsChanged { get; set; }
 
     private RadzenDataGrid<TestSteps> _dataGrid = new();
     private TestSteps _newTestStep = new();
@@ -153,6 +154,7 @@
         _isEditing = false;
         _dataGrid.Reload(); // Refresh the DataGrid
         ResetMaxLenghtValue();
+        OnTestStepsChanged.InvokeAsync(new List<TestSteps>(TestSteps)); // Notify parent
     }
 
     private void EditTestStep(TestSteps step)
@@ -176,6 +178,7 @@
         // Update the step's details
         stepToUpdate.Description = _newTestStep.Description;
         stepToUpdate.ExpectedResult = _newTestStep.ExpectedResult;
+        OnTestStepsChanged.InvokeAsync(new List<TestSteps>(TestSteps)); // Notify parent
     }
 
     private async Task RemoveTestStep(TestSteps step)
@@ -187,6 +190,7 @@
             TestSteps.Remove(step); // Remove the step
             RenumberTestSteps(); // Renumber the remaining steps
             await _dataGrid.Reload(); // Refresh the DataGrid
+            await OnTestStepsChanged.InvokeAsync(new List<TestSteps>(TestSteps)); // Notify parent
         }
 
         ResetMaxLenghtValue();
@@ -205,6 +209,7 @@
 
         RenumberTestSteps(); // Renumber the steps
         _dataGrid.Reload(); // Refresh the DataGrid
+        OnTestStepsChanged.InvokeAsync(new List<TestSteps>(TestSteps)); // Notify parent
     }
 
     private void RenumberTestSteps()
@@ -212,6 +217,9 @@
         for (var i = 0; i < TestSteps.Count; i++)
         {
             TestSteps[i].Number = i + 1; // Renumber each step sequentially
+            TestSteps[i].Description = TestSteps[i].Description;
+            TestSteps[i].ExpectedResult = TestSteps[i].ExpectedResult;
+            OnTestStepsChanged.InvokeAsync(new List<TestSteps>(TestSteps)); // Notify parent
         }
     }
 

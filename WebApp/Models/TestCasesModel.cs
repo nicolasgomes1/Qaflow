@@ -180,8 +180,6 @@ public class TestCasesModel(
         db.Entry(testCases).State = EntityState.Modified;
 
 
-        TestStepsList = testCases.TestSteps;
-
         await UpdateRequirementsDropdown(testCases, db);
         await UpdateJiraTickets(testCases);
 
@@ -189,6 +187,7 @@ public class TestCasesModel(
             testCases.ArchivedStatus = ArchivedStatus.Archived;
         testCases.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         testCases.ModifiedAt = DateTime.UtcNow;
+        testCases.TestSteps = TestStepsList;
 
         await db.SaveChangesAsync();
 

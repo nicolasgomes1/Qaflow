@@ -1,6 +1,6 @@
 ﻿@attribute [Authorize]
 
-<RadzenDataGrid Data="@TestStepsData" TItem="TestSteps" Style="margin-top: 10px;">
+<RadzenDataGrid Data="@SortedTestSteps" TItem="TestSteps" Style="margin-top: 10px;">
     <HeaderTemplate>
         <h4 class="text-center text-primary mb-4">View Test Steps</h4>
     </HeaderTemplate>
@@ -13,4 +13,7 @@
 
 @code {
     [Parameter] public IEnumerable<TestSteps>? TestStepsData { get; set; }
+
+    private IEnumerable<TestSteps> SortedTestSteps => TestStepsData?.OrderBy(ts => ts.Number) ?? Enumerable.Empty<TestSteps>();
+
 }
