@@ -61,5 +61,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<TestStepExecutionFileModel>();
         services.AddScoped<TestCasesJiraModel>();
         services.AddScoped<RequirementsSpecificationModel>();
+        services.AddScoped<TestExecutionModelv2>();
     }
 }
