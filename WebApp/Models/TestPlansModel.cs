@@ -26,7 +26,7 @@ public class TestPlansModel(
     }
 
 
-    public async Task<List<TestPlans>> GetallTestPlansWithWorkflowStatus(WorkflowStatus status, int projectId)
+    public async Task<List<TestPlans>> GetAllTestPlansWithWorkflowStatus(WorkflowStatus status, int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
