@@ -166,7 +166,6 @@ public class TestCasesModel(
         if (selectedRequirements.Count != SelectedRequirementIds.Count)
             throw new Exception("One or more selected requirements were not found.");
 
-        // **💡 Replace the collection directly**
         existingTestCase.LinkedRequirements = selectedRequirements;
 
         await dbContext.SaveChangesAsync();
