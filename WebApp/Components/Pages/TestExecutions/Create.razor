@@ -62,7 +62,7 @@
         <RadzenDropDown id="testplan"
                         data-testid="testexecution_testplan"
                         Data="_testPlansList"
-                        @bind-Value="TestExecutionModel.TestPlanId"
+                        @bind-Value="TestExecutionModelv2.SelectedTestPlan"
                         TextProperty="Name"
                         ValueProperty="Id"
                         class="input-style"
@@ -113,7 +113,7 @@
     {
         _testExecution.EstimatedTime = TimeSpan.FromMinutes(int.TryParse(_estimatedTimeInput, out var minutes) ? minutes : 0);
 
-        //   await TestExecutionModel.CreateTestExecution(_testExecution, ProjectId);
+        // await TestExecutionModel.CreateTestExecution(_testExecution, ProjectId);
         await TestExecutionModelv2.AddTestExecution(_testExecution, ProjectId);
         NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution", true);
     }
