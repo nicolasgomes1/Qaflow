@@ -29,14 +29,14 @@
     [Parameter]
     public bool IsDisabled { get; set; } = false;
 
-    [EditorRequired][Parameter] public int ProjectId { get; set; }
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
 
     private async Task CreateNewTestExecution()
     {
         // CreateBug should handle adding the bug and return a result
-        var result = await TestExecutionModel.CreateTestExecution(_testExecution, ProjectId);
-
+        //  var result = await TestExecutionModel.CreateTestExecution(_testExecution, ProjectId);
+        var result = await TestExecutionModelv2.AddTestExecution(_testExecution, ProjectId);
         DialogService.Close(result);
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Execution created successfully with id {_testExecution.Id}");
@@ -58,78 +58,78 @@
         _usersList = await UserService.GetUsersList();
         _testExecution = new TestExecution();
         var result = await DialogService.OpenAsync("Create Test Execution", ds =>
-            @<RadzenStack Gap="1.5rem" Style="height: 600px;">
-                <RadzenTemplateForm Data="_testExecution" TItem="TestExecution" Submit="@CreateNewTestExecution">
-                    <ValidationSummary class="alert alert-danger"/>
+                @<RadzenStack Gap="1.5rem" Style="height: 600px;">
+                    <RadzenTemplateForm Data="_testExecution" TItem="TestExecution" Submit="@CreateNewTestExecution">
+                        <ValidationSummary class="alert alert-danger"/>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Name"/>
-                        <RadzenTextBox id="name"
-                                       @bind-Value="_testExecution.Name"
-                                       class="input-style"
-                                       Name="name"/>
-                        <RadzenRequiredValidator Component="name" Text="Name is required"/>
-                    </div>
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Name"/>
+                            <RadzenTextBox id="name"
+                                           @bind-Value="_testExecution.Name"
+                                           class="input-style"
+                                           Name="name"/>
+                            <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                        </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Description"/>
-                        <RadzenTextBox id="description"
-                                       @bind-Value="_testExecution.Description"
-                                       class="input-style"
-                                       Name="description"/>
-                        <RadzenRequiredValidator Component="description" Text="Description is recommended"/>
-                    </div>
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Description"/>
+                            <RadzenTextBox id="description"
+                                           @bind-Value="_testExecution.Description"
+                                           class="input-style"
+                                           Name="description"/>
+                            <RadzenRequiredValidator Component="description" Text="Description is recommended"/>
+                        </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Estimated Time (in minutes)"/>
-                        <RadzenTextBox id="estimatedTime"
-                                       @bind-Value="_estimatedTimeInput"
-                                       Placeholder="Enter time in minutes"
-                                       class="input-style"
-                                       Name="estimatedTime"/>
-                    </div>
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Estimated Time (in minutes)"/>
+                            <RadzenTextBox id="estimatedTime"
+                                           @bind-Value="_estimatedTimeInput"
+                                           Placeholder="Enter time in minutes"
+                                           class="input-style"
+                                           Name="estimatedTime"/>
+                        </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Priority"/>
-                        <RadzenDropDown id="priority" @bind-Value="_testExecution.Priority"
-                                        Data="EnumService.GetEnumValues<Priority>()"
-                                        class="input-style"
-                                        Name="priority"/>
-                        <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
-                    </div>
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Priority"/>
+                            <RadzenDropDown id="priority" @bind-Value="_testExecution.Priority"
+                                            Data="EnumService.GetEnumValues<Priority>()"
+                                            class="input-style"
+                                            Name="priority"/>
+                            <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                        </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Test Plan"/>
-                        <RadzenDropDown id="testplan"
-                                        Data="_testPlansList"
-                                        @bind-Value="TestExecutionModel.TestPlanId"
-                                        TextProperty="Name"
-                                        ValueProperty="Id"
-                                        class="input-style"
-                                        AllowFiltering="true"
-                                        Name="testplan"/>
-                        <RadzenRequiredValidator Component="testplan" Text="Test Plan is required"/>
-                    </div>
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Test Plan"/>
+                            <RadzenDropDown id="testplan"
+                                            Data="_testPlansList"
+                                            @bind-Value="TestExecutionModel.TestPlanId"
+                                            TextProperty="Name"
+                                            ValueProperty="Id"
+                                            class="input-style"
+                                            AllowFiltering="true"
+                                            Name="testplan"/>
+                            <RadzenRequiredValidator Component="testplan" Text="Test Plan is required"/>
+                        </div>
 
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Assigned To"/>
-                        <RadzenDropDown id="assignedto"
-                                        Data="@_usersList"
-                                        @bind-Value="_testExecution.AssignedTo"
-                                        TextProperty="UserName"
-                                        ValueProperty="Id"
-                                        class="input-style"
-                                        Name="assignedto"/>
-                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
-                    </div>
-                    
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Assigned To"/>
+                            <RadzenDropDown id="assignedto"
+                                            Data="@_usersList"
+                                            @bind-Value="_testExecution.AssignedTo"
+                                            TextProperty="UserName"
+                                            ValueProperty="Id"
+                                            class="input-style"
+                                            Name="assignedto"/>
+                            <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                        </div>
 
-                    <!-- Submit button inside the form -->
-                    <RadzenButton Text="Create Test Execution" ButtonStyle="ButtonStyle.Secondary"
-                                  ButtonType="ButtonType.Submit"
-                                  Style="margin-bottom: 10px;"/>
-                </RadzenTemplateForm>
-            </RadzenStack>,new DialogOptions() { Draggable = true, CloseDialogOnOverlayClick = true }
+
+                        <!-- Submit button inside the form -->
+                        <RadzenButton Text="Create Test Execution" ButtonStyle="ButtonStyle.Secondary"
+                                      ButtonType="ButtonType.Submit"
+                                      Style="margin-bottom: 10px;"/>
+                    </RadzenTemplateForm>
+                </RadzenStack>, new DialogOptions() { Draggable = true, CloseDialogOnOverlayClick = true }
         );
     }
 

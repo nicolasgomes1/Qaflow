@@ -175,37 +175,6 @@ public class TestExecutionModel
         await db.SaveChangesAsync();
     }
 
-    private TestCaseExecution CreateTestCaseExecution(TestCases testCase, TestExecution existingTestExecution)
-    {
-        var testCaseExecution = new TestCaseExecution
-        {
-            TestExecution = existingTestExecution,
-            TestCaseId = testCase.Id,
-            ExecutionStatus = ExecutionStatus.NotRun,
-            Version = existingTestExecution.Version,
-            CreatedAt = DateTime.UtcNow,
-            ModifiedAt = DateTime.UtcNow
-        };
-
-        foreach (var testStep in testCase.TestSteps)
-        {
-            var newTestStepExecution = new TestStepsExecution
-            {
-                TestCaseExecution = testCaseExecution,
-                TestStepsId = testStep.Id,
-                ExecutionStatus = ExecutionStatus.NotRun,
-                Version = existingTestExecution.Version,
-                CreatedAt = DateTime.UtcNow,
-                ModifiedAt = DateTime.UtcNow
-            };
-
-            if (testCaseExecution.LinkedTestStepsExecution != null)
-                testCaseExecution.LinkedTestStepsExecution.Add(newTestStepExecution);
-        }
-
-        return testCaseExecution;
-    }
-
     private void UpdateTestCaseExecution(TestCaseExecution existingTestCaseExecution, TestCases testCase,
         TestExecution existingTestExecution)
     {
@@ -250,6 +219,37 @@ public class TestExecutionModel
                          testCase.TestSteps.All(ts => ts.Id != ets.TestStepsId)))
                 _dbContext.TestStepsExecution.Remove(testStepExecution);
         }
+    }
+
+    private TestCaseExecution CreateTestCaseExecution(TestCases testCase, TestExecution existingTestExecution)
+    {
+        var testCaseExecution = new TestCaseExecution
+        {
+            TestExecution = existingTestExecution,
+            TestCaseId = testCase.Id,
+            ExecutionStatus = ExecutionStatus.NotRun,
+            Version = existingTestExecution.Version,
+            CreatedAt = DateTime.UtcNow,
+            ModifiedAt = DateTime.UtcNow
+        };
+
+        foreach (var testStep in testCase.TestSteps)
+        {
+            var newTestStepExecution = new TestStepsExecution
+            {
+                TestCaseExecution = testCaseExecution,
+                TestStepsId = testStep.Id,
+                ExecutionStatus = ExecutionStatus.NotRun,
+                Version = existingTestExecution.Version,
+                CreatedAt = DateTime.UtcNow,
+                ModifiedAt = DateTime.UtcNow
+            };
+
+            if (testCaseExecution.LinkedTestStepsExecution != null)
+                testCaseExecution.LinkedTestStepsExecution.Add(newTestStepExecution);
+        }
+
+        return testCaseExecution;
     }
 
 

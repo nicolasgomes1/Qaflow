@@ -33,7 +33,7 @@ else
             <RadzenLabel Text="Test Plan"/>
             <RadzenDropDown id="testplan"
                             Data="@_testPlansList"
-                            @bind-Value="@TestExecutionModel.TestPlanId"
+                            @bind-Value="@TestExecutionModelv2.SelectedTestPlan"
                             TextProperty="Name"
                             ValueProperty="Id"
                             class="input-style"
@@ -91,7 +91,6 @@ else
     {
         _testPlansList = await TestPlansModel.GetAllTestPlansWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
         _usersList = await UserService.GetUsersList();
-
         _testExecution = await TestExecutionModel.GetTestExecutionData(Id);
 
 
@@ -105,8 +104,8 @@ else
 
     private async Task UpdateTestCaseExecution()
     {
-        await TestExecutionModel.UpdateTestExecution(Id, _testExecution);
-
+        // await TestExecutionModel.UpdateTestExecution(Id, _testExecution);
+        await TestExecutionModelv2.UpdateTestExecution(_testExecution, ProjectId);
         NavigationManager.NavigateTo($"project/{ProjectId}/testexecution", true);
     }
 

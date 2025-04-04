@@ -113,7 +113,8 @@
     {
         _testExecution.EstimatedTime = TimeSpan.FromMinutes(int.TryParse(_estimatedTimeInput, out var minutes) ? minutes : 0);
 
-        await TestExecutionModel.CreateTestExecution(_testExecution, ProjectId);
+        //   await TestExecutionModel.CreateTestExecution(_testExecution, ProjectId);
+        await TestExecutionModelv2.AddTestExecution(_testExecution, ProjectId);
         NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution", true);
     }
 

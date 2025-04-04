@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Data.enums;
@@ -69,7 +70,7 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
         return testExecution;
     }
 
-    public async Task UpdateTestExecution(TestExecution updatedExecution, int projectId)
+    public async Task UpdateTestExecution(TestExecution testExecution, int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
@@ -77,28 +78,25 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
             .Where(p => p.ProjectsId == projectId)
             .Include(te => te.LinkedTestCaseExecutions)
             .ThenInclude(tce => tce.LinkedTestStepsExecution)
-            .FirstOrDefaultAsync(te => te.Id == updatedExecution.Id);
+            .FirstOrDefaultAsync(te => te.Id == testExecution.Id);
 
         if (existingTestExecution == null)
             throw new InvalidOperationException("TestExecution not found.");
 
         existingTestExecution.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        existingTestExecution.Name = updatedExecution.Name;
-        existingTestExecution.Description = updatedExecution.Description;
-        existingTestExecution.Priority = updatedExecution.Priority;
         existingTestExecution.ModifiedAt = DateTime.UtcNow;
 
-        if (existingTestExecution.TestPlanId != updatedExecution.TestPlanId)
+        if (existingTestExecution.TestPlanId != SelectedTestPlan)
         {
             var newTestPlan = await db.TestPlans
                 .Include(tp => tp.LinkedTestCases)
                 .ThenInclude(tc => tc.TestSteps)
-                .FirstOrDefaultAsync(tp => tp.Id == updatedExecution.TestPlanId);
+                .FirstOrDefaultAsync(tp => tp.Id == SelectedTestPlan);
 
             if (newTestPlan == null)
-                throw new InvalidOperationException($"TestPlan with ID {updatedExecution.TestPlanId} not found.");
+                throw new InvalidOperationException($"TestPlan with ID {testExecution.TestPlanId} not found.");
 
-            existingTestExecution.TestPlanId = newTestPlan.Id;
+            existingTestExecution.TestPlanId = SelectedTestPlan;
             existingTestExecution.LinkedTestCaseExecutions.Clear();
 
             foreach (var testCase in newTestPlan.LinkedTestCases)
