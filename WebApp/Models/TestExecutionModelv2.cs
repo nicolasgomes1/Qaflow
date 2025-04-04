@@ -11,6 +11,19 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
     //single selection
     public int SelectedTestPlan { get; set; } = -1;
 
+
+    public async Task LoadTestPlanForTestExecution(int testExecution, int projectId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var execution =
+            await db.TestExecution.FirstOrDefaultAsync(te => te.Id == testExecution && te.ProjectsId == projectId);
+
+        if (execution is null) return;
+
+        SelectedTestPlan = execution.TestPlanId;
+    }
+
     public async Task<TestExecution> AddTestExecution(TestExecution testExecution, int projectId)
     {
         var execution = new TestExecution();

@@ -92,6 +92,7 @@ else
         _testPlansList = await TestPlansModel.GetAllTestPlansWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
         _usersList = await UserService.GetUsersList();
         _testExecution = await TestExecutionModel.GetTestExecutionData(Id);
+        await TestExecutionModelv2.LoadTestPlanForTestExecution(Id, ProjectId);
 
 
         if (!_testExecution.IsActive)

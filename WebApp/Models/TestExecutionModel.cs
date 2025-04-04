@@ -35,6 +35,7 @@ public class TestExecutionModel
     /// This is to be used when creazting a new TestExecution
     /// </summary>
     /// <returns></returns>
+    /*
     public async Task<TestExecution> CreateTestExecution(TestExecution testExecution, int projectId)
     {
         // await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
@@ -174,7 +175,9 @@ public class TestExecutionModel
         // Save changes
         await db.SaveChangesAsync();
     }
+    */
 
+    /*
     private void UpdateTestCaseExecution(TestCaseExecution existingTestCaseExecution, TestCases testCase,
         TestExecution existingTestExecution)
     {
@@ -251,6 +254,7 @@ public class TestExecutionModel
 
         return testCaseExecution;
     }
+    */
 
 
     /// <summary>
