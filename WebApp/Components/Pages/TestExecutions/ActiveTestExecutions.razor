@@ -15,7 +15,7 @@
                 ColumnWidth="300px"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
-                @bind-Value="@TestExecutionModel.selectedExecution">
+                @bind-Value="@_selectedTestExecutions">
 
     <HeaderTemplate>
         <RadzenAlert Text="Test Execution Ready!" AllowClose="false" Variant="Variant.Flat"></RadzenAlert>
@@ -76,6 +76,7 @@
 @code {
     [Parameter] public int Id { get; set; }
     [Parameter] public int ProjectId { get; set; }
+    private IList<TestExecution> _selectedTestExecutions = [];
 
     private IEnumerable<TestExecution> _testexecution = [];
 

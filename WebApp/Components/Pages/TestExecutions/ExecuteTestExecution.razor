@@ -13,7 +13,7 @@ else
     <GlobalTestExecutionControls_slim Id="Id" ProjectId="ProjectId"/>
 
 
-    @if (executionInProgress)
+    @if (ExecutionInProgress)
     {
         <OngoingTestExecution Id="Id" ProjectId="ProjectId"/>
     }
@@ -24,10 +24,10 @@ else
     <div style="margin-top: 10px;">
         <RadzenButton Text="Edit"
                       Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/edit/{_testExecution.Id}")'
-                      Disabled="@(_testExecution.IsActive == false || executionInProgress)"/>
+                      Disabled="@(_testExecution.IsActive == false || ExecutionInProgress)"/>
         <RadzenButton Text="Back"
                       Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution")'
-                      Disabled="@(executionInProgress)"/>
+                      Disabled="@(ExecutionInProgress)"/>
     </div>
 }
 
@@ -41,7 +41,7 @@ else
 
     private bool _isLoading = true;
 
-    private bool executionInProgress => TestExecutionTimerService.IsExecutionInProgress(); // Check if execution is in progress
+    private bool ExecutionInProgress => TestExecutionTimerService.IsExecutionInProgress(); // Check if execution is in progress
 
 
     void IDisposable.Dispose()
