@@ -1,89 +1,67 @@
-﻿@page "/project/{ProjectId:int}/testexecution/viewv1/{Id:int}"
+@page "/project/{ProjectId:int}/testexecution/view/{Id:int}"
 @rendermode InteractiveServer
-@implements IDisposable
-@*Version 1*@
 @attribute [Authorize]
 
-@if (_isLoading)
+<RadzenButton Click="DuplicateCurrentTestExecution"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "The Current Test Execution Will be duplicated with current values, the test execution must be active"))"
+              MouseLeave="TooltipService.Close"
+              Icon="content_copy" Disabled="_isArchived" Text="Duplicate"/>
+
+@*Version 2*@
+<RadzenTabs @bind-SelectedIndex="@_selectedIndex">
+    <Tabs>
+        <RadzenTabsItem Text="Test Execution">
+            <ViewTestExecutionData Id="Id" ProjectId="ProjectId"/>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Past Test Execution">
+            <PastTestExecutionsTable Id="Id" ProjectId="ProjectId"/>
+        </RadzenTabsItem>
+
+        <RadzenTabsItem Text="Associated Test Cases">
+            <AssociatedTestCasesTable Id="Id" ProjectId="ProjectId"/>
+        </RadzenTabsItem>
+
+
+        <RadzenTabsItem Text="Results">
+            <ViewTestCaseExecution Id="Id" ProjectId="ProjectId"/>
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
+<div style="margin-top: 10px;">
+    <RadzenButton Text="Edit"
+                  Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/edit/{_testExecution.Id}")'
+                  Disabled="@(_testExecution.IsActive == false)"/>
+    <RadzenButton Text="Back" Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution")'/>
+</div>
+
+
+
+@code
 {
-    <ProgressBar/>
-}
-else
-{
-    <div style="display: flex; gap: 20px; justify-content: space-between;">
-
-        <!-- View Test Execution Data -->
-        <ViewTestExecutionData Id="Id" ProjectId="ProjectId"/>
-
-        <!-- Global Test Execution Controls -->
-        <GlobalTestExecutionControls Id="Id" ProjectId="ProjectId"/>
-    </div>
-
-
-    @if (!executionInProgress)
-    {
-        <!-- Past Test Executions Table -->
-        <PastTestExecutionsTable Id="Id" ProjectId="ProjectId"/>
-
-
-        <!-- Test Cases Table associated with the current TestExecution-->
-        <AssociatedTestCasesTable Id="Id" ProjectId="ProjectId"/>
-    }
-
-
-    @if (executionInProgress)
-    {
-        <OngoingTestExecution Id="Id" ProjectId="ProjectId"/>
-    }
-    else
-    {
-    }
-
-    <!-- Test Cases Execution with Test Step Execution-->
-    <ViewTestCaseExecution Id="Id" ProjectId="ProjectId"/>
-
-    <div style="margin-top: 10px;">
-        <RadzenButton Text="Edit"
-                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/edit/{_testExecution.Id}")'
-                      Disabled="@(_testExecution.IsActive == false || executionInProgress)"/>
-        <RadzenButton Text="Back"
-                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution")'
-                      Disabled="@(executionInProgress)"/>
-    </div>
-}
-
-
-@code {
     [Parameter] public int Id { get; set; }
 
     [Parameter] public int ProjectId { get; set; }
 
     private TestExecution _testExecution = new();
-
-    private bool _isLoading = true;
-
-    private bool executionInProgress => TestExecutionTimerService.IsExecutionInProgress(); // Check if execution is in progress
-
-
-    void IDisposable.Dispose()
-    {
-        TestExecutionTimerService.OnExecutionStateChanged -= HandleExecutionStateChanged; // Unsubscribe from the event
-    }
-
-
-    private void HandleExecutionStateChanged()
-    {
-        InvokeAsync(StateHasChanged);
-    }
-
+    private TestExecution _newTestExecution = new();
+    int _selectedIndex;
+    bool _isArchived;
 
     protected override async Task OnInitializedAsync()
     {
-        TestExecutionTimerService.OnExecutionStateChanged += HandleExecutionStateChanged; // Subscribe to the event
+        _testExecution = await TestExecutionModel.GetTestExecutionbyIdAsync(Id);
 
-        _testExecution = await TestExecutionModel.GetTestExecutionAsync(Id);
-
-        _isLoading = false;
+        if (_testExecution.IsActive == false)
+        {
+            _isArchived = true;
+        }
     }
+
+    private async Task DuplicateCurrentTestExecution()
+    {
+        _newTestExecution = await TestExecutionModelv2.DuplicateExecutionAsync(Id, ProjectId);
+        NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/view/{_newTestExecution.Id}");
+    }
+
 
 }
