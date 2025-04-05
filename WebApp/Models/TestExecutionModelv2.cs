@@ -227,7 +227,7 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
     /// <exception cref="InvalidOperationException">
     /// Thrown when the specified Test Execution to duplicate cannot be found.
     /// </exception>
-    public async Task<TestExecution?> DuplicateExecutionAsync(int testExecutionId, int projectId)
+    public async Task<TestExecution> DuplicateExecutionAsync(int testExecutionId, int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
@@ -241,10 +241,11 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
 
         var newExecution = new TestExecution
         {
-            Name = originalExecution.Name,
+            Name = originalExecution.Name + " (Copy)",
             Description = originalExecution.Description,
             ExecutionStatus = ExecutionStatus.NotRun,
-            Version = originalExecution.Version + 1,
+            // Version = originalExecution.Version + 1,
+            Version = 0,
             CreatedAt = DateTime.UtcNow,
             TestPlanId = originalExecution.TestPlanId,
             EstimatedTime = originalExecution.EstimatedTime,

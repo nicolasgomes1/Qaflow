@@ -2,7 +2,7 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 
-<RadzenButton Click="DuplicateCurrentTestExecution"></RadzenButton>
+<RadzenButton Click="DuplicateCurrentTestExecution" Icon="content_copy" Disabled="_isArchived" Text="Duplicate"/>
 
 @*Version 2*@
 <RadzenTabs @bind-SelectedIndex="@_selectedIndex">
@@ -42,13 +42,16 @@
     private TestExecution _testExecution = new();
     private TestExecution _newTestExecution = new();
     int _selectedIndex;
-
-    int _newId;
+    bool _isArchived;
 
     protected override async Task OnInitializedAsync()
     {
         _testExecution = await TestExecutionModel.GetTestExecutionbyIdAsync(Id);
-        _newId = Id + 1;
+
+        if (_testExecution.IsActive == false)
+        {
+            _isArchived = true;
+        }
     }
 
     private async Task DuplicateCurrentTestExecution()
