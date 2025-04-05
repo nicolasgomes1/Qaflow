@@ -11,7 +11,7 @@
 }
 
 <RadzenCard Style="width: 100%">
-    <RadzenTemplateForm Data="@TestExecutionModel.TestExecution" TItem="TestExecution"
+    <RadzenTemplateForm Data="@_testExecution" TItem="TestExecution"
                         Submit="@(() => EndCurrentExecution())">
 
         <ValidationSummary class="alert alert-danger"/>
