@@ -19,16 +19,16 @@ public class TestExecutionModel
         _userService = userService;
     }
 
-    public TestExecution TestExecution { get; set; } = new();
+    //   public TestExecution TestExecution { get; set; } = new();
 
-    private TestPlans? TestPlans { get; set; } = new();
+    //  private TestPlans? TestPlans { get; set; } = new();
 
     public int TestPlanId { get; set; } = -1;
 
-    public List<TestExecution> TestExecutionList = [];
+    // public List<TestExecution> TestExecutionList = [];
 
-    public IEnumerable<TestExecution>? testexecution;
-    public IList<TestExecution>? selectedExecution = new List<TestExecution>();
+    //  public IEnumerable<TestExecution>? testexecution;
+    //   public IList<TestExecution>? selectedExecution = new List<TestExecution>();
 
     /// <summary>
     /// Initialize TestExecution with TestPlan, TestCases, TestSteps, TestCaseExecutions, and TestStepsExecutions
@@ -414,10 +414,10 @@ public class TestExecutionModel
     public async Task<List<TestExecution>> GetPastTestExecutions(int testExecutionId)
     {
         // Create a new DbContext for the first operation
-        await using var contextForFirstQuery = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
 
         // Load the current TestExecution based on Id
-        var testExecution = await contextForFirstQuery.TestExecution
+        var testExecution = await db.TestExecution
             .Include(te => te.TestPlan) // Include TestPlan to check for null
             .FirstOrDefaultAsync(te => te.Id == testExecutionId);
 
@@ -429,7 +429,7 @@ public class TestExecutionModel
         await using var contextForSecondQuery = await _dbContextFactory.CreateDbContextAsync();
 
         // Load past executions filtered directly from the database
-        TestExecutionList = await contextForSecondQuery.TestExecution
+        var teList = await contextForSecondQuery.TestExecution
             .Where(te => !te.IsActive
                          && te.TestPlan != null
                          && te.TestPlan.Id == testExecution.TestPlan.Id
@@ -437,22 +437,21 @@ public class TestExecutionModel
                          && te.Id < testExecution.Id)
             .ToListAsync();
 
-        return TestExecutionList;
+        return teList;
     }
 
 
     public async Task<TestExecution> GetTestExecutionbyIdAsync(int testExecutionId)
     {
-        await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
 
-        var testexecution = await _dbContext.TestExecution
+        var te = await db.TestExecution
             .Include(te => te.TestPlan)
             .FirstOrDefaultAsync(te => te.Id == testExecutionId);
 
-        if (testexecution != null)
-            TestExecution = testexecution;
+        if (te is null) throw new Exception("Test Execution not found");
 
-        return TestExecution;
+        return te;
     }
 
     public async Task<TestExecution> GetTestExecutionAsync(int testExecutionId)
