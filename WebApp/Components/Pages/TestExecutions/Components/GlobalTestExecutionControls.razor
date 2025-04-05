@@ -171,7 +171,7 @@
     async Task CancelExecution()
     {
         await TestExecutionTimerService.CancelExecution(Id);
-        TestExecutionModel.TestExecution = new TestExecution();
+        _testExecution = new TestExecution();
         StateHasChanged();
         await FormNotificationService.NotifyWarning("Test Execution Canceled");
         NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/view/{_testExecution.Id}");
