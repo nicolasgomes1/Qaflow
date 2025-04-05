@@ -21,8 +21,8 @@
                       Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/create")'
                       Size="ButtonSize.Medium"
                       Icon="add"/>
-        <DeleteallDataForModel EntityName="@(nameof(TestExecutionModel.TestExecution))"
-                               EntityList="TestExecutionModel.testexecution"/>
+        <DeleteallDataForModel EntityName="@(nameof(TestExecution))"
+                               EntityList="_testexecution"/>
         <ExportGridDataCsv Grid="_dataGrid"/>
         <RadzenButton Icon="assessment"
                       MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment"))"
