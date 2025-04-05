@@ -11,6 +11,7 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
     //single selection
     public int SelectedTestPlan { get; set; } = -1;
 
+    public string EstimatedTimeInput = string.Empty;
 
     public async Task LoadTestPlanForTestExecution(int testExecution, int projectId)
     {
@@ -44,6 +45,8 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
         if (testPlan is null) return testExecution;
 
         testExecution.TestPlanId = testPlan.Id;
+        testExecution.EstimatedTime =
+            TimeSpan.FromMinutes(int.TryParse(EstimatedTimeInput, out var minutes) ? minutes : 0);
 
         foreach (var testCase in testPlan.LinkedTestCases)
         {

@@ -2,19 +2,30 @@
 
 namespace WebApp.Services;
 
-public class TestExecutionTimerService : IDisposable
+public class TestExecutionTimerServiceold : IDisposable
 {
     private TimeSpan _timeElapsed;
     private DateTime _startExecutionTime;
     private DateTime? _pauseTime; // Time when paused
-    private readonly PeriodicTimer _periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(1)); // 1 second interval
+    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromSeconds(1)); // 1 second interval
     private bool _executionInProgress;
     private bool _isPaused; // Track whether execution is paused
-    public TimeSpan GetElapsedTime() => _timeElapsed;
 
-    public bool IsExecutionInProgress() => _executionInProgress;
+    public TimeSpan GetElapsedTime()
+    {
+        return _timeElapsed;
+    }
 
-    public bool IsPaused() => _isPaused; // Check if paused
+    public bool IsExecutionInProgress()
+    {
+        return _executionInProgress;
+    }
+
+    public bool IsPaused()
+    {
+        return _isPaused;
+        // Check if paused
+    }
 
     // Event to notify when the elapsed time is updated, including testExecutionId
     public event Action<TimeSpan, int>? OnTimeUpdated;
@@ -25,7 +36,7 @@ public class TestExecutionTimerService : IDisposable
 
     private TestExecution? _testExecution;
 
-    public async Task StartExecutionAndTrackTime(TestExecution testExecution)
+    /*public async Task StartExecutionAndTrackTime(TestExecution testExecution)
     {
         if (_executionInProgress) return; // Prevent starting if already in progress
 
@@ -98,9 +109,9 @@ public class TestExecutionTimerService : IDisposable
 
         OnExecutionStateChanged?.Invoke();
         await RunTimerLoop();
-    }
+    }*/
 
-    private async Task RunTimerLoop()
+    /*private async Task RunTimerLoop()
     {
         while (_executionInProgress && !_isPaused)
         {
@@ -110,9 +121,9 @@ public class TestExecutionTimerService : IDisposable
             // Update the elapsed time and trigger the event
             UpdateElapsedTime();
         }
-    }
+    }*/
 
-    private void UpdateElapsedTime()
+    /*private void UpdateElapsedTime()
     {
         if (_isPaused || !_executionInProgress) return; // Do nothing if paused or not running
 
@@ -142,7 +153,7 @@ public class TestExecutionTimerService : IDisposable
         _testExecution = null;
         OnExecutionStateChanged?.Invoke();
         await Task.CompletedTask;
-    }
+    }*/
 
 
     public void Dispose()

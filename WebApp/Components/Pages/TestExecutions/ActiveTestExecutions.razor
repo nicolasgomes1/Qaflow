@@ -11,7 +11,7 @@
                 AllowPaging="true"
                 PagerHorizontalAlign="HorizontalAlign.Left"
                 ShowPagingSummary="true"
-                Data="@_testexecution"
+                Data="@_testExecution"
                 ColumnWidth="300px"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
@@ -78,7 +78,7 @@
     [Parameter] public int ProjectId { get; set; }
     private IList<TestExecution> _selectedTestExecutions = [];
 
-    private IEnumerable<TestExecution> _testexecution = [];
+    private IEnumerable<TestExecution> _testExecution = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -88,7 +88,7 @@
 
     private async Task GetActiveTestExecutions()
     {
-        _testexecution = await TestExecutionModel.GetActiveTestExecutionsAsync(ProjectId);
+        _testExecution = await TestExecutionModel.GetActiveTestExecutionsAsync(ProjectId);
     }
 
 

@@ -30,7 +30,7 @@
         <RadzenLabel Text="Estimated Time (in minutes)"/>
         <RadzenTextBox id="estimatedTime"
                        data-testid="testexecution_estimatedtime"
-                       @bind-Value="_estimatedTimeInput"
+                       @bind-Value="TestExecutionModelv2.EstimatedTimeInput"
                        Placeholder="Enter time in minutes"
                        class="input-style"
                        Name="estimatedTime"/>
@@ -91,8 +91,6 @@
 
     [Parameter] public int ProjectId { get; set; }
 
-    private string _estimatedTimeInput = string.Empty;
-
     private List<TestPlans> _testPlansList = [];
     private readonly TestExecution _testExecution = new();
 
@@ -111,8 +109,6 @@
 
     private async Task CreateExecution()
     {
-        _testExecution.EstimatedTime = TimeSpan.FromMinutes(int.TryParse(_estimatedTimeInput, out var minutes) ? minutes : 0);
-
         // await TestExecutionModel.CreateTestExecution(_testExecution, ProjectId);
         await TestExecutionModelv2.AddTestExecution(_testExecution, ProjectId);
         NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution", true);

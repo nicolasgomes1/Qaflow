@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<FormNotificationService>();
         services.AddScoped<ProjectState>();
         services.AddScoped<TestCaseExecutionTimerService>();
-        services.AddScoped<TestExecutionTimerService>();
+        //services.AddScoped<TestExecutionTimerService>();
         services.AddScoped<TestExecutionTimerServicev2>();
         services.AddScoped<TestStepsExecutionTimerService>();
         services.AddScoped<AppTooltipService>();
