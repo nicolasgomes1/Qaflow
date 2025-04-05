@@ -2,6 +2,8 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 
+<RadzenButton Click="DuplicateCurrentTestExecution"></RadzenButton>
+
 @*Version 2*@
 <RadzenTabs @bind-SelectedIndex="@_selectedIndex">
     <Tabs>
@@ -20,7 +22,6 @@
         <RadzenTabsItem Text="Results">
             <ViewTestCaseExecution Id="Id" ProjectId="ProjectId"/>
         </RadzenTabsItem>
-
     </Tabs>
 </RadzenTabs>
 <div style="margin-top: 10px;">
@@ -39,14 +40,22 @@
     [Parameter] public int ProjectId { get; set; }
 
     private TestExecution _testExecution = new();
+    private TestExecution _newTestExecution = new();
+    int _selectedIndex;
 
+    int _newId;
 
     protected override async Task OnInitializedAsync()
     {
         _testExecution = await TestExecutionModel.GetTestExecutionbyIdAsync(Id);
+        _newId = Id + 1;
     }
 
+    private async Task DuplicateCurrentTestExecution()
+    {
+        _newTestExecution = await TestExecutionModelv2.DuplicateExecutionAsync(Id, ProjectId);
+        NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/view/{_newTestExecution.Id}");
+    }
 
-    int _selectedIndex;
 
 }

@@ -144,6 +144,15 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
         await db.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// Creates a new Test Execution with the provided details and associates it with the given project.
+    /// </summary>
+    /// <param name="testExecution">The Test Execution object containing the necessary details for the new execution.</param>
+    /// <param name="projectId">The ID of the project to associate with the new Test Execution.</param>
+    /// <returns>A new <see cref="TestExecution"/> object initialized with the specified details.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the associated Test Plan specified in the provided Test Execution cannot be found.
+    /// </exception>
     public async Task<TestExecution?> CreateNewExecutionAsync(TestExecution testExecution, int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
@@ -154,7 +163,7 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
                            .FirstOrDefaultAsync(tp => tp.Id == testExecution.TestPlanId)
                        ?? throw new InvalidOperationException("TestPlan not found.");
 
-        var createdBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        var createdBy = (await userService.GetCurrentUserInfoAsync()).UserName;
 
         var newExecution = new TestExecution
         {
@@ -181,17 +190,100 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
                 Version = newExecution.Version,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = createdBy,
-                LinkedTestStepsExecution = testCase.TestSteps.Select(testStep => new TestStepsExecution
+                LinkedTestStepsExecution = new List<TestStepsExecution>()
+            };
+
+            foreach (var testStep in testCase.TestSteps)
+            {
+                var newTestStepsExecution = new TestStepsExecution
                 {
+                    TestCaseExecution = newTestCaseExecution, // 🔧 Important!
                     TestStepsId = testStep.Id,
                     ExecutionStatus = ExecutionStatus.NotRun,
                     Version = newExecution.Version,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = createdBy
-                }).ToList()
-            };
+                };
+
+                newTestCaseExecution.LinkedTestStepsExecution.Add(newTestStepsExecution);
+            }
 
             newExecution.LinkedTestCaseExecutions.Add(newTestCaseExecution);
+        }
+
+        db.TestExecution.Add(newExecution);
+        await db.SaveChangesAsync();
+
+        return newExecution;
+    }
+
+
+    /// <summary>
+    /// Duplicates an existing Test Execution by creating a new instance with updated details, associating it with the specified project.
+    /// </summary>
+    /// <param name="testExecutionId">The ID of the Test Execution to duplicate.</param>
+    /// <param name="projectId">The ID of the project to associate with the duplicated Test Execution.</param>
+    /// <returns>A new <see cref="TestExecution"/> instance containing the duplicated details.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the specified Test Execution to duplicate cannot be found.
+    /// </exception>
+    public async Task<TestExecution?> DuplicateExecutionAsync(int testExecutionId, int projectId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var originalExecution = await db.TestExecution
+                                    .Include(te => te.LinkedTestCaseExecutions)
+                                    .ThenInclude(tce => tce.LinkedTestStepsExecution)
+                                    .FirstOrDefaultAsync(te => te.Id == testExecutionId)
+                                ?? throw new InvalidOperationException("Original TestExecution not found.");
+
+        var createdBy = (await userService.GetCurrentUserInfoAsync()).UserName;
+
+        var newExecution = new TestExecution
+        {
+            Name = originalExecution.Name,
+            Description = originalExecution.Description,
+            ExecutionStatus = ExecutionStatus.NotRun,
+            Version = originalExecution.Version + 1,
+            CreatedAt = DateTime.UtcNow,
+            TestPlanId = originalExecution.TestPlanId,
+            EstimatedTime = originalExecution.EstimatedTime,
+            AssignedTo = originalExecution.AssignedTo,
+            CreatedBy = createdBy,
+            ProjectsId = projectId,
+            Priority = originalExecution.Priority,
+            LinkedTestCaseExecutions = new List<TestCaseExecution>()
+        };
+
+        foreach (var originalTce in originalExecution.LinkedTestCaseExecutions)
+        {
+            var newTce = new TestCaseExecution
+            {
+                TestExecution = newExecution,
+                TestCaseId = originalTce.TestCaseId,
+                ExecutionStatus = ExecutionStatus.NotRun,
+                Version = newExecution.Version,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = createdBy,
+                LinkedTestStepsExecution = new List<TestStepsExecution>()
+            };
+
+            foreach (var originalStep in originalTce.LinkedTestStepsExecution)
+            {
+                var newStep = new TestStepsExecution
+                {
+                    TestCaseExecution = newTce,
+                    TestStepsId = originalStep.TestStepsId,
+                    ExecutionStatus = ExecutionStatus.NotRun,
+                    Version = newExecution.Version,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = createdBy
+                };
+
+                newTce.LinkedTestStepsExecution.Add(newStep);
+            }
+
+            newExecution.LinkedTestCaseExecutions.Add(newTce);
         }
 
         db.TestExecution.Add(newExecution);
