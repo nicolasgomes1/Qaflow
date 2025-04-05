@@ -5,8 +5,9 @@
 <RadzenTabs @bind-SelectedIndex="@_selectedIndex">
     <Tabs>
         <RadzenTabsItem Text="All">
-            <TestExecutionTable OnInitializedMethod="()=>TestExecutionModel.DisplayTestExecutionIndexPage(ProjectId)"
-                                ProjectId="ProjectId"/>
+            <TestExecutionTable
+                OnInitializedMethod="() => TestExecutionModel.DisplayTestExecutionIndexPage(ProjectId)"
+                ProjectId="ProjectId"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Passed">
             <TestExecutionTable

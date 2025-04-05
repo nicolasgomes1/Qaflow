@@ -362,35 +362,30 @@ public class TestExecutionModel
     }
 
 
-    public async Task DisplayTestExecutionIndexPage(int projectId)
+    public async Task<List<TestExecution>> DisplayTestExecutionIndexPage(int projectId)
     {
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        testexecution = await dbContext.TestExecution
+        var te = await dbContext.TestExecution
             .Include(te => te.TestPlan) // Include the TestPlan navigation property
             .Where(te => te.ProjectsId == projectId)
             .ToListAsync();
 
-        if (testexecution != null && testexecution.Any()) // Check if there are any elements
-            selectedExecution = new List<TestExecution> { testexecution.First() };
-        else
-            selectedExecution = new List<TestExecution>(); // Handle the case where there are no test executions
+        return te;
     }
 
-    public async Task DisplayTestExecutionIndexPageWithStatus(ExecutionStatus status, int projectId)
+    public async Task<List<TestExecution>> DisplayTestExecutionIndexPageWithStatus(ExecutionStatus status,
+        int projectId)
     {
         //  await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        testexecution = await _dbContext.TestExecution
+        var te = await _dbContext.TestExecution
             .Where(te => te.ExecutionStatus == status) // Compare the status directly
             .Include(te => te.TestPlan) // Include the TestPlan navigation property
             .Where(te => te.ProjectsId == projectId)
             .ToListAsync();
 
-        if (testexecution != null && testexecution.Any()) // Check if there are any elements
-            selectedExecution = new List<TestExecution> { testexecution.First() };
-        else
-            selectedExecution = new List<TestExecution>(); // Handle the case where there are no test executions
+        return te;
     }
 
 

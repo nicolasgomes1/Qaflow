@@ -9,13 +9,12 @@
                 AllowPaging="true"
                 PagerHorizontalAlign="HorizontalAlign.Left"
                 ShowPagingSummary="true"
-                Data="@TestExecutionModel.testexecution"
+                Data="@_testexecution"
                 ColumnWidth="300px"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
-                @bind-Value="@TestExecutionModel.selectedExecution"
+                @bind-Value="@_selectedTestExecutions"
                 @ref="_dataGrid">
-
     <HeaderTemplate>
         <RadzenButton Text="Test Execution"
                       data-testid="create-testexecutions"
@@ -94,19 +93,20 @@
 </RadzenDataGrid>
 
 @code {
-    [Parameter] public Func<Task>? OnInitializedMethod { get; set; }
+    [Parameter] public Func<Task<List<TestExecution>>>? OnInitializedMethod { get; set; }
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
-    //   private BadgeStyle _badgeStyle = new();
+    private IList<TestExecution> _selectedTestExecutions = [];
+    private List<TestExecution> _testexecution = [];
 
     private RadzenDataGrid<TestExecution> _dataGrid = new();
-
 
     protected override async Task OnInitializedAsync()
     {
         if (OnInitializedMethod != null)
         {
-            await OnInitializedMethod();
+            var result = await OnInitializedMethod();
+            _testexecution = result;
         }
     }
 
