@@ -27,6 +27,7 @@ public class Requirements : BaseEntity
     public ICollection<RequirementsFile> LinkedRequirementsFiles { get; set; } = [];
 
     public RequirementsSpecification? RequirementsSpecification { get; set; }
+    public int? RequirementsSpecificationId { get; set; } // FK
 
 
     //Filtering properties

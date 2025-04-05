@@ -35,7 +35,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         //Project Relationships
         modelBuilder.Entity<Projects>()
             .HasMany(p => p.Bugs)
@@ -88,6 +88,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasMany(p => p.TestExecution)
             .WithOne(r => r.Projects)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Requirements>()
+            .HasOne(r => r.RequirementsSpecification)
+            .WithMany(rs => rs.LinkedRequirements)
+            .HasForeignKey("RequirementsSpecificationId")
+            .OnDelete(DeleteBehavior.Restrict); // or Cascade or SetNull depending on your logic
 
 
         modelBuilder.Entity<TestCases>()

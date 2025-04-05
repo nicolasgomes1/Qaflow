@@ -136,7 +136,7 @@
 
     private async Task CreateNewRequirement()
     {
-        _requirements.RequirementsSpecification = _requirementsSpecificationList.FirstOrDefault(rs => rs.Id == _selectedRequirementSpecificationId && rs.ProjectsId == ProjectId);
+        _requirements.RequirementsSpecificationId = _selectedRequirementSpecificationId;
         _requirements = await RequirementsModel.AddRequirement(_requirements, _uploadedFiles, ProjectId);
         NavigationManager.NavigateTo($"project/{ProjectId}/requirements");
 

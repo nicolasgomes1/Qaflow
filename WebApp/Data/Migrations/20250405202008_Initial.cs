@@ -327,7 +327,8 @@ namespace WebApp.Data.Migrations
                         name: "FK_Requirements_RequirementsSpecification_RequirementsSpecific~",
                         column: x => x.RequirementsSpecificationId,
                         principalTable: "RequirementsSpecification",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -687,18 +688,18 @@ namespace WebApp.Data.Migrations
                 name: "TestCasesTestPlans",
                 columns: table => new
                 {
-                    TestCasesId = table.Column<int>(type: "integer", nullable: false),
+                    LinkedTestCasesId = table.Column<int>(type: "integer", nullable: false),
                     TestPlansId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TestCasesTestPlans", x => new { x.TestCasesId, x.TestPlansId });
+                    table.PrimaryKey("PK_TestCasesTestPlans", x => new { x.LinkedTestCasesId, x.TestPlansId });
                     table.ForeignKey(
-                        name: "FK_TestCasesTestPlans_TestCases_TestCasesId",
-                        column: x => x.TestCasesId,
+                        name: "FK_TestCasesTestPlans_TestCases_LinkedTestCasesId",
+                        column: x => x.LinkedTestCasesId,
                         principalTable: "TestCases",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_TestCasesTestPlans_TestPlans_TestPlansId",
                         column: x => x.TestPlansId,

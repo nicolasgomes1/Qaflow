@@ -1332,7 +1332,8 @@ namespace WebApp.Data.Migrations
 
                     b.HasOne("WebApp.Data.RequirementsSpecification", "RequirementsSpecification")
                         .WithMany("LinkedRequirements")
-                        .HasForeignKey("RequirementsSpecificationId");
+                        .HasForeignKey("RequirementsSpecificationId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Projects");
 

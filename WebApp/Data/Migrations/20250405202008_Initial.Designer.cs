@@ -12,8 +12,8 @@ using WebApp.Data;
 namespace WebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250403182315_Simplify")]
-    partial class Simplify
+    [Migration("20250405202008_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1335,7 +1335,8 @@ namespace WebApp.Data.Migrations
 
                     b.HasOne("WebApp.Data.RequirementsSpecification", "RequirementsSpecification")
                         .WithMany("LinkedRequirements")
-                        .HasForeignKey("RequirementsSpecificationId");
+                        .HasForeignKey("RequirementsSpecificationId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Projects");
 
