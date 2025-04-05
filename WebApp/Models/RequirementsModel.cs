@@ -13,10 +13,9 @@ public class RequirementsModel(
     RequirementsFilesModel requirementsFilesModel,
     UserService userService)
 {
-    
     public int SelectedRequirementSpecificationId;
 
-    
+
     public async Task<List<Requirements>> DisplayRequirementsIndexPage(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
@@ -90,7 +89,8 @@ public class RequirementsModel(
         db.Requirements.Add(requirement);
         requirement.ProjectsId = projectId;
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        UpdateArchivedStatus(requirement);
+        SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(requirement);
+
         await db.SaveChangesAsync();
 
         // If there are files, attempt to save them
@@ -109,7 +109,7 @@ public class RequirementsModel(
 
         // First, update the requirement
         db.Requirements.Update(requirement);
-        UpdateArchivedStatus(requirement);
+        SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(requirement);
         requirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         requirement.ModifiedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
@@ -119,15 +119,6 @@ public class RequirementsModel(
             await requirementsFilesModel.SaveFilesToDb(files, requirementId, projectId);
     }
 
-    /// <summary>
-    /// Determines how the requirements is archived if it has the workflow status complete
-    /// </summary>
-    /// <param name="requirement"></param>
-    private static void UpdateArchivedStatus(Requirements requirement)
-    {
-        if (requirement.WorkflowStatus == WorkflowStatus.Completed)
-            requirement.ArchivedStatus = ArchivedStatus.Archived;
-    }
 
     public async Task<List<Requirements>> GetRequirementsToValidateAgainstCsv(int projectId)
     {
