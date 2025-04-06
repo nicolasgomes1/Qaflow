@@ -29,9 +29,9 @@ public class TestExecutionModel
     /// <returns>The TestExecution object</returns>
     public async Task<TestExecution> GetTestExecutionData(int testExecutionId)
     {
-        await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
 
-        var getTestExecutionData = await dbContext.TestExecution
+        var getTestExecutionData = await db.TestExecution
             .Include(te => te.TestPlan)
             .Include(te => te.LinkedTestCaseExecutions)
             .ThenInclude(tce => tce.LinkedTestStepsExecution)
@@ -44,9 +44,9 @@ public class TestExecutionModel
 
     public async Task<List<TestExecution>> GetTestExecutionWithTestPlan()
     {
-        await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
 
-        return await dbContext.TestExecution
+        return await db.TestExecution
             .Include(te => te.TestPlan)
             .ToListAsync();
     }
@@ -54,9 +54,9 @@ public class TestExecutionModel
 
     public async Task<List<TestExecution>> DisplayTestExecutionIndexPage(int projectId)
     {
-        await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
 
-        var te = await dbContext.TestExecution
+        var te = await db.TestExecution
             .Include(te => te.TestPlan) // Include the TestPlan navigation property
             .Where(te => te.ProjectsId == projectId)
             .ToListAsync();
@@ -67,9 +67,9 @@ public class TestExecutionModel
     public async Task<List<TestExecution>> DisplayTestExecutionIndexPageWithStatus(ExecutionStatus status,
         int projectId)
     {
-        //  await using var _dbContext = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
 
-        var te = await _dbContext.TestExecution
+        var te = await db.TestExecution
             .Where(te => te.ExecutionStatus == status) // Compare the status directly
             .Include(te => te.TestPlan) // Include the TestPlan navigation property
             .Where(te => te.ProjectsId == projectId)
@@ -87,9 +87,9 @@ public class TestExecutionModel
     /// <exception cref="InvalidOperationException"></exception>
     public async Task<List<TestCases>> GetTestCasesForTestExecution(int testExecutionId)
     {
-        await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
 
-        var testExecution = await dbContext.TestExecution
+        var testExecution = await db.TestExecution
             .Include(te => te.TestPlan)
             .ThenInclude(tp => tp!.LinkedTestCases)
             .FirstOrDefaultAsync(te => te.Id == testExecutionId);
@@ -146,7 +146,9 @@ public class TestExecutionModel
 
     public async Task<TestExecution> GetTestExecutionAsync(int testExecutionId)
     {
-        return await _dbContext.TestExecution.FindAsync(testExecutionId) ??
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestExecution.FindAsync(testExecutionId) ??
                throw new Exception("Test Execution Id not found");
     }
 
@@ -158,7 +160,9 @@ public class TestExecutionModel
     /// <exception cref="Exception"></exception>
     public async Task<TestExecution> GetTestExecutionByIdAsync(int testExecutionId)
     {
-        return await _dbContext.TestExecution.FindAsync(testExecutionId) ??
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestExecution.FindAsync(testExecutionId) ??
                throw new Exception("Test Execution Id not found");
     }
 
@@ -217,7 +221,7 @@ public class TestExecutionModel
     /// </summary>
     /// <param name="priority"></param>
     /// <returns></returns>
-    public async Task<int> TestExecutionWIthPriority(Priority priority, int projectId)
+    private async Task<int> TestExecutionWIthPriority(Priority priority, int projectId)
     {
         await using var db = await _dbContextFactory.CreateDbContextAsync();
 
@@ -229,7 +233,7 @@ public class TestExecutionModel
     }
 
 
-    public async Task<int> GetTotalTestExecutionsAsync(int projectId)
+    private async Task<int> GetTotalTestExecutionsAsync(int projectId)
     {
         await using var db = await _dbContextFactory.CreateDbContextAsync();
 

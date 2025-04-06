@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Models;
 using WebApp.Services;
+using WebApp.Services.TestData;
 using WebApp.UnitTests.Models;
 
 namespace WebApp.UnitTests.DIContainers;
@@ -30,6 +31,9 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<ProjectState>();
         serviceCollection.AddScoped<RequirementsModel>();
         serviceCollection.AddScoped<RequirementsFilesModel>();
+        serviceCollection.AddScoped<RoleSeeder>();
+        serviceCollection.AddScoped<IntegrationDataSeeder>();
+        serviceCollection.AddScoped<ProjectDataSeeder>();
 
         // Register IDbContextFactory
         serviceCollection.AddDbContextFactory<ApplicationDbContext>();
@@ -41,7 +45,25 @@ public class TestFixture : IDisposable
 
         // Build the service provider
         ServiceProvider = serviceCollection.BuildServiceProvider();
+
+        // NOW create the scope and resolve the seeders
+        using var scope = ServiceProvider.CreateScope();
+        var scopedServices = scope.ServiceProvider;
+
+        // Ensure the DB is created
+        var db = scopedServices.GetRequiredService<ApplicationDbContext>();
+        db.Database.EnsureCreated(); // 👈 THIS is the missing link
+
+        var roleSeeder = scopedServices.GetRequiredService<RoleSeeder>();
+        roleSeeder.StartAsync(CancellationToken.None);
+
+        var integrationSeeder = scopedServices.GetRequiredService<IntegrationDataSeeder>();
+        integrationSeeder.StartAsync(CancellationToken.None);
+
+        var projectSeeder = scopedServices.GetRequiredService<ProjectDataSeeder>();
+        projectSeeder.StartAsync(CancellationToken.None);
     }
+
     public void Dispose()
     {
         // Clean up any resources if needed (optional)
