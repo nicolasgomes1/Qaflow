@@ -35,6 +35,8 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<RoleSeeder>();
         serviceCollection.AddScoped<IntegrationDataSeeder>();
         serviceCollection.AddScoped<ProjectDataSeeder>();
+        serviceCollection.AddScoped<BugsModel>();
+        serviceCollection.AddScoped<BugsFilesModel>();
 
         // Register IDbContextFactory
         serviceCollection.AddDbContextFactory<ApplicationDbContext>();

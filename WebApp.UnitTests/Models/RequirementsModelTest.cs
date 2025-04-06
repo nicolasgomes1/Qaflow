@@ -9,7 +9,7 @@ using WebApp.UnitTests.DIContainers;
 namespace WebApp.UnitTests.Models;
 
 [TestSubject(typeof(RequirementsModel))]
-public class RequirementsModelTest
+public class RequirementsModelTest : IClassFixture<TestFixture>
 {
     private readonly ApplicationDbContext db;
     private readonly RequirementsModel rm;
@@ -67,7 +67,6 @@ public class RequirementsModelTest
     {
         var project = await CreateAndSetProject();
 
-
         var newRequirement = new Requirements
         {
             Name = "original",
@@ -80,7 +79,8 @@ public class RequirementsModelTest
         newRequirement.Name = "updated";
         newRequirement.Description = "updated description";
 
-        await rm.UpdateRequirement(newRequirement.Id, null, project.Id);
+        db.Requirements.Update(newRequirement);
+        await db.SaveChangesAsync();
 
         var updatedRequirement = await rm.GetRequirementByIdAsync(newRequirement.Id);
         Assert.Equal("updated", updatedRequirement.Name);

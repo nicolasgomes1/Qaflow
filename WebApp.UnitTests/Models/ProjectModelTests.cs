@@ -132,13 +132,20 @@ public class ProjectModelTests : IClassFixture<TestFixture>
 
         await pm.AddProject(newProject);
 
-        // Update the project's name
-        newProject.Name = "updated sample";
-        db.Projects.Update(newProject);
+        // Retrieve the newly added project and validate
+        var addedProject = await pm.GetProjectById(newProject.Id);
+        Assert.NotNull(addedProject);
+        Assert.Equal("sample", addedProject.Name);
+        Assert.Equal("Description", addedProject.Description);
+
+        // Update the project's name and save the changes
+        addedProject.Name = "updated sample";
+        //  await pm.UpdateProject(addedProject.Id);
+        db.Projects.Update(addedProject);
         await db.SaveChangesAsync();
 
         // Retrieve the updated project
-        var updatedProject = await pm.GetProjectById(newProject.Id);
+        var updatedProject = await pm.GetProjectById(addedProject.Id);
 
         // Assert that the name was updated
         Assert.Equal("updated sample", updatedProject.Name);
