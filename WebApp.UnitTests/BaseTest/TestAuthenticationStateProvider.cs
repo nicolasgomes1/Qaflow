@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace WebApp.UnitTests.Models;
+namespace WebApp.UnitTests.BaseTest;
 
 public class TestAuthenticationStateProvider : AuthenticationStateProvider
 {
@@ -9,7 +9,7 @@ public class TestAuthenticationStateProvider : AuthenticationStateProvider
     {
         var identity = new ClaimsIdentity(new[]
         {
-            new Claim(ClaimTypes.Name, "TestUser"),
+            new Claim(ClaimTypes.Name, "TestUser")
         }, "Test");
         var user = new ClaimsPrincipal(identity);
         return Task.FromResult(new AuthenticationState(user));

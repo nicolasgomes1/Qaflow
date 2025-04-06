@@ -9,26 +9,23 @@ using WebApp.UnitTests.DIContainers;
 namespace WebApp.UnitTests.Models;
 
 [TestSubject(typeof(RequirementsModel))]
-public class RequirementsModelTest : TestBase
+public class RequirementsModelTest
 {
-    private readonly TestFixture _fixture;
-    private readonly ApplicationDbContext _db;
-    private readonly RequirementsModel _rm;
-    private readonly ProjectModel _pm;
+    private readonly ApplicationDbContext db;
+    private readonly RequirementsModel rm;
+    private readonly ProjectModel pm;
 
-    public RequirementsModelTest(TestFixture fixture) : base(fixture)
+    public RequirementsModelTest(TestFixture fixture)
     {
-        _fixture = fixture;
-
         // Resolve services via ServiceProvider
-        _db = _fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        _rm = _fixture.ServiceProvider.GetRequiredService<RequirementsModel>();
-        _pm = _fixture.ServiceProvider.GetRequiredService<ProjectModel>();
+        db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        rm = fixture.ServiceProvider.GetRequiredService<RequirementsModel>();
+        pm = fixture.ServiceProvider.GetRequiredService<ProjectModel>();
     }
 
     private async Task<int> GetRequirementCountAsync()
     {
-        return await _db.Requirements.CountAsync();
+        return await db.Requirements.CountAsync();
     }
 
     private async Task<Data.Projects> CreateAndSetProject()
@@ -39,7 +36,7 @@ public class RequirementsModelTest : TestBase
             Description = "Description"
         };
 
-        await _pm.AddProject(newProject);
+        await pm.AddProject(newProject);
         var project = newProject;
 
         return project;
@@ -59,7 +56,7 @@ public class RequirementsModelTest : TestBase
 
         var initialCount = await GetRequirementCountAsync();
 
-        await _rm.AddRequirement(newRequirement, null, project.Id);
+        await rm.AddRequirement(newRequirement, null, project.Id);
 
         var finalCount = await GetRequirementCountAsync();
         Assert.Equal(initialCount + 1, finalCount);
@@ -78,14 +75,14 @@ public class RequirementsModelTest : TestBase
             ProjectsId = project.Id
         };
 
-        await _rm.AddRequirement(newRequirement, null, project.Id);
+        await rm.AddRequirement(newRequirement, null, project.Id);
 
         newRequirement.Name = "updated";
         newRequirement.Description = "updated description";
 
-        await _rm.UpdateRequirement(newRequirement.Id, null, project.Id);
+        await rm.UpdateRequirement(newRequirement.Id, null, project.Id);
 
-        var updatedRequirement = await _rm.GetRequirementByIdAsync(newRequirement.Id);
+        var updatedRequirement = await rm.GetRequirementByIdAsync(newRequirement.Id);
         Assert.Equal("updated", updatedRequirement.Name);
         Assert.Equal("updated description", updatedRequirement.Description);
     }

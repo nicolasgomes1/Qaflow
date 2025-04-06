@@ -5,6 +5,7 @@ using WebApp.Data;
 using WebApp.Models;
 using WebApp.Services;
 using WebApp.Services.TestData;
+using WebApp.UnitTests.BaseTest;
 using WebApp.UnitTests.Models;
 
 namespace WebApp.UnitTests.DIContainers;
@@ -52,7 +53,7 @@ public class TestFixture : IDisposable
 
         // Ensure the DB is created
         var db = scopedServices.GetRequiredService<ApplicationDbContext>();
-        db.Database.EnsureCreated(); // 👈 THIS is the missing link
+        db.Database.EnsureCreated();
 
         var roleSeeder = scopedServices.GetRequiredService<RoleSeeder>();
         roleSeeder.StartAsync(CancellationToken.None);
@@ -63,6 +64,7 @@ public class TestFixture : IDisposable
         var projectSeeder = scopedServices.GetRequiredService<ProjectDataSeeder>();
         projectSeeder.StartAsync(CancellationToken.None);
     }
+
 
     public void Dispose()
     {

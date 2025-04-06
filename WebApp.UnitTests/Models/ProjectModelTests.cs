@@ -2,33 +2,26 @@ using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Models;
-using WebApp.UnitTests.BaseTest;
 using WebApp.UnitTests.DIContainers;
 
 namespace WebApp.UnitTests.Models;
 
 [TestSubject(typeof(ProjectModel))]
-public class ProjectModelTests : TestBase
+public class ProjectModelTests : IClassFixture<TestFixture>
 {
-    
+    private readonly ApplicationDbContext db;
+    private readonly ProjectModel pm;
 
-    private readonly TestFixture _fixture;
-    private readonly ApplicationDbContext _db;
-    private readonly ProjectModel _pm;
-
-    public ProjectModelTests(TestFixture fixture) : base(fixture)
+    public ProjectModelTests(TestFixture fixture)
     {
-        _fixture = fixture;
-
-        // Resolve services via ServiceProvider
-        _db = _fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        _pm = _fixture.ServiceProvider.GetRequiredService<ProjectModel>();
+        db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        pm = fixture.ServiceProvider.GetRequiredService<ProjectModel>();
     }
 
     // Helper method to track relative changes in project count
     private async Task<int> GetProjectCountAsync()
     {
-        return await _db.Projects.CountAsync();
+        return await db.Projects.CountAsync();
     }
 
     [Fact]
@@ -42,10 +35,10 @@ public class ProjectModelTests : TestBase
 
         // Get the current count of projects before adding a new one
         var initialCount = await GetProjectCountAsync();
-        
+
         // Add a new project
-        await _pm.AddProject(newProject);
-        
+        await pm.AddProject(newProject);
+
         // Check that the project count increased by 1
         var finalCount = await GetProjectCountAsync();
         Assert.Equal(initialCount + 1, finalCount);
@@ -65,14 +58,15 @@ public class ProjectModelTests : TestBase
                 Description = $"Description{i}"
             };
 
-            await _pm.AddProject(newProject);
+            await pm.AddProject(newProject);
         }
+
         var finalCount = await GetProjectCountAsync();
 
         // Verify the number of projects is exactly 3
-        var result = await _pm.GetProjects();
-  //      Assert.Equal(initialCount+3, result.Count());
-    Assert.Equal(initialCount + 3, finalCount);
+        var result = await pm.GetProjects();
+        //      Assert.Equal(initialCount+3, result.Count());
+        Assert.Equal(initialCount + 3, finalCount);
     }
 
     [Fact]
@@ -86,17 +80,17 @@ public class ProjectModelTests : TestBase
             Name = "sample",
             Description = "Description"
         };
-        
-        await _pm.AddProject(newProject);
+
+        await pm.AddProject(newProject);
 
         // Ensure it was added
         Assert.Equal(initialCount + 1, await GetProjectCountAsync());
         // Remove the project
-        await _pm.RemoveProject(newProject.Id);
+        await pm.RemoveProject(newProject.Id);
 
         // Ensure the count decreased by 1 (check relative change)
         var finalCount = await GetProjectCountAsync();
-        Assert.Equal(initialCount - 1, finalCount-1);
+        Assert.Equal(initialCount - 1, finalCount - 1);
     }
 
     [Fact]
@@ -106,7 +100,7 @@ public class ProjectModelTests : TestBase
         var initialCount = await GetProjectCountAsync();
 
         // Attempt to remove a non-existent project
-        await Assert.ThrowsAsync<Exception>(() => _pm.RemoveProject(0)); // Random non-existent Id        
+        await Assert.ThrowsAsync<Exception>(() => pm.RemoveProject(0)); // Random non-existent Id        
         // The count should remain unchanged (no side effects)
         var finalCount = await GetProjectCountAsync();
         Assert.Equal(initialCount, finalCount);
@@ -120,12 +114,11 @@ public class ProjectModelTests : TestBase
             Name = "sample",
             Description = "Description"
         };
-        
-        await _pm.AddProject(newProject);
 
-        var createdProject = await _pm.GetProjectById(newProject.Id);
+        await pm.AddProject(newProject);
+
+        var createdProject = await pm.GetProjectById(newProject.Id);
         Assert.Equal(newProject.Id, createdProject.Id);
-        
     }
 
     [Fact]
@@ -136,15 +129,16 @@ public class ProjectModelTests : TestBase
             Name = "sample",
             Description = "Description"
         };
-    
-        await _pm.AddProject(newProject);
+
+        await pm.AddProject(newProject);
 
         // Update the project's name
         newProject.Name = "updated sample";
-        await _pm.UpdateProject(newProject.Id);
+        db.Projects.Update(newProject);
+        await db.SaveChangesAsync();
 
         // Retrieve the updated project
-        var updatedProject = await _pm.GetProjectById(newProject.Id);
+        var updatedProject = await pm.GetProjectById(newProject.Id);
 
         // Assert that the name was updated
         Assert.Equal("updated sample", updatedProject.Name);

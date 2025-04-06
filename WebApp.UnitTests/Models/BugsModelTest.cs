@@ -8,23 +8,20 @@ using WebApp.UnitTests.DIContainers;
 namespace WebApp.UnitTests.Models;
 
 [TestSubject(typeof(BugsModel))]
-public class BugsModelTest : TestBase
+public class BugsModelTest : IClassFixture<TestFixture>
 {
-    private readonly TestFixture _fixture;
-    private readonly ApplicationDbContext _db;
+    private readonly ApplicationDbContext db;
 
 
-    public BugsModelTest(TestFixture fixture) : base(fixture)
+    public BugsModelTest(TestFixture fixture)
     {
-        _fixture = fixture;
-
-        _db = _fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     }
 
     [Fact]
     public async Task ddd()
     {
-        var count = await _db.Projects.CountAsync();
+        var count = await db.Projects.CountAsync();
 
         Assert.Equal(5, count);
     }
