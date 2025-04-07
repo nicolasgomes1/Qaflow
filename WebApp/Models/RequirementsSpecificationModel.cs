@@ -32,18 +32,13 @@ public class RequirementsSpecificationModel(
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        var requirementsSpecification = await db.RequirementsSpecification
-                                        .FindAsync(updated.Id) ??
-                                    throw new Exception("No requirements Specification Found");
+        updated.ModifiedAt = DateTime.UtcNow;
+        updated.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
-        requirementsSpecification.Name = updated.Name;
-        requirementsSpecification.Description = updated.Description;
-        requirementsSpecification.ModifiedAt = DateTime.UtcNow;
-        requirementsSpecification.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-
-        db.RequirementsSpecification.Update(requirementsSpecification);
+        db.RequirementsSpecification.Update(updated);
         await db.SaveChangesAsync();
-        return requirementsSpecification;
+
+        return updated;
     }
 
 
