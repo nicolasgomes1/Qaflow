@@ -7,6 +7,7 @@ using WebApp.Services;
 using WebApp.Services.TestData;
 using WebApp.UnitTests.BaseTest;
 using WebApp.UnitTests.Models;
+using RequirementsSpecificationModel = WebApp.Models.RequirementsSpecificationModel;
 
 namespace WebApp.UnitTests.DIContainers;
 
@@ -37,6 +38,7 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<ProjectDataSeeder>();
         serviceCollection.AddScoped<BugsModel>();
         serviceCollection.AddScoped<BugsFilesModel>();
+        serviceCollection.AddScoped<RequirementsSpecificationModel>();
 
         // Register IDbContextFactory
         serviceCollection.AddDbContextFactory<ApplicationDbContext>();
