@@ -34,12 +34,12 @@ public class BugsModel(
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
         var bug = await db.Bugs
-            .Include(b => b.TestCases)
+            .Include(b => b.LinkedTestCases)
             .FirstOrDefaultAsync(b => b.Id == bugId);
 
         if (bug is null) throw new Exception("Bug not found");
 
-        return bug.TestCases.ToList();
+        return bug.LinkedTestCases.ToList();
     }
 
     public async Task<Bugs> AddBug(Bugs bug, List<IBrowserFile>? files, int projectId)
@@ -49,7 +49,9 @@ public class BugsModel(
         bug.CreatedAt = DateTime.UtcNow;
         bug.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         bug.ProjectsId = projectId;
-        bug.TestCases = new List<TestCases>();
+        bug.LinkedTestCases = new List<TestCases>();
+
+        SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(bug);
 
         // Fetch and add test cases asynchronously
         foreach (var testCaseId in SelectedTestCasesIds)
@@ -58,7 +60,7 @@ public class BugsModel(
             if (testCase is null)
                 throw new Exception($"Test case with ID {testCaseId} not found.");
 
-            bug.TestCases.Add(testCase);
+            bug.LinkedTestCases.Add(testCase);
         }
 
         // Save the bug
@@ -73,26 +75,33 @@ public class BugsModel(
         return bug;
     }
 
-    public async Task UpdateBugAsync(int bugId, List<IBrowserFile>? files, int projectId)
+    public async Task<Bugs> UpdateBugAsync(Bugs updatedBug, List<IBrowserFile>? files, int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        var bug = await db.Bugs.FindAsync(bugId);
-        if (bug is null) throw new Exception("Bug not found");
+        var bug = await db.Bugs.FindAsync(updatedBug.Id) ?? throw new Exception("Bug not found");
 
-        db.Bugs.Update(bug);
-        UpdateArchivedStatus(bug);
+
+        SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(bug);
+
+        bug.Name = updatedBug.Name;
+        bug.Description = updatedBug.Description;
+        bug.ProjectsId = projectId;
+
+        bug.LinkedTestCases = updatedBug.LinkedTestCases;
+        bug.BugStatus = updatedBug.BugStatus;
+        bug.Priority = updatedBug.Priority;
+        bug.Severity = updatedBug.Severity;
         bug.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         bug.ModifiedAt = DateTime.UtcNow;
+        db.Bugs.Update(bug);
+
         await db.SaveChangesAsync();
 
         // If there are files, attempt to save them
-        if (files != null && files.Count != 0) await bugsFilesModel.SaveFilesToDb(files, bugId, projectId);
-    }
+        if (files is { Count: > 0 })
+            await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
 
-    private static void UpdateArchivedStatus(Bugs bugs)
-    {
-        if (bugs.WorkflowStatus == WorkflowStatus.Completed)
-            bugs.ArchivedStatus = ArchivedStatus.Archived;
+        return bug;
     }
 }

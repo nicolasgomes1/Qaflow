@@ -42,7 +42,7 @@
 
     private async Task UpdateProject()
     {
-        await ProjectModel.UpdateProject(Id);
+        var updated = await ProjectModel.UpdateProject(_projects);
         NavigationManager.NavigateTo("/");
         StateHasChanged();
         await FormNotificationService.NotifySuccess("Project Updated Successfully");

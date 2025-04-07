@@ -1396,7 +1396,7 @@ namespace WebApp.Data.Migrations
             modelBuilder.Entity("WebApp.Data.TestCases", b =>
                 {
                     b.HasOne("WebApp.Data.Bugs", null)
-                        .WithMany("TestCases")
+                        .WithMany("LinkedTestCases")
                         .HasForeignKey("BugsId");
 
                     b.HasOne("WebApp.Data.Projects", "Projects")
@@ -1547,7 +1547,7 @@ namespace WebApp.Data.Migrations
 
                     b.Navigation("BugFiles");
 
-                    b.Navigation("TestCases");
+                    b.Navigation("LinkedTestCases");
                 });
 
             modelBuilder.Entity("WebApp.Data.Projects", b =>

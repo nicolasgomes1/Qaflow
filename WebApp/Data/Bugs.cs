@@ -33,5 +33,5 @@ public class Bugs : BaseEntity
 
     [MaxLength(50)] public string AssignedTo { get; set; } = string.Empty;
 
-    public ICollection<TestCases> TestCases { get; set; } = new List<TestCases>();
+    public ICollection<TestCases> LinkedTestCases { get; set; } = new List<TestCases>();
 }

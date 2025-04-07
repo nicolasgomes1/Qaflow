@@ -213,7 +213,8 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             Projects = projects,
             CreatedBy = USER,
             BugStatus = status,
-            AssignedTo = assignedUserId
+            AssignedTo = assignedUserId,
+            WorkflowStatus = WorkflowStatus.New
         };
 
         await dbContext.Bugs.AddAsync(newBug);
