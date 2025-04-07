@@ -25,17 +25,8 @@ else
                     @bind-Settings="@DataGridSettingsService.Settings"
                     @ref="_dataGrid"
                     AllowVirtualization="true"
-                    Density="@setDensityBasedOnSettings()">
-
-        @code{
-
-            private Density setDensityBasedOnSettings()
-            {
-                return _gridSettings.IsCompactMode == true ? Density.Compact : Density.Default;
-            }
-
-        }
-
+                    Density="@Density.Compact">
+        
         <HeaderTemplate>
             <RadzenButton Text="Requirement"
                           Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements/create", true)'
@@ -115,8 +106,8 @@ else
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Property="@nameof(Requirements.CreatedBy)" Title="Created By" Width="auto"/>
             <RadzenDataGridColumn Property="@nameof(Requirements.ModifiedBy)" Title="Modified By" Width="auto"/>
-            <RadzenDataGridColumn Property="@nameof(Requirements.CreatedAt)" Title="Created At" Width="auto"/>
-            <RadzenDataGridColumn Property="@nameof(Requirements.ModifiedAt)" Title="Modified At" Width="auto"/>
+            <!-- <RadzenDataGridColumn Property="@nameof(Requirements.CreatedAt)" Title="Created At" Width="auto"/> -->
+            <!-- <RadzenDataGridColumn Property="@nameof(Requirements.ModifiedAt)" Title="Modified At" Width="auto"/>-->
             <RadzenDataGridColumn Property="@nameof(Requirements.AssignedTo)" Title="Assigned To" Width="auto">
                 <Template Context="requirement">
                     @Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(requirement.AssignedTo)).Result

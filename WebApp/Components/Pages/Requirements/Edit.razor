@@ -140,7 +140,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await GetAssociatedRequirementSpecification(Id);
+        await RequirementsModel.GetAssociatedRequirementSpecification(Id);
 
         _usersList = await UserService.GetUsersList();
 
@@ -165,18 +165,6 @@ else
         NavigationManager.NavigateTo($"/project/{ProjectId}/requirements");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Requirement with Id {_requirements.Id} Updated Successfully");
-    }
-
-    async Task GetAssociatedRequirementSpecification(int Id)
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-
-        var requirement = await db.Requirements.FindAsync(Id);
-        if (requirement is null) return;
-
-        var current = requirement.RequirementsSpecificationId;
-        if (current is not null)
-            RequirementsModel.SelectedRequirementSpecificationId = (int)current;
     }
 
 

@@ -182,8 +182,7 @@ public class TestCasesModel(
         await UpdateRequirementsDropdown(testCases, db);
         await UpdateJiraTickets(testCases);
 
-        if (testCases.WorkflowStatus == WorkflowStatus.Completed)
-            testCases.ArchivedStatus = ArchivedStatus.Archived;
+        SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(testCases);
         testCases.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         testCases.ModifiedAt = DateTime.UtcNow;
         testCases.TestSteps = TestStepsList;

@@ -89,6 +89,7 @@ public class RequirementsModel(
         db.Requirements.Add(requirement);
         requirement.ProjectsId = projectId;
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+
         if (SelectedRequirementSpecificationId != -1)
             requirement.RequirementsSpecificationId = SelectedRequirementSpecificationId;
 
@@ -102,13 +103,12 @@ public class RequirementsModel(
 
         return requirement;
     }
-    
-    
+
+
     public async Task<Requirements> UpdateRequirement(Requirements requirements, List<IBrowserFile>? files,
         int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-
 
 
         SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(requirements);
@@ -163,5 +163,17 @@ public class RequirementsModel(
             await db.RequirementsSpecification.Where(p => p.ProjectsId == projectId)
                 .ToListAsync();
         return requirementsSpecifications;
+    }
+
+    public async Task GetAssociatedRequirementSpecification(int requirementId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var requirement = await db.Requirements.FindAsync(requirementId);
+        if (requirement is null) return;
+
+        var current = requirement.RequirementsSpecificationId;
+        if (current is not null)
+            SelectedRequirementSpecificationId = (int)current;
     }
 }
