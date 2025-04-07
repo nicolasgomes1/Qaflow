@@ -118,6 +118,8 @@ public class RequirementsModel(
         
         if(SelectedRequirementSpecificationId != -1)
             requirement.RequirementsSpecificationId = SelectedRequirementSpecificationId;
+        if(SelectedRequirementSpecificationId != -10)
+            requirement.RequirementsSpecificationId = null;
         await db.SaveChangesAsync();
 
         // If there are files, attempt to save them
