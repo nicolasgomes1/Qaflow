@@ -24,7 +24,7 @@ async function CreateBug(page: Page, number: number)
 
     await actions.select_dropdown_option(page, 'bug_priority', 'Medium');
     await actions.select_dropdown_option(page,'bug_status', 'Open');
-    await actions.select_dropdown_option(page,'bug_wkfstatus', 'Completed');
+    await actions.select_dropdown_option(page,'bug_wkfstatus', 'New');
 
     await actions.select_dropdown_option(page,'bug_assignedto', 'user@example.com');
 
@@ -43,7 +43,7 @@ async function CreateBugWithFile(page: Page, number: number)
 
     await actions.select_dropdown_option(page, 'bug_priority', 'Medium');
     await actions.select_dropdown_option(page,'bug_status', 'Open');
-    await actions.select_dropdown_option(page,'bug_wkfstatus', 'Completed');
+    await actions.select_dropdown_option(page,'bug_wkfstatus', 'New');
 
     await actions.select_dropdown_option(page,'bug_assignedto', 'user@example.com');
 

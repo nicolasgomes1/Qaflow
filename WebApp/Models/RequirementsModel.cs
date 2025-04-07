@@ -103,28 +103,37 @@ public class RequirementsModel(
         return requirement;
     }
 
-    public async Task UpdateRequirement(int requirementId, List<IBrowserFile>? files, int projectId)
+    public async Task<Requirements> UpdateRequirement(Requirements updatedRequirements, List<IBrowserFile>? files,
+        int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        var requirement = await db.Requirements.FindAsync(requirementId);
-        if (requirement == null) throw new Exception("Requirement not found");
+        var requirement = await db.Requirements.FindAsync(updatedRequirements.Id);
+        if (requirement is null) throw new Exception("Requirement not found");
 
-        // First, update the requirement
-        db.Requirements.Update(requirement);
         SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(requirement);
+
+        requirement.Name = updatedRequirements.Name;
+        requirement.Description = updatedRequirements.Description;
+        requirement.Priority = updatedRequirements.Priority;
+        requirement.WorkflowStatus = updatedRequirements.WorkflowStatus;
+        requirement.AssignedTo = updatedRequirements.AssignedTo;
         requirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         requirement.ModifiedAt = DateTime.UtcNow;
-        
-        if(SelectedRequirementSpecificationId != -1)
-            requirement.RequirementsSpecificationId = SelectedRequirementSpecificationId;
-        if(SelectedRequirementSpecificationId != -10)
+
+        if (SelectedRequirementSpecificationId != -1)
+            requirement.RequirementsSpecificationId = updatedRequirements.RequirementsSpecificationId;
+        updatedRequirements.RequirementsSpecificationId = SelectedRequirementSpecificationId;
+        if (SelectedRequirementSpecificationId != -10)
             requirement.RequirementsSpecificationId = null;
+
+        db.Requirements.Update(requirement);
         await db.SaveChangesAsync();
 
         // If there are files, attempt to save them
         if (files != null && files.Count != 0)
-            await requirementsFilesModel.SaveFilesToDb(files, requirementId, projectId);
+            await requirementsFilesModel.SaveFilesToDb(files, updatedRequirements.Id, projectId);
+        return requirement;
     }
 
 

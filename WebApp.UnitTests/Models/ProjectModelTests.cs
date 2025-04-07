@@ -18,11 +18,6 @@ public class ProjectModelTests : IClassFixture<TestFixture>
         pm = fixture.ServiceProvider.GetRequiredService<ProjectModel>();
     }
 
-    // Helper method to track relative changes in project count
-    private async Task<int> GetProjectCountAsync()
-    {
-        return await db.Projects.CountAsync();
-    }
 
     [Fact]
     public async Task ProjectModel_AddProject()
@@ -34,20 +29,20 @@ public class ProjectModelTests : IClassFixture<TestFixture>
         };
 
         // Get the current count of projects before adding a new one
-        var initialCount = await GetProjectCountAsync();
+        var initialCount = await db.Projects.CountAsync();
 
         // Add a new project
         await pm.AddProject(newProject);
 
         // Check that the project count increased by 1
-        var finalCount = await GetProjectCountAsync();
+        var finalCount = await db.Projects.CountAsync();
         Assert.Equal(initialCount + 1, finalCount);
     }
 
     [Fact]
     public async Task ProjectModel_GetProjects()
     {
-        var initialCount = await GetProjectCountAsync();
+        var initialCount = await db.Projects.CountAsync();
 
         // Adding multiple projects
         for (var i = 0; i < 3; i++)
@@ -61,7 +56,7 @@ public class ProjectModelTests : IClassFixture<TestFixture>
             await pm.AddProject(newProject);
         }
 
-        var finalCount = await GetProjectCountAsync();
+        var finalCount = await db.Projects.CountAsync();
 
         // Verify the number of projects is exactly 3
         var result = await pm.GetProjects();
@@ -72,7 +67,7 @@ public class ProjectModelTests : IClassFixture<TestFixture>
     [Fact]
     public async Task ProjectModel_RemoveProject()
     {
-        var initialCount = await GetProjectCountAsync();
+        var initialCount = await db.Projects.CountAsync();
 
         // First, add a project
         var newProject = new Data.Projects
@@ -83,13 +78,14 @@ public class ProjectModelTests : IClassFixture<TestFixture>
 
         await pm.AddProject(newProject);
 
+        var count = await db.Projects.CountAsync();
         // Ensure it was added
-        Assert.Equal(initialCount + 1, await GetProjectCountAsync());
+        Assert.Equal(initialCount + 1, count);
         // Remove the project
         await pm.RemoveProject(newProject.Id);
 
         // Ensure the count decreased by 1 (check relative change)
-        var finalCount = await GetProjectCountAsync();
+        var finalCount = await db.Projects.CountAsync();
         Assert.Equal(initialCount - 1, finalCount - 1);
     }
 
@@ -97,12 +93,12 @@ public class ProjectModelTests : IClassFixture<TestFixture>
     public async Task ProjectModel_RemoveNonExistentProject()
     {
         // Try removing a project that doesn't exist
-        var initialCount = await GetProjectCountAsync();
+        var initialCount = await db.Projects.CountAsync();
 
         // Attempt to remove a non-existent project
         await Assert.ThrowsAsync<Exception>(() => pm.RemoveProject(0)); // Random non-existent Id        
         // The count should remain unchanged (no side effects)
-        var finalCount = await GetProjectCountAsync();
+        var finalCount = await db.Projects.CountAsync();
         Assert.Equal(initialCount, finalCount);
     }
 
@@ -138,11 +134,9 @@ public class ProjectModelTests : IClassFixture<TestFixture>
         Assert.Equal("sample", addedProject.Name);
         Assert.Equal("Description", addedProject.Description);
 
-        // Update the project's name and save the changes
         addedProject.Name = "updated sample";
-        //  await pm.UpdateProject(addedProject.Id);
-        db.Projects.Update(addedProject);
-        await db.SaveChangesAsync();
+        await pm.UpdateProject(addedProject);
+
 
         // Retrieve the updated project
         var updatedProject = await pm.GetProjectById(addedProject.Id);

@@ -43,24 +43,19 @@ public class ProjectModel(
     /// <summary>
     ///     Updates the project with the specified id.
     /// </summary>
-    /// <param name="projectId"></param>
+    /// <param name="projects"></param>
     /// <exception cref="Exception"></exception>
-    public async Task<Projects> UpdateProject(Projects updatedProject)
+    public async Task<Projects> UpdateProject(Projects projects)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        var project = await db.Projects.FindAsync(updatedProject.Id)
-                      ?? throw new Exception("Project is null");
+        projects.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        projects.ModifiedAt = DateTime.UtcNow;
 
-        // Update the fields from the updatedProject
-        project.Name = updatedProject.Name;
-        project.Description = updatedProject.Description;
-
-        project.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        project.ModifiedAt = DateTime.UtcNow;
-
+        db.Projects.Update(projects);
         await db.SaveChangesAsync();
-        return project;
+
+        return projects;
     }
 
 
