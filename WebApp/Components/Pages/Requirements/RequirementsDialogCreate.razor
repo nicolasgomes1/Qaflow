@@ -17,7 +17,7 @@
     private readonly List<IBrowserFile>? _uploadedFiles = [];
     private List<ApplicationUser> _usersList = [];
     private List<RequirementsSpecification> _requirementsSpecificationList = [];
-    private int _selectedRequirementSpecificationId;
+    //  private int _selectedRequirementSpecificationId;
 
     [Parameter] public EventCallback OnRequirementCreated { get; set; }
 
@@ -29,13 +29,13 @@
     [Parameter]
     public bool IsDisabled { get; set; } = false;
 
-    [EditorRequired][Parameter] public int ProjectId { get; set; }
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
 
     private async Task CreateNewRequirement()
     {
         // CreateBug should handle adding the bug and return a result
-        _requirements.RequirementsSpecification = _requirementsSpecificationList.FirstOrDefault(rs => rs.Id == _selectedRequirementSpecificationId && rs.ProjectsId == ProjectId);
+        //   _requirements.RequirementsSpecification = _requirementsSpecificationList.FirstOrDefault(rs => rs.Id == _selectedRequirementSpecificationId && rs.ProjectsId == ProjectId);
         var result = await RequirementsModel.AddRequirement(_requirements, _uploadedFiles, ProjectId);
         DialogService.Close(result);
         StateHasChanged();
@@ -52,7 +52,7 @@
     {
         _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
         _usersList = await UserService.GetUsersList();
-        _selectedRequirementSpecificationId = -1;
+        RequirementsModel.SelectedRequirementSpecificationId = -1;
         _requirements = new Requirements();
         _uploadedFiles?.Clear();
 
@@ -105,7 +105,7 @@
                         <RadzenDropDown id="requirements_specification"
                                         class="w-100"
                                         Data="@_requirementsSpecificationList"
-                                        @bind-Value="_selectedRequirementSpecificationId"
+                                        @bind-Value="RequirementsModel.SelectedRequirementSpecificationId"
                                         TextProperty="Name"
                                         ValueProperty="Id"
                                         AllowFiltering="true"

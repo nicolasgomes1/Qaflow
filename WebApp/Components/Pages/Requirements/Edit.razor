@@ -57,7 +57,7 @@ else
                                                     Data="@_requirementsSpecificationList"
                                                     TextProperty="Name"
                                                     ValueProperty="Id"
-                                                    @bind-Value="_selectedRequirementSpecificationId"
+                                                    @bind-Value="RequirementsModel.SelectedRequirementSpecificationId"
                                                     AllowFiltering="true"
                                                     AllowVirtualization="true"
                                                     Name="requirementsSpecification"/>
@@ -126,7 +126,7 @@ else
     [Parameter] public int ProjectId { get; set; }
     private List<ApplicationUser> _usersList = [];
     private List<RequirementsSpecification> _requirementsSpecificationList = [];
-    private int _selectedRequirementSpecificationId;
+    //  private int _selectedRequirementSpecificationId;
 
 
     int _selectedIndex;
@@ -139,11 +139,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await GetAssociatedRequirementSpecification(Id);
+
         _usersList = await UserService.GetUsersList();
 
         _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
         _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
-        if (_requirements.RequirementsSpecification != null) _selectedRequirementSpecificationId = _requirements.RequirementsSpecification.Id;
         if (_requirements.ArchivedStatus.Equals(ArchivedStatus.Archived))
         {
             NavigationManager.NavigateTo($"project/{ProjectId}/requirements", true);
@@ -158,12 +159,23 @@ else
 
     private async Task UpdateRequirement()
     {
-        _requirements.RequirementsSpecification = _requirementsSpecificationList.FirstOrDefault(rs => rs.Id == _selectedRequirementSpecificationId && rs.ProjectsId == ProjectId);
         await RequirementsModel.UpdateRequirement(Id, _uploadedFiles, ProjectId);
 
         NavigationManager.NavigateTo($"/project/{ProjectId}/requirements");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Requirement with Id {_requirements.Id} Updated Successfully");
+    }
+
+    async Task GetAssociatedRequirementSpecification(int Id)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        var requirement = await db.Requirements.FindAsync(Id);
+        if (requirement is null) return;
+
+        var current = requirement.RequirementsSpecificationId;
+        if (current is not null)
+            RequirementsModel.SelectedRequirementSpecificationId = (int)current;
     }
 
 

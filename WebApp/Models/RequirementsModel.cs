@@ -13,7 +13,7 @@ public class RequirementsModel(
     RequirementsFilesModel requirementsFilesModel,
     UserService userService)
 {
-    public int SelectedRequirementSpecificationId;
+    public int SelectedRequirementSpecificationId = -1;
 
 
     public async Task<List<Requirements>> DisplayRequirementsIndexPage(int projectId)
@@ -89,6 +89,9 @@ public class RequirementsModel(
         db.Requirements.Add(requirement);
         requirement.ProjectsId = projectId;
         requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        if (SelectedRequirementSpecificationId != -1)
+            requirement.RequirementsSpecificationId = SelectedRequirementSpecificationId;
+
         SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(requirement);
 
         await db.SaveChangesAsync();
@@ -112,6 +115,9 @@ public class RequirementsModel(
         SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(requirement);
         requirement.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         requirement.ModifiedAt = DateTime.UtcNow;
+        
+        if(SelectedRequirementSpecificationId != -1)
+            requirement.RequirementsSpecificationId = SelectedRequirementSpecificationId;
         await db.SaveChangesAsync();
 
         // If there are files, attempt to save them
