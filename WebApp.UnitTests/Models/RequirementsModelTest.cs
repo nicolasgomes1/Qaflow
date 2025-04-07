@@ -79,8 +79,9 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
         newRequirement.Name = "updated";
         newRequirement.Description = "updated description";
 
-        db.Requirements.Update(newRequirement);
-        await db.SaveChangesAsync();
+        await rm.UpdateRequirement(newRequirement, null, project.Id);
+       // db.Requirements.Update(newRequirement);
+        //await db.SaveChangesAsync();
 
         var updatedRequirement = await rm.GetRequirementByIdAsync(newRequirement.Id);
         Assert.Equal("updated", updatedRequirement.Name);
