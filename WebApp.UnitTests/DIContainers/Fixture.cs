@@ -43,7 +43,9 @@ public class TestFixture : IDisposable
 
         // Configure Identity
         serviceCollection.AddIdentityCore<ApplicationUser>(options => { })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddSignInManager()
             .AddDefaultTokenProviders();
 
         // Build the service provider
@@ -57,14 +59,23 @@ public class TestFixture : IDisposable
         var db = scopedServices.GetRequiredService<ApplicationDbContext>();
         db.Database.EnsureCreated();
 
-        var roleSeeder = scopedServices.GetRequiredService<RoleSeeder>();
-        roleSeeder.StartAsync(CancellationToken.None);
 
-        var integrationSeeder = scopedServices.GetRequiredService<IntegrationDataSeeder>();
-        integrationSeeder.StartAsync(CancellationToken.None);
+        try
+        {
+            var roleSeeder = scopedServices.GetRequiredService<RoleSeeder>();
+            roleSeeder.StartAsync(CancellationToken.None).GetAwaiter().GetResult();
 
-        var projectSeeder = scopedServices.GetRequiredService<ProjectDataSeeder>();
-        projectSeeder.StartAsync(CancellationToken.None);
+            var integrationSeeder = scopedServices.GetRequiredService<IntegrationDataSeeder>();
+            integrationSeeder.StartAsync(CancellationToken.None).GetAwaiter().GetResult();
+
+            var projectSeeder = scopedServices.GetRequiredService<ProjectDataSeeder>();
+            projectSeeder.StartAsync(CancellationToken.None).GetAwaiter().GetResult();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 

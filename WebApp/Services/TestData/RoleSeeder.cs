@@ -19,9 +19,8 @@ public class RoleSeeder(IServiceProvider serviceProvider, ILogger<RoleSeeder> lo
             if (await roleManager.RoleExistsAsync(roleName)) continue;
             var roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
             if (!roleResult.Succeeded)
-            {
-                logger.LogError("Error creating role {RoleName}: {Errors}", roleName, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
-            }
+                logger.LogError("Error creating role {RoleName}: {Errors}", roleName,
+                    string.Join(", ", roleResult.Errors.Select(e => e.Description)));
         }
 
         // Create users and assign them to roles
@@ -30,7 +29,8 @@ public class RoleSeeder(IServiceProvider serviceProvider, ILogger<RoleSeeder> lo
         await CreateUserAndAssignRole(userManager, "manager@example.com", "Manager123!", "Manager", true);
     }
 
-    private async Task CreateUserAndAssignRole(UserManager<ApplicationUser> userManager, string email, string password, string role, bool emailConfirmed)
+    private async Task CreateUserAndAssignRole(UserManager<ApplicationUser> userManager, string email, string password,
+        string role, bool emailConfirmed)
     {
         var user = await userManager.FindByEmailAsync(email);
 
@@ -41,7 +41,8 @@ public class RoleSeeder(IServiceProvider serviceProvider, ILogger<RoleSeeder> lo
 
             if (!createResult.Succeeded)
             {
-                logger.LogError("Error creating user {email}: {Errors}", email, string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                logger.LogError("Error creating user {email}: {Errors}", email,
+                    string.Join(", ", createResult.Errors.Select(e => e.Description)));
                 return;
             }
         }
@@ -51,11 +52,13 @@ public class RoleSeeder(IServiceProvider serviceProvider, ILogger<RoleSeeder> lo
         {
             var addToRoleResult = await userManager.AddToRoleAsync(user, role);
             if (!addToRoleResult.Succeeded)
-            {
-                logger.LogError("Error assigning role {role}: {Errors}", role, string.Join(", ", addToRoleResult.Errors.Select(e => e.Description)));
-            }
+                logger.LogError("Error assigning role {role}: {Errors}", role,
+                    string.Join(", ", addToRoleResult.Errors.Select(e => e.Description)));
         }
     }
 
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
 }
