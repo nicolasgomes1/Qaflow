@@ -1,5 +1,6 @@
 ﻿@attribute [Authorize]
 @rendermode InteractiveServer
+@implements IDisposable
 
 @if (ProjectId != 0)
 {
@@ -64,9 +65,26 @@
         TooltipService.Open(elementReference, message, options);
     }
 
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+
     void CloseTooltip()
     {
         TooltipService.Close();
+    }
+
+    void IDisposable.Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
     }
 
 }
