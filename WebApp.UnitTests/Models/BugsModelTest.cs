@@ -23,18 +23,25 @@ public class BugsModelTest : IClassFixture<TestFixture>
     }
 
     [Fact]
-    public async Task ddd()
+    public async Task DDD()
     {
         var project = await db.Projects.CountAsync();
         var requirement = await db.Requirements.CountAsync();
         var requirmentsspec = await db.RequirementsSpecification.CountAsync();
         var testcase = await db.TestCases.CountAsync();
         var testplans = await db.TestPlans.CountAsync();
+        var bugs = await db.Bugs.CountAsync();
+        var testSteps = await db.TestSteps.CountAsync();
+        var testExecutions = await db.TestExecution.CountAsync();
 
         output.WriteLine($"Total Projects: {project.ToString()}");
         output.WriteLine($"Total Requirements: {requirement.ToString()}");
         output.WriteLine($"Total Requirements Specification: {requirmentsspec.ToString()}");
         output.WriteLine($"Total Test Cases: {testcase.ToString()}");
         output.WriteLine($"Total Test Plans: {testplans.ToString()}");
+        output.WriteLine($"Total Bugs: {bugs.ToString()}");
+        output.WriteLine($"Total Test Steps: {testSteps.ToString()}");
+        output.WriteLine($"Total Test Executions: {testExecutions.ToString()}");
+        
     }
 }
