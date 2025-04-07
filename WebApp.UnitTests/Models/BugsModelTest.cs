@@ -23,25 +23,24 @@ public class BugsModelTest : IClassFixture<TestFixture>
     }
 
     [Fact]
-    public async Task DDD()
+    public async Task BugModel_GetBugsAsync()
     {
-        var project = await db.Projects.CountAsync();
-        var requirement = await db.Requirements.CountAsync();
-        var requirmentsspec = await db.RequirementsSpecification.CountAsync();
-        var testcase = await db.TestCases.CountAsync();
-        var testplans = await db.TestPlans.CountAsync();
-        var bugs = await db.Bugs.CountAsync();
-        var testSteps = await db.TestSteps.CountAsync();
-        var testExecutions = await db.TestExecution.CountAsync();
+        var project = await db.Projects.Where(x => x.Name == "Demo Project With Data").FirstOrDefaultAsync();
 
-        output.WriteLine($"Total Projects: {project.ToString()}");
-        output.WriteLine($"Total Requirements: {requirement.ToString()}");
-        output.WriteLine($"Total Requirements Specification: {requirmentsspec.ToString()}");
-        output.WriteLine($"Total Test Cases: {testcase.ToString()}");
-        output.WriteLine($"Total Test Plans: {testplans.ToString()}");
-        output.WriteLine($"Total Bugs: {bugs.ToString()}");
-        output.WriteLine($"Total Test Steps: {testSteps.ToString()}");
-        output.WriteLine($"Total Test Executions: {testExecutions.ToString()}");
-        
+        var bugs = await bm.GetBugsAsync(project.Id);
+
+        Assert.NotEmpty(bugs);
+        Assert.True(bugs.Count >= 5);
+    }
+
+    [Fact]
+    public async Task BugModel_GetBugByIdAsync()
+    {
+        var bug = await db.Bugs.Where(x => x.Name == "Bug 1").FirstOrDefaultAsync();
+
+        var bugById = await bm.GetBugByIdAsync(bug.Id);
+
+        Assert.NotNull(bugById);
+        Assert.Equal(bug.Id, bugById.Id);
     }
 }
