@@ -92,6 +92,8 @@ public class BugsModel(
         bug.BugStatus = updatedBug.BugStatus;
         bug.Priority = updatedBug.Priority;
         bug.Severity = updatedBug.Severity;
+        bug.WorkflowStatus = updatedBug.WorkflowStatus;
+        bug.AssignedTo = updatedBug.AssignedTo;
         bug.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         bug.ModifiedAt = DateTime.UtcNow;
         db.Bugs.Update(bug);

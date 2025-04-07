@@ -27,7 +27,7 @@
     private async Task UpdateNewRequirement()
     {
         // CreateBug should handle adding the bug and return a result
-        _requirements = await RequirementsSpecificationModel.UpdateRequirementsSpecificationAsync(Id);
+        var updated = await RequirementsSpecificationModel.UpdateRequirementsSpecificationAsync(_requirements);
         DialogService.Close(_requirements);
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Requirement Updated successfully with id {_requirements.Id}");
