@@ -27,7 +27,7 @@ public class BugsModelTest : IClassFixture<TestFixture>
     public async Task BugModel_GetBugsAsync()
     {
         var project = await db.Projects.Where(x => x.Name == "Demo Project With Data").FirstOrDefaultAsync();
-
+        if (project == null) throw new Exception("Project not found");
         var bugs = await bm.GetBugsAsync(project.Id);
 
         Assert.NotEmpty(bugs);
@@ -38,7 +38,7 @@ public class BugsModelTest : IClassFixture<TestFixture>
     public async Task BugModel_GetBugByIdAsync()
     {
         var bug = await db.Bugs.Where(x => x.Name == "Bug 1").FirstOrDefaultAsync();
-
+        if (bug == null) throw new Exception("Bug not found");
         var bugById = await bm.GetBugByIdAsync(bug.Id);
 
         Assert.NotNull(bugById);
@@ -49,7 +49,7 @@ public class BugsModelTest : IClassFixture<TestFixture>
     public async Task BugModel_AddBugAsync()
     {
         var project = await db.Projects.Where(x => x.Name == "Demo Project With Data").FirstOrDefaultAsync();
-
+        if (project == null) throw new Exception("Project not found");
         var newBug = new Bugs
         {
             Name = "Bug 1",
@@ -70,7 +70,7 @@ public class BugsModelTest : IClassFixture<TestFixture>
     public async Task BugModel_AddBugAsync_Status_New()
     {
         var project = await db.Projects.Where(x => x.Name == "Demo Project With Data").FirstOrDefaultAsync();
-
+        if (project == null) throw new Exception("Project not found");
         var newBug = new Bugs
         {
             Name = "Bug 1",
@@ -94,7 +94,7 @@ public class BugsModelTest : IClassFixture<TestFixture>
     public async Task BugModel_AddBugAsync_Status_InReview()
     {
         var project = await db.Projects.Where(x => x.Name == "Demo Project With Data").FirstOrDefaultAsync();
-
+        if (project == null) throw new Exception("Project not found");
         var newBug = new Bugs
         {
             Name = "Bug 1",
@@ -118,7 +118,7 @@ public class BugsModelTest : IClassFixture<TestFixture>
     public async Task BugModel_AddBugAsync_Status_Completed()
     {
         var project = await db.Projects.Where(x => x.Name == "Demo Project With Data").FirstOrDefaultAsync();
-
+        if (project == null) throw new Exception("Project not found");
         var newBug = new Bugs
         {
             Name = "Bug 1",
@@ -142,6 +142,7 @@ public class BugsModelTest : IClassFixture<TestFixture>
     public async Task BugModel_UpdateBugAsync()
     {
         var project = await db.Projects.Where(x => x.Name == "Demo Project With Data").FirstOrDefaultAsync();
+        if (project == null) throw new Exception("Project not found");
         var newBug = new Bugs
         {
             Name = "Bug 1",

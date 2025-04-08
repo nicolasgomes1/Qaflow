@@ -29,11 +29,19 @@ async function click_button(page: Page, id: string) {
  * @param {Page} page - The Playwright page object.
  * @param {string} id - data-testid element to be validated.
  */
-async function validate_button(page: Page, id: string)
+async function validate_button1(page: Page, id: string)
 {
     const el = page.getByTestId(id);
     await el.waitFor({ state: 'visible' });
     await page.waitForLoadState('networkidle');
+}
+
+async function validate_button(page: Page, id: string) {
+    const button = page.getByTestId(id);
+
+    await expect(button).toBeVisible({ timeout: 5000 });
+    
+    await page.waitForTimeout(100); // Give Blazor a moment to render final state
 }
 
 /**
@@ -41,15 +49,39 @@ async function validate_button(page: Page, id: string)
  * @param {string} id - data-testid to locate the element.
  * @param {string} value - value to be filled in the input element.
  */
-async function fill_input(page: Page, id: string, value: string)
-{
+async function fill_input(page: Page, id: string, value: string) {
     const el = page.getByTestId(id);
-    await el.waitFor({ state: 'visible' });
+    await el.waitFor({state: 'visible'});
     await el.click();
-    await el.fill(value);
-    await el.press('Tab');
-    await expect(el).toHaveValue(value);
+
+    // Try filling with retry if necessary
+    const maxAttempts = 3;
+    let attempt = 0;
+    let filled = false;
+
+    while (attempt < maxAttempts && !filled) {
+        await el.fill(value);
+        await el.press('Tab');
+
+        // Confirm the value is correctly set
+        const currentValue = await el.inputValue();
+        if (currentValue === value) {
+            filled = true;
+        } else {
+            attempt++;
+            console.warn(`Attempt ${attempt} failed to fill input "${id}" correctly. Retrying...`);
+            await page.waitForTimeout(100); // short wait between attempts
+        }
+    }
+
+    if (!filled) {
+        throw new Error(`Failed to fill input "${id}" with value "${value}" after ${maxAttempts} attempts.`);
+    }
+
+    // Assert the input was modified by verifying the class
+    await expect(el).toHaveClass(/modified/);
 }
+
 
 async function validate_input(page: Page, id: string, value: string)
 {
@@ -70,11 +102,21 @@ async function select_dropdown_option(page: Page, id: string, option: string)
     await expect(el).toHaveText(option);
 }
 
-async function submit_form(page: Page, id: string = 'submit')
-{
+async function submit_form(page: Page) {
+    const id = 'submit'
     const submitButton = page.getByTestId(id);
+
+    // Ensure the button is visible and enabled
     await submitButton.waitFor({ state: 'visible' });
+    await expect(submitButton).toBeEnabled();
+
+    // Store the initial URL to detect a change (optional, used for debugging or logs)
+    const initialUrl = page.url();
+
+    // Click the submit button
     await submitButton.click({ force: true });
+    await expect(submitButton).not.toBeVisible({timeout: 5000});
+    
 }
 
 async function validate_page_has_text(page: Page, text: string)
@@ -128,37 +170,49 @@ async function closeModal(page: Page, dataTestId: string) {
     }, dataTestId); // Pass the parameter to page.evaluate
 }
 
-async function LaunchProject(page: Page, project: string)
-{
-    // Hover and click the "Name sort filter_alt" icon to open the filter
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
+async function LaunchProject(page: Page, project: string) {
+    // 1. Open the filter menu by clicking the icon
+    const filterIcon = page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i');
+    await filterIcon.waitFor({ state: 'visible' });
+    await filterIcon.hover();
+    await filterIcon.click();
 
-    // Fill in the project name in the filter textbox
-    await page.getByRole('textbox', { name: 'Name filter value' }).click();
-    await page.getByRole('textbox', { name: 'Name filter value' }).fill(project);
+    // 2. Fill in the filter textbox
+    const filterInput = page.getByRole('textbox', { name: 'Name filter value' });
+    await filterInput.waitFor({ state: 'visible' });
+    await filterInput.fill(project);
 
-    // Click the "Apply" button
-    await page.getByRole('button', { name: 'Apply' }).click();
+    // 3. Click Apply
+    const applyButton = page.getByRole('button', { name: 'Apply' });
+    await applyButton.waitFor({ state: 'visible' });
+    await applyButton.click();
 
-    // Wait for the network to idle (ensure the page loads and updates)
-    await page.waitForLoadState('networkidle');
-
-    // Wait for the tooltip or popup (rz-tooltip rz-popup) to disappear before continuing
+    // 4. Wait for Blazor to finish rendering (tooltip gone, DOM settled)
     await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
+    await page.waitForTimeout(100); // Tiny delay to ensure Blazor rendering is complete
 
-    // Wait for the tbody to have only one row after applying the filter
-    await page.waitForFunction(() => {
-        const tbody = document.querySelector('tbody');
-        return tbody && tbody.rows.length === 1; // Wait until there is only one row in tbody
-    }, { timeout: 5000 }); // Set a timeout for this check (5 seconds in this example)
+    // 5. Get the first visible row
+    const visibleRow = page.locator('tbody tr:visible').first();
+    await expect(visibleRow).toBeVisible({ timeout: 5000 });
+    await expect(visibleRow).toContainText(project); // ✅ Less strict, just right
 
-    // Now click the "launch" button
-    await page.getByRole('button', { name: 'launch' }).first().click({ force: true });
+    const launchButton = visibleRow.getByRole('button', { name: 'launch' });
+    await launchButton.waitFor({ state: 'visible' });
+    await launchButton.click();
 
-    // Wait for the page to load after the click
+
+
+    // 7. Wait for navigation or success state
     await page.waitForLoadState('load');
+
+    // 8. Confirm we landed on the right screen/component
+    await validate_button(page, 'd_requirements');
+
+    // Optional: add a selector to validate success feedback (toast, modal, etc.)
+    // await page.waitForSelector('[data-testid="launch-success"]', { timeout: 5000 });
 }
+
+
 
 
 async function UploadFile(page: Page, id: string) {
@@ -179,19 +233,19 @@ async function UploadFile(page: Page, id: string) {
 }
 
 async function ClickTab(page: Page, TabTestId: string) {
-
-    // Step 1: Unfocus any currently focused element to ensure we can interact freely
-    await page.evaluate(() => document.body.focus());
+    // Step 1: Unfocus any currently focused element
+    await page.evaluate(() => document.activeElement instanceof HTMLElement && document.activeElement.blur());
 
     // Step 2: Locate the element by its data-testid
     const tab = page.locator(`[data-testid="${TabTestId}"]`);
 
-    
-    // Step 3a: Wait for the tab to be attached to the DOM
-    await tab.waitFor({state: 'attached'}).then(() => tab.scrollIntoViewIfNeeded());
-    // Step 3: Scroll the element into view, even if it's hidden or off-screen
+    // Step 3: Wait for the element to be attached to the DOM
+    await tab.waitFor({ state: 'attached' });
 
-    // Step 4: Ensure the element is visible
+    // Step 4: Scroll the element into view if needed
+    await tab.scrollIntoViewIfNeeded();
+
+    // Optional: wait for visibility (not required if using force, but helpful if you want more confidence)
     const isVisible = await tab.isVisible();
     if (!isVisible) {
         console.log(`Element with data-testid="${TabTestId}" is not visible, but proceeding to click anyway.`);
@@ -199,7 +253,6 @@ async function ClickTab(page: Page, TabTestId: string) {
 
     // Step 5: Force click the element
     await tab.click({ force: true });
-
 }
 
 

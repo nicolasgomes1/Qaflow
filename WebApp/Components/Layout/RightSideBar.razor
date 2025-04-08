@@ -58,7 +58,7 @@
         _shouldRenderTestCasesSideBar = ShouldRenderRightSidebarRequirements();
     }
 
-    private void OnLocationChanged(object sender, LocationChangedEventArgs e)
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         StateHasChanged(); // Force re-render
     }
@@ -90,5 +90,5 @@
     {
         return $"width: {(_rightSidebarExpanded ? "300px" : "0px")}; transition: width 0.3s ease; height: 100%; background-color: #f0f0f0; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);";
     }
-    
+
 }

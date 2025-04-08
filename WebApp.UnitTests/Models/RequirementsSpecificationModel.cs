@@ -60,6 +60,7 @@ public class RequirementsSpecificationModelTest : IClassFixture<TestFixture>
         await rm.UpdateRequirementsSpecificationAsync(currentRequirementsSpecification);
         var updatedRequirementsSpecification =
             await db.RequirementsSpecification.FirstOrDefaultAsync(x => x.Name == "updated");
+        if (updatedRequirementsSpecification == null) throw new Exception("Requirements Specification not found");
         Assert.Equal("updated", updatedRequirementsSpecification.Name);
         Assert.Equal("updated description", updatedRequirementsSpecification.Description);
     }

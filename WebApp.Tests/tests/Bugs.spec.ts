@@ -37,7 +37,7 @@ async function CreateBugWithFile(page: Page, number: number)
 {
     const name = 'Test Bug Playwright' + number;
     await actions.fill_input(page, 'bug_name', name);
-
+    await page.waitForTimeout(50); // short wait between attempts
     const description = 'Test Bug Playwright Description' + number;
     await actions.fill_input(page, 'bug_description', description);
 
