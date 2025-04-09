@@ -52,101 +52,105 @@ async function CreateBugWithFile(page: Page, number: number)
     await actions.ClickTab(page, 'bug_files');
 
     await actions.UploadFile(page, 'fileupload');
-    
+
     await actions.submit_form(page);
 
     await actions.validate_button(page, 'create_bug');
 }
 
 
-test('Create New Bug', async ({ page })=> {
-    test.slow();
-    const Random = Math.floor(Math.random() * 1000000);
+test.describe('Bug Suite', () => {
 
-    await actions.LaunchProject(page, 'Demo Project Without Data' );
+    
+    test('Create New Bug', async ({ page })=> {
+        test.slow();
+        const Random = Math.floor(Math.random() * 1000000);
 
-    await actions.click_button(page, 'd_bugs');
+        await actions.LaunchProject(page, 'Demo Project Without Data' );
 
-    await actions.click_button(page, 'create_bug');
+        await actions.click_button(page, 'd_bugs');
 
-
-    await CreateBug(page, Random);
-    const name = 'Test Bug Playwright' + Random;
-    await filter.filterTableModel(page, name);
-
-    await actions.click_button(page, 'delete');
-
-    await page.getByRole('button', { name: 'Ok' }).click();
-    await expect(page.getByRole('table')).not.toContainText(name);
-});
-
-test('Create New Bug with file', async ({ page })=> {
-    test.slow();
-    const Random = Math.floor(Math.random() * 1000000);
-
-    await actions.LaunchProject(page, 'Demo Project Without Data' );
-
-    await actions.click_button(page, 'd_bugs');
-
-    await actions.click_button(page, 'create_bug');
+        await actions.click_button(page, 'create_bug');
 
 
-    await CreateBugWithFile(page, Random);
-    const name = 'Test Bug Playwright' + Random;
-    await filter.filterTableModel(page, name);
+        await CreateBug(page, Random);
+        const name = 'Test Bug Playwright' + Random;
+        await filter.filterTableModel(page, name);
 
-    await actions.click_button(page, 'view');
+        await actions.click_button(page, 'delete');
 
-    await actions.ClickTab(page, 'bug_files');
-    await actions.validate_page_has_text(page, 'testfile.png');
-});
+        await page.getByRole('button', { name: 'Ok' }).click();
+        await expect(page.getByRole('table')).not.toContainText(name);
+    });
 
+    test('Create New Bug with file', async ({ page })=> {
+        test.slow();
+        const Random = Math.floor(Math.random() * 1000000);
 
-test('View New Bug', async ({ page })=> {
-    test.slow();
-    const Random = Math.floor(Math.random() * 1000000);
+        await actions.LaunchProject(page, 'Demo Project Without Data' );
 
-    await actions.LaunchProject(page, 'Demo Project Without Data' );
+        await actions.click_button(page, 'd_bugs');
 
-    await actions.click_button(page, 'd_bugs');
-
-    await actions.click_button(page, 'create_bug');
-
-
-    await CreateBug(page, Random);
-    const name = 'Test Bug Playwright' + Random;
-    await filter.filterTableModel(page, name);
-
-    await actions.click_button(page, 'view');
-
-    const description = 'Test Bug Playwright Description' + Random;
-
-    expect(page.getByText(name)).toBeVisible();
-    expect(page.getByText(description)).toBeVisible();
-});
-
-test('Edit New Bug', async ({ page })=> {
-    test.slow();
-    const Random = Math.floor(Math.random() * 1000000);
-
-    await actions.LaunchProject(page, 'Demo Project Without Data' );
-
-    await actions.click_button(page, 'd_bugs');
-
-    await actions.click_button(page, 'create_bug');
+        await actions.click_button(page, 'create_bug');
 
 
-    await CreateBug(page, Random);
-    const name = 'Test Bug Playwright' + Random;
-    const description = 'Test Bug Playwright Description' + Random;
+        await CreateBugWithFile(page, Random);
+        const name = 'Test Bug Playwright' + Random;
+        await filter.filterTableModel(page, name);
 
-    await filter.filterTableModel(page, name);
+        await actions.click_button(page, 'view');
 
-    await actions.click_button(page, 'edit');
+        await actions.ClickTab(page, 'bug_files');
+        await actions.validate_page_has_text(page, 'testfile.png');
+    });
 
-    await actions.validate_input(page, 'bug_name', name);
-    await actions.validate_input(page, 'bug_description', description);
 
-    await actions.submit_form(page);
-    await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()
+    test('View New Bug', async ({ page })=> {
+        test.slow();
+        const Random = Math.floor(Math.random() * 1000000);
+
+        await actions.LaunchProject(page, 'Demo Project Without Data' );
+
+        await actions.click_button(page, 'd_bugs');
+
+        await actions.click_button(page, 'create_bug');
+
+
+        await CreateBug(page, Random);
+        const name = 'Test Bug Playwright' + Random;
+        await filter.filterTableModel(page, name);
+
+        await actions.click_button(page, 'view');
+
+        const description = 'Test Bug Playwright Description' + Random;
+
+        expect(page.getByText(name)).toBeVisible();
+        expect(page.getByText(description)).toBeVisible();
+    });
+
+    test('Edit New Bug', async ({ page })=> {
+        test.slow();
+        const Random = Math.floor(Math.random() * 1000000);
+
+        await actions.LaunchProject(page, 'Demo Project Without Data' );
+
+        await actions.click_button(page, 'd_bugs');
+
+        await actions.click_button(page, 'create_bug');
+
+
+        await CreateBug(page, Random);
+        const name = 'Test Bug Playwright' + Random;
+        const description = 'Test Bug Playwright Description' + Random;
+
+        await filter.filterTableModel(page, name);
+
+        await actions.click_button(page, 'edit');
+
+        await actions.validate_input(page, 'bug_name', name);
+        await actions.validate_input(page, 'bug_description', description);
+
+        await actions.submit_form(page);
+        await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()
+    })
 })
