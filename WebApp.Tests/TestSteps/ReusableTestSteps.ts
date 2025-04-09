@@ -247,29 +247,7 @@ async function UploadFile(page: Page, id: string) {
     console.log(`File uploaded: ${filePath}`);
 }
 
-async function ClickTab(page: Page, TabTestId: string) {
-    // Step 1: Unfocus any currently focused element
-    await page.evaluate(() => document.activeElement instanceof HTMLElement && document.activeElement.blur());
-
-    // Step 2: Locate the element by its data-testid
-    const tab = page.locator(`[data-testid="${TabTestId}"]`);
-
-    // Step 3: Wait for the element to be attached to the DOM
-    await tab.waitFor({ state: 'attached' });
-
-    // Step 4: Scroll the element into view if needed
-    await tab.scrollIntoViewIfNeeded();
-
-    // Optional: wait for visibility (not required if using force, but helpful if you want more confidence)
-    const isVisible = await tab.isVisible();
-    if (!isVisible) {
-        console.log(`Element with data-testid="${TabTestId}" is not visible, but proceeding to click anyway.`);
-    }
-
-    // Step 5: Force click the element
-    await tab.click({ force: true });
-}
 
 
 
-export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject, UploadFile, ClickTab };
+export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject, UploadFile };

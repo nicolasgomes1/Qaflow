@@ -1,3 +1,4 @@
+
 import { test, expect, Page } from '@playwright/test';
 import * as actions from '../TestSteps/ReusableTestSteps';
 import * as login from '../TestSteps/LoginbyRole';
@@ -69,7 +70,8 @@ test('Create New Test Case With Files', async ({ page })=> {
 
     await actions.select_dropdown_option(page,'testcase_assignedto', 'user@example.com');
 
-    await actions.ClickTab(page, 'testcase_files');
+    await page.getByTestId('testcase_files').click(); // Click on the "Files" tab using data-testid attribute
+
 
     await actions.UploadFile(page, 'fileupload');
     
@@ -80,7 +82,7 @@ test('Create New Test Case With Files', async ({ page })=> {
 
     await filter.filterTableModel(page, testcase_name);
     await actions.click_button(page, 'view');
-    await actions.ClickTab(page, 'testcase_files');
+    await page.getByTestId('testcase_files').click(); // Click on the "Files" tab using data-testid attribute
     await actions.validate_page_has_text(page, 'testfile.png');
 
 });

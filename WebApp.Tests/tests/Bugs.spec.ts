@@ -49,7 +49,7 @@ async function CreateBugWithFile(page: Page, number: number)
 
     await page.evaluate(() => document.activeElement && (document.activeElement as HTMLElement).blur());
 
-    await actions.ClickTab(page, 'bug_files');
+    await page.getByTestId('bug_files').click(); // Click on the "Files" tab using data-testid attribute
 
     await actions.UploadFile(page, 'fileupload');
 
@@ -100,7 +100,8 @@ test.describe('Bug Suite', () => {
 
         await actions.click_button(page, 'view');
 
-        await actions.ClickTab(page, 'bug_files');
+
+        await page.getByTestId('bug_files').click(); // Click on the "Files" tab using data-testid attribute
         await actions.validate_page_has_text(page, 'testfile.png');
     });
 

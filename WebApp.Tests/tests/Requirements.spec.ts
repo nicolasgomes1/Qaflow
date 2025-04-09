@@ -140,7 +140,8 @@ test('Create New Requirement with file', async ({ page })=> {
 
     await page.evaluate(() => document.activeElement && (document.activeElement as HTMLElement).blur());
 
-    await actions.ClickTab(page, 'requirement_files');
+    await page.getByTestId('requirement_files').click(); // Click on the "Files" tab using data-testid attribute
+
 
     await actions.UploadFile(page, 'fileupload');
     
@@ -150,7 +151,7 @@ test('Create New Requirement with file', async ({ page })=> {
 
     await filter.filterTableModel(page, name);
     await actions.click_button(page, 'view');
-    await actions.ClickTab(page, 'requirement_files');
+    await page.getByTestId('requirement_files').click(); // Click on the "Files" tab using data-testid attribute
     await actions.validate_page_has_text(page, 'testfile.png');
 
 

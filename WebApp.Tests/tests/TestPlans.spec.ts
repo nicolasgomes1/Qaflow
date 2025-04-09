@@ -71,8 +71,9 @@ test.describe('Test Plan Suite', () => {
         await actions.select_dropdown_option(page,'testplan_status', 'New');
 
         await actions.select_dropdown_option(page,'testplan_assignedto', 'user@example.com');
-        
-        await actions.ClickTab(page, 'testplan_files');
+
+        await page.getByTestId('testplan_files').click(); // Click on the "Files" tab using data-testid attribute
+
 
         await actions.UploadFile(page, 'fileupload');
 
@@ -83,7 +84,7 @@ test.describe('Test Plan Suite', () => {
         await filter.filterTableModel(page, name);
 
         await actions.click_button(page, 'view');
-        await actions.ClickTab(page, 'testplan_files');
+        await page.getByTestId('testplan_files').click(); // Click on the "Files" tab using data-testid attribute
         await actions.validate_page_has_text(page, 'testfile.png');
     });
 })
