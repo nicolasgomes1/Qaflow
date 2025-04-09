@@ -20,6 +20,7 @@ else
                     ShowPagingSummary="true"
                     Data="@_testplans"
                     ColumnWidth="300px"
+                    Density="Density.Compact"
                     LogicalFilterOperator="LogicalFilterOperator.Or"
                     SelectionMode="DataGridSelectionMode.Single"
                     @bind-Value="@_selectedTestPlans"
@@ -118,7 +119,7 @@ else
     private readonly string _gridId = "testplans"; // Unique identifier for this grid
 
     private bool _isLoading = true;
-    int _pageSizeFilter = 5;
+    int _pageSizeFilter = 10;
 
     private RadzenDataGrid<TestPlans> _dataGrid = new();
 
