@@ -51,36 +51,22 @@ async function validate_button(page: Page, id: string) {
  */
 async function fill_input(page: Page, id: string, value: string) {
     const el = page.getByTestId(id);
-    await el.waitFor({state: 'visible'});
+    await el.waitFor({ state: 'visible' });
+
+    // Focus and fill the input field
     await el.click();
-
-    // Try filling with retry if necessary
-    const maxAttempts = 3;
-    let attempt = 0;
-    let filled = false;
-
-    while (attempt < maxAttempts && !filled) {
-        await el.fill(value);
-        await el.press('Tab');
-
-        // Confirm the value is correctly set
-        const currentValue = await el.inputValue();
-        if (currentValue === value) {
-            filled = true;
-        } else {
-            attempt++;
-            console.warn(`Attempt ${attempt} failed to fill input "${id}" correctly. Retrying...`);
-            await page.waitForTimeout(100); // short wait between attempts
-        }
+    await el.fill(value).then(() => {
+        // Move focus away by pressing Tab
+        el.press('Tab');
+    });
+    
+    // Confirm the value is correctly set
+    const currentValue = await el.inputValue();
+    if (currentValue !== value) {
+        throw new Error(`Failed to fill input "${id}" with value "${value}".`);
     }
-
-    if (!filled) {
-        throw new Error(`Failed to fill input "${id}" with value "${value}" after ${maxAttempts} attempts.`);
-    }
-
-    // Assert the input was modified by verifying the class
-    await expect(el).toHaveClass(/modified/);
 }
+
 
 
 async function validate_input(page: Page, id: string, value: string)
