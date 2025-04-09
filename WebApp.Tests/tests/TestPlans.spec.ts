@@ -70,7 +70,7 @@ test('Create New Test Plan With Files', async ({ page })=> {
 
     await actions.select_dropdown_option(page,'testplan_assignedto', 'user@example.com');
 
-    await page.evaluate(() => document.activeElement && (document.activeElement as HTMLElement).blur());
+    //await page.evaluate(() => document.activeElement && (document.activeElement as HTMLElement).blur());
 
     await actions.ClickTab(page, 'testplan_files');
 
