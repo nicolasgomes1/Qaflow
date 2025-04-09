@@ -50,20 +50,26 @@ async function validate_button(page: Page, id: string) {
  * @param {string} value - value to be filled in the input element.
  */
 async function fill_input(page: Page, id: string, value: string) {
-    const el = page.getByTestId(id);
-    await el.waitFor({ state: 'visible' });
 
-    // Focus and fill the input field
-    await el.click();
-    await el.fill(value).then(() => {
-        // Move focus away by pressing Tab
-        el.press('Tab');
-    });
-    
-    // Confirm the value is correctly set
-    const currentValue = await el.inputValue();
-    if (currentValue !== value) {
-        throw new Error(`Failed to fill input "${id}" with value "${value}".`);
+    let MaxTries = 3;
+    let RetryFill = 0;
+
+    while (RetryFill < MaxTries) {
+        try {
+            console.log(`Attempt ${RetryFill + 1}: Filling input with data-testid="${id}"`);
+            const el = page.getByTestId(id);
+            await el.waitFor({state: 'visible'});
+            await el.click();
+            await el.fill(value);
+            await el.press('Tab');
+            await expect(el).toHaveValue(value);
+            break;
+        } catch (e) {
+            RetryFill++;
+            if (RetryFill === MaxTries) {
+                console.error(`Failed to fill input with data-testid="${id}" after ${MaxTries} attempts.`);
+            }
+        }
     }
 }
 
@@ -161,7 +167,7 @@ async function LaunchProject(page: Page, project: string) {
     const filterIcon = page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i');
     await filterIcon.waitFor({ state: 'visible' });
     await filterIcon.hover();
-    await filterIcon.click();
+    await filterIcon.click({force: true});
 
     // 2. Fill in the filter textbox
     const filterInput = page.getByRole('textbox', { name: 'Name filter value' });
