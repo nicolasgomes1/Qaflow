@@ -5,7 +5,12 @@ import { expect, Page } from '@playwright/test';
  */
 async function LoginbyRole(page: Page, selectedUser: Users)
 {
+    await page.goto('/');
+    
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByTestId('login')).toHaveText('Login');
     await page.goto('/Account/Login');
+
     
     if (selectedUser === Users.Admin) {
         await page.getByTestId('login_emailform').fill('admin@example.com');

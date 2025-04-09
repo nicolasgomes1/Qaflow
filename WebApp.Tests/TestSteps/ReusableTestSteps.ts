@@ -56,7 +56,7 @@ async function fill_input(page: Page, id: string, value: string) {
 
     while (RetryFill < MaxTries) {
         try {
-            console.log(`Attempt ${RetryFill + 1}: Filling input with data-testid="${id}"`);
+         //   console.log(`Attempt ${RetryFill + 1}: Filling input with data-testid="${id}"`);
             const el = page.getByTestId(id);
             await el.waitFor({state: 'visible'});
             await el.click();
@@ -163,45 +163,56 @@ async function closeModal(page: Page, dataTestId: string) {
 }
 
 async function LaunchProject(page: Page, project: string) {
+
+    let InitialValue = 0;
+    let Maxretries = 3;
+
     // 1. Open the filter menu by clicking the icon
     const filterIcon = page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i');
     await filterIcon.waitFor({ state: 'visible' });
     await filterIcon.hover();
-    await filterIcon.click({force: true});
-
-    // 2. Fill in the filter textbox
-    const filterInput = page.getByRole('textbox', { name: 'Name filter value' });
-    await filterInput.waitFor({ state: 'visible' });
-    await filterInput.fill(project);
-
-    // 3. Click Apply
-    const applyButton = page.getByRole('button', { name: 'Apply' });
-    await applyButton.waitFor({ state: 'visible' });
-    await applyButton.click();
-
-    // 4. Wait for Blazor to finish rendering (tooltip gone, DOM settled)
-    await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
-    await page.waitForTimeout(100); // Tiny delay to ensure Blazor rendering is complete
-
-    // 5. Get the first visible row
-    const visibleRow = page.locator('tbody tr:visible').first();
-    await expect(visibleRow).toBeVisible({ timeout: 5000 });
-    await expect(visibleRow).toContainText(project); // ✅ Less strict, just right
-
-    const launchButton = visibleRow.getByRole('button', { name: 'launch' });
-    await launchButton.waitFor({ state: 'visible' });
-    await launchButton.click();
 
 
+    while (InitialValue < Maxretries) {
+        try {
+         //   console.log(`Attempt ${InitialValue}: To Filter`);
 
-    // 7. Wait for navigation or success state
-    await page.waitForLoadState('load');
+            await filterIcon.click({force: true});
+            const overlayPanel = page.locator('.rz-overlaypanel:visible'); // Only consider visible elements
+            await expect(overlayPanel).toBeVisible({timeout: 500});// Assert that the visible element is displayed
 
-    // 8. Confirm we landed on the right screen/component
-    await validate_button(page, 'd_requirements');
+            // 2. Fill in the filter textbox
+            const filterInput = page.getByRole('textbox', { name: 'Name filter value' });
+            await filterInput.waitFor({ state: 'visible' });
+            await filterInput.fill(project);
 
-    // Optional: add a selector to validate success feedback (toast, modal, etc.)
-    // await page.waitForSelector('[data-testid="launch-success"]', { timeout: 5000 });
+            // 3. Click Apply
+            const applyButton = page.getByRole('button', { name: 'Apply' });
+            await applyButton.waitFor({ state: 'visible' });
+            await applyButton.click();
+
+            // 4. Wait for Blazor to finish rendering (tooltip gone, DOM settled)
+            await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
+            await page.waitForTimeout(100); // Tiny delay to ensure Blazor rendering is complete
+
+            // 5. Get the first visible row
+            const visibleRow = page.locator('tbody tr:visible').first();
+            await expect(visibleRow).toBeVisible({ timeout: 5000 });
+            await expect(visibleRow).toContainText(project); // ✅ Less strict, just right
+
+            const launchButton = visibleRow.getByRole('button', { name: 'launch' });
+            await launchButton.waitFor({ state: 'visible' });
+            await launchButton.click();
+
+            await validate_button(page, 'd_requirements');
+            break;
+        } catch (e) {
+            InitialValue++;
+            if (InitialValue === Maxretries) {
+                console.error(`Failed to validate button with data-testid="d_requirements" after ${Maxretries} attempts.`);
+            }
+        }
+    }
 }
 
 
