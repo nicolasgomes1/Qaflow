@@ -14,7 +14,6 @@ test.afterEach('Logout User',async ({ page }) => {
 
 
 test('Create a new Project', async ({ page }) => {
-    test.slow();
     const Random = Math.floor(Math.random() * 1000000);
     
     await actions.click_button(page, 'create_project');
@@ -51,7 +50,6 @@ test('Create a new Project', async ({ page }) => {
 });
 
 test('View a new Project', async ({ page }) => {
-    test.slow();
     const Random = Math.floor(Math.random() * 1000000);
 
     await actions.click_button(page, 'create_project');
@@ -85,7 +83,6 @@ test('View a new Project', async ({ page }) => {
 });
 
 test('Edit a new Project', async ({ page }) => {
-    test.slow();
     const Random = Math.floor(Math.random() * 1000000);
 
     await actions.click_button(page, 'create_project');

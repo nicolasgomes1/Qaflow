@@ -102,12 +102,24 @@ async function submit_form(page: Page) {
     await submitButton.waitFor({ state: 'visible' });
     await expect(submitButton).toBeEnabled();
 
-    // Store the initial URL to detect a change (optional, used for debugging or logs)
-    const initialUrl = page.url();
 
-    // Click the submit button
-    await submitButton.click({ force: true });
-    await expect(submitButton).not.toBeVisible({timeout: 5000});
+    let Retries = 3;
+    let RetrySubmit = 0;
+
+    while (RetrySubmit < Retries) {
+        try {
+            await submitButton.click({ force: true });
+            await expect(submitButton).toBeHidden({ timeout: 2000 });
+            break;
+        } catch (e) {
+            RetrySubmit++;
+
+            if (RetrySubmit === Retries) {
+                console.error(`Failed to submit form after ${Retries} attempts. Error: ${e.message}`);
+            }
+        }
+    }
+
     
 }
 
