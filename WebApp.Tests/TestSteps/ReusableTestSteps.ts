@@ -241,7 +241,8 @@ async function UploadFile(page: Page, id: string) {
 
     // Locate the actual file input and set the file
     const fileInput = page.locator(`input[type="file"]`);
-    const filePath = 'C:/Users/nicol/source/repos/WebApp/WebApp.Tests/test_files/testfile.png';
+    const path = require('path'); // Import the 'path' module
+    const filePath = path.resolve(__dirname, '../../WebApp.Tests/test_files/testfile.png'); // Construct the relative path
     await fileInput.setInputFiles(filePath);
 
     console.log(`File uploaded: ${filePath}`);

@@ -35,7 +35,12 @@
 
         await using var db = await DbContext.CreateDbContextAsync();
 
-        var confirmed = await DialogService.Confirm($"Are you sure you want to delete all {EntityName}?", $"Delete All {EntityName}");
+        var confirmed = await DialogService.Confirm($"Are you sure you want to delete all {EntityName}?", $"Delete All {EntityName}",
+            new ConfirmOptions()
+            {
+                Draggable = true,
+                CloseDialogOnEsc = true
+            });
         if (confirmed == true)
         {
             try
