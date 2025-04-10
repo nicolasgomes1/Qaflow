@@ -89,7 +89,35 @@
                              MouseLeave="@TooltipService.Close"/>
 
 
-                <RadzenBadge Variant="Variant.Outlined" Text=@($"Regression {_testcaseByTypeRegression}")/>
+                <RadzenBadge Variant="Variant.Outlined"
+                             Text=@($"Regression {_testcaseByTypeRegression}")
+                             MouseEnter=@(async args =>
+                             {
+                                 var apiTests = await TestCasesReporting.GetTestCasesByTypeAndScope(ProjectId, TestTypes.RegressionTest, TestScope.ApiTests);
+                                 var dbTests = await TestCasesReporting.GetTestCasesByTypeAndScope(ProjectId, TestTypes.RegressionTest, TestScope.DatabaseTests);
+                                 var uiTests = await TestCasesReporting.GetTestCasesByTypeAndScope(ProjectId, TestTypes.RegressionTest, TestScope.UiTests);
+
+                                 RenderFragment Content(TooltipService ds)
+                                 {
+                                     return builder =>
+                                     {
+                                         builder.OpenElement(0, "div");
+                                         builder.AddContent(1, $"API Tests: {apiTests}");
+                                         builder.AddMarkupContent(2, "<br />");
+                                         builder.AddContent(3, $"Database Tests: {dbTests}");
+                                         builder.AddMarkupContent(4, "<br />");
+                                         builder.AddContent(5, $"UI Tests: {uiTests}");
+                                         builder.CloseElement();
+                                     };
+                                 }
+
+                                 TooltipService.Open(args, (RenderFragment<TooltipService>)Content, new TooltipOptions
+                                 {
+                                     Position = TooltipPosition.Top,
+                                     Duration = 10000
+                                 });
+                             })
+                             MouseLeave="@TooltipService.Close"/>
                 <RadzenBadge Variant="Variant.Outlined"
                              Text=@($"Smoke {_testcaseByTypeSmoke}")
                              MouseEnter=@(async args =>
