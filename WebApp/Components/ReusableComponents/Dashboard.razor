@@ -38,10 +38,10 @@
         </RadzenStack>
     </RadzenCard>
 
-    <RadzenCard Style="max-width: 300px; flex: 1 1 420px; margin: 10px;">
-        <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
-                     AlignItems="AlignItems.Center">
-            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+    <RadzenCard Style="max-width: 400px; flex: 1 1 420px; margin: 10px;">
+        <RadzenStack Orientation="Orientation.Vertical">
+            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal"
+                         JustifyContent="JustifyContent.Center">
                 <RadzenButton data-testid="d_testcases"
                               Icon="science"
                               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Test Cases"))"
@@ -54,8 +54,71 @@
                               MouseLeave="@AppTooltipService.HideTooltip"
                               Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testcases/manage")'/>
             </RadzenStack>
-            <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
-                <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_testCasesCount" class="rz-ms-2"/>
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
+                <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_testCasesCount"/>
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
+                <RadzenBadge Variant="Variant.Outlined"
+                             Text=@($"Acceptance {_testcaseByTypeAcceptance}")
+                             MouseEnter=@(async args =>
+                             {
+                                 var apiTests = await TestCasesReporting.GetTestCasesByTypeAndScope(ProjectId, TestTypes.AcceptanceTest, TestScope.ApiTests);
+                                 var dbTests = await TestCasesReporting.GetTestCasesByTypeAndScope(ProjectId, TestTypes.AcceptanceTest, TestScope.DatabaseTests);
+                                 var uiTests = await TestCasesReporting.GetTestCasesByTypeAndScope(ProjectId, TestTypes.AcceptanceTest, TestScope.UiTests);
+
+                                 RenderFragment Content(TooltipService ds)
+                                 {
+                                     return builder =>
+                                     {
+                                         builder.OpenElement(0, "div");
+                                         builder.AddContent(1, $"API Tests: {apiTests}");
+                                         builder.AddMarkupContent(2, "<br />");
+                                         builder.AddContent(3, $"Database Tests: {dbTests}");
+                                         builder.AddMarkupContent(4, "<br />");
+                                         builder.AddContent(5, $"UI Tests: {uiTests}");
+                                         builder.CloseElement();
+                                     };
+                                 }
+
+                                 TooltipService.Open(args, (RenderFragment<TooltipService>)Content, new TooltipOptions
+                                 {
+                                     Position = TooltipPosition.Top,
+                                     Duration = 10000
+                                 });
+                             })
+                             MouseLeave="@TooltipService.Close"/>
+
+
+                <RadzenBadge Variant="Variant.Outlined" Text=@($"Regression {_testcaseByTypeRegression}")/>
+                <RadzenBadge Variant="Variant.Outlined"
+                             Text=@($"Smoke {_testcaseByTypeSmoke}")
+                             MouseEnter=@(async args =>
+                             {
+                                 var apiTests = await TestCasesReporting.GetTestCasesByTypeAndScope(ProjectId, TestTypes.SmokeTest, TestScope.ApiTests);
+                                 var dbTests = await TestCasesReporting.GetTestCasesByTypeAndScope(ProjectId, TestTypes.SmokeTest, TestScope.DatabaseTests);
+                                 var uiTests = await TestCasesReporting.GetTestCasesByTypeAndScope(ProjectId, TestTypes.SmokeTest, TestScope.UiTests);
+
+                                 RenderFragment Content(TooltipService ds)
+                                 {
+                                     return builder =>
+                                     {
+                                         builder.OpenElement(0, "div");
+                                         builder.AddContent(1, $"API Tests: {apiTests}");
+                                         builder.AddMarkupContent(2, "<br />");
+                                         builder.AddContent(3, $"Database Tests: {dbTests}");
+                                         builder.AddMarkupContent(4, "<br />");
+                                         builder.AddContent(5, $"UI Tests: {uiTests}");
+                                         builder.CloseElement();
+                                     };
+                                 }
+
+                                 TooltipService.Open(args, (RenderFragment<TooltipService>)Content, new TooltipOptions
+                                 {
+                                     Position = TooltipPosition.Top,
+                                     Duration = 10000
+                                 });
+                             })
+                             MouseLeave="@TooltipService.Close"/>
             </RadzenStack>
         </RadzenStack>
     </RadzenCard>
@@ -191,6 +254,9 @@
     private string _requirementsWithSpec = string.Empty;
     private double req;
     private int _testExecutionsReady;
+    int _testcaseByTypeAcceptance;
+    int _testcaseByTypeRegression;
+    int _testcaseByTypeSmoke;
 
     protected override async Task OnInitializedAsync()
     {
@@ -201,6 +267,9 @@
         _testExecutionsCount = ReportsModel.LoadTotalTestExecutions(ProjectId);
         _bugsCount = ReportsModel.LoadTotalBugs(ProjectId);
         _testExecutionsReady = await TestExecutionModel.GetTestExecutionsReadyToExecuteAsync(ProjectId);
+        _testcaseByTypeAcceptance = await TestCasesReporting.GetTestCasesByTestType(ProjectId, TestTypes.AcceptanceTest);
+        _testcaseByTypeRegression = await TestCasesReporting.GetTestCasesByTestType(ProjectId, TestTypes.RegressionTest);
+        _testcaseByTypeSmoke = await TestCasesReporting.GetTestCasesByTestType(ProjectId, TestTypes.SmokeTest);
 
         req = await ReportsModel.RequirementsCoveredBySpecifications(ProjectId);
     }
