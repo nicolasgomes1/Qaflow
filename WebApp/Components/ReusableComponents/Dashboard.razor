@@ -66,6 +66,14 @@
                                  var dbTests = await TestCasesReporting.GetTestCasesByTypeAndScope(ProjectId, TestTypes.AcceptanceTest, TestScope.DatabaseTests);
                                  var uiTests = await TestCasesReporting.GetTestCasesByTypeAndScope(ProjectId, TestTypes.AcceptanceTest, TestScope.UiTests);
 
+                                 TooltipService.Open(args, (RenderFragment<TooltipService>)Content, new TooltipOptions
+                                 {
+                                     Position = TooltipPosition.Top,
+                                     Duration = 10000,
+                                     CloseTooltipOnDocumentClick = true
+                                 });
+                                 return;
+
                                  RenderFragment Content(TooltipService ds)
                                  {
                                      return builder =>
@@ -79,14 +87,7 @@
                                          builder.CloseElement();
                                      };
                                  }
-
-                                 TooltipService.Open(args, (RenderFragment<TooltipService>)Content, new TooltipOptions
-                                 {
-                                     Position = TooltipPosition.Top,
-                                     Duration = 10000
-                                 });
-                             })
-                             MouseLeave="@TooltipService.Close"/>
+                             })/>
 
 
                 <RadzenBadge Variant="Variant.Outlined"
