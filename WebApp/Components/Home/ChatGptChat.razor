@@ -1,5 +1,4 @@
 @page "/chatgptchat"
-@using Newtonsoft.Json.Linq
 @using System.Text.Json
 @rendermode InteractiveServer
 @inject IConfiguration Configuration
@@ -65,10 +64,11 @@
         var response2 = await client.PostAsync(Endpoint, content);
 
         var responseContent = await response2.Content.ReadAsStringAsync();
-        // Parse the response JSON
-        var jsonResponse = JObject.Parse(responseContent);
-
-        _response = (jsonResponse["choices"]?[0]?["message"]?["content"] ?? "No value").Value<string>();
+        // Parse the response JSON using System.Text.Json
+        using JsonDocument doc = JsonDocument.Parse(responseContent);
+        JsonElement root = doc.RootElement;
+        
+        _response = root.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString() ?? "No value";
 
         Console.WriteLine(_response);
 
