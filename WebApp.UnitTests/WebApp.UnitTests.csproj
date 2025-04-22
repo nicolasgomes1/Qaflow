@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Hosting.Testing" Version="9.1.0"/>
-        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.1.0"/>
+        <PackageReference Include="Aspire.Hosting.Testing" Version="9.2.0"/>
+        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.2.0"/>
         <PackageReference Include="JetBrains.Annotations" Version="2025.1.0-eap1"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.4"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4"/>

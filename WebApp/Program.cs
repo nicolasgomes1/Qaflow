@@ -19,11 +19,8 @@ using WebApp.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
-#if POSTGRES
 builder.AddNpgsqlDbContext<ApplicationDbContext>("postgresdb");
-#elif SQLSERVER
-    builder.AddSqlServerDbContext<ApplicationDbContext>("qa");
-#endif
+
 
 // Add authentication
 var key = builder.Configuration["Jwt:Key"]; // Store securely!

@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Api.Dto;
 using WebApp.Api.Jira;
@@ -165,7 +164,7 @@ public static class ApiServiceExtensions
                 await dbContext.SaveChangesAsync();
                 return Results.Ok($"Project {id} deleted");
             }
-            catch (DbUpdateException ex) when (ex.InnerException is SqlException { Number: 547 }) // FK violation
+            catch (DbUpdateException ex)
             {
                 return Results.Conflict($"Cannot delete project {id} due to related data.");
             }

@@ -9,31 +9,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.1.0"/>
-        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.1.0"/>
+        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.2.0"/>
         <PackageReference Include="MartinCostello.OpenApi.Extensions" Version="1.0.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4"/>
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.4"/>
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
-        <PackageReference Include="Radzen.Blazor" Version="6.5.0"/>
-        <PackageReference Include="Scalar.AspNetCore" Version="2.1.8"/>
+        <PackageReference Include="Radzen.Blazor" Version="6.6.1"/>
+        <PackageReference Include="Scalar.AspNetCore" Version="2.1.17"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\WebApp.ServiceDefaults\WebApp.ServiceDefaults.csproj"/>
     </ItemGroup>
-
-    <PropertyGroup>
-        <DefineConstants>POSTGRES</DefineConstants>
-    </PropertyGroup>
 
     <ItemGroup>
         <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css"/>
