@@ -3,8 +3,8 @@ using Projects;
 var builder = DistributedApplication.CreateBuilder(args);
 
 
-var tests = builder.AddNpmApp("webapptests",
-    "../WebApp.Tests", "start");
+var tests = builder.AddNpmApp("webapptests", "../WebApp.Tests", "start");  
+
 
 
 var dbPassword = builder.AddParameter("DatabasePassword", false);
@@ -22,6 +22,10 @@ var app = builder.AddProject<WebApp>("webapp")
     .WaitFor(postgresdb)
     .WithHttpsHealthCheck("/health");
 
-tests.WaitFor(app);
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+{
+    tests.WaitFor(app);
+    
+}
 
 builder.Build().Run();
