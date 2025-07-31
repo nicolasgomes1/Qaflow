@@ -13,23 +13,23 @@ namespace WebApp.UnitTests.Models;
 [TestSubject(typeof(RequirementsModel))]
 public class RequirementsModelTest : IClassFixture<TestFixture>
 {
-    private readonly ApplicationDbContext db;
-    private readonly RequirementsModel rm;
-    private readonly ProjectModel pm;
-    private readonly RequirementsFilesModel rfm;
+    private readonly ApplicationDbContext _db;
+    private readonly RequirementsModel _rm;
+    private readonly ProjectModel _pm;
+    private readonly RequirementsFilesModel _rfm;
 
     public RequirementsModelTest(TestFixture fixture)
     {
         // Resolve services via ServiceProvider
-        db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        rm = fixture.ServiceProvider.GetRequiredService<RequirementsModel>();
-        pm = fixture.ServiceProvider.GetRequiredService<ProjectModel>();
-        rfm = fixture.ServiceProvider.GetRequiredService<RequirementsFilesModel>();
+        _db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        _rm = fixture.ServiceProvider.GetRequiredService<RequirementsModel>();
+        _pm = fixture.ServiceProvider.GetRequiredService<ProjectModel>();
+        _rfm = fixture.ServiceProvider.GetRequiredService<RequirementsFilesModel>();
     }
 
     private async Task<int> GetRequirementCountAsync()
     {
-        return await db.Requirements.CountAsync();
+        return await _db.Requirements.CountAsync();
     }
 
     private async Task<Data.Projects> CreateAndSetProject()
@@ -40,7 +40,7 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
             Description = "Description"
         };
 
-        await pm.AddProject(newProject);
+        await _pm.AddProject(newProject);
         var project = newProject;
 
         return project;
@@ -60,7 +60,7 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
 
         var initialCount = await GetRequirementCountAsync();
 
-        await rm.AddRequirement(newRequirement, null, project.Id);
+        await _rm.AddRequirement(newRequirement, null, project.Id);
 
         var finalCount = await GetRequirementCountAsync();
         Assert.Equal(initialCount + 1, finalCount);
@@ -78,7 +78,7 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
             ProjectsId = project.Id
         };
 
-        await rm.AddRequirement(newRequirement, null, project.Id);
+        await _rm.AddRequirement(newRequirement, null, project.Id);
 
         newRequirement.Name = "updated";
         newRequirement.Description = "updated description";
@@ -88,11 +88,11 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
         newRequirement.WorkflowStatus = WorkflowStatus.New;
         newRequirement.ArchivedStatus = ArchivedStatus.Active;
 
-        await rm.UpdateRequirement(newRequirement, null, project.Id);
+        await _rm.UpdateRequirement(newRequirement, null, project.Id);
         // db.Requirements.Update(newRequirement);
         //await db.SaveChangesAsync();
 
-        var updatedRequirement = await rm.GetRequirementByIdAsync(newRequirement.Id);
+        var updatedRequirement = await _rm.GetRequirementByIdAsync(newRequirement.Id);
         Assert.Equal("updated", updatedRequirement.Name);
         Assert.Equal("updated description", updatedRequirement.Description);
         Assert.Equal(Priority.Critical, updatedRequirement.Priority);
@@ -113,9 +113,9 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
             ProjectsId = project.Id
         };
 
-        await rm.AddRequirement(newRequirement, null, project.Id);
+        await _rm.AddRequirement(newRequirement, null, project.Id);
 
-        var requirementspec = await db.RequirementsSpecification.Where(x => x.Name == "Requirements Specification 3")
+        var requirementspec = await _db.RequirementsSpecification.Where(x => x.Name == "Requirements Specification 3")
             .FirstOrDefaultAsync();
 
         if (requirementspec == null) throw new Exception("Requirements Specification 3 not found");
@@ -128,10 +128,10 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
         newRequirement.ArchivedStatus = ArchivedStatus.Active;
         newRequirement.RequirementsSpecificationId = requirementspec.Id;
 
-        await rm.UpdateRequirement(newRequirement, null, project.Id);
+        await _rm.UpdateRequirement(newRequirement, null, project.Id);
 
 
-        var updatedRequirement = await rm.GetRequirementByIdAsync(newRequirement.Id);
+        var updatedRequirement = await _rm.GetRequirementByIdAsync(newRequirement.Id);
         Assert.Equal("updated", updatedRequirement.Name);
         Assert.Equal("updated description", updatedRequirement.Description);
         Assert.Equal(Priority.Critical, updatedRequirement.Priority);
@@ -145,7 +145,7 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
     public async Task RequirementsModel_UpdateRequirementWithRequirementsSpecificationsDelete()
     {
         var project = await CreateAndSetProject();
-        var requirementSpec = await db.RequirementsSpecification.Where(x => x.Name == "Requirements Specification 3")
+        var requirementSpec = await _db.RequirementsSpecification.Where(x => x.Name == "Requirements Specification 3")
             .FirstOrDefaultAsync();
         if (requirementSpec == null) throw new Exception("Requirements Specification 3 not found");
 
@@ -157,7 +157,7 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
             RequirementsSpecificationId = requirementSpec.Id // Requirements Specification 1 is deleted in the database
         };
 
-        await rm.AddRequirement(newRequirement, null, project.Id);
+        await _rm.AddRequirement(newRequirement, null, project.Id);
 
 
         newRequirement.Name = "updated";
@@ -169,10 +169,10 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
         newRequirement.ArchivedStatus = ArchivedStatus.Active;
         newRequirement.RequirementsSpecificationId = -1;
 
-        await rm.UpdateRequirement(newRequirement, null, project.Id);
+        await _rm.UpdateRequirement(newRequirement, null, project.Id);
 
 
-        var updatedRequirement = await rm.GetRequirementByIdAsync(newRequirement.Id);
+        var updatedRequirement = await _rm.GetRequirementByIdAsync(newRequirement.Id);
         Assert.Equal("updated", updatedRequirement.Name);
         Assert.Equal("updated description", updatedRequirement.Description);
         Assert.Equal(Priority.Critical, updatedRequirement.Priority);
@@ -180,9 +180,9 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
         Assert.Equal(WorkflowStatus.New, updatedRequirement.WorkflowStatus);
         Assert.Equal(ArchivedStatus.Active, updatedRequirement.ArchivedStatus);
         Assert.Equal(-1,
-            db.Requirements.Where(x => x.Id == updatedRequirement.Id).Select(x => x.RequirementsSpecificationId)
+            _db.Requirements.Where(x => x.Id == updatedRequirement.Id).Select(x => x.RequirementsSpecificationId)
                 .FirstOrDefault());
-        Assert.DoesNotContain(db.Requirements.Where(x => x.Id == updatedRequirement.Id),
+        Assert.DoesNotContain(_db.Requirements.Where(x => x.Id == updatedRequirement.Id),
             x => x.RequirementsSpecification != null);
     }
 
@@ -206,7 +206,7 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
             new TestBrowserFile("test1.txt", bytes)
         };
 
-        await rm.AddRequirement(newRequirement, browserFiles, project.Id);
+        await _rm.AddRequirement(newRequirement, browserFiles, project.Id);
 
         newRequirement.Name = "updated";
         newRequirement.Description = "updated description";
@@ -215,13 +215,13 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
         newRequirement.WorkflowStatus = WorkflowStatus.New;
         newRequirement.ArchivedStatus = ArchivedStatus.Active;
 
-        await rm.UpdateRequirement(newRequirement, null, project.Id);
+        await _rm.UpdateRequirement(newRequirement, null, project.Id);
 
 
-        var requirementFiles = db.RequirementsFiles.Where(x => x.RequirementsId == newRequirement.Id).ToList();
+        var requirementFiles = _db.RequirementsFiles.Where(x => x.RequirementsId == newRequirement.Id).ToList();
 
         Assert.Equal(2, requirementFiles.Count);
-        var updatedRequirement = await rm.GetRequirementByIdAsync(newRequirement.Id);
+        var updatedRequirement = await _rm.GetRequirementByIdAsync(newRequirement.Id);
     }
 
     [Fact]
@@ -244,8 +244,8 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
             new TestBrowserFile("test1.txt", bytes)
         };
 
-        await rfm.SaveFilesToDb(browserFiles, newRequirement.Id, project.Id);
-        await rm.AddRequirement(newRequirement, browserFiles, project.Id);
+        await _rfm.SaveFilesToDb(browserFiles, newRequirement.Id, project.Id);
+        await _rm.AddRequirement(newRequirement, browserFiles, project.Id);
     }
 
     [Fact]
@@ -268,10 +268,10 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
             new TestBrowserFile("test1.txt", bytes)
         };
 
-        await rfm.SaveFilesToDb(browserFiles, newRequirement.Id, project.Id);
-        await rm.AddRequirement(newRequirement, browserFiles, project.Id);
+        await _rfm.SaveFilesToDb(browserFiles, newRequirement.Id, project.Id);
+        await _rm.AddRequirement(newRequirement, browserFiles, project.Id);
 
-        var files = await rfm.GetFilesByRequirementId(newRequirement.Id);
+        var files = await _rfm.GetFilesByRequirementId(newRequirement.Id);
         Assert.Equal(2, files.Count);
     }
 

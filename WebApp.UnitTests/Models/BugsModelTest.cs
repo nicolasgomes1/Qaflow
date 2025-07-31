@@ -12,15 +12,13 @@ namespace WebApp.UnitTests.Models;
 [TestSubject(typeof(BugsModel))]
 public class BugsModelTest : IClassFixture<TestFixture>
 {
-    private readonly ITestOutputHelper output;
     private readonly ApplicationDbContext db;
     private readonly BugsModel bm;
 
-    public BugsModelTest(ITestOutputHelper helper, TestFixture fixture)
+    public BugsModelTest(TestFixture fixture)
     {
         db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         bm = fixture.ServiceProvider.GetRequiredService<BugsModel>();
-        output = helper;
     }
 
     [Fact]

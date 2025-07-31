@@ -11,7 +11,7 @@ public class IntegrationTest
     //
     // 2. Uncomment the following example test and update 'Projects.MyAspireApp_AppHost' to match your AppHost project:
     //
-    [Fact(Skip = "Skipping this test temporarily")]
+    [Fact]
     public async Task GetWebResourceRootReturnsOkStatusCode()
      {
          // Arrange
