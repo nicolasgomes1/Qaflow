@@ -39,6 +39,8 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<BugsModel>();
         serviceCollection.AddScoped<BugsFilesModel>();
         serviceCollection.AddScoped<RequirementsSpecificationModel>();
+        serviceCollection.AddScoped<TestCasesModel>();
+        serviceCollection.AddScoped<TestCasesFilesModel>();
 
         // Register IDbContextFactory
         serviceCollection.AddDbContextFactory<ApplicationDbContext>();
