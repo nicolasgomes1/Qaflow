@@ -11,6 +11,7 @@ using WebApp.Models;
 using WebApp.Services;
 using WebApp.Services.TestData;
 using WebApp.UnitTests.BaseTest;
+using WebApp.UnitTests.Components;
 using WebApp.UnitTests.Models;
 using RequirementsSpecificationModel = WebApp.Models.RequirementsSpecificationModel;
 
@@ -69,9 +70,19 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<TestExecutionModelv2>();
         serviceCollection.AddScoped<TestCasesJiraModel>();
         serviceCollection.AddScoped<GenerateJwtToken>();
+        serviceCollection.AddScoped<TestPlansFilesModel>();
+        serviceCollection.AddScoped<Radzen.NotificationService>();
         serviceCollection.AddScoped<JiraServiceFromDb>();
         serviceCollection.AddScoped<IntegrationsModel>();
         serviceCollection.AddScoped<JiraService>();
+        serviceCollection.AddScoped<ReportsModel>();
+        serviceCollection.AddScoped<ApplicationUser>();
+
+        serviceCollection.AddScoped<FormNotificationService>();
+        serviceCollection.AddScoped<EmailService>();
+
+        serviceCollection.AddSingleton<IEmailSender<ApplicationUser>, TestEmailSender>();
+
 
         serviceCollection.AddHttpClient();
         // Register IDbContextFactory
