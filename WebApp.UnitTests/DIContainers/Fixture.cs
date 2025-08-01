@@ -37,11 +37,6 @@ public class TestFixture : IDisposable
         serviceCollection.AddSingleton(Microsoft.Extensions.Options.Options.Create(jiraOptions));
 
 
-        // Add proper localization services
-        serviceCollection.AddLocalization(options => options.ResourcesPath = "Locales");
-        serviceCollection.AddSingleton<IStringLocalizerFactory, ResourceManagerStringLocalizerFactory>();
-
-
 
         
         // Set up in-memory database

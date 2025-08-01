@@ -36,7 +36,11 @@ public class DashboardTests : TestContext, IClassFixture<TestFixture>
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<IntegrationsModel>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<ResourceManagerStringLocalizerFactory>());
 
+        // Add localization services - DON'T try to get ResourceManagerStringLocalizerFactory
         
+        // Create a simple dummy localizer for the Resources type
+
+
     }
     
     [Fact]
@@ -53,3 +57,8 @@ public class DashboardTests : TestContext, IClassFixture<TestFixture>
         Assert.NotNull(cut.Find("[data-testid='d_bugs']"));
     }
 }
+
+
+
+
+
