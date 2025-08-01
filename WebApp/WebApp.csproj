@@ -25,6 +25,18 @@
     </ItemGroup>
 
     <ItemGroup>
+        <EmbeddedResource Update="Locales\Resources.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Locales\Resources.*.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+    </ItemGroup>
+
+
+
+    <ItemGroup>
         <ProjectReference Include="..\WebApp.ServiceDefaults\WebApp.ServiceDefaults.csproj"/>
     </ItemGroup>
 

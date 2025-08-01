@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using WebApp.Api.Jira;
 using WebApp.Data;
@@ -23,17 +24,24 @@ public class TestFixture : IDisposable
     {
         var serviceCollection = new ServiceCollection();
 
+
         // Add configuration with mock Jira settings
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string>
-            {
-                ["JiraApi:BaseUrl"] = "https://qawebmaster.atlassian.net",
-                ["JiraApi:Username"] = "nicolasdiasgomes@gmail.com",
-                ["JiraApi:ApiToken"] = "ATATT3xFfGF0wVSvi8EeTnlFjtFO0fTILF54Vz4rCtHgxFEofpOARSWh_MaH_qSJTD5hi5fP8ubZv2w301lnf66Jx-llk0NnppHr6LRzh6RSZdS3yaDzsNATd3_h9-yWbrCfApgiuK9eHYna0bw4VRjT9ITC7J-3fFeD7wngx6mw57cKzuBhYqA=7F44A4CE"
-            })
-            .Build();
+        var jiraOptions = new JiraApiOptions
+        {
+            BaseUrl = "https://qawebmaster.atlassian.net",
+            Username = "nicolasdiasgomes@gmail.com",
+            ApiKey = "ATATT3xFfGF0wVSvi8EeTnlFjtFO0fTILF54Vz4rCtHgxFEofpOARSWh_MaH_qSJTD5hi5fP8ubZv2w301lnf66Jx-llk0NnppHr6LRzh6RSZdS3yaDzsNATd3_h9-yWbrCfApgiuK9eHYna0bw4VRjT9ITC7J-3fFeD7wngx6mw57cKzuBhYqA=7F44A4CE"
+        };
         
-        serviceCollection.AddSingleton<IConfiguration>(configuration);
+        // Register the JiraApiOptions with the DI container
+        serviceCollection.AddSingleton(Microsoft.Extensions.Options.Options.Create(jiraOptions));
+
+
+        // Add proper localization services
+        serviceCollection.AddLocalization(options => options.ResourcesPath = "Locales");
+        serviceCollection.AddSingleton<IStringLocalizerFactory, ResourceManagerStringLocalizerFactory>();
+
+
 
         
         // Set up in-memory database

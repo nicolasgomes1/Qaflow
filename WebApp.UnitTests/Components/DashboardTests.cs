@@ -1,4 +1,5 @@
 using Bunit;
+using Microsoft.Extensions.Localization;
 using WebApp.Api.Jira;
 using WebApp.Components.ReusableComponents;
 using WebApp.Models;
@@ -10,12 +11,10 @@ using Xunit;
 
 public class DashboardTests : TestContext, IClassFixture<TestFixture>
 {
-    private readonly TestCasesReporting _reporting;
     
     public DashboardTests(TestFixture fixture)
     {
-        _reporting = fixture.ServiceProvider.GetRequiredService<TestCasesReporting>();
-        
+        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<ProjectModel>());
         // Register all services from the fixture with the BUnit TestContext
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestCasesReporting>());
         // Add other services that Dashboard component might need
@@ -35,8 +34,9 @@ public class DashboardTests : TestContext, IClassFixture<TestFixture>
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<JiraServiceFromDb>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<JiraService>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<IntegrationsModel>());
+        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<ResourceManagerStringLocalizerFactory>());
 
-        // Add any other services that Dashboard uses through @inject directives
+        
     }
     
     [Fact]
