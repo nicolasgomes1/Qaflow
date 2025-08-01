@@ -1,6 +1,10 @@
+using Bunit;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.JSInterop;
+using WebApp.Api.Jira;
 using WebApp.Data;
 using WebApp.Models;
 using WebApp.Services;
@@ -19,10 +23,27 @@ public class TestFixture : IDisposable
     {
         var serviceCollection = new ServiceCollection();
 
+        // Add configuration with mock Jira settings
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                ["JiraApi:BaseUrl"] = "https://qawebmaster.atlassian.net",
+                ["JiraApi:Username"] = "nicolasdiasgomes@gmail.com",
+                ["JiraApi:ApiToken"] = "ATATT3xFfGF0wVSvi8EeTnlFjtFO0fTILF54Vz4rCtHgxFEofpOARSWh_MaH_qSJTD5hi5fP8ubZv2w301lnf66Jx-llk0NnppHr6LRzh6RSZdS3yaDzsNATd3_h9-yWbrCfApgiuK9eHYna0bw4VRjT9ITC7J-3fFeD7wngx6mw57cKzuBhYqA=7F44A4CE"
+            })
+            .Build();
+        
+        serviceCollection.AddSingleton<IConfiguration>(configuration);
+
+        
         // Set up in-memory database
         serviceCollection.AddDbContext<ApplicationDbContext>(options =>
             options.UseInMemoryDatabase("TestDb"));
 
+        var testContext = new TestContext();
+        serviceCollection.AddSingleton<IJSRuntime>(testContext.JSInterop.JSRuntime);
+
+        
         // Add Data Protection services
         serviceCollection.AddDataProtection();
 
@@ -41,7 +62,15 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<RequirementsSpecificationModel>();
         serviceCollection.AddScoped<TestCasesModel>();
         serviceCollection.AddScoped<TestCasesFilesModel>();
+        serviceCollection.AddScoped<TestCasesReporting>();
+        serviceCollection.AddScoped<TestExecutionModelv2>();
+        serviceCollection.AddScoped<TestCasesJiraModel>();
+        serviceCollection.AddScoped<GenerateJwtToken>();
+        serviceCollection.AddScoped<JiraServiceFromDb>();
+        serviceCollection.AddScoped<IntegrationsModel>();
+        serviceCollection.AddScoped<JiraService>();
 
+        serviceCollection.AddHttpClient();
         // Register IDbContextFactory
         serviceCollection.AddDbContextFactory<ApplicationDbContext>();
 

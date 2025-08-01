@@ -120,7 +120,7 @@ public class TestCasesModel(
 
         await AddRequirementsDropdown(testcase, db);
 
-        await AddJiraTickets(testcase);
+        await AddJiraTickets(testcase, db);
 
         await db.SaveChangesAsync();
 
@@ -226,9 +226,8 @@ public class TestCasesModel(
     /// TestCase Jira Tickets that accepts a TestCases object and stores the selected Jira tickets
     /// </summary>
     /// <param name="testcase"></param>
-    private async Task AddJiraTickets(TestCases testcase)
+    private async Task AddJiraTickets(TestCases testcase, ApplicationDbContext db)
     {
-        await using var db = await dbContextFactory.CreateDbContextAsync();
 
         var selectedJiraTickets = JiraIntegrations
             .Where(jira => SelectedJiraTicketIds.Contains(jira.Id.ToString()))
@@ -244,7 +243,7 @@ public class TestCasesModel(
                      }))
             db.TestCasesJira.Add(testCaseJira);
 
-        await db.SaveChangesAsync();
+     //   await db.SaveChangesAsync();
     }
 
 
