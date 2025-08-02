@@ -41,10 +41,18 @@ public class DashboardTests : TestContext, IClassFixture<TestFixture>
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestPlansFilesModel>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<ReportsModel>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<RequirementsFilesModel>());
-        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<Radzen.NotificationService>());
-        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<Radzen.ContextMenuService>());
+        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestPlansModel>());
+        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestExecutionModel>());
 
-        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<FormNotificationService>());
+      //  Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<Radzen.NotificationService>());
+       // Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<Radzen.ContextMenuService>());
+
+        Services.AddSingleton<Radzen.NotificationService>();
+        Services.AddSingleton<Radzen.ContextMenuService>();
+        Services.AddSingleton<Radzen.ContextMenuService>();
+        Services.AddSingleton<FormNotificationService>();
+        Services.AddSingleton<AppTooltipService>();
+    //    Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<FormNotificationService>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<ApplicationUser>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestCasesFilesModel>());
 

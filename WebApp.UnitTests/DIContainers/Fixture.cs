@@ -70,16 +70,16 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<TestCasesFilesModel>();
         serviceCollection.AddScoped<TestCasesReporting>();
         serviceCollection.AddScoped<TestExecutionModelv2>();
+        serviceCollection.AddScoped<TestExecutionModel>();
         serviceCollection.AddScoped<TestCasesJiraModel>();
         serviceCollection.AddScoped<GenerateJwtToken>();
         serviceCollection.AddScoped<TestPlansFilesModel>();
-        serviceCollection.AddScoped<Radzen.NotificationService>();
+        serviceCollection.AddScoped<TestPlansModel>();
         serviceCollection.AddScoped<JiraServiceFromDb>();
         serviceCollection.AddScoped<IntegrationsModel>();
         serviceCollection.AddScoped<JiraService>();
         serviceCollection.AddScoped<ReportsModel>();
         serviceCollection.AddScoped<ApplicationUser>();
-        serviceCollection.AddScoped<ContextMenuService>();
         serviceCollection.AddScoped<FormNotificationService>();
         serviceCollection.AddScoped<EmailService>();
 
