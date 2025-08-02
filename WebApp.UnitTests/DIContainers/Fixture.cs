@@ -104,8 +104,7 @@ public class TestFixture : IDisposable
 
 
         serviceCollection.AddHttpClient();
-        // Register IDbContextFactory
-        // Register IDbContextFactory with singleton options
+
         serviceCollection.AddSingleton<IDbContextFactory<ApplicationDbContext>>(provider =>
         {
             var options = provider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
