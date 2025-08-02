@@ -20,6 +20,25 @@ public class DashboardTests : TestContext, IClassFixture<TestFixture>
     
     public DashboardTests(TestFixture fixture)
     {
+        // Configure JSInterop for Radzen components
+        JSInterop.SetupVoid("Radzen.addMouseEnter", _ => true);
+        JSInterop.SetupVoid("Radzen.addMouseLeave", _ => true);
+        JSInterop.SetupVoid("Radzen.removeMouseEnter", _ => true);
+        JSInterop.SetupVoid("Radzen.removeMouseLeave", _ => true);
+        JSInterop.SetupVoid("Radzen.destroyTooltip", _ => true);
+        JSInterop.SetupVoid("Radzen.createTooltip", _ => true);
+        JSInterop.SetupVoid("Radzen.showTooltip", _ => true);
+        JSInterop.SetupVoid("Radzen.hideTooltip", _ => true);
+        
+        // Add other common Radzen JSInterop calls that might be needed
+        JSInterop.SetupVoid("Radzen.addContextMenu", _ => true);
+        JSInterop.SetupVoid("Radzen.removeContextMenu", _ => true);
+        JSInterop.SetupVoid("Radzen.closeContextMenu", _ => true);
+        JSInterop.SetupVoid("Radzen.openContextMenu", _ => true);
+        JSInterop.SetupVoid("Radzen.addDocumentClickHandler", _ => true);
+        JSInterop.SetupVoid("Radzen.removeDocumentClickHandler", _ => true);
+
+        
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<ProjectModel>());
         // Register all services from the fixture with the BUnit TestContext
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestCasesReporting>());
@@ -57,9 +76,13 @@ public class DashboardTests : TestContext, IClassFixture<TestFixture>
         Services.AddSingleton<AppTooltipService>();
         Services.AddSingleton<EmailService>();
         Services.AddSingleton<Radzen.DialogService>();
+
     //    Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<FormNotificationService>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<ApplicationUser>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestCasesFilesModel>());
+        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestStepsExecutionTimerService>());
+        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestExecutionTimerServicev2>());
+        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestCaseExecutionTimerService>());
 
         Services.AddSingleton<UserManager<ApplicationUser>, TestUserManager>();
 
@@ -73,6 +96,7 @@ public class DashboardTests : TestContext, IClassFixture<TestFixture>
         // Create a simple dummy localizer for the Resources type
         Services.AddLocalization();
 
+        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>());
 
     }
     

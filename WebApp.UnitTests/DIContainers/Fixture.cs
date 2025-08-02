@@ -62,7 +62,6 @@ public class TestFixture : IDisposable
 
         var testContext = new TestContext();
         serviceCollection.AddSingleton<IJSRuntime>(testContext.JSInterop.JSRuntime);
-
         
         // Add Data Protection services
         serviceCollection.AddDataProtection();
@@ -97,6 +96,9 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<FormNotificationService>();
         serviceCollection.AddScoped<EmailService>();
         serviceCollection.AddScoped<DataGridSettingsService>();
+        serviceCollection.AddScoped<TestStepsExecutionTimerService>();
+        serviceCollection.AddScoped<TestExecutionTimerServicev2>();
+        serviceCollection.AddScoped<TestCaseExecutionTimerService>();
 
         serviceCollection.AddSingleton<IEmailSender<ApplicationUser>, TestEmailSender>();
 
