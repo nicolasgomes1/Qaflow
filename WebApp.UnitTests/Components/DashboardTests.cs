@@ -1,5 +1,6 @@
 using Bunit;
 using Humanizer.Localisation;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using WebApp.Api.Jira;
@@ -41,13 +42,20 @@ public class DashboardTests : TestContext, IClassFixture<TestFixture>
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<ReportsModel>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<RequirementsFilesModel>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<Radzen.NotificationService>());
+        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<Radzen.ContextMenuService>());
+
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<FormNotificationService>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<ApplicationUser>());
+        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestCasesFilesModel>());
+
+        Services.AddSingleton<UserManager<ApplicationUser>, TestUserManager>();
 
        // Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<ResourceManagerStringLocalizerFactory>());
 
         // Add localization services - DON'T try to get ResourceManagerStringLocalizerFactory
-        
+        Services.AddSingleton<IEmailSender<ApplicationUser>, TestEmailSender>();
+        Services.AddSingleton<RoleManager<IdentityRole>, TestRoleManager>();
+
         // Create a simple dummy localizer for the Resources type
         Services.AddLocalization();
 
@@ -94,6 +102,152 @@ public class TestEmailSender : IEmailSender<ApplicationUser>
     {
         // Do nothing for tests
         return Task.CompletedTask;
+    }
+}
+
+// Test implementation of RoleManager<IdentityRole> for testing
+public class TestRoleManager : RoleManager<IdentityRole>
+{
+    public TestRoleManager() : base(
+        new TestRoleStore(),
+        null,
+        null,
+        null,
+        null)
+    {
+    }
+}
+
+// Test implementation of IRoleStore<IdentityRole> for testing
+public class TestRoleStore : IRoleStore<IdentityRole>
+{
+    public void Dispose() { }
+
+    public Task<IdentityResult> CreateAsync(IdentityRole role, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(IdentityResult.Success);
+    }
+
+    public Task<IdentityResult> UpdateAsync(IdentityRole role, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(IdentityResult.Success);
+    }
+
+    public Task<IdentityResult> DeleteAsync(IdentityRole role, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(IdentityResult.Success);
+    }
+
+    public Task<string> GetRoleIdAsync(IdentityRole role, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(role.Id);
+    }
+
+    public Task<string> GetRoleNameAsync(IdentityRole role, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(role.Name);
+    }
+
+    public Task SetRoleNameAsync(IdentityRole role, string roleName, CancellationToken cancellationToken)
+    {
+        role.Name = roleName;
+        return Task.CompletedTask;
+    }
+
+    public Task<string> GetNormalizedRoleNameAsync(IdentityRole role, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(role.NormalizedName);
+    }
+
+    public Task SetNormalizedRoleNameAsync(IdentityRole role, string normalizedName, CancellationToken cancellationToken)
+    {
+        role.NormalizedName = normalizedName;
+        return Task.CompletedTask;
+    }
+
+    public Task<IdentityRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
+    {
+        return Task.FromResult<IdentityRole>(null);
+    }
+
+    public Task<IdentityRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
+    {
+        return Task.FromResult<IdentityRole>(null);
+    }
+}
+
+// Test implementation of UserManager<ApplicationUser> for testing
+public class TestUserManager : UserManager<ApplicationUser>
+{
+    public TestUserManager() : base(
+        new TestUserStore(),
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null)
+    {
+    }
+}
+
+// Test implementation of IUserStore<ApplicationUser> for testing
+public class TestUserStore : IUserStore<ApplicationUser>
+{
+    public void Dispose() { }
+
+    public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(user.Id);
+    }
+
+    public Task<string> GetUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(user.UserName);
+    }
+
+    public Task SetUserNameAsync(ApplicationUser user, string userName, CancellationToken cancellationToken)
+    {
+        user.UserName = userName;
+        return Task.CompletedTask;
+    }
+
+    public Task<string> GetNormalizedUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(user.NormalizedUserName);
+    }
+
+    public Task SetNormalizedUserNameAsync(ApplicationUser user, string normalizedName, CancellationToken cancellationToken)
+    {
+        user.NormalizedUserName = normalizedName;
+        return Task.CompletedTask;
+    }
+
+    public Task<IdentityResult> CreateAsync(ApplicationUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(IdentityResult.Success);
+    }
+
+    public Task<IdentityResult> UpdateAsync(ApplicationUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(IdentityResult.Success);
+    }
+
+    public Task<IdentityResult> DeleteAsync(ApplicationUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(IdentityResult.Success);
+    }
+
+    public Task<ApplicationUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
+    {
+        return Task.FromResult<ApplicationUser>(null);
+    }
+
+    public Task<ApplicationUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+    {
+        return Task.FromResult<ApplicationUser>(null);
     }
 }
 

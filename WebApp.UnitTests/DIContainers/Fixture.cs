@@ -1,10 +1,12 @@
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
+using Radzen;
 using WebApp.Api.Jira;
 using WebApp.Data;
 using WebApp.Models;
@@ -77,7 +79,7 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<JiraService>();
         serviceCollection.AddScoped<ReportsModel>();
         serviceCollection.AddScoped<ApplicationUser>();
-
+        serviceCollection.AddScoped<ContextMenuService>();
         serviceCollection.AddScoped<FormNotificationService>();
         serviceCollection.AddScoped<EmailService>();
 
