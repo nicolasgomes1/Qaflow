@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
@@ -43,8 +44,21 @@ public class TestFixture : IDisposable
 
         
         // Set up in-memory database
-        serviceCollection.AddDbContext<ApplicationDbContext>(options =>
-            options.UseInMemoryDatabase("TestDb"));
+        serviceCollection.AddSingleton<DbContextOptions<ApplicationDbContext>>(provider =>
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            optionsBuilder.UseInMemoryDatabase("TestDb");
+            return optionsBuilder.Options;
+        });
+        
+        // Register ApplicationDbContext as scoped (using the singleton options)
+        serviceCollection.AddScoped<ApplicationDbContext>(provider =>
+        {
+            var options = provider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
+            return new ApplicationDbContext(options);
+        });
+
+
 
         var testContext = new TestContext();
         serviceCollection.AddSingleton<IJSRuntime>(testContext.JSInterop.JSRuntime);
@@ -82,13 +96,19 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<ApplicationUser>();
         serviceCollection.AddScoped<FormNotificationService>();
         serviceCollection.AddScoped<EmailService>();
+        serviceCollection.AddScoped<DataGridSettingsService>();
 
         serviceCollection.AddSingleton<IEmailSender<ApplicationUser>, TestEmailSender>();
 
 
         serviceCollection.AddHttpClient();
         // Register IDbContextFactory
-        serviceCollection.AddDbContextFactory<ApplicationDbContext>();
+        // Register IDbContextFactory with singleton options
+        serviceCollection.AddSingleton<IDbContextFactory<ApplicationDbContext>>(provider =>
+        {
+            var options = provider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
+            return new PooledDbContextFactory<ApplicationDbContext>(options);
+        });
 
         // Configure Identity
         serviceCollection.AddIdentityCore<ApplicationUser>(options => { })

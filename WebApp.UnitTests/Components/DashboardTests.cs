@@ -2,7 +2,9 @@ using Bunit;
 using Humanizer.Localisation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Radzen;
 using WebApp.Api.Jira;
 using WebApp.Components.ReusableComponents;
 using WebApp.Data;
@@ -43,15 +45,18 @@ public class DashboardTests : TestContext, IClassFixture<TestFixture>
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<RequirementsFilesModel>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestPlansModel>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestExecutionModel>());
+        Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<DataGridSettingsService>());
 
       //  Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<Radzen.NotificationService>());
        // Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<Radzen.ContextMenuService>());
 
         Services.AddSingleton<Radzen.NotificationService>();
         Services.AddSingleton<Radzen.ContextMenuService>();
-        Services.AddSingleton<Radzen.ContextMenuService>();
+        Services.AddSingleton<Radzen.TooltipService>();
         Services.AddSingleton<FormNotificationService>();
         Services.AddSingleton<AppTooltipService>();
+        Services.AddSingleton<EmailService>();
+        Services.AddSingleton<Radzen.DialogService>();
     //    Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<FormNotificationService>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<ApplicationUser>());
         Services.AddSingleton(fixture.ServiceProvider.GetRequiredService<TestCasesFilesModel>());
@@ -63,7 +68,8 @@ public class DashboardTests : TestContext, IClassFixture<TestFixture>
         // Add localization services - DON'T try to get ResourceManagerStringLocalizerFactory
         Services.AddSingleton<IEmailSender<ApplicationUser>, TestEmailSender>();
         Services.AddSingleton<RoleManager<IdentityRole>, TestRoleManager>();
-
+        Services.AddSingleton<IEmailService, EmailService>();  // Add this line
+        Services.AddSingleton<UserService>();
         // Create a simple dummy localizer for the Resources type
         Services.AddLocalization();
 
