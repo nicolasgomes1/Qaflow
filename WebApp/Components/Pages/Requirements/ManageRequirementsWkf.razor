@@ -15,7 +15,7 @@
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
         <RequirementsDialogCreate Title="" ProjectId="@ProjectId"
-                                  OnRequirementCreated="@RefreshAssignedRequirementsFromDialog"/>
+                                  OnRequirementCreated="@RefreshAllRequirements"/>
         <RadzenButton Icon="list"
                       Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements", true))'/>
     </RadzenStack>
