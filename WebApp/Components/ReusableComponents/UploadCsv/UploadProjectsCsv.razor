@@ -1,4 +1,6 @@
+@attribute [Authorize(Roles = "Admin, Manager")]
 <RadzenButton Icon="csv" Click="OpenFileUpload"
+              Visible="UiUserVisibility.IsAuthorized()"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Upload projects data from csv"))"
               MouseLeave="@AppTooltipService.HideTooltip"/>
 
@@ -109,5 +111,6 @@
             await FormNotificationService.NotifySuccess($"{nameof(Projects)} CSV imported successfully with {_validLines} blog posts and {_invalidLines} invalid lines.");
         }
     }
+
 
 }

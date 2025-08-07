@@ -1,4 +1,5 @@
 ﻿@page "/projects/create"
+@attribute [Authorize(Roles = "Admin, Manager")]
 @rendermode InteractiveServer
 
 <RadzenTemplateForm Data="@_projects" TItem="Projects" Submit="CreateNewProject">

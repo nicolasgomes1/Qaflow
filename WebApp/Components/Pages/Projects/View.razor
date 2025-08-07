@@ -34,7 +34,8 @@
 </RadzenCard>
 
 <div style="margin-top: 10px;">
-    <RadzenButton Text="Edit" Click='() => NavigationManager.NavigateTo($"projects/edit/{_project.Id}")'/>
+    <RadzenButton Visible="@UiUserVisibility.IsAuthorized()" Text="Edit"
+                  Click='() => NavigationManager.NavigateTo($"projects/edit/{_project.Id}")'/>
     <RadzenButton Text="Back" Click='() => NavigationManager.NavigateTo("/")'/>
 </div>
 

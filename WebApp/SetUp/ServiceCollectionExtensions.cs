@@ -1,6 +1,4 @@
 using WebApp.Api;
-using WebApp.Api.Dto;
-using WebApp.Data;
 using WebApp.Models;
 using WebApp.Services;
 using WebApp.Services.TestData;
@@ -27,6 +25,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<UserService>();
         services.AddScoped<GenerateJwtToken>();
         services.AddScoped<FetchApiData>();
+        services.AddScoped<UiUserVisibility>();
     }
 
     /// <summary>
