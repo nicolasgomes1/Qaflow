@@ -40,6 +40,10 @@
                                  MouseEnter="@(args => ShowTooltip(args, "Milestones", new TooltipOptions { Position = TooltipPosition.Right }))"
                                  MouseLeave="CloseTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/milestones"))"/>
+            <RadzenPanelMenuItem Text="@Loc["Minimize"]" Icon="@GetIcon()" data-testid="sidebar_minimize"
+                                 MouseEnter="@(args => ShowTooltip(args, "Minimize", new TooltipOptions { Position = TooltipPosition.Right }))"
+                                 MouseLeave="CloseTooltip"
+                                 Click="@(() => _sidebarExpanded = !_sidebarExpanded)"/>
         </RadzenPanelMenu>
 
     </RadzenSidebar>
@@ -47,6 +51,12 @@
 
 @code {
     bool _sidebarExpanded = false;
+
+    string GetIcon()
+    {
+        return _sidebarExpanded ? "chevron_left" : "chevron_right";
+    }
+    
 
     private int ProjectId { get; set; } // Capture projectId from the URL
 
