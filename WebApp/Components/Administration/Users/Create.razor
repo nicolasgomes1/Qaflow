@@ -1,4 +1,5 @@
 ﻿@page "/Users/Create"
+@using Microsoft.AspNetCore.WebUtilities
 @attribute [Authorize(Roles = "Admin")]
 @inject ILogger<Create> Logger
 
@@ -71,38 +72,48 @@
         };
 
         var result = await UserManager.CreateAsync(user, Input.Password);
-        if (result.Succeeded)
-        {
-            if (!Input.EmailConfirmed)
-            {
-                var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-                var callbackUrl = NavigationManager.GetUriWithQueryParameters(
-                    NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
-                    new Dictionary<string, object?> { ["userId"] = user.Id, ["code"] = code });
-
-                await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
-            }
-
-            if (!string.IsNullOrEmpty(Input.Role))
-            {
-                var roleResult = await UserManager.AddToRoleAsync(user, Input.Role);
-                if (!roleResult.Succeeded)
-                {
-                    Logger.LogError("Error adding user to role: {Errors}", string.Join(", ", roleResult.Errors.Select(e => e.Description)));
-                }
-            }
-
-            Logger.LogInformation("User created successfully.");
-            NavigationManager.NavigateTo("/Users/Index");
-            await UserNotification.NotifySuccess("User was created Sucessefully");
-        }
-        else
+        if (!result.Succeeded)
         {
             foreach (var error in result.Errors)
             {
                 Logger.LogError("Error creating user: {Error}", error.Description);
             }
+            return;
         }
+
+        Logger.LogInformation("User created successfully.");
+
+        // Send confirmation email only if user is not confirmed
+        if (!Input.EmailConfirmed)
+        {
+            var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+            var callbackUrl = NavigationManager.GetUriWithQueryParameters(
+                NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
+                new Dictionary<string, object?>
+                {
+                    ["userId"] = user.Id,
+                    ["code"] = code
+                });
+
+            var encodedUrl = HtmlEncoder.Default.Encode(callbackUrl);
+            await EmailSender.SendConfirmationLinkAsync(user, user.Email, encodedUrl);
+            await EmailService.SendUserEmailLinkAsync(user.Email, "Confirm your email", $"Please click <a href='{encodedUrl}'>here</a> to confirm your email.");
+        }
+
+        // Add to role if selected
+        if (!string.IsNullOrWhiteSpace(Input.Role))
+        {
+            var roleResult = await UserManager.AddToRoleAsync(user, Input.Role);
+            if (!roleResult.Succeeded)
+            {
+                Logger.LogError("Error adding user to role: {Errors}", string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+            }
+        }
+
+        await UserNotification.NotifySuccess("User was created successfully.");
+        NavigationManager.NavigateTo("/Users/Index");
     }
 
     private class InputModel
