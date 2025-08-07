@@ -17,6 +17,9 @@
         <RequirementsDialogCreate Title="" ProjectId="@ProjectId"
                                   OnRequirementCreated="@RefreshAllRequirements"/>
         <RadzenButton Icon="list"
+                      ButtonStyle="ButtonStyle.Warning"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Requirements List"))"
+                      MouseLeave="@AppTooltipService.HideTooltip"
                       Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements", true))'/>
     </RadzenStack>
 </RadzenStack>

@@ -72,6 +72,7 @@ else
                             <RadzenLabel Text="Requirements"/>
                             <RadzenDropDown id="requirements"
                                             Data="@_requirementsList"
+                                            Placeholder="only completed requirements will be displayed"
                                             @bind-Value="TestCasesModel.SelectedRequirementIds"
                                             TextProperty="Name"
                                             ValueProperty="Id"

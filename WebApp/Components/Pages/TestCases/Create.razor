@@ -77,6 +77,7 @@
                             <RadzenDropDown id="requirements"
                                             Data="@_requirementsList"
                                             @bind-Value="TestCasesModel.SelectedRequirementIds"
+                                            Placeholder="only completed requirements will be displayed"
                                             TextProperty="Name"
                                             ValueProperty="Id"
                                             Multiple="true"
