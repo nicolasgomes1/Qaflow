@@ -28,7 +28,7 @@
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
 
-    private async Task CreateNewRequirement()
+    private async Task CreateNewRequirementSpecification()
     {
         // CreateBug should handle adding the bug and return a result
         var result = await RequirementsSpecificationModel.AddRequirementsSpecification(_requirements, ProjectId);
@@ -47,10 +47,10 @@
     {
         _requirements = new RequirementsSpecification();
 
-        var result = await DialogService.OpenAsync("Create Requirement", ds =>
+        var result = await DialogService.OpenAsync("Create Requirement Specification", ds =>
             @<RadzenStack Gap="1.5rem" Style="height: 300px;">
                 <RadzenTemplateForm Data="_requirements" TItem="RequirementsSpecification"
-                                    Submit="@CreateNewRequirement">
+                                    Submit="@CreateNewRequirementSpecification">
                     <ValidationSummary class="alert alert-danger"/>
 
                     <div class="form-group mb-4">
