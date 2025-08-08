@@ -25,10 +25,10 @@
 
     </HeaderTemplate>
     <Columns>
-        <RadzenDataGridColumn Property="@nameof(_cycles.Id)" Title="Id" Width="auto"/>
-        <RadzenDataGridColumn Property="@nameof(_cycles.Name)" Title="Name" Width="auto"/>
-        <RadzenDataGridColumn Property="@nameof(_cycles.StartDate)" Title="Start" Width="auto"/>
-        <RadzenDataGridColumn Property="@nameof(_cycles.EndDate)" Title="End" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(Cycles.Id)" Title="Id" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(Cycles.Name)" Title="Name" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(Cycles.StartDate)" Title="Start" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(Cycles.EndDate)" Title="End" Width="auto"/>
         <RadzenDataGridColumn Filterable="false" Width="auto" Title="Days">
             <Template Context="ctx">
                 <RadzenBadge IsPill="true">
@@ -50,7 +50,6 @@
 @code {
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
-    Cycles _cycles = new();
     IEnumerable<Cycles>? _cyclesList;
     private IList<Cycles> _selectedcycle = [];
 
