@@ -12,7 +12,7 @@ public class TestPlansModel(
     TestPlansFilesModel testPlansFilesModel)
 {
     public List<int> SelectedTestCasesIds { get; set; } = [];
-
+    public int SelectedCycleId { get; set; }
 
     public async Task<List<TestPlans>> DisplayTestPlansIndexPage(int projectId)
     {
@@ -44,6 +44,8 @@ public class TestPlansModel(
             .Include(tp => tp.Cycle) // Add this line to include the Cycle
             .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
 
+        SelectedCycleId = testPlans.CycleId;
+
         if (testPlans == null) throw new ApplicationException("Test Plan not found");
 
         return testPlans;
@@ -72,7 +74,7 @@ public class TestPlansModel(
         // Set test plan properties
         testPlan.CreatedBy = currentUserInfo;
         testPlan.ProjectsId = projectId;
-
+        testPlan.CycleId = SelectedCycleId;
 
         testPlan.LinkedTestCases = [];
 
@@ -103,12 +105,14 @@ public class TestPlansModel(
 
         var testPlan = await db.TestPlans
             .Include(tp => tp.LinkedTestCases)
+            .Include(tp => tp.Cycle) // Add this line to include the Cycle
             .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
         if (testPlan is null) throw new Exception("Test plan not found");
 
         db.Update(testPlan);
         testPlan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         testPlan.ProjectsId = projectId;
+        testPlan.CycleId = SelectedCycleId;
 
         // Update test cases of testplan
         testPlan.LinkedTestCases = await db.TestCases
