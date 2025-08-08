@@ -1,0 +1,37 @@
+@attribute [Authorize]
+@inject CyclesModel CyclesModel
+<RadzenButton Icon="visibility"
+              Disabled="@IsDisabled"
+              Size="ButtonSize.ExtraSmall"
+              data-testid="view"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"View {nameof(Cycles)}"))"
+              ButtonStyle="ButtonStyle.Light" Click="@ViewInlineDialog" Style="color: blue;"/>
+
+@code {
+    private Cycles _cycles = new();
+
+
+    [Parameter] public bool IsDisabled { get; set; } = false;
+
+    [EditorRequired] [Parameter] public int Id { get; set; }
+
+    async Task ViewInlineDialog()
+    {
+        _cycles = await CyclesModel.GetCycleById(Id);
+
+        await DialogService.OpenAsync($"View {nameof(Cycles)}", ds =>
+                        @<div>
+                            <p>ID: @_cycles.Id</p>
+                            <p>Name: @_cycles.Name</p>
+                            <p>Start Date: @_cycles.StartDate</p>
+                            <p>End Date: @_cycles.EndDate</p>
+                            <p>Created At: @_cycles.CreatedAt</p>
+                            <p>Modified At: @_cycles.ModifiedAt</p>
+                            <p>Created By: @_cycles.CreatedBy</p>
+                            <p>Modified By: @_cycles.ModifiedBy</p>
+
+                        </div>,
+                new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
+    }
+
+}

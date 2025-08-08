@@ -1,4 +1,5 @@
 ﻿@attribute [Authorize]
+@using WebApp.Components.Pages.Cycles
 @typeparam TItem
 @inject TooltipService TooltipService
 
@@ -15,6 +16,11 @@
                                                          OnRequirementSpecificationUpdated="OnRequirementSpecificationUpdated"/>
                     <RequirementsSpecificationDialogDelete Id="GetId(item)"
                                                            OnRequirementDeleted="OnRequirementSpecificationUpdated"/>
+                }
+                
+                @if (EntityName == nameof(Cycles))
+                {
+                    <CyclesDialogView Id="GetId(item)"/>
                 }
                 
 
