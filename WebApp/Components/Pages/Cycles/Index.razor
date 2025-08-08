@@ -27,7 +27,7 @@
         <RadzenDataGridColumn Property="@nameof(_cycles.Id)" Title="Id" Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(_cycles.Name)" Title="Name" Width="auto"/>
         <!-- Action Buttons column -->
-        <IndexActionsModal TItem="RequirementsSpecification" EntityName="RequirementsSpecification"
+        <IndexActionsModal TItem="Cycles" EntityName="@nameof(Cycles)"
                            OnRequirementSpecificationUpdated="() => RefreshPage()"/>
     </Columns>
 </RadzenDataGrid>
@@ -45,6 +45,11 @@
 
         // Refresh the Home component (re-render it)
         await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _cyclesList = await CyclesModel.GetCyclesByProjectId(ProjectId);
     }
 
 }

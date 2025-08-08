@@ -7,11 +7,17 @@
                           Reorderable="false" Title="Actions" Pickable="false">
         <Template Context="item">
             <div style="display: flex; gap: 5px;">
-                <RequirementsSpecificationDialogView Id="GetId(item)"/>
-                <RequirementsSpecificationDialogEdit Id="GetId(item)"
-                                                     OnRequirementSpecificationUpdated="OnRequirementSpecificationUpdated"/>
-                <RequirementsSpecificationDialogDelete Id="GetId(item)"
-                                                       OnRequirementDeleted="OnRequirementSpecificationUpdated"/>
+
+                @if (EntityName == nameof(RequirementsSpecification))
+                {
+                    <RequirementsSpecificationDialogView Id="GetId(item)"/>
+                    <RequirementsSpecificationDialogEdit Id="GetId(item)"
+                                                         OnRequirementSpecificationUpdated="OnRequirementSpecificationUpdated"/>
+                    <RequirementsSpecificationDialogDelete Id="GetId(item)"
+                                                           OnRequirementDeleted="OnRequirementSpecificationUpdated"/>
+                }
+                
+
             </div>
         </Template>
     </RadzenDataGridColumn>
@@ -20,7 +26,7 @@
 
 
 @code {
-    [Parameter] public string EntityName { get; set; } = string.Empty;
+    [EditorRequired] [Parameter] public required string EntityName { get; set; }
     [EditorRequired] [Parameter] public EventCallback OnRequirementSpecificationUpdated { get; set; }
 
 
