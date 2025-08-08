@@ -29,7 +29,7 @@
         <RadzenDataGridColumn Property="@nameof(_cycles.Name)" Title="Name" Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(_cycles.StartDate)" Title="Start" Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(_cycles.EndDate)" Title="End" Width="auto"/>
-        <RadzenDataGridColumn Filterable="false" Width="auto">
+        <RadzenDataGridColumn Filterable="false" Width="auto" Title="Days">
             <Template Context="ctx">
                 <RadzenBadge IsPill="true">
                     @{

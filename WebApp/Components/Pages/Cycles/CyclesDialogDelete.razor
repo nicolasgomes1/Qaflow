@@ -13,23 +13,25 @@
 
     private async Task DeleteItem(int item)
     {
-        var confirmed = await DialogService.Confirm($"Are you sure you want to delete this {nameof(CyclesModel)}?", $"Delete {nameof(Cycles)}");
+        var confirmed = await DialogService.Confirm(
+            $"Are you sure you want to delete this {nameof(CyclesModel)}?",
+            $"Delete {nameof(Cycles)}");
 
         if (confirmed is true)
         {
-            var hey = await CyclesModel.DeleteCycle(item);
+            var canDelete = await CyclesModel.DeleteCycle(item);
 
             if (OnRequirementDeleted.HasDelegate)
             {
                 await OnRequirementDeleted.InvokeAsync();
             }
 
-            switch (hey)
+            switch (canDelete)
             {
-                case true:
-                    await FormNotificationService.NotifyError("Can't delete cycle has it is beign used");
-                    break;
                 case false:
+                    await FormNotificationService.NotifyError("Can't delete cycle as it is being used");
+                    break;
+                case true:
                     await FormNotificationService.NotifySuccess($"Cycle with Id {item} was successfully deleted");
                     break;
             }

@@ -63,21 +63,23 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        // Check if cycle exists and include related test plans
+        // First check if there are any test plans using this cycle
+        var hasTestPlans = await db.TestPlans
+            .AnyAsync(tp => tp.CycleId == cycleId);
+
+        if (hasTestPlans)
+        {
+            return false; // Cannot delete due to associated test plans
+        }
+
         var cycle = await db.Cycles
-            .Include(c => c.TestPlans)
             .FirstOrDefaultAsync(c => c.Id == cycleId);
 
-        if (cycle == null) throw new Exception("Cycle not found");
-
-        // Check if there are any test plans associated with this cycle
-        if (cycle.TestPlans.Any())
-        {
-            return true; // Cannot delete cycle because it has associated test plans
-        }
+        if (cycle == null)
+            throw new Exception("Cycle not found");
 
         db.Cycles.Remove(cycle);
         await db.SaveChangesAsync();
-        return false; // Successfully deleted cycle
+        return true; // Successfully deleted
     }
 }
