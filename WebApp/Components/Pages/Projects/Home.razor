@@ -3,8 +3,7 @@
 
 
 @rendermode InteractiveServer
-@attribute [Authorize(Roles = "Admin, User, Manager")]
-
+@attribute [Authorize(Roles = $"{nameof(UserRoles.Admin)},{nameof(UserRoles.Manager)},{nameof(UserRoles.User)}")]
 <PageTitle>Home</PageTitle>
 <AuthorizeView>
     <Authorized>
