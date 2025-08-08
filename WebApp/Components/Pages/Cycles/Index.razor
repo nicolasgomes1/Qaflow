@@ -28,6 +28,17 @@
         <RadzenDataGridColumn Property="@nameof(_cycles.Name)" Title="Name" Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(_cycles.StartDate)" Title="Start" Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(_cycles.EndDate)" Title="End" Width="auto"/>
+        <RadzenDataGridColumn Filterable="false" Width="auto">
+            <Template Context="ctx">
+                <RadzenBadge IsPill="true">
+                    @{
+                        TimeSpan difference = ctx.EndDate.Date - ctx.StartDate.Date;
+                    }
+                    @difference.Days
+                </RadzenBadge>
+            </Template>
+        </RadzenDataGridColumn>
+
 
         <!-- Action Buttons column -->
         <IndexActionsModal TItem="Cycles" EntityName="@nameof(Cycles)"
