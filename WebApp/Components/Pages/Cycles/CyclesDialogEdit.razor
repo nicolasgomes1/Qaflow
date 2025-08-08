@@ -58,6 +58,46 @@
                             <RadzenRequiredValidator Component="name" Text="Name is required"/>
                         </div>
 
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Start Date" Component="RadzenDatePickerBindValue"/>
+
+                            <RadzenDatePicker data-testid="cycle_start_date"
+                                              @bind-Value="_cycles.StartDate"
+                                              Change="OnStartDateChanged"
+                                              Name="RadzenDatePickerBindValue"
+                                              DateFormat="yyyy-MM-dd"
+                                              Style="width: 100%;"/>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="End Date" Component="RadzenDatePickerBindValue"/>
+
+                            <RadzenDatePicker data-testid="cycle_end_date"
+                                              @bind-Value="_cycles.EndDate"
+                                              Change="OnEndDateChanged"
+                                              Name="RadzenDatePickerBindValue"
+                                              DateFormat="yyyy-MM-dd"
+                                              Style="width: 100%;"/>
+                        </div>
+
+                        @code{
+
+                            private void OnStartDateChanged(DateTime? selectedDate)
+                            {
+                                if (!selectedDate.HasValue) return;
+                                // Convert local date to UTC
+                                _cycles.StartDate = DateTime.SpecifyKind(selectedDate.Value, DateTimeKind.Local).ToUniversalTime();
+                            }
+
+                            private void OnEndDateChanged(DateTime? selectedDate)
+                            {
+                                if (!selectedDate.HasValue) return;
+                                // Convert local date to UTC
+                                _cycles.EndDate = DateTime.SpecifyKind(selectedDate.Value, DateTimeKind.Local).ToUniversalTime();
+                            }
+
+                        }
+
 
                         <!-- Submit button inside the form -->
                         <RadzenButton Icon="update" Text="Cycle" ButtonStyle="ButtonStyle.Warning"
