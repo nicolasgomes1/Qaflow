@@ -16,4 +16,6 @@ public class Cycles : BaseEntity
     public int ProjectsId { get; set; }
 
     public Projects? Projects { get; init; }
+
+    public ICollection<TestPlans> TestPlans { get; set; } = [];
 }

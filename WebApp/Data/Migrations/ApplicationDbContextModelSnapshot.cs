@@ -1012,6 +1012,9 @@ namespace WebApp.Data.Migrations
                     b.Property<int>("CycleId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("CyclesId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -1038,6 +1041,8 @@ namespace WebApp.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CycleId");
+
+                    b.HasIndex("CyclesId");
 
                     b.HasIndex("ProjectsId");
 
@@ -1533,8 +1538,12 @@ namespace WebApp.Data.Migrations
                     b.HasOne("WebApp.Data.Cycles", "Cycle")
                         .WithMany()
                         .HasForeignKey("CycleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("WebApp.Data.Cycles", null)
+                        .WithMany("TestPlans")
+                        .HasForeignKey("CyclesId");
 
                     b.HasOne("WebApp.Data.Projects", "Projects")
                         .WithMany("TestPlans")
@@ -1627,6 +1636,11 @@ namespace WebApp.Data.Migrations
                     b.Navigation("BugFiles");
 
                     b.Navigation("LinkedTestCases");
+                });
+
+            modelBuilder.Entity("WebApp.Data.Cycles", b =>
+                {
+                    b.Navigation("TestPlans");
                 });
 
             modelBuilder.Entity("WebApp.Data.Projects", b =>

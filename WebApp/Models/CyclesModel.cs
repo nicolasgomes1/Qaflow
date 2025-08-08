@@ -62,10 +62,22 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
     public async Task<bool> DeleteCycle(int cycleId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-        var cycle = await db.Cycles.FindAsync(cycleId);
+
+        // Check if cycle exists and include related test plans
+        var cycle = await db.Cycles
+            .Include(c => c.TestPlans)
+            .FirstOrDefaultAsync(c => c.Id == cycleId);
+
         if (cycle == null) throw new Exception("Cycle not found");
+
+        // Check if there are any test plans associated with this cycle
+        if (cycle.TestPlans.Any())
+        {
+            return true; // Cannot delete cycle because it has associated test plans
+        }
+
         db.Cycles.Remove(cycle);
         await db.SaveChangesAsync();
-        return true;
+        return false; // Successfully deleted cycle
     }
 }

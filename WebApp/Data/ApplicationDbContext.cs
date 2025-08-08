@@ -194,5 +194,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasMany<Cycles>()
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Cycles>()
+            .HasMany<TestPlans>()
+            .WithOne(t => t.Cycle)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
