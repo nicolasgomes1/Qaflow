@@ -41,6 +41,7 @@ public class TestPlansModel(
 
         var testPlans = await db.TestPlans
             .Include(tp => tp.LinkedTestCases)
+            .Include(tp => tp.Cycle) // Add this line to include the Cycle
             .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
 
         if (testPlans == null) throw new ApplicationException("Test Plan not found");
@@ -91,7 +92,7 @@ public class TestPlansModel(
         await db.SaveChangesAsync();
 
         // Save associated files if provided
-        if (files !=null && files.Count !=0) await testPlansFilesModel.SaveFilesToDb(files, testPlan.Id, projectId);
+        if (files != null && files.Count != 0) await testPlansFilesModel.SaveFilesToDb(files, testPlan.Id, projectId);
 
         return testPlan;
     }

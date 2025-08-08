@@ -189,5 +189,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasMany<TestStepsExecution>(tse => tse.LinkedTestStepsExecution)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<TestPlans>()
+            .HasMany<Cycles>()
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

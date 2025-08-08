@@ -39,6 +39,10 @@
                         <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
                         <RadzenLabel Text="@_testPlans.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
 
+                        <RadzenLabel Text="Cycle:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@(_testPlans.Cycle?.Name ?? "No cycle assigned")"/>
+
+
                     </div>
                 </RadzenCard>
             </RadzenRow>

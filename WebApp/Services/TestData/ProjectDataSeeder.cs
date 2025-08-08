@@ -88,12 +88,19 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         await GetOrCreateTestCaseWithStepsAsync(dbContext, project, "Test Case 4", "Sample test case 4", null,
             testSteps);
 
+
+        var cycle = await GetOrCreateCycle(dbContext, project, "Cycle 1");
+        await GetOrCreateCycle(dbContext, project, "Cycle 2");
+        await GetOrCreateCycle(dbContext, project, "Cycle 3");
+        await GetOrCreateCycle(dbContext, project, "Cycle 4");
+        await GetOrCreateCycle(dbContext, project, "Cycle 5");
+
         // Create or get test plans associated with the test cases
-        await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Alpha", "Alpha", USER, testCase1,
+        await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Alpha", "Alpha", USER, testCase1, cycle,
             WorkflowStatus.Completed);
-        await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Alpha", "Beta", MANAGER, testCase2,
+        await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Alpha", "Beta", MANAGER, testCase2, cycle,
             WorkflowStatus.InReview);
-        await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Beta", "no tests", USER, null,
+        await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Beta", "no tests", USER, null, cycle,
             WorkflowStatus.New);
 
         await GetOrCreateBugsAsync(dbContext, project, "Bug 1", "Bug 1 Description", USER);
@@ -101,12 +108,6 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         await GetOrCreateBugsAsync(dbContext, project, "Bug 3", "Bug 3 Description", USER, BugStatus.InProgress);
         await GetOrCreateBugsAsync(dbContext, project, "Bug 4", "Bug 4 Description", MANAGER, BugStatus.InReview);
         await GetOrCreateBugsAsync(dbContext, project, "Bug 5", "Bug 5 Description", MANAGER, BugStatus.Open);
-
-        await GetOrCreateCycle(dbContext, project, "Cycle 1");
-        await GetOrCreateCycle(dbContext, project, "Cycle 2");
-        await GetOrCreateCycle(dbContext, project, "Cycle 3");
-        await GetOrCreateCycle(dbContext, project, "Cycle 4");
-        await GetOrCreateCycle(dbContext, project, "Cycle 5");
     }
 
     private static async Task<Projects> GetOrCreateProjectAsync(ApplicationDbContext dbContext, string projectName)
@@ -326,7 +327,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
     private static async Task GetOrCreateTestPlanAsync(ApplicationDbContext dbContext, Projects projects, string name,
         string description, string assignedUserName,
-        TestCases? testCase, WorkflowStatus status = WorkflowStatus.Completed)
+        TestCases? testCase, Cycles? cycle, WorkflowStatus status = WorkflowStatus.Completed)
     {
         // Check if a test plan already exists
         var existingTestPlan = await dbContext.TestPlans
@@ -381,7 +382,8 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             Projects = projects,
             CreatedBy = USER,
             AssignedTo = assignedUserId,
-            WorkflowStatus = status
+            WorkflowStatus = status,
+            Cycle = cycle
         };
 
         if (newTestPlanForCreation.WorkflowStatus == WorkflowStatus.Completed)
@@ -398,12 +400,13 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         }
     }
 
-    private static async Task GetOrCreateCycle(ApplicationDbContext dbContext, Projects projects, string name)
+    private static async Task<Cycles> GetOrCreateCycle(ApplicationDbContext dbContext, Projects projects, string name)
     {
         // Check if a cycle already exists
         var existingCycle = await dbContext.Cycles
             .FirstOrDefaultAsync(c => c.Projects == projects && c.Name == name);
-        if (existingCycle != null) return;
+        if (existingCycle != null) return existingCycle;
+        ;
         var newCycle = new Cycles
         {
             Name = name,
@@ -412,5 +415,6 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         };
         await dbContext.Cycles.AddAsync(newCycle);
         await dbContext.SaveChangesAsync();
+        return newCycle;
     }
 }

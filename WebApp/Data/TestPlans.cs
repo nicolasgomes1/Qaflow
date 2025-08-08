@@ -13,15 +13,17 @@ public class TestPlans : BaseEntity
     public Priority Priority { get; set; }
 
     public ICollection<TestCases> LinkedTestCases { get; set; } = [];
-    
+
     public int ProjectsId { get; set; }
 
     public Projects? Projects { get; set; }
-    
+
     public WorkflowStatus WorkflowStatus { get; set; }
-    
-    [MaxLength(50)]
-    public string AssignedTo { get; set; } = string.Empty;
+
+    [Required] public int CycleId { get; set; }
+    public Cycles? Cycle { get; set; }
+
+    [MaxLength(50)] public string AssignedTo { get; set; } = string.Empty;
 
     public ICollection<TestPlansFile> TestPlansFiles { get; set; } = new List<TestPlansFile>();
 }
