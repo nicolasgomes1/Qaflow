@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using WebApp.Data;
+using WebApp.Data.enums;
 
 namespace WebApp.Services.TestData;
 
@@ -13,7 +14,7 @@ public class RoleSeeder(IServiceProvider serviceProvider, ILogger<RoleSeeder> lo
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         // Define roles you want to seed
-        string[] roleNames = ["Admin", "User", "Manager"];
+        string[] roleNames = [nameof(UserRoles.Admin), nameof(UserRoles.User), nameof(UserRoles.Manager)];
         foreach (var roleName in roleNames)
         {
             if (await roleManager.RoleExistsAsync(roleName)) continue;
@@ -24,9 +25,10 @@ public class RoleSeeder(IServiceProvider serviceProvider, ILogger<RoleSeeder> lo
         }
 
         // Create users and assign them to roles
-        await CreateUserAndAssignRole(userManager, "admin@example.com", "Admin123!", "Admin", true);
-        await CreateUserAndAssignRole(userManager, "user@example.com", "User123!", "User", true);
-        await CreateUserAndAssignRole(userManager, "manager@example.com", "Manager123!", "Manager", true);
+        await CreateUserAndAssignRole(userManager, "admin@example.com", "Admin123!", nameof(UserRoles.Admin), true);
+        await CreateUserAndAssignRole(userManager, "user@example.com", "User123!", nameof(UserRoles.User), true);
+        await CreateUserAndAssignRole(userManager, "manager@example.com", "Manager123!", nameof(UserRoles.Manager),
+            true);
     }
 
     private async Task CreateUserAndAssignRole(UserManager<ApplicationUser> userManager, string email, string password,

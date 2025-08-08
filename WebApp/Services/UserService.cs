@@ -3,11 +3,14 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
+using WebApp.Data.enums;
 
 namespace WebApp.Services;
-public class UserService(AuthenticationStateProvider authenticationStateProvider, UserManager<ApplicationUser> userManager)
+
+public class UserService(
+    AuthenticationStateProvider authenticationStateProvider,
+    UserManager<ApplicationUser> userManager)
 {
-    
     /// <summary>
     /// Retrieves the current user's information including their username and user ID.
     /// </summary>
@@ -26,7 +29,7 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
 
         return (userName, userId);
     }
-    
+
     /// <summary>
     /// Retrieves the current user's username.
     /// </summary>
@@ -38,7 +41,7 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
         var userInfo = await GetCurrentUserInfoAsync();
         return userInfo.UserName;
     }
-    
+
     /// <summary>
     /// Returns the name of the user with the given id. To be used in the dropdowns
     /// </summary>
@@ -50,33 +53,32 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
         var user = userList.FirstOrDefault(user => user.Id == userId);
         return user?.UserName ?? "Unassigned";
     }
-    
-    
- /// <summary>
- /// Get the user name from the user id
- /// </summary>
- /// <param name="id"></param>
- /// <returns></returns>
- // public string GetUserNameFromUserId(string id)
- // {
- //     var users = userManager.Users.ToList();
- //     return users.FirstOrDefault(x => x.Id == id)?.UserName ?? string.Empty;
- // }
- 
- public async Task<string> GetUserNameFromUserIdAsync(string id)
- {
-     var user = await userManager.Users
-         .Where(x => x.Id == id)
-         .Select(x => x.UserName)
-         .FirstOrDefaultAsync();
-     return user ?? string.Empty;
- }
- 
- 
- /// <summary>
- /// Retrieve the list of users based on roles other than admin
- /// </summary>
- /// <returns></returns>
+
+
+    /// <summary>
+    /// Get the user name from the user id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    // public string GetUserNameFromUserId(string id)
+    // {
+    //     var users = userManager.Users.ToList();
+    //     return users.FirstOrDefault(x => x.Id == id)?.UserName ?? string.Empty;
+    // }
+    public async Task<string> GetUserNameFromUserIdAsync(string id)
+    {
+        var user = await userManager.Users
+            .Where(x => x.Id == id)
+            .Select(x => x.UserName)
+            .FirstOrDefaultAsync();
+        return user ?? string.Empty;
+    }
+
+
+    /// <summary>
+    /// Retrieve the list of users based on roles other than admin
+    /// </summary>
+    /// <returns></returns>
     public async Task<List<ApplicationUser>> GetUsersList()
     {
         // Get all users
@@ -86,7 +88,7 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
         var nonAdminUsers = new List<ApplicationUser>();
         foreach (var user in users)
         {
-            if (!await userManager.IsInRoleAsync(user, "Admin"))
+            if (!await userManager.IsInRoleAsync(user, nameof(UserRoles.Admin)))
             {
                 nonAdminUsers.Add(user);
             }
@@ -94,7 +96,4 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
 
         return nonAdminUsers;
     }
-    
 }
-
-
