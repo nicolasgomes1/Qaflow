@@ -12,15 +12,19 @@
                 @if (EntityName == nameof(RequirementsSpecification))
                 {
                     <RequirementsSpecificationDialogView Id="GetId(item)"/>
-                    <RequirementsSpecificationDialogEdit Id="GetId(item)"
+                    <CyclesDialogEdit Id="GetId(item)"
                                                          OnRequirementSpecificationUpdated="OnRequirementSpecificationUpdated"/>
-                    <RequirementsSpecificationDialogDelete Id="GetId(item)"
+                    <CyclesDialogDelete Id="GetId(item)"
                                                            OnRequirementDeleted="OnRequirementSpecificationUpdated"/>
                 }
                 
                 @if (EntityName == nameof(Cycles))
                 {
                     <CyclesDialogView Id="GetId(item)"/>
+                    <CyclesDialogEdit Id="GetId(item)"
+                                                         OnRequirementSpecificationUpdated="OnRequirementSpecificationUpdated"/>
+                    <CyclesDialogDelete Id="GetId(item)"
+                                                           OnRequirementDeleted="OnRequirementSpecificationUpdated"/>
                 }
                 
 

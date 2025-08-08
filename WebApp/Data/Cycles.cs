@@ -9,9 +9,9 @@ public class Cycles : BaseEntity
 
     public string Name { get; set; } = string.Empty;
 
-    public DateTime StartDate { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.UtcNow;
 
-    public DateTime EndDate { get; set; }
+    public DateTime EndDate { get; set; } = DateTime.UtcNow;
 
     public int ProjectsId { get; set; }
 

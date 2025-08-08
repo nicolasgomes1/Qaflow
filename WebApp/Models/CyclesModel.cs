@@ -36,23 +36,14 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
         return cycles;
     }
 
-    public async Task<Cycles> UpdateCycle(Cycles cycles, int projectId)
+    public async Task<Cycles> UpdateCycle(Cycles cycles)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
         db.Cycles.Update(cycles);
         cycles.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         cycles.ModifiedAt = DateTime.UtcNow;
-        cycles.ProjectsId = projectId;
-        return cycles;
-    }
-
-    public async Task DeleteCycle(int cycleId)
-    {
-        await using var db = await dbContextFactory.CreateDbContextAsync();
-        var cycle = await db.Cycles.FindAsync(cycleId);
-        if (cycle == null) throw new Exception("Cycle not found");
-        db.Cycles.Remove(cycle);
         await db.SaveChangesAsync();
+        return cycles;
     }
 
 
@@ -66,5 +57,15 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
         return await db.Cycles.Where(c => c.ProjectsId == projectId).ToListAsync();
+    }
+
+    public async Task<bool> DeleteCycle(int cycleId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        var cycle = await db.Cycles.FindAsync(cycleId);
+        if (cycle == null) throw new Exception("Cycle not found");
+        db.Cycles.Remove(cycle);
+        await db.SaveChangesAsync();
+        return true;
     }
 }

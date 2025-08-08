@@ -1,0 +1,70 @@
+@inject DialogService DialogService
+@attribute [Authorize]
+@inject CyclesModel CyclesModel
+
+<RadzenButton Icon="edit"
+              Disabled="@IsDisabled"
+              Size="ButtonSize.ExtraSmall"
+              data-testid="edit"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Edit {nameof(Cycles)}"))"
+              MouseLeave="@AppTooltipService.HideTooltip"
+              ButtonStyle="ButtonStyle.Light" Click="@EditInlineDialog" Style="color: green;"/>
+
+@code {
+    private Cycles _cycles = new();
+
+    [EditorRequired] [Parameter] public EventCallback OnRequirementSpecificationUpdated { get; set; }
+
+    /// <summary>
+    /// Default value is false
+    /// </summary>
+    [Parameter]
+    public bool IsDisabled { get; set; } = false;
+
+    [EditorRequired] [Parameter] public int Id { get; set; }
+
+
+    private async Task UpdateCycles()
+    {
+        // CreateBug should handle adding the bug and return a result
+        var updated = await CyclesModel.UpdateCycle(_cycles);
+        DialogService.Close(_cycles);
+        StateHasChanged();
+        await FormNotificationService.NotifySuccess($"Cycle Updated successfully with id {_cycles.Id}");
+        // Notify the parent that the requirement was created
+        if (OnRequirementSpecificationUpdated.HasDelegate)
+        {
+            await OnRequirementSpecificationUpdated.InvokeAsync();
+        }
+    }
+
+
+    async Task EditInlineDialog()
+    {
+        _cycles = await CyclesModel.GetCycleById(Id);
+
+        var result = await DialogService.OpenAsync("Edit Cycle", ds =>
+                @<RadzenStack Gap="1.5rem" Style="height: 300px;">
+                    <RadzenTemplateForm Data="_cycles" TItem="Cycles"
+                                        Submit="@UpdateCycles">
+                        <ValidationSummary class="alert alert-danger"/>
+
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Name"/>
+                            <RadzenTextBox id="name"
+                                           @bind-Value="_cycles.Name"
+                                           class="input-style"
+                                           Name="name"/>
+                            <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                        </div>
+
+
+                        <!-- Submit button inside the form -->
+                        <RadzenButton Icon="update" Text="Cycle" ButtonStyle="ButtonStyle.Warning"
+                                      ButtonType="ButtonType.Submit"
+                                      Style="margin-bottom: 10px;"/>
+                    </RadzenTemplateForm>
+                </RadzenStack>, new DialogOptions() { Draggable = true, CloseDialogOnOverlayClick = true });
+    }
+
+}

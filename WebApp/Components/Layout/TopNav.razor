@@ -50,7 +50,7 @@
                         <RadzenMenuItem Text="Manage Account" Icon="account_circle" Path="/Account/Manage"/>
                         <RadzenMenuItem Text="Manage Users" Icon="account_circle" Path="/Users/Index"/>
                         <RadzenMenuItem Text="Grid Settings" Icon="display_settings" Path="/Gridsettings"/>
-                        <RadzenMenuItem Text="Cycles" Icon="cycle" Path="@path"/>
+                        <RadzenMenuItem Text="Cycles" Icon="cycle" Path="@path" Disabled="HasNotProjectSet()"/>
 
 
                         <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
@@ -187,6 +187,13 @@
             false => $"/Users/View/{user}",
             _ => throw new Exception("User not found")
         };
+    }
+
+    private bool HasNotProjectSet()
+    {
+        if (ProjectId == 0)
+            return true;
+        return false;
     }
 
 }
