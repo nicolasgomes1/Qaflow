@@ -50,6 +50,9 @@
                         <RadzenMenuItem Text="Manage Account" Icon="account_circle" Path="/Account/Manage"/>
                         <RadzenMenuItem Text="Manage Users" Icon="account_circle" Path="/Users/Index"/>
                         <RadzenMenuItem Text="Grid Settings" Icon="display_settings" Path="/Gridsettings"/>
+                        <RadzenMenuItem Text="Cycles" Icon="cycle" Path="@path"/>
+
+
                         <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
                         <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank"></RadzenMenuItem>
                         <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"/>
@@ -115,6 +118,9 @@
     private bool _isUser; // Flag to check if the user is a User
     private bool _isManager; // Flag to check if the user is a Manager
     [Parameter] public int ProjectId { get; set; }
+
+
+    string path => $"/project/{ProjectId}/Cycles";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

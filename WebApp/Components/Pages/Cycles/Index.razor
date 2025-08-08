@@ -1,0 +1,50 @@
+@page "/project/{ProjectId:int}/Cycles"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject CyclesModel CyclesModel
+<RadzenDataGrid TItem="Cycles"
+                Data="_cyclesList"
+                Density="Density.Compact"
+                AllowSorting="true"
+                AllowFiltering="true"
+                AllowPaging="true"
+                PageSize="10"
+                PagerHorizontalAlign="HorizontalAlign.Left"
+                AllowVirtualization="true"
+                SelectionMode="DataGridSelectionMode.Single"
+                @bind-Value="@_selectedcycle"
+                ShowPagingSummary="true"
+                FilterMode="FilterMode.Advanced"
+                LogicalFilterOperator="LogicalFilterOperator.Or">
+
+    <HeaderTemplate>
+        <CyclesDialogCreate Title="Cycles" ProjectId="ProjectId"
+                            OnCycleCreated="() => RefreshPage()"/>
+
+
+    </HeaderTemplate>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(_cycles.Id)" Title="Id" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(_cycles.Name)" Title="Name" Width="auto"/>
+        <!-- Action Buttons column -->
+        <IndexActionsModal TItem="RequirementsSpecification" EntityName="RequirementsSpecification"
+                           OnRequirementSpecificationUpdated="() => RefreshPage()"/>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+
+    Cycles _cycles = new();
+    IEnumerable<Cycles>? _cyclesList;
+    private IList<Cycles> _selectedcycle = [];
+
+    private async Task RefreshPage()
+    {
+        _cyclesList = await CyclesModel.GetCyclesByProjectId(ProjectId);
+
+        // Refresh the Home component (re-render it)
+        await InvokeAsync(StateHasChanged);
+    }
+
+}

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Data.enums;
 
@@ -102,6 +101,12 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         await GetOrCreateBugsAsync(dbContext, project, "Bug 3", "Bug 3 Description", USER, BugStatus.InProgress);
         await GetOrCreateBugsAsync(dbContext, project, "Bug 4", "Bug 4 Description", MANAGER, BugStatus.InReview);
         await GetOrCreateBugsAsync(dbContext, project, "Bug 5", "Bug 5 Description", MANAGER, BugStatus.Open);
+
+        await GetOrCreateCycle(dbContext, project, "Cycle 1");
+        await GetOrCreateCycle(dbContext, project, "Cycle 2");
+        await GetOrCreateCycle(dbContext, project, "Cycle 3");
+        await GetOrCreateCycle(dbContext, project, "Cycle 4");
+        await GetOrCreateCycle(dbContext, project, "Cycle 5");
     }
 
     private static async Task<Projects> GetOrCreateProjectAsync(ApplicationDbContext dbContext, string projectName)
@@ -391,5 +396,21 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             newTestPlanForCreation.LinkedTestCases.Add(testCase);
             await dbContext.SaveChangesAsync(); // Save the association
         }
+    }
+
+    private static async Task GetOrCreateCycle(ApplicationDbContext dbContext, Projects projects, string name)
+    {
+        // Check if a cycle already exists
+        var existingCycle = await dbContext.Cycles
+            .FirstOrDefaultAsync(c => c.Projects == projects && c.Name == name);
+        if (existingCycle != null) return;
+        var newCycle = new Cycles
+        {
+            Name = name,
+            Projects = projects,
+            CreatedBy = USER
+        };
+        await dbContext.Cycles.AddAsync(newCycle);
+        await dbContext.SaveChangesAsync();
     }
 }
