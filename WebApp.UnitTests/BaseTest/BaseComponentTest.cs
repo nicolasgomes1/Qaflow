@@ -5,6 +5,7 @@ using WebApp.Services;
 using WebApp.UnitTests.DIContainers;
 
 namespace WebApp.UnitTests.BaseTest;
+
 using Bunit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -45,10 +46,10 @@ public abstract class BaseComponentTest : TestContext, IClassFixture<TestFixture
     {
         // Register services from fixture
         RegisterFixtureServices();
-        
+
         // Register standalone services
         RegisterStandaloneServices();
-        
+
         // Register additional services
         Services.AddSingleton<UserManager<ApplicationUser>, TestUserManager>();
         Services.AddSingleton<IEmailSender<ApplicationUser>, TestEmailSender>();
@@ -87,6 +88,7 @@ public abstract class BaseComponentTest : TestContext, IClassFixture<TestFixture
             typeof(TestStepsExecutionTimerService),
             typeof(TestExecutionTimerServicev2),
             typeof(TestCaseExecutionTimerService),
+            typeof(UiUserVisibility),
             typeof(IDbContextFactory<ApplicationDbContext>)
         };
 

@@ -34,15 +34,14 @@ public class TestFixture : IDisposable
         {
             BaseUrl = "https://qawebmaster.atlassian.net",
             Username = "nicolasdiasgomes@gmail.com",
-            ApiKey = "ATATT3xFfGF0wVSvi8EeTnlFjtFO0fTILF54Vz4rCtHgxFEofpOARSWh_MaH_qSJTD5hi5fP8ubZv2w301lnf66Jx-llk0NnppHr6LRzh6RSZdS3yaDzsNATd3_h9-yWbrCfApgiuK9eHYna0bw4VRjT9ITC7J-3fFeD7wngx6mw57cKzuBhYqA=7F44A4CE"
+            ApiKey =
+                "ATATT3xFfGF0wVSvi8EeTnlFjtFO0fTILF54Vz4rCtHgxFEofpOARSWh_MaH_qSJTD5hi5fP8ubZv2w301lnf66Jx-llk0NnppHr6LRzh6RSZdS3yaDzsNATd3_h9-yWbrCfApgiuK9eHYna0bw4VRjT9ITC7J-3fFeD7wngx6mw57cKzuBhYqA=7F44A4CE"
         };
-        
+
         // Register the JiraApiOptions with the DI container
         serviceCollection.AddSingleton(Microsoft.Extensions.Options.Options.Create(jiraOptions));
 
 
-
-        
         // Set up in-memory database
         serviceCollection.AddSingleton<DbContextOptions<ApplicationDbContext>>(provider =>
         {
@@ -50,7 +49,7 @@ public class TestFixture : IDisposable
             optionsBuilder.UseInMemoryDatabase("TestDb");
             return optionsBuilder.Options;
         });
-        
+
         // Register ApplicationDbContext as scoped (using the singleton options)
         serviceCollection.AddScoped<ApplicationDbContext>(provider =>
         {
@@ -59,10 +58,9 @@ public class TestFixture : IDisposable
         });
 
 
-
         var testContext = new TestContext();
         serviceCollection.AddSingleton<IJSRuntime>(testContext.JSInterop.JSRuntime);
-        
+
         // Add Data Protection services
         serviceCollection.AddDataProtection();
 
@@ -99,6 +97,7 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<TestStepsExecutionTimerService>();
         serviceCollection.AddScoped<TestExecutionTimerServicev2>();
         serviceCollection.AddScoped<TestCaseExecutionTimerService>();
+        serviceCollection.AddScoped<UiUserVisibility>();
 
         serviceCollection.AddSingleton<IEmailSender<ApplicationUser>, TestEmailSender>();
 
