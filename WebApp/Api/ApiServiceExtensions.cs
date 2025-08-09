@@ -166,7 +166,7 @@ public static class ApiServiceExtensions
             }
             catch (DbUpdateException ex)
             {
-                return Results.Conflict($"Cannot delete project {id} due to related data.");
+                return Results.Conflict($"Cannot delete project {id} due to related data. Error: {ex.Message}");
             }
         }).WithOpenApi();
 

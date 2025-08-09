@@ -2,9 +2,8 @@
 @rendermode InteractiveServer
 @implements IDisposable
 
-@if (ProjectId != 0)
-{
-    <RadzenSidebar Responsive="false" Style="width: max-content">
+
+<RadzenSidebar Responsive="false" Style="width: max-content" Visible="@_hasProjectSet">
         <RadzenPanelMenu
             DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"
             ShowArrow="false">
@@ -47,7 +46,7 @@
         </RadzenPanelMenu>
 
     </RadzenSidebar>
-}
+
 
 @code {
     bool _sidebarExpanded = false;
@@ -60,12 +59,15 @@
 
     private int ProjectId { get; set; } // Capture projectId from the URL
 
+    bool _hasProjectSet;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
+            if (ProjectId != 0)
+                _hasProjectSet = true;
             StateHasChanged(); // Ensure UI updates
         }
     }
@@ -97,5 +99,7 @@
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
+
+}
 
 }

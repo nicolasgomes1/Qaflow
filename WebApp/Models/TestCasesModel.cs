@@ -226,9 +226,9 @@ public class TestCasesModel(
     /// TestCase Jira Tickets that accepts a TestCases object and stores the selected Jira tickets
     /// </summary>
     /// <param name="testcase"></param>
+    /// <param name="db"></param>
     private async Task AddJiraTickets(TestCases testcase, ApplicationDbContext db)
     {
-
         var selectedJiraTickets = JiraIntegrations
             .Where(jira => SelectedJiraTicketIds.Contains(jira.Id.ToString()))
             .Select(jira => jira.Key)
@@ -242,8 +242,8 @@ public class TestCasesModel(
                          JiraId = Convert.ToInt32(JiraIntegrations.First(jira => jira.Key == jiraKey).Id.ToString())
                      }))
             db.TestCasesJira.Add(testCaseJira);
-
-     //   await db.SaveChangesAsync();
+        await Task.CompletedTask;
+        //   await db.SaveChangesAsync();
     }
 
 

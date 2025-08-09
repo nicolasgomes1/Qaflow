@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
@@ -272,6 +273,7 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
                 LinkedTestStepsExecution = new List<TestStepsExecution>()
             };
 
+            Debug.Assert(originalTce.LinkedTestStepsExecution != null, "originalTce.LinkedTestStepsExecution != null");
             foreach (var originalStep in originalTce.LinkedTestStepsExecution)
             {
                 var newStep = new TestStepsExecution

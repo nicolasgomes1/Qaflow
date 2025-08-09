@@ -19,7 +19,7 @@ var app = builder.AddProject<WebApp>("webapp")
     .WaitFor(postgres)
     .WithReference(postgresdb)
     .WaitFor(postgresdb)
-    .WithHttpsHealthCheck("/health");
+    .WithHttpHealthCheck("/health");
 
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
 {

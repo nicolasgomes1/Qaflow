@@ -50,10 +50,10 @@ public class TestRoleManager : RoleManager<IdentityRole>
 {
     public TestRoleManager() : base(
         new TestRoleStore(),
-        null,
-        null,
-        null,
-        null)
+        null!,
+        null!,
+        null!,
+        null!)
     {
     }
 }
@@ -61,7 +61,9 @@ public class TestRoleManager : RoleManager<IdentityRole>
 // Test implementation of IRoleStore<IdentityRole> for testing
 public class TestRoleStore : IRoleStore<IdentityRole>
 {
-    public void Dispose() { }
+    public void Dispose()
+    {
+    }
 
     public Task<IdentityResult> CreateAsync(IdentityRole role, CancellationToken cancellationToken)
     {
@@ -83,36 +85,37 @@ public class TestRoleStore : IRoleStore<IdentityRole>
         return Task.FromResult(role.Id);
     }
 
-    public Task<string> GetRoleNameAsync(IdentityRole role, CancellationToken cancellationToken)
+    public Task<string?> GetRoleNameAsync(IdentityRole role, CancellationToken cancellationToken)
     {
         return Task.FromResult(role.Name);
     }
 
-    public Task SetRoleNameAsync(IdentityRole role, string roleName, CancellationToken cancellationToken)
+    public Task SetRoleNameAsync(IdentityRole role, string? roleName, CancellationToken cancellationToken)
     {
         role.Name = roleName;
         return Task.CompletedTask;
     }
 
-    public Task<string> GetNormalizedRoleNameAsync(IdentityRole role, CancellationToken cancellationToken)
+    public Task<string?> GetNormalizedRoleNameAsync(IdentityRole role, CancellationToken cancellationToken)
     {
         return Task.FromResult(role.NormalizedName);
     }
 
-    public Task SetNormalizedRoleNameAsync(IdentityRole role, string normalizedName, CancellationToken cancellationToken)
+    public Task SetNormalizedRoleNameAsync(IdentityRole role, string? normalizedName,
+        CancellationToken cancellationToken)
     {
         role.NormalizedName = normalizedName;
         return Task.CompletedTask;
     }
 
-    public Task<IdentityRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
+    public Task<IdentityRole?> FindByIdAsync(string roleId, CancellationToken cancellationToken)
     {
-        return Task.FromResult<IdentityRole>(null);
+        return Task.FromResult<IdentityRole>(null!)!;
     }
 
-    public Task<IdentityRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
+    public Task<IdentityRole?> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
     {
-        return Task.FromResult<IdentityRole>(null);
+        return Task.FromResult<IdentityRole>(null!)!;
     }
 }
 
@@ -121,14 +124,14 @@ public class TestUserManager : UserManager<ApplicationUser>
 {
     public TestUserManager() : base(
         new TestUserStore(),
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null)
+        null!,
+        null!,
+        null!,
+        null!,
+        null!,
+        null!,
+        null!,
+        null!)
     {
     }
 }
@@ -136,30 +139,33 @@ public class TestUserManager : UserManager<ApplicationUser>
 // Test implementation of IUserStore<ApplicationUser> for testing
 public class TestUserStore : IUserStore<ApplicationUser>
 {
-    public void Dispose() { }
+    public void Dispose()
+    {
+    }
 
     public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken cancellationToken)
     {
         return Task.FromResult(user.Id);
     }
 
-    public Task<string> GetUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
+    public Task<string?> GetUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
     {
         return Task.FromResult(user.UserName);
     }
 
-    public Task SetUserNameAsync(ApplicationUser user, string userName, CancellationToken cancellationToken)
+    public Task SetUserNameAsync(ApplicationUser user, string? userName, CancellationToken cancellationToken)
     {
         user.UserName = userName;
         return Task.CompletedTask;
     }
 
-    public Task<string> GetNormalizedUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
+    public Task<string?> GetNormalizedUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
     {
         return Task.FromResult(user.NormalizedUserName);
     }
 
-    public Task SetNormalizedUserNameAsync(ApplicationUser user, string normalizedName, CancellationToken cancellationToken)
+    public Task SetNormalizedUserNameAsync(ApplicationUser user, string? normalizedName,
+        CancellationToken cancellationToken)
     {
         user.NormalizedUserName = normalizedName;
         return Task.CompletedTask;
@@ -180,13 +186,13 @@ public class TestUserStore : IUserStore<ApplicationUser>
         return Task.FromResult(IdentityResult.Success);
     }
 
-    public Task<ApplicationUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
+    public Task<ApplicationUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
     {
-        return Task.FromResult<ApplicationUser>(null);
+        return Task.FromResult<ApplicationUser>(null!)!;
     }
 
-    public Task<ApplicationUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+    public Task<ApplicationUser?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
     {
-        return Task.FromResult<ApplicationUser>(null);
+        return Task.FromResult<ApplicationUser>(null!)!;
     }
 }

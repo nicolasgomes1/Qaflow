@@ -44,10 +44,8 @@ public class TestPlansModel(
             .Include(tp => tp.Cycle) // Add this line to include the Cycle
             .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
 
-        SelectedCycleId = testPlans.CycleId;
-
         if (testPlans == null) throw new ApplicationException("Test Plan not found");
-
+        SelectedCycleId = testPlans.CycleId;
         return testPlans;
     }
 
