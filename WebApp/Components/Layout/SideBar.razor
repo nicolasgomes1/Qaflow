@@ -1,7 +1,5 @@
 ﻿@attribute [Authorize]
 @rendermode InteractiveServer
-@implements IDisposable
-
 
 <RadzenSidebar Responsive="false" Style="width: max-content" Visible="@_hasProjectSet">
         <RadzenPanelMenu
@@ -68,7 +66,7 @@
             ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
             if (ProjectId != 0)
                 _hasProjectSet = true;
-            StateHasChanged(); // Ensure UI updates
+            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -77,15 +75,12 @@
         TooltipService.Open(elementReference, message, options);
     }
 
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        StateHasChanged();
-    }
+
 
 
     protected override async Task OnInitializedAsync()
     {
-        NavigationManager.LocationChanged += OnLocationChanged;
+        await InvokeAsync(StateHasChanged);
         await Task.CompletedTask;
     }
 
@@ -95,9 +90,5 @@
         TooltipService.Close();
     }
 
-    void IDisposable.Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
-    }
 
 }
