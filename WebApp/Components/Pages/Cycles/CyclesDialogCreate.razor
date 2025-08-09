@@ -60,25 +60,31 @@
                     </div>
 
                     <div class="form-group mb-4">
-                        <RadzenLabel Text="Start Date" Component="RadzenDatePickerBindValue"/>
-
-                        <RadzenDatePicker data-testid="cycle_start_date"
-                                          @bind-Value="_cycles.StartDate"
-                                          Change="OnStartDateChanged"
-                                          Name="RadzenDatePickerBindValue"
+                        <RadzenLabel Text="Start Date" Component="StartDate"/>
+                        <RadzenDatePicker @bind-Value="_cycles.StartDate"
+                                          Name="StartDate"
                                           DateFormat="yyyy-MM-dd"
-                                          Style="width: 100%;"/>
+                                          Kind="DateTimeKind.Utc"
+                                          Change="@OnStartDateChanged"
+                                          Style="width:100%;"/>
+                        <RadzenRequiredValidator Component="StartDate" Text="Start date is required"/>
+                        <RadzenCustomValidator Component="StartDate"
+                                               Text="Start date must be earlier than End date"
+                                               Validator="@ValidateStartDate"/>
                     </div>
 
                     <div class="form-group mb-4">
-                        <RadzenLabel Text="End Date" Component="RadzenDatePickerBindValue"/>
-
-                        <RadzenDatePicker data-testid="cycle_end_date"
-                                          @bind-Value="_cycles.EndDate"
-                                          Change="OnEndDateChanged"
-                                          Name="RadzenDatePickerBindValue"
+                        <RadzenLabel Text="End Date" Component="EndDate"/>
+                        <RadzenDatePicker @bind-Value="_cycles.EndDate"
+                                          Name="EndDate"
                                           DateFormat="yyyy-MM-dd"
-                                          Style="width: 100%;"/>
+                                          Kind="DateTimeKind.Utc"
+                                          Change="@OnEndDateChanged"
+                                          Style="width:100%;"/>
+                        <RadzenRequiredValidator Component="EndDate" Text="End date is required"/>
+                        <RadzenCustomValidator Component="EndDate"
+                                               Text="End date must be later than Start date"
+                                               Validator="@ValidateEndDate"/>
                     </div>
 
                     @code{
@@ -95,6 +101,17 @@
                             if (!selectedDate.HasValue) return;
                             // Convert local date to UTC
                             _cycles.EndDate = DateTime.SpecifyKind(selectedDate.Value, DateTimeKind.Local).ToUniversalTime();
+                        }
+
+                        bool ValidateStartDate()
+                        {
+                            // if either is not set, don't fail here (let RequiredValidator handle missing values)
+                            return _cycles.StartDate < _cycles.EndDate;
+                        }
+
+                        bool ValidateEndDate()
+                        {
+                            return _cycles.EndDate > _cycles.StartDate;
                         }
 
                     }
