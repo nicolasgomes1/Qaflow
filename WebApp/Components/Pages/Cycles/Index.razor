@@ -4,7 +4,7 @@
 @attribute [Authorize]
 @inject CyclesModel CyclesModel
 <RadzenDataGrid TItem="Cycles"
-                Data="_cyclesList"
+                Data="_cycles"
                 Density="Density.Compact"
                 AllowSorting="true"
                 AllowFiltering="true"
@@ -21,6 +21,7 @@
     <HeaderTemplate>
         <CyclesDialogCreate Title="Cycles" ProjectId="ProjectId"
                             OnCycleCreated="() => RefreshPage()"/>
+        <DeleteallDataForModel EntityName="@nameof(Cycles)" EntityList="@_cycles"/>
 
 
     </HeaderTemplate>
@@ -50,12 +51,12 @@
 @code {
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
-    IEnumerable<Cycles>? _cyclesList;
+    IEnumerable<Cycles>? _cycles;
     private IList<Cycles> _selectedcycle = [];
 
     private async Task RefreshPage()
     {
-        _cyclesList = await CyclesModel.GetCyclesByProjectId(ProjectId);
+        _cycles = await CyclesModel.GetCyclesByProjectId(ProjectId);
 
         // Refresh the Home component (re-render it)
         await InvokeAsync(StateHasChanged);
@@ -63,7 +64,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _cyclesList = await CyclesModel.GetCyclesByProjectId(ProjectId);
+        _cycles = await CyclesModel.GetCyclesByProjectId(ProjectId);
     }
 
 }

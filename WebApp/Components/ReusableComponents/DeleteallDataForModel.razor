@@ -12,9 +12,9 @@
 
 @code {
 
-    [Parameter] public string EntityName { get; set; } = string.Empty;
+    [EditorRequired] [Parameter] public string EntityName { get; set; } = string.Empty;
 
-    [Parameter] public IEnumerable<object> EntityList { get; set; } = new List<object>();
+    [EditorRequired] [Parameter] public IEnumerable<object> EntityList { get; set; } = new List<object>();
 
     private int _projectId;
 
@@ -29,7 +29,6 @@
 
     private async Task DeleteAllModelData()
     {
-        var entityName = EntityName.ToLower();
         var project = _projectId;
 
         await using var db = await DbContext.CreateDbContextAsync();
@@ -47,35 +46,41 @@
                 db.RemoveRange(EntityList);
 
 
-                switch (entityName)
+                switch (EntityName)
                 {
                     // Check if the entity being deleted is 'Requirement'
-                    case "requirements":
+                    case nameof(Requirements):
                     {
                         Logger.LogInformation($"{UserInfo} deleted all Requirements on Time: {DateTime.Now}");
 
                         break;
                     }
-                    case "testcases":
+                    case nameof(TestCases):
                     {
                         Logger.LogInformation($"{UserInfo} deleted all TestCases on Time: {DateTime.Now}");
                         break;
                     }
-                    case "tesplans":
+                    case nameof(TestPlans):
                     {
                         Logger.LogInformation($"{UserInfo} deleted all TestPlans on Time: {DateTime.Now}");
                         break;
                     }
 
-                    case "bugs":
+                    case nameof(Bugs):
                     {
                         Logger.LogInformation($"{UserInfo} deleted all Bugs on Time: {DateTime.Now}");
+                        break;
+                    }
+
+                    case nameof(Cycles):
+                    {
+                        Logger.LogInformation($"{UserInfo} deleted all Cycles on Time: {DateTime.Now}");
                         break;
                     }
                 }
 
                 await db.SaveChangesAsync();
-                NavigationManager.NavigateTo($"/project/{project}/{entityName}", true);
+                NavigationManager.NavigateTo($"/project/{project}/{EntityName}", true);
             }
             catch (Exception e)
             {
