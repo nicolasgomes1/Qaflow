@@ -6,40 +6,40 @@
             DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"
             ShowArrow="false">
             <RadzenPanelMenuItem Text="@Loc["Home"]" Icon="dashboard" data-testid="sidebar_dashboard"
-                                 MouseEnter="@(args => ShowTooltip(args, "Dashboard", new TooltipOptions { Position = TooltipPosition.Right }))"
-                                 MouseLeave="CloseTooltip"
+                                 MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["Dashboard"]))"
+                                 MouseLeave="@AppTooltipService.HideTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}"))"/>
             <RadzenPanelMenuItem Text="@Loc["Requirements"]" Icon="assignment" data-testid="sidebar_requirements"
                                  MouseEnter="@(args => ShowTooltip(args, "Requirements", new TooltipOptions { Position = TooltipPosition.Right }))"
-                                 MouseLeave="CloseTooltip"
+                                 MouseLeave="AppTooltipService.HideTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements"))"/>
             <RadzenPanelMenuItem Text="@Loc["TestCases"]" Icon="science" data-testid="sidebar_testcases"
                                  MouseEnter="@(args => ShowTooltip(args, "Test Cases", new TooltipOptions { Position = TooltipPosition.Right }))"
-                                 MouseLeave="CloseTooltip"
+                                 MouseLeave="AppTooltipService.HideTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases"))"/>
             <RadzenPanelMenuItem Text="@Loc["TestPlans"]" Icon="description" data-testid="sidebar_testplans"
                                  MouseEnter="@(args => ShowTooltip(args, "Test Plans", new TooltipOptions { Position = TooltipPosition.Right }))"
-                                 MouseLeave="CloseTooltip"
+                                 MouseLeave="AppTooltipService.HideTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testplans"))"/>
             <RadzenPanelMenuItem Text="@Loc["TestExecutions"]" Icon="play_circle" data-testid="sidebar_testexecutions"
                                  MouseEnter="@(args => ShowTooltip(args, "Test Executions", new TooltipOptions { Position = TooltipPosition.Right }))"
-                                 MouseLeave="CloseTooltip"
+                                 MouseLeave="AppTooltipService.HideTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution"))"/>
             <RadzenPanelMenuItem Text="@Loc["Bugs"]" Icon="bug_report" data-testid="sidebar_bugs"
                                  MouseEnter="@(args => ShowTooltip(args, "Bugs", new TooltipOptions { Position = TooltipPosition.Right }))"
-                                 MouseLeave="CloseTooltip"
+                                 MouseLeave="AppTooltipService.HideTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs"))"/>
             <RadzenPanelMenuItem Text="@Loc["Reports"]" Icon="bar_chart" data-testid="sidebar_reports"
                                  MouseEnter="@(args => ShowTooltip(args, "Reports", new TooltipOptions { Position = TooltipPosition.Right }))"
-                                 MouseLeave="CloseTooltip"
+                                 MouseLeave="AppTooltipService.HideTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/reports"))"/>
             <RadzenPanelMenuItem Text="@Loc["Milestones"]" Icon="flag" data-testid="sidebar_milestones"
                                  MouseEnter="@(args => ShowTooltip(args, "Milestones", new TooltipOptions { Position = TooltipPosition.Right }))"
-                                 MouseLeave="CloseTooltip"
+                                 MouseLeave="AppTooltipService.HideTooltip"
                                  Click="@(() => NavigationManager.NavigateTo($"project/{ProjectId}/milestones"))"/>
             <RadzenPanelMenuItem Text="@Loc["Minimize"]" Icon="@GetIcon()" data-testid="sidebar_minimize"
                                  MouseEnter="@(args => ShowTooltip(args, "Minimize", new TooltipOptions { Position = TooltipPosition.Right }))"
-                                 MouseLeave="CloseTooltip"
+                                 MouseLeave="AppTooltipService.HideTooltip"
                                  Click="@(() => _sidebarExpanded = !_sidebarExpanded)"/>
         </RadzenPanelMenu>
 
@@ -82,12 +82,6 @@
     {
         await InvokeAsync(StateHasChanged);
         await Task.CompletedTask;
-    }
-
-
-    void CloseTooltip()
-    {
-        TooltipService.Close();
     }
 
 
