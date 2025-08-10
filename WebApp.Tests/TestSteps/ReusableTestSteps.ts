@@ -60,7 +60,7 @@ async function validate_button(page: Page, id: string) {
 }
 
 async function validate_button_disabled(page: Page, id: string) {
-    const button = page.getByTestId(id);
+    const button = page.getByTestId(id).first();
 
     await expect(button).toBeDisabled({ timeout: 5000 });
 
