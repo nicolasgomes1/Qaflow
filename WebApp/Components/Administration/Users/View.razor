@@ -6,7 +6,7 @@
 
 <h3>User Details</h3>
 
-<RadzenCard>
+<RadzenCard style="width: 50%;">
     @if (_user != null)
     {
         <p>User ID: <strong>@_user.Id</strong></p>
@@ -20,12 +20,10 @@
         <div style="margin-top: 10px;">
             <RadzenButton Text="Edit"
                           ButtonType="ButtonType.Submit"
-                          Click='() => NavigationManager.NavigateTo($"/Users/Edit/{Id}")'
-                          Style="font-weight: bold; padding: 10px; border-radius: 50px;"/>
+                          Click='() => NavigationManager.NavigateTo($"/Users/Edit/{Id}")'/>
             <RadzenButton Text="Cancel"
                           Click='() => NavigationManager.NavigateTo("/", true)'
-                          ButtonType="ButtonType.Button"
-                          Style="font-weight: bold; padding: 10px; border-radius: 50px;"/>
+                          ButtonType="ButtonType.Button"/>
         </div>
     }
     else

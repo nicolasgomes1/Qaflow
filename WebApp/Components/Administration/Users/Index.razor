@@ -5,12 +5,10 @@
 
 <PageTitle>Users</PageTitle>
 
-<h3>Users and Their Roles</h3>
+<AlertTitle TitleText="Users and Their Roles"/>
 
-<RadzenButton ButtonType="ButtonType.Submit"
-              Click="CreateUser"
-              Text="Create User"
-              Style="margin-bottom: 10px;"/>
+
+
 
 <RadzenDataGrid AllowFiltering="true"
                 AllowColumnResize="true"
@@ -19,6 +17,13 @@
                 AllowPaging="true"
                 Data="@_users"
                 ColumnWidth="300px">
+
+    <HeaderTemplate>
+        <RadzenButton Icon="add" ButtonType="ButtonType.Submit"
+                      Click="CreateUser"
+                      Text="Create User"/>
+    </HeaderTemplate>
+
     <Columns>
         <RadzenDataGridColumn Property="@nameof(ApplicationUser.UserName)"
                               Title="Name"
@@ -45,9 +50,18 @@
         </RadzenDataGridColumn>
         <RadzenDataGridColumn Title="Edit" Width="auto">
             <Template Context="user">
-                <RadzenButton Text="Edit" Click="@(() => EditUser(user.Id))" Size="ButtonSize.ExtraSmall"/>
-                <RadzenButton Text="View" Click="@(() => ViewUser(user.Id))" Size="ButtonSize.ExtraSmall"/>
-                <RadzenButton Text="Delete" Click="@(() => DeleteUser(user))" Size="ButtonSize.ExtraSmall"/>
+                <RadzenButton
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"View User {user.Id}"))"
+                    MouseLeave="@AppTooltipService.HideTooltip"
+                    Icon="edit" Click="@(() => EditUser(user.Id))" Size="ButtonSize.ExtraSmall"/>
+                <RadzenButton
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Edit User {user.Id}"))"
+                    MouseLeave="@AppTooltipService.HideTooltip"
+                    Icon="visibility" Click="@(() => ViewUser(user.Id))" Size="ButtonSize.ExtraSmall"/>
+                <RadzenButton
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Delete User {user.Id}"))"
+                    MouseLeave="@AppTooltipService.HideTooltip"
+                    Icon="delete" Click="@(() => DeleteUser(user))" Size="ButtonSize.ExtraSmall"/>
             </Template>
         </RadzenDataGridColumn>
     </Columns>
