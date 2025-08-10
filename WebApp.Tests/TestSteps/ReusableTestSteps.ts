@@ -59,6 +59,14 @@ async function validate_button(page: Page, id: string) {
     await page.waitForTimeout(100); // Give Blazor a moment to render final state
 }
 
+async function validate_button_disabled(page: Page, id: string) {
+    const button = page.getByTestId(id);
+
+    await expect(button).toBeDisabled({ timeout: 5000 });
+
+    await page.waitForTimeout(100); // Give Blazor a moment to render final state
+}
+
 /**
  * @param {Page} page - The Playwright page object.
  * @param {string} id - data-testid to locate the element.
@@ -317,4 +325,4 @@ async function UploadFile(page: Page, id: string) {
 
 
 
-export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject, UploadFile, click_element, fill_date_picker };
+export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject, UploadFile, click_element, fill_date_picker, validate_button_disabled };
