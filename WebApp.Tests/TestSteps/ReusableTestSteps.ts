@@ -24,6 +24,21 @@ async function click_button(page: Page, id: string) {
     await page.waitForLoadState('networkidle');
 }
 
+/**
+ * @param {Page} page - The Playwright page object.
+ * @param {string} id - data-testid to locate the element.
+ * No tooltip needed
+ */
+async function click_element(page: Page, id: string) {
+    const el = page.getByTestId(id).first();
+    await el.waitFor({ state: 'visible' });
+    await el.hover();
+
+    // Click the button even if the tooltip is visible
+    await el.click({ force: true, delay: 100 });
+    await page.waitForLoadState('networkidle');
+}
+
 
 /**
  * @param {Page} page - The Playwright page object.
@@ -89,7 +104,43 @@ async function fill_input(page: Page, id: string, value: string) {
     }
 }
 
+async function fill_date_picker(page: Page, datatestid: string, value: string) {
+    const maxTries = 3;
+    let retryCount = 0;
 
+    while (retryCount < maxTries) {
+        try {
+            // Find the input with id="StartDate" within the date picker container
+            const dateInput = page.getByTestId(datatestid).locator('#StartDate');
+            await dateInput.waitFor({ state: 'visible', timeout: 5000 });
+
+            // Click to focus
+            await dateInput.click({ force: true });
+
+            // Clear existing value
+            await dateInput.fill('');
+
+            // Enter the new date
+            await dateInput.fill(value);
+
+            // Press Tab to trigger blur and date validation
+            await dateInput.press('Tab');
+
+            // Wait briefly for any date picker UI updates
+            await page.waitForTimeout(100);
+
+            break;
+        } catch (error) {
+            retryCount++;
+            console.warn(`Attempt ${retryCount} failed to fill date picker with data-testid="${datatestid}". Retrying...`);
+            if (retryCount === maxTries) {
+                console.error(`❌ Failed to fill date picker with data-testid="${datatestid}" after ${maxTries} attempts.`);
+                throw error;
+            }
+            await page.waitForTimeout(250);
+        }
+    }
+}
 async function validate_input(page: Page, id: string, value: string)
 {
     const el = page.getByTestId(id);
@@ -266,4 +317,4 @@ async function UploadFile(page: Page, id: string) {
 
 
 
-export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject, UploadFile };
+export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject, UploadFile, click_element, fill_date_picker };

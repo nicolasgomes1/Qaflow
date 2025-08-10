@@ -46,11 +46,15 @@
             @if (_isAdmin)
             {
                 <RadzenMenu>
-                    <RadzenMenuItem Text="General" Icon="badge">
-                        <RadzenMenuItem Text="Manage Account" Icon="account_circle" Path="/Account/Manage"/>
-                        <RadzenMenuItem Text="Manage Users" Icon="account_circle" Path="/Users/Index"/>
-                        <RadzenMenuItem Text="Grid Settings" Icon="display_settings" Path="/Gridsettings"/>
-                        <RadzenMenuItem Text="Cycles" Icon="cycle" Path="@path" Disabled="HasNotProjectSet()"/>
+                    <RadzenMenuItem Text="General" Icon="badge" data-testid="admin_menu">
+                        <RadzenMenuItem Text="Manage Account" data-testid="manage_account" Icon="account_circle"
+                                        Path="/Account/Manage"/>
+                        <RadzenMenuItem Text="Manage Users" data-testid="manage_users" Icon="account_circle"
+                                        Path="/Users/Index"/>
+                        <RadzenMenuItem Text="Grid Settings" data-testid="grid_settings" Icon="display_settings"
+                                        Path="/Gridsettings"/>
+                        <RadzenMenuItem Text="Cycles" data-testid="manage_cycles" Icon="cycle" Path="@path"
+                                        Disabled="HasNotProjectSet()"/>
 
 
                         <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>

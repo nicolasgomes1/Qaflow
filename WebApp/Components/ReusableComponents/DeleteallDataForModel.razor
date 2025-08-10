@@ -3,6 +3,7 @@
 <RadzenButton Icon="delete_forever"
               Click="@(DeleteAllModelData)"
               Size="ButtonSize.Medium"
+              data-testid="delete_all"
               ButtonStyle="ButtonStyle.Danger"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Delete All"))"
               MouseLeave="@AppTooltipService.HideTooltip"/>

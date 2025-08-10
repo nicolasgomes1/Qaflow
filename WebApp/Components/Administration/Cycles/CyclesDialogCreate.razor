@@ -62,6 +62,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Start Date" Component="StartDate"/>
                         <RadzenDatePicker @bind-Value="_cycles.StartDate"
+                                          data-testid="cycle_start_date"
                                           Name="StartDate"
                                           DateFormat="yyyy-MM-dd"
                                           Kind="DateTimeKind.Utc"
@@ -76,6 +77,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="End Date" Component="EndDate"/>
                         <RadzenDatePicker @bind-Value="_cycles.EndDate"
+                                          data-testid="cycle_end_date"
                                           Name="EndDate"
                                           DateFormat="yyyy-MM-dd"
                                           Kind="DateTimeKind.Utc"
