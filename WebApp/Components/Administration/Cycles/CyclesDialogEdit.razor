@@ -14,12 +14,8 @@
     private Cycles _cycles = new();
 
     [EditorRequired] [Parameter] public EventCallback OnRequirementSpecificationUpdated { get; set; }
+    [EditorRequired] [Parameter] public bool IsDisabled { get; set; }
 
-    /// <summary>
-    /// Default value is false
-    /// </summary>
-    [Parameter]
-    public bool IsDisabled { get; set; } = false;
 
     [EditorRequired] [Parameter] public int Id { get; set; }
 

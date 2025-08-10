@@ -28,8 +28,10 @@
     <Columns>
         <RadzenDataGridColumn Property="@nameof(Cycles.Id)" Title="Id" Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(Cycles.Name)" Title="Name" Width="auto"/>
-        <RadzenDataGridColumn Property="@nameof(Cycles.StartDate)" Title="Start" Width="auto"/>
-        <RadzenDataGridColumn Property="@nameof(Cycles.EndDate)" Title="End" Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(Cycles.StartDate)" FormatString="{0:dd/MM/yyyy}" Title="Start"
+                              Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(Cycles.EndDate)" FormatString="{0:dd/MM/yyyy}" Title="End"
+                              Width="auto"/>
         <RadzenDataGridColumn Filterable="false" Width="auto" Title="Days">
             <Template Context="ctx">
                 <RadzenBadge IsPill="true">
@@ -43,15 +45,29 @@
 
 
         <!-- Action Buttons column -->
-        <IndexActionsModal TItem="Cycles" EntityName="@nameof(Cycles)"
-                           OnRequirementSpecificationUpdated="() => RefreshPage()"/>
+
+        <RadzenDataGridColumn TItem="Cycles" Sortable="false" Filterable="false" Resizable="false" Width="100px">
+            <Template Context="cycle">
+                <div style="display: flex; gap: 5px;">
+                    <CyclesDialogView Id="@cycle.Id"/>
+                    <CyclesDialogEdit Id="@cycle.Id"
+                                      OnRequirementSpecificationUpdated="() => RefreshPage()"
+                                      IsDisabled="@(HasTestPlans(cycle))"/>
+                    <CyclesDialogDelete Id="@cycle.Id"
+                                        OnRequirementDeleted="() => RefreshPage()"
+                                        IsDisabled="@(HasTestPlans(cycle))"/>
+                </div>
+            </Template>
+        </RadzenDataGridColumn>
+
+
     </Columns>
 </RadzenDataGrid>
 
 @code {
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
-    IEnumerable<Cycles>? _cycles;
+    IEnumerable<Cycles>? _cycles = [];
     private IList<Cycles> _selectedcycle = [];
 
     private async Task RefreshPage()
@@ -66,5 +82,12 @@
     {
         _cycles = await CyclesModel.GetCyclesByProjectId(ProjectId);
     }
+
+    bool HasTestPlans(Cycles cycle)
+    {
+        using var db = DbContext.CreateDbContextAsync();
+        return db.Result.TestPlans.Any(tp => tp.CycleId == cycle.Id);
+    }
+
 
 }

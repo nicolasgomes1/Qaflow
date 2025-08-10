@@ -1,5 +1,5 @@
 ﻿@attribute [Authorize]
-@using WebApp.Components.Pages.Cycles
+@using WebApp.Components.Administration.Cycles
 @typeparam TItem
 @inject TooltipService TooltipService
 
@@ -18,16 +18,6 @@
                                                            OnRequirementDeleted="OnRequirementSpecificationUpdated"/>
                 }
                 
-                @if (EntityName == nameof(Cycles))
-                {
-                    <CyclesDialogView Id="GetId(item)"/>
-                    <CyclesDialogEdit Id="GetId(item)"
-                                                         OnRequirementSpecificationUpdated="OnRequirementSpecificationUpdated"/>
-                    <CyclesDialogDelete Id="GetId(item)"
-                                                           OnRequirementDeleted="OnRequirementSpecificationUpdated"/>
-                }
-                
-
             </div>
         </Template>
     </RadzenDataGridColumn>
@@ -38,7 +28,7 @@
 @code {
     [EditorRequired] [Parameter] public required string EntityName { get; set; }
     [EditorRequired] [Parameter] public EventCallback OnRequirementSpecificationUpdated { get; set; }
-
+    [EditorRequired] [Parameter] public bool IsDisabled { get; set; }
 
     private int GetId(TItem item)
     {

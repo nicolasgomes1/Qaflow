@@ -91,4 +91,12 @@
         <Folder Include="Data\Migrations\"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <AdditionalFiles Include="Components\Administration\Cycles\CyclesDialogCreate.razor"/>
+        <AdditionalFiles Include="Components\Administration\Cycles\CyclesDialogDelete.razor"/>
+        <AdditionalFiles Include="Components\Administration\Cycles\CyclesDialogEdit.razor"/>
+        <AdditionalFiles Include="Components\Administration\Cycles\CyclesDialogView.razor"/>
+        <AdditionalFiles Include="Components\Administration\Cycles\Index.razor"/>
+    </ItemGroup>
+
 </Project>

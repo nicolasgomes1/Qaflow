@@ -2,14 +2,16 @@
 @inject CyclesModel CyclesModel
 <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: red;"
               data-testid="delete"
-              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Delete {nameof(CyclesModel)}"))"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Delete {nameof(Cycles)}"))"
               MouseLeave="@AppTooltipService.HideTooltip"
               Click="@(() => DeleteItem(Id))"
+              Disabled="@(IsDisabled)"
               Size="ButtonSize.ExtraSmall"/>
 
 @code {
     [EditorRequired] [Parameter] public int Id { get; set; }
     [EditorRequired] [Parameter] public EventCallback OnRequirementDeleted { get; set; }
+    [EditorRequired] [Parameter] public bool IsDisabled { get; set; }
 
     private async Task DeleteItem(int item)
     {
