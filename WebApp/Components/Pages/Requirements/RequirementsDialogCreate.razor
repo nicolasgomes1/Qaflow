@@ -56,7 +56,7 @@
         _requirements = new Requirements();
         _uploadedFiles?.Clear();
 
-        var result = await DialogService.OpenAsync("Create Requirement", ds =>
+        var result = await DialogService.OpenAsync("Create new Requirement", ds =>
             @<RadzenStack Gap="1.5rem" Style="height: 600px;">
                 <RadzenTemplateForm Data="_requirements" TItem="Requirements" Submit="@CreateNewRequirement">
                     <ValidationSummary class="alert alert-danger"/>
@@ -134,7 +134,7 @@
                                   ButtonType="ButtonType.Submit"
                                   Style="margin-bottom: 10px;"/>
                 </RadzenTemplateForm>
-            </RadzenStack>, new DialogOptions() { Draggable = true, CloseDialogOnOverlayClick = true });
+            </RadzenStack>, new DialogOptions() { Draggable = true, CloseDialogOnOverlayClick = true, Resizable = true });
     }
 
 }

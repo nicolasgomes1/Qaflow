@@ -2,11 +2,11 @@
 @attribute [Authorize(Roles = "Admin, Manager")]
 @rendermode InteractiveServer
 
+<AlertTitle TitleText="@($"Editing Project {Id}")"/>
+
+
 <RadzenTemplateForm Data="@_projects" TItem="Projects" Submit="UpdateProject">
-    <h3 class="text-center text-primary mb-4">Edit Project</h3>
-
     <RadzenFieldset Text="Project Details">
-
         <div class="form-group mb-4">
             <RadzenLabel Text="Name"/>
             <RadzenTextBox @bind-Value="@_projects.Name"

@@ -2,14 +2,9 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 @inject CyclesModel CyclesModel
-<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
-             Size="AlertSize.Small" Variant="Variant.Filled"
-             Shade="Shade.Default" Icon="add"
-             Text="@(Req)"/>
 
-@code{
-    private string Req => $"Creating new Test Plan";
-}
+<AlertTitle TitleText="Creating new Test Plan"/>
+
 
 <RadzenTemplateForm Data="@_testPlans" TItem="TestPlans" Submit="CreateNewTestPlan">
     <ValidationSummary class="alert alert-danger"/>

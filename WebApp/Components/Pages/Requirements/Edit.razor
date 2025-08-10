@@ -9,15 +9,8 @@
 }
 else
 {
-    <RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
-                 Size="AlertSize.Small" Variant="Variant.Filled"
-                 Shade="Shade.Default" Icon="edit"
-                 Text="@(req)"/>
+    <AlertTitle TitleText="@($"Editing Requirement {Id}")"/>
 
-    @code{
-        private string req => $"Editing requirement {Id}";
-
-    }
 
     <RadzenTemplateForm Data="@_requirements" Submit="@UpdateRequirement" TItem="Requirements">
         <ValidationSummary class="alert alert-danger"/>
@@ -109,9 +102,12 @@ else
 
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Files" data-testid="requirement_files">
-                    <FileUploadEdit UploadedFiles="_uploadedFiles"
-                                    EntityName="@nameof(RequirementsFile)"
-                                    ExistingFiles="@_existingFiles"/>
+                    <RadzenFieldset Text="Requirement Files">
+                        <FileUploadEdit UploadedFiles="_uploadedFiles"
+                                        EntityName="@nameof(RequirementsFile)"
+                                        ExistingFiles="@_existingFiles"/>
+                    </RadzenFieldset>
+
                 </RadzenTabsItem>
             </Tabs>
         </RadzenTabs>

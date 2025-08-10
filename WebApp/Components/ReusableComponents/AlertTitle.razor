@@ -1,0 +1,11 @@
+<RadzenAlert AllowClose="false"
+             AlertStyle="AlertStyle.Info"
+             Size="AlertSize.Small"
+             Variant="Variant.Outlined"
+             Shade="Shade.Light"
+             Icon="add"
+             Text="@(TitleText)"/>
+
+@code {
+    [EditorRequired] [Parameter] public required string TitleText { get; set; }
+}

@@ -2,15 +2,8 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 
-<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
-             Size="AlertSize.Small" Variant="Variant.Filled"
-             Shade="Shade.Default" Icon="visibility"
-             Text="@(req)"/>
 
-@code{
-    private string req => $"Viewing requirement {Id}";
-
-}
+<AlertTitle TitleText="@($"Viewing Requirement {Id}")"/>
 
 <RadzenTabs RenderMode="TabRenderMode.Client">
     <Tabs>

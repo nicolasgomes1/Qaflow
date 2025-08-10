@@ -1,6 +1,9 @@
 @page "/project/{ProjectId:int}/bugs/create"
 @rendermode InteractiveServer
 
+<AlertTitle TitleText="Creating new Bug"/>
+
+
 <RadzenTemplateForm Data="@_bugs" TItem="Bugs" Submit="CreateNewBug">
     <ValidationSummary class="alert alert-danger"/>
 

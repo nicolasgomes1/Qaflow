@@ -1,6 +1,9 @@
 ﻿@page "/projects/view/{Id:int}"
 @rendermode InteractiveServer
 
+<AlertTitle TitleText="@($"Viewing Project {Id}")"/>
+
+
 <RadzenCard Style="width: 50%; padding: 20px; margin-bottom:20px">
     <RadzenFieldset Text="Project Details">
 
