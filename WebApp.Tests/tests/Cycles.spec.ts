@@ -54,7 +54,7 @@ test('Create a new Cycle', async ({ page }) => {
 
 });
 
-test('Cycle with linked entities cant be deleted or edited', async ({ page }) => {
+test('Cycle with linked entities cannot be deleted or edited', async ({ page }) => {
     const cycle_name = 'Cycle 1';
     await actions.LaunchProject(page, 'Demo Project Without Data' );
 
@@ -72,9 +72,5 @@ test('Cycle with linked entities cant be deleted or edited', async ({ page }) =>
     await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
 
     await actions.validate_button_disabled(page, 'delete');
-
-
-
-
-
+    await actions.validate_button_disabled(page, 'edit');
 });
