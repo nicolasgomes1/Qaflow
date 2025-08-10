@@ -50,29 +50,44 @@ async function validate_button(page: Page, id: string) {
  * @param {string} value - value to be filled in the input element.
  */
 async function fill_input(page: Page, id: string, value: string) {
+    const maxTries = 3;
+    let retryCount = 0;
 
-    let MaxTries = 3;
-    let RetryFill = 0;
-
-    while (RetryFill < MaxTries) {
+    while (retryCount < maxTries) {
         try {
-         //   console.log(`Attempt ${RetryFill + 1}: Filling input with data-testid="${id}"`);
             const el = page.getByTestId(id);
-            await el.waitFor({state: 'visible'});
-            await el.click();
+            await el.waitFor({ state: 'visible', timeout: 5000 });
+
+            // Force click to avoid hidden overlay issues
+            await el.click({ force: true });
+
+            // Clear the input before filling
+            await el.fill('');
             await el.fill(value);
+
+            // Wait briefly to ensure UI catches up
+            await page.waitForTimeout(100);
+
+            // Trigger blur by pressing Tab
             await el.press('Tab');
-            await expect(el).toHaveValue(value);
-            break;
-        } catch (e) {
-            RetryFill++;
-            if (RetryFill === MaxTries) {
-                console.error(`Failed to fill input with data-testid="${id}" after ${MaxTries} attempts.`);
+
+            // Double-check value
+            await expect(el).toHaveValue(value, { timeout: 3000 });
+
+            break; // Success
+        } catch (error) {
+            retryCount++;
+            console.warn(`Attempt ${retryCount} failed to fill input with data-testid="${id}". Retrying...`);
+            if (retryCount === maxTries) {
+                console.error(`❌ Failed to fill input with data-testid="${id}" after ${maxTries} attempts.`);
+                throw error; // Let the test fail
             }
+
+            // Add short backoff to reduce retry flakiness
+            await page.waitForTimeout(250);
         }
     }
 }
-
 
 
 async function validate_input(page: Page, id: string, value: string)

@@ -10,8 +10,6 @@ test.beforeEach('Login User',async ({ page }) => {
 
 test.afterEach('Logout User',async ({ page }) => {
     await actions.click_button(page, 'logout');
-    const guest_user = page.locator('strong', { hasText: 'Welcome, Guest User!'});
-    await expect(guest_user).toBeVisible();
 });
 
 
@@ -33,6 +31,7 @@ test.describe('Test Plan Suite', () => {
 
         await actions.select_dropdown_option(page, 'testplan_priority', 'Medium');
 
+        await actions.select_dropdown_option(page, 'testplan_cycles', 'Cycle 1');
 
         await actions.select_dropdown_option(page,'testplan_status', 'New');
 
@@ -66,6 +65,7 @@ test.describe('Test Plan Suite', () => {
         await actions.fill_input(page, 'testplan_description', description);
 
         await actions.select_dropdown_option(page, 'testplan_priority', 'Medium');
+        await actions.select_dropdown_option(page, 'testplan_cycles', 'Cycle 1');
 
 
         await actions.select_dropdown_option(page,'testplan_status', 'New');

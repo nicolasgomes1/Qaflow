@@ -4,11 +4,7 @@ import { test, expect } from '@playwright/test';
 test('Verify that Login and Register is visible', async ({ page }) => {
   test.slow();
   await page.goto('/');
-  const guest_user = page.locator('strong', { hasText: 'Welcome, Guest User!'});
-  await expect(guest_user).toBeVisible();
-  // Expect a title "to contain" a substring.
-  await expect(page.getByTestId('login')).toHaveText('Login');
-  await expect(page.getByTestId('register')).toHaveText('Register');
+  await expect(page.getByTestId('login_submitform')).toHaveText('Login');
   await expect(page.getByTestId('login_top')).toHaveText('Login');
   await expect(page.getByTestId('register_top')).toHaveText('Register');
 });
@@ -16,13 +12,8 @@ test('Verify that Login and Register is visible', async ({ page }) => {
 test('Verify that Login page is accessible', async ({ page }) => {
   test.slow();
   await page.goto('/');
-
-  // Click login
-  await page.getByTestId('login').click();
-
-  // Wait for navigation and specific content to load
-  await page.waitForURL('/Account/Login');
-  const heading = page.locator('h1', { hasText: 'Log in' });
+  await page.getByTestId('login_submitform').click();
+  const heading = page.locator('li', { hasText: 'The Email field is required.' });
   await expect(heading).toBeVisible();
 });
 
@@ -42,7 +33,7 @@ test('Verify that Register page is accessible', async ({ page }) => {
   await page.goto('/');
 
   // Click register
-  await page.getByTestId('register').click();
+  await page.getByTestId('register_top').click();
 
   // Wait for navigation and specific content to load
   await page.waitForURL('/Account/Register');
@@ -50,7 +41,7 @@ test('Verify that Register page is accessible', async ({ page }) => {
   await expect(heading).toBeVisible();
 });
 
-test('Verify that Register page is accessible via Top navigation', async ({ page }) => {
+test('Verify that Register page is interacteable via Top navigation', async ({ page }) => {
   test.slow();
 
   await page.goto('/');
@@ -59,9 +50,12 @@ test('Verify that Register page is accessible via Top navigation', async ({ page
   await page.getByTestId('register_top').click();
 
   // Wait for navigation and specific content to load
-  await page.waitForURL('/Account/Register');
   const heading = page.locator('h1', { hasText: 'Register' });
   await expect(heading).toBeVisible();
+  
+  await page.getByTestId('register_submitform').click();
+  const validation = page.locator('li', { hasText: 'The Email field is required.' });
+  await expect(validation).toBeVisible();
 });
 
 test('User can Login as Admin', async ({ page }) => {
@@ -98,7 +92,7 @@ test('User can Login as Manager', async ({ page }) => {
   await expect(heading).toBeVisible();
 });
 
-test('User Can Loggout from the application', async ({ page }) => {
+test('User Can Logout from the application', async ({ page }) => {
   test.slow();
 
   await page.goto('/Account/Login');
@@ -108,8 +102,8 @@ test('User Can Loggout from the application', async ({ page }) => {
   const heading = page.locator('strong', { hasText: 'Welcome, manager@example.com!'});
   await expect(heading).toBeVisible();
   await page.getByTestId('logout').click();
-  const guest_user = page.locator('strong', { hasText: 'Welcome, Guest User!'});
-  await expect(guest_user).toBeVisible();
+  const heading1 = page.locator('h1', { hasText: 'Log in' });
+  await expect(heading1).toBeVisible();
 });
 
 test.skip('User Can Register in the application', async ({page}) => {

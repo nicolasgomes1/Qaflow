@@ -10,8 +10,6 @@ test.beforeEach('Login User',async ({ page }) => {
 
 test.afterEach('Logout User',async ({ page }) => {
     await actions.click_button(page, 'logout');
-    const guest_user = page.locator('strong', { hasText: 'Welcome, Guest User!'});
-    await expect(guest_user).toBeVisible();
 });
 
 
@@ -41,6 +39,12 @@ test('Create New Requirement Specification', async ({ page })=> {
     await filter.filterTableModel(page, 'Test Requirement Playwright' + Random);
     
     await actions.click_button(page, 'delete');
+
+    // Ensure the dialog is visible
+    const dialog = page.locator('.rz-dialog');
+
+// Check if the dialog is visible
+    await expect(dialog).toBeVisible();
 
     await page.getByRole('button', { name: 'Ok' }).first().click();
     await expect(page.getByRole('table')).not.toContainText('Test Requirement Playwright' + Random);

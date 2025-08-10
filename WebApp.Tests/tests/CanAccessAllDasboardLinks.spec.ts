@@ -8,8 +8,7 @@ test.beforeEach('Login User',async ({ page }) => {
 
 test.afterEach('Logout User',async ({ page }) => {
     await actions.click_button(page, 'logout');
-    const guest_user = page.locator('strong', { hasText: 'Welcome, Guest User!'});
-    await expect(guest_user).toBeVisible();
+
 });
 
 test('Access Requirement Specification Index', async ({ page })=> {

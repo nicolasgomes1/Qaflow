@@ -65,6 +65,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Cycles"/>
                         <RadzenDropDown id="cycles"
+                                        data-testid="testplan_cycles"
                                         Data="@_cyclesList"
                                         @bind-Value="TestPlansModel.SelectedCycleId"
                                         TextProperty="Name"

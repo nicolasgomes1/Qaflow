@@ -23,7 +23,7 @@ var app = builder.AddProject<WebApp>("webapp")
 
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
 {
-    //  tests.WaitFor(app);
+    tests.WaitFor(app);
 }
 
 builder.Build().Run();
