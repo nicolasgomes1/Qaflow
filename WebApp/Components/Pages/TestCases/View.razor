@@ -2,15 +2,7 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 
-<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
-             Size="AlertSize.Small" Variant="Variant.Filled"
-             Shade="Shade.Default" Icon="visibility"
-             Text="@(req)"/>
-
-@code{
-    private string req => $"Viewing test case {Id}";
-
-}
+<AlertTitle TitleText="@($"Viewing test case {Id}")"></AlertTitle>
 
 
 @if (_isLoading)
@@ -24,9 +16,9 @@ else
             <RadzenTabsItem Text="Test Case Details">
                 <RadzenRow>
                     <RadzenCard Style="width: 50%; padding: 20px;">
-                        <h4 class="text-center text-primary mb-4">Test Case Details</h4>
 
-                        <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
+                        <RadzenFieldset Text="Test Case Details">
+                            <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
                             <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
                             <RadzenLabel Text="@_testCases.Id.ToString()"/>
 
@@ -79,6 +71,10 @@ else
 
 
                         </div>
+
+                        </RadzenFieldset>
+
+
                     </RadzenCard>
                 </RadzenRow>
             </RadzenTabsItem>

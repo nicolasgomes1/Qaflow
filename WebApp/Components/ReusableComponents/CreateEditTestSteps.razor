@@ -2,7 +2,9 @@
                 Density="Density.Default">
 
     <HeaderTemplate>
-        <h4 class="text-center text-primary mb-4">Test Steps</h4>
+        <AlertTitle TitleText="Test Steps"></AlertTitle>
+        <RadzenAlert AlertStyle="AlertStyle.Base" AllowClose="false" Variant="Variant.Flat" Size="AlertSize.ExtraSmall"
+                     Text="For a new Test Case Test steps can't be deleted"></RadzenAlert>
     </HeaderTemplate>
 
     <Columns>
@@ -57,11 +59,11 @@
 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
     @if (_isEditing)
     {
-        <h4 class="text-center text-primary mb-4">Update Test Step</h4>
+        <AlertTitle TitleText="Update Test Step"></AlertTitle>
     }
     else
     {
-        <h4 class="text-center text-primary mb-4">Add Test Step</h4>
+        <AlertTitle TitleText="Add Test Step"></AlertTitle>
     }
 </RadzenStack>
 
