@@ -12,7 +12,7 @@ test.afterEach('Logout User',async ({ page }) => {
 
 test('Create a new Cycle', async ({ page }) => {
 
-    await actions.LaunchProject(page, 'Demo Project Without Data' );
+    await actions.LaunchProject(page, 'Demo Project With Data' );
 
     await actions.click_element(page, 'admin_menu');
     await actions.click_element(page, 'manage_cycles');

@@ -19,7 +19,7 @@ test.describe('Test Plan Suite', () => {
         const Random = Math.floor(Math.random() * 1000000);
         const name = 'Test Plan Playwright' + Random;
         const description = 'Test Test Plan Playwright Description' + Random;
-        await actions.LaunchProject(page, 'Demo Project Without Data' );
+        await actions.LaunchProject(page, 'Demo Project With Data' );
 
         await actions.click_button(page, 'd_testplans');
 
@@ -54,7 +54,7 @@ test.describe('Test Plan Suite', () => {
         const Random = Math.floor(Math.random() * 1000000);
         const name = 'Test Plan Playwright' + Random;
         const description = 'Test Test Plan Playwright Description' + Random;
-        await actions.LaunchProject(page, 'Demo Project Without Data' );
+        await actions.LaunchProject(page, 'Demo Project With Data' );
 
         await actions.click_button(page, 'd_testplans');
 

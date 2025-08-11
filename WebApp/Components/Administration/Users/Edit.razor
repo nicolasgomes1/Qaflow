@@ -68,6 +68,7 @@
             // Populate Input with existing user data
             Input.UserName = user.UserName;
             Input.Email = user.Email;
+            Input.Password = user.PasswordHash ?? string.Empty;
             Input.Role = (await UserManager.GetRolesAsync(user)).FirstOrDefault() ?? string.Empty; // Get the user's role(s)
             Input.EmailConfirmed = user.EmailConfirmed;
         }

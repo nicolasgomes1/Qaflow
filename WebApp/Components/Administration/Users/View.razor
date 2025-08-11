@@ -1,27 +1,48 @@
 ﻿@page "/Users/View/{Id:guid}"
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize]
 @rendermode InteractiveServer
 
 <PageTitle>View User</PageTitle>
 
-<h3>User Details</h3>
+<AlertTitle TitleText="@($"Viewing User {Id.ToString()}")"></AlertTitle>
 
-<RadzenCard style="width: 50%;">
+<RadzenCard Style="width: 50%; padding: 20px;">
     @if (_user != null)
     {
-        <p>User ID: <strong>@_user.Id</strong></p>
-        <p>Username: <strong>@_user.UserName</strong></p>
-        <p>Email: <strong>@_user.Email</strong></p>
-        <p>Email Confirmed: <strong>@_user.EmailConfirmed.ToString()</strong></p>
-        <p>Phone Number: <strong>@_user.PhoneNumber</strong></p>
-        <p>Phone Number Confirmed: @_user.PhoneNumberConfirmed.ToString()</p>
-        <p>Roles: <strong>@_userRole</strong></p>
+        <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
+            <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@_user.Id.ToString()"/>
+
+            <RadzenLabel Text="UserName:" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@_user.UserName?.ToString()"/>
+
+            <RadzenLabel Text="Email:" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@_user.Email?.ToString()"/>
+
+            <RadzenLabel Text="Email Confirmed:" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@_user.EmailConfirmed.ToString()"/>
+
+            <RadzenLabel Text="Phone Number:" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@_user.PhoneNumber?.ToString()"/>
+
+            <RadzenLabel Text="Phone Number Confirmed:" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@_user.PhoneNumberConfirmed.ToString()"/>
+
+            <RadzenLabel Text="Roles:" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@_userRole"/>
+        </div>
 
         <div style="margin-top: 10px;">
             <RadzenButton Text="Edit"
+                          Visible='IsUserAdmin()'
                           ButtonType="ButtonType.Submit"
                           Click='() => NavigationManager.NavigateTo($"/Users/Edit/{Id}")'/>
             <RadzenButton Text="Cancel"
+                          Visible='IsUserAdmin()'
+                          Click='() => NavigationManager.NavigateTo("/Users/Index", true)'
+                          ButtonType="ButtonType.Button"/>
+            <RadzenButton Text="Go Back"
+                          Visible='!IsUserAdmin()'
                           Click='() => NavigationManager.NavigateTo("/", true)'
                           ButtonType="ButtonType.Button"/>
         </div>
@@ -52,4 +73,13 @@
         _userRole = roles.FirstOrDefault() ?? "No Role Assigned";
     }
 
+    bool IsUserAdmin()
+    {
+        if (_userRole.Equals("Admin"))
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
