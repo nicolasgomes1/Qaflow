@@ -11,6 +11,7 @@
     "posttest:testplans": "playwright test ./tests/TestPlans.spec.ts  --retries=0 --headed --project=\"Google Chrome\"",
     "posttest:testcases": "playwright test ./tests/TestCases.spec.ts  --retries=0 --headed --project=\"Google Chrome\"",
     "posttest:cycles": "playwright test ./tests/Administration/Cycles.spec.ts  --retries=0 --headed --project=\"Google Chrome\"",
+    "posttest:users": "playwright test ./tests/Administration/Users.spec.ts  --retries=0 --headed --project=\"Google Chrome\"",
 
     "posttest:dashboard": "playwright test ./tests/CanAccessAllDasboardLinks.spec.ts --project=\"Google Chrome\" --retries=0 --headed",
     "posttest:bug": "playwright test ./tests/Bugs.spec.ts --retries=0 --headed --project=\"Google Chrome\" && npx playwright show-report",

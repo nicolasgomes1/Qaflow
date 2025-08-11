@@ -45,9 +45,7 @@ test('Create a new Cycle', async ({ page }) => {
     await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
     
     await actions.click_button(page, 'delete');
-
-
-
+    
     await expect(page.locator('#rz-dialog-0-label')).toContainText('Delete Cycles');
     await page.getByRole('button', { name: 'Ok' }).first().click();
     await expect(page.getByRole('table')).not.toContainText(cycle_name);

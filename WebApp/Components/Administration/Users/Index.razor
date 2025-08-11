@@ -19,7 +19,9 @@
                 ColumnWidth="300px">
 
     <HeaderTemplate>
-        <RadzenButton Icon="add" ButtonType="ButtonType.Submit"
+        <RadzenButton Icon="add"
+                      data-testid="users_create"
+                      ButtonType="ButtonType.Submit"
                       Click="CreateUser"
                       Text="Create User"/>
     </HeaderTemplate>
@@ -61,6 +63,7 @@
                     MouseLeave="@AppTooltipService.HideTooltip"
                     Icon="edit" Click="@(() => EditUser(user.Id))" Size="ButtonSize.ExtraSmall"/>
                 <RadzenButton
+                    data-testid="users_delete"
                     ButtonStyle="ButtonStyle.Light" Style="color: red;"
                     MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Delete User {user.Id}"))"
                     MouseLeave="@AppTooltipService.HideTooltip"

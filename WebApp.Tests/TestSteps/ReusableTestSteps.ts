@@ -112,6 +112,12 @@ async function fill_input(page: Page, id: string, value: string) {
     }
 }
 
+async function check_checkbox(page: Page, id: string) {
+    const checkbox = page.getByTestId(id);
+    await checkbox.waitFor({ state: 'visible' });
+    await checkbox.click();
+}
+
 async function fill_date_picker(page: Page, datatestid: string, value: string) {
     const maxTries = 3;
     let retryCount = 0;
@@ -325,4 +331,4 @@ async function UploadFile(page: Page, id: string) {
 
 
 
-export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject, UploadFile, click_element, fill_date_picker, validate_button_disabled };
+export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject, UploadFile, click_element, fill_date_picker, validate_button_disabled, check_checkbox };

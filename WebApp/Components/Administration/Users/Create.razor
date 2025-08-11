@@ -16,6 +16,7 @@
     <div class="row mb-4 col-12">
         <RadzenLabel Text="Username"/>
         <RadzenTextBox id="username"
+                       data-testid="user_username"
                        @bind-Value="Input.UserName"
                        Placeholder="Username"/>
         <ValidationMessage For="() => Input.UserName" class="text-danger"/>
@@ -24,27 +25,35 @@
     <div class="row mb-4 col-12">
 
         <RadzenLabel Text="Password"/>
-        <RadzenTextBox id="password" @bind-Value="Input.Password" Type="password" Placeholder="Password"/>
+        <RadzenTextBox id="password"
+                       data-testid="user_password"
+                       @bind-Value="Input.Password" Type="password" Placeholder="Password"/>
         <ValidationMessage For="() => Input.Password" class="text-danger"/>
     </div>
 
     <div class="row mb-4 col-12">
         <RadzenLabel Text="Email"/>
-        <RadzenTextBox id="email" @bind-Value="Input.Email" Placeholder="Email"/>
+        <RadzenTextBox id="email"
+                       data-testid="user_email"
+                       @bind-Value="Input.Email" Placeholder="Email"/>
         <ValidationMessage For="() => Input.Email" class="text-danger"/>
     </div>
 
     <div class="row mb-4 col-12">
 
         <RadzenLabel Text="Role"/>
-        <RadzenDropDown id="role" @bind-Value="Input.Role" Data="@_allRoles"/>
+        <RadzenDropDown
+            data-testid="user_role"
+            id="role" @bind-Value="Input.Role" Data="@_allRoles"/>
         <ValidationMessage For="() => Input.Role" class="text-danger"/>
     </div>
 
     <div class="row mb-4 col-12">
 
         <RadzenLabel Text="Confirmed Email?"/>
-        <RadzenCheckBox @bind-Value="Input.EmailConfirmed"/>
+        <RadzenCheckBox
+            data-testid="email_confirmed"
+            @bind-Value="Input.EmailConfirmed"/>
     </div>
 
     <CreateEditActions CreateEdit="Create" EntityName="users"/>
