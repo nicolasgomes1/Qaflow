@@ -3,10 +3,10 @@
 @switch (_testExecution.IsActive)
 {
     case true when ExecutionInProgress == false:
-        <h3 class="text-center text-primary mb-4">Start New Test Execution</h3>
+        <AlertTitle TitleText="Start New Test Execution"></AlertTitle>
         break;
     case false when ExecutionInProgress == false:
-        <h3 class="text-center text-primary mb-4">Executed Test Execution</h3>
+        <AlertTitle TitleText="Executed Test Execution"></AlertTitle>
         break;
 }
 
