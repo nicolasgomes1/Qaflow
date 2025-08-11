@@ -6,9 +6,7 @@
 
 <PageTitle>Edit User</PageTitle>
 
-<h3>Edit User</h3>
-
-<p>User ID: <strong>@Id</strong></p>
+<AlertTitle TitleText=@($"Editing User {Id}")></AlertTitle>
 
 <RadzenTemplateForm Data="@Input" TItem="InputModel" Submit="@HandleValidSubmit">
     <DataAnnotationsValidator/>

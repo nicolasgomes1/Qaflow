@@ -5,13 +5,11 @@
 
 @rendermode InteractiveServer
 
-<PageTitle>Create User</PageTitle>
+<AlertTitle TitleText="Creating new User"></AlertTitle>
 
 <RadzenTemplateForm Data="@Input" TItem="InputModel" Submit="@HandleValidSubmit">
-
-    <h3 class="text-center text-primary mb-4">Create User</h3>
-
-    <DataAnnotationsValidator/>
+    
+<DataAnnotationsValidator/>
     <ValidationSummary class="alert alert-danger"/>
 
     <RadzenLabel Text="Username"/>

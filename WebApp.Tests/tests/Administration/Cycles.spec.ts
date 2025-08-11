@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import * as actions from '../TestSteps/ReusableTestSteps';
-import * as login from '../TestSteps/LoginbyRole';
+import * as actions from '../../TestSteps/ReusableTestSteps';
+import * as login from '../../TestSteps/LoginbyRole';
 
 test.beforeEach('Login User',async ({ page }) => {
     login.LoginbyRole(page, login.Users.Admin);
