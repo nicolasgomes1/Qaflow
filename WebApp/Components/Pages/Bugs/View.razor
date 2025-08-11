@@ -1,6 +1,8 @@
 @page "/project/{ProjectId:int}/bugs/view/{Id:int}"
 @rendermode InteractiveServer
 
+<AlertTitle TitleText="@($"Viewing Bug {Id}")"/>
+
 
 <RadzenTabs RenderMode="TabRenderMode.Client">
     <Tabs>
@@ -36,27 +38,21 @@
                         <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
                         <RadzenLabel Text="@_bug.ModifiedBy"/>
 
+
                         @if (_bug.TestCaseExecutionId.HasValue)
                         {
                             <a>Open during TestExecution</a>
+                            <br/>
+
                             <RadzenLabel Text="Associated Test Case Execution:" Style="font-weight: bold;"/>
                             <RadzenLabel Text="@_bug.TestCaseExecutionId.ToString()"/>
 
                             <RadzenLabel Text="Associated Test Case" Style="font-weight: bold;"/>
                             <RadzenLink Text="@_testCaseExecution.TestCaseId.ToString()"
-                                        Path="@TestCaseExecutionLink(_testCaseExecution.TestCaseId)"></RadzenLink>
+                                        Path="@TestCaseExecutionLink(_testCaseExecution.TestCaseId)" Target="_blank">
+                            </RadzenLink>
                         }
-
-                        @code
-
-                        {
-                            private string TestCaseExecutionLink(int id)
-                            {
-                                return $"/project/{ProjectId}/testcases/view/{id}";
-                            }
-                        }
-
-                        @if (!_bug.TestCaseExecutionId.HasValue)
+                        else
                         {
                             <a>Open outside of TestExecution</a>
 
@@ -64,16 +60,21 @@
                             @foreach (var testCase in TestCasesList)
                             {
                                 <RadzenLink Text="@testCase.Id.ToString()"
-                                            Path="@TestCaseLink(testCase.Id)"></RadzenLink>
+                                            Path="@TestCaseLink(testCase.Id)">
+                                </RadzenLink>
+                            }
+                        }
 
-                                @code
+                        @code
+                        {
+                            private string TestCaseExecutionLink(int id)
+                            {
+                                return $"/project/{ProjectId}/testcases/view/{id}";
+                            }
 
-                                {
-                                    private string TestCaseLink(int id)
-                                    {
-                                        return $"/project/{ProjectId}/testcases/view/{id}";
-                                    }
-                                }
+                            private string TestCaseLink(int id)
+                            {
+                                return $"/project/{ProjectId}/testcases/view/{id}";
                             }
                         }
                     </div>
