@@ -56,7 +56,7 @@ test('Create a new Cycle', async ({ page }) => {
 
 test('Cycle with linked entities cannot be deleted or edited', async ({ page }) => {
     const cycle_name = 'Cycle 1';
-    await actions.LaunchProject(page, 'Demo Project Without Data' );
+    await actions.LaunchProject(page, 'Demo Project With Data' );
 
     await actions.click_element(page, 'admin_menu');
     await actions.click_element(page, 'manage_cycles');

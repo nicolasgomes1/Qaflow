@@ -51,14 +51,17 @@
         <RadzenDataGridColumn Title="Edit" Width="auto">
             <Template Context="user">
                 <RadzenButton
-                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Edit User {user.Id}"))"
-                    MouseLeave="@AppTooltipService.HideTooltip"
-                    Icon="edit" Click="@(() => EditUser(user.Id))" Size="ButtonSize.ExtraSmall"/>
-                <RadzenButton
+                    ButtonStyle="ButtonStyle.Light" Style="color: blue;"
                     MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"View User {user.Id}"))"
                     MouseLeave="@AppTooltipService.HideTooltip"
                     Icon="visibility" Click="@(() => ViewUser(user.Id))" Size="ButtonSize.ExtraSmall"/>
                 <RadzenButton
+                    ButtonStyle="ButtonStyle.Light" Style="color: green;"
+                    MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Edit User {user.Id}"))"
+                    MouseLeave="@AppTooltipService.HideTooltip"
+                    Icon="edit" Click="@(() => EditUser(user.Id))" Size="ButtonSize.ExtraSmall"/>
+                <RadzenButton
+                    ButtonStyle="ButtonStyle.Light" Style="color: red;"
                     MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Delete User {user.Id}"))"
                     MouseLeave="@AppTooltipService.HideTooltip"
                     Icon="delete" Click="@(() => DeleteUser(user))" Size="ButtonSize.ExtraSmall"/>

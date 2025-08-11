@@ -20,11 +20,13 @@
     </div>
 
     <div class="row mb-4 col-12">
-
         <RadzenLabel Text="Password"/>
-        <RadzenTextBox id="password" @bind-Value="Input.Password" Type="password" Placeholder="Password"/>
+        <RadzenTextBox id="password" @bind-Value="Input.Password" Type="password"
+                       Placeholder="Leave empty to keep current password"/>
         <ValidationMessage For="() => Input.Password" class="text-danger"/>
+        <small class="text-muted">Only fill this field if you want to change the password</small>
     </div>
+
 
     <div class="row mb-4 col-12">
 
@@ -68,7 +70,6 @@
             // Populate Input with existing user data
             Input.UserName = user.UserName;
             Input.Email = user.Email;
-            Input.Password = user.PasswordHash ?? string.Empty;
             Input.Role = (await UserManager.GetRolesAsync(user)).FirstOrDefault() ?? string.Empty; // Get the user's role(s)
             Input.EmailConfirmed = user.EmailConfirmed;
         }
