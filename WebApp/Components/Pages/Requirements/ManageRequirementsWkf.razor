@@ -80,9 +80,9 @@
 
     private IList<Requirements>? _requirementsData = [];
 
-    Func<Requirements, RadzenDropZone<Requirements>, bool> _itemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
+    readonly Func<Requirements, RadzenDropZone<Requirements>, bool> _itemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
 
-    Func<RadzenDropZoneItemEventArgs<Requirements>, bool> _canDrop = request =>
+    readonly Func<RadzenDropZoneItemEventArgs<Requirements>, bool> _canDrop = request =>
     {
         return request.FromZone == request.ToZone ||
                Math.Abs((int)request.Item.WorkflowStatus - (int)request.ToZone.Value) == 1;

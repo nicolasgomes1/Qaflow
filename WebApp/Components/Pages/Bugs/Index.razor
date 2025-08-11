@@ -40,6 +40,10 @@
                       Click="@(() => DataGridSettingsService.ClearSettingsAsync())"/>
         <DeleteallDataForModel EntityName="@(nameof(Bugs))"
                                EntityList="_bugs"/>
+        <RadzenButton Icon="assessment"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment"))"
+                      MouseLeave="@AppTooltipService.HideTooltip"
+                      Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/bugs/manage")'/>
         <ExportGridDataCsv Grid="@_dataGrid"/>
     </HeaderTemplate>
 

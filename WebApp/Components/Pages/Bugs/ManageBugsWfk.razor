@@ -1,10 +1,26 @@
 @page "/project/{ProjectId:int}/bugs/manage"
 @rendermode InteractiveServer
 
-<h3>Manage Bugs</h3>
+<AlertTitle TitleText="Managing Bugs"/>
 
-<RadzenButton Text="My Assignments" Click="RefreshAssignedBugs"/>
-<RadzenButton Text="All Bugs" Click="RefreshAllBugs"/>
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
+        <RadzenButton Icon="assignment_ind" Text="My Assignments" data-testid="my_assignment"
+                      Click="RefreshAssignedBugs"/>
+        <RadzenButton Icon="assignment" data-testid="all_assignment" Text="All Bugs" Click="@RefreshAllBugs"/>
+    </RadzenStack>
+
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
+        <BugDialogCreate Title="" ProjectId="ProjectId" OnBugsCreated="@RefreshAllBugs"/>
+        <RadzenButton Icon="list"
+                      ButtonStyle="ButtonStyle.Warning"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Bugs List"))"
+                      MouseLeave="@AppTooltipService.HideTooltip"
+                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs", true))'/>
+    </RadzenStack>
+
+</RadzenStack>
 
 <RadzenDropZoneContainer TItem="Bugs" Data="bugsData"
                          ItemSelector="@ItemSelector"
@@ -63,9 +79,9 @@
 
     private IList<Bugs>? bugsData = [];
 
-    Func<Bugs, RadzenDropZone<Bugs>, bool> ItemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
+    readonly Func<Bugs, RadzenDropZone<Bugs>, bool> ItemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
 
-    Func<RadzenDropZoneItemEventArgs<Bugs>, bool> CanDrop = request =>
+    readonly Func<RadzenDropZoneItemEventArgs<Bugs>, bool> CanDrop = request =>
     {
         return request.FromZone == request.ToZone ||
                Math.Abs((int)request.Item.WorkflowStatus - (int)request.ToZone.Value) == 1;

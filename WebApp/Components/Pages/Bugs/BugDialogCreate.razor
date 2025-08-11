@@ -26,18 +26,21 @@
 
     [Parameter] public int? TestCaseExecutionId { get; set; } = null;
 
+    [Parameter] public EventCallback OnBugsCreated { get; set; }
+
+
     private async Task CreateNewBug()
     {
         _bugs.TestCaseExecutionId = TestCaseExecutionId;
-        // CreateBug should handle adding the bug and return a result
         var result = await BugsModel.AddBug(_bugs, _uploadedFiles, ProjectId);
 
-
-        // Close the dialog with the result
         DialogService.Close(result);
-        //   NavigationManager.NavigateTo($"/project/{ProjectId}");
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Bug created successfully with id {_bugs.Id}");
+        if (OnBugsCreated.HasDelegate)
+        {
+            await OnBugsCreated.InvokeAsync();
+        }
     }
 
 
