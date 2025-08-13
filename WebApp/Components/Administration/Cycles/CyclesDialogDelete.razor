@@ -1,5 +1,4 @@
 @attribute [Authorize]
-@inject CyclesModel CyclesModel
 <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Style="color: red;"
               data-testid="delete"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, $"Delete {nameof(Cycles)}"))"

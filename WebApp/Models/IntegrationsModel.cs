@@ -5,6 +5,11 @@ namespace WebApp.Models;
 
 public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
+    private static readonly ILoggerFactory LoggerFactory =
+        Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger("IntegrationsModel");
+
     /// <summary>
     /// Creates a new integration and saves it to the database.
     /// </summary>
@@ -17,6 +22,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
 
         db.Integrations.Add(integration);
         await db.SaveChangesAsync();
+        Logger.LogInformation("Added new integration");
         return integration;
     }
 
@@ -34,6 +40,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
         if (integration is null) throw new Exception("Bug not found");
         db.Integrations.Update(integration);
         await db.SaveChangesAsync();
+        Logger.LogInformation("Updated integration");
     }
 
 
@@ -46,7 +53,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
     public async Task<Integrations> GetIntegrationByIdAsync(int integrationId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-
+        Logger.LogInformation($"Getting integration {integrationId}");
         return await db.Integrations.FindAsync(integrationId) ?? throw new Exception("Integration is null");
     }
 
@@ -68,7 +75,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
     public async Task<List<Integrations>> GetListIntegrations()
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-
+        Logger.LogInformation($"Getting integrations");
         return await db.Integrations.ToListAsync();
     }
 
@@ -80,5 +87,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
                           throw new Exception("Integration is Null");
         db.Integrations.Remove(integration);
         await db.SaveChangesAsync();
+        Logger.LogInformation("Removed integration with id:  {id}", integrationId);
+        ;
     }
 }

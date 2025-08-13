@@ -11,12 +11,17 @@ public class BugsModel(
     UserService userService,
     BugsFilesModel bugsFilesModel)
 {
+    private static readonly ILoggerFactory LoggerFactory =
+        Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger("BugsModel");
+
     public List<int> SelectedTestCasesIds { get; set; } = [];
 
     public async Task<List<Bugs>> GetBugsAsync(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-
+        Logger.LogInformation($"Getting bugs for project {projectId}");
         return await db.Bugs.Where(bp => bp.ProjectsId == projectId).ToListAsync();
     }
 
@@ -26,6 +31,7 @@ public class BugsModel(
 
         var bug = await db.Bugs.FindAsync(id);
         if (bug is null) throw new Exception("Bug not found");
+        Logger.LogInformation($"Getting bug {id}");
         return bug;
     }
 
@@ -38,7 +44,7 @@ public class BugsModel(
             .FirstOrDefaultAsync(b => b.Id == bugId);
 
         if (bug is null) throw new Exception("Bug not found");
-
+        Logger.LogInformation($"Getting test cases for bug {bugId}");
         return bug.LinkedTestCases.ToList();
     }
 
@@ -71,7 +77,7 @@ public class BugsModel(
 
         // If there are files, attempt to save them
         if (files != null && files.Count != 0) await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
-
+        Logger.LogInformation($"Bug {bug.Id} added to project {projectId}");
         return bug;
     }
 
@@ -103,7 +109,7 @@ public class BugsModel(
         // If there are files, attempt to save them
         if (files is { Count: > 0 })
             await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
-
+        Logger.LogInformation($"Bug {bug.Id} updated");
         return bug;
     }
 }

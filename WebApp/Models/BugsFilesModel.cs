@@ -6,9 +6,13 @@ using WebApp.Services;
 
 namespace WebApp.Models;
 
-public class BugsFilesModel(
-    IDbContextFactory<ApplicationDbContext> dbContextFactory)
+public class BugsFilesModel(IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
+    private static readonly ILoggerFactory LoggerFactory =
+        Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger("BugsFilesModel");
+
     public async Task SaveFilesToDb(List<IBrowserFile>? files, int bugId, int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
@@ -29,6 +33,7 @@ public class BugsFilesModel(
             };
 
             db.BugsFiles.Add(bugsFile);
+            Logger.LogInformation($"File {file.Name} added to bug {bugId}");
         }
 
         await db.SaveChangesAsync();
@@ -37,7 +42,7 @@ public class BugsFilesModel(
     public async Task<List<BugsFiles>> GetBugFilesById(int bugId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-
+        Logger.LogInformation($"Getting files for bug {bugId}");
         return await db.BugsFiles.Where(bf => bf.BugId == bugId).ToListAsync();
     }
 }

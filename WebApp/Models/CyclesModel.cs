@@ -7,6 +7,12 @@ namespace WebApp.Models;
 
 public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactory, UserService userService)
 {
+    private static readonly ILoggerFactory LoggerFactory =
+        Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger("CyclesModel");
+
+
     public async Task ArchiveExpiredCyclesAsync()
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
@@ -33,6 +39,7 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
         cycles.CreatedAt = DateTime.UtcNow;
         cycles.ProjectsId = projectId;
         await db.SaveChangesAsync();
+        Logger.LogInformation($"Cycle {cycles.Name} added to project {projectId}");
         return cycles;
     }
 
@@ -43,6 +50,7 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
         cycles.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         cycles.ModifiedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
+        Logger.LogInformation($"Cycle {cycles.Name} updated");
         return cycles;
     }
 
@@ -50,12 +58,14 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
     public async Task<Cycles> GetCycleById(int cycleId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
+        Logger.LogInformation($"Getting cycle {cycleId}");
         return await db.Cycles.FindAsync(cycleId) ?? throw new Exception("Cycle not found");
     }
 
     public async Task<List<Cycles>> GetCyclesByProjectId(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
+        Logger.LogInformation($"Getting cycles for project {projectId}");
         return await db.Cycles.Where(c => c.ProjectsId == projectId).ToListAsync();
     }
 
@@ -80,6 +90,14 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
 
         db.Cycles.Remove(cycle);
         await db.SaveChangesAsync();
+        Logger.LogInformation($"Cycle {cycle.Name} deleted");
         return true; // Successfully deleted
+    }
+
+    public bool HasTestPlans(Cycles cycle)
+    {
+        using var db = dbContextFactory.CreateDbContextAsync();
+        Logger.LogInformation($"Checking if cycle {cycle.Name} has test plans");
+        return db.Result.TestPlans.Any(tp => tp.CycleId == cycle.Id);
     }
 }

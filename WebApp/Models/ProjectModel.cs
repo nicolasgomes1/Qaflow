@@ -8,6 +8,11 @@ public class ProjectModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory,
     UserService userService)
 {
+    private static readonly ILoggerFactory LoggerFactory =
+        Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger("ProjectModel");
+
     /// <summary>
     ///     Get Project by Id
     /// </summary>
@@ -16,7 +21,7 @@ public class ProjectModel(
     public async Task<Projects> GetProjectById(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-
+        Logger.LogInformation($"Getting project {projectId}");
         return await db.Projects.FindAsync(projectId) ?? throw new Exception("Projects is null");
     }
 
@@ -28,6 +33,7 @@ public class ProjectModel(
         project.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         project.CreatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
+        Logger.LogInformation($"Project {project.Name} added");
     }
 
     public async Task AddProjectFromCsv(Projects project)
@@ -38,6 +44,7 @@ public class ProjectModel(
         project.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         project.CreatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
+        Logger.LogInformation($"Project {project.Name} added");
     }
 
     /// <summary>
@@ -54,7 +61,7 @@ public class ProjectModel(
 
         db.Projects.Update(projects);
         await db.SaveChangesAsync();
-
+        Logger.LogInformation($"Project {projects.Name} updated");
         return projects;
     }
 
@@ -69,7 +76,8 @@ public class ProjectModel(
     public async Task<List<Projects>> GetProjectsTestCasesRequirements(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-
+        Logger.LogInformation("Getting projects {projectId} with Test Cases and Requirements", projectId);
+        ;
         return await db.Projects
             .AsSplitQuery()
             .Include(p => p.Requirements)

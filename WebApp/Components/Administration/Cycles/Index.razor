@@ -1,8 +1,6 @@
 @page "/project/{ProjectId:int}/Cycles"
-@using WebApp.Components.Pages.RequirementsSpecification
 @rendermode InteractiveServer
 @attribute [Authorize]
-@inject CyclesModel CyclesModel
 <RadzenDataGrid TItem="Cycles"
                 Data="_cycles"
                 Density="Density.Compact"
@@ -52,10 +50,10 @@
                     <CyclesDialogView Id="@cycle.Id"/>
                     <CyclesDialogEdit Id="@cycle.Id"
                                       OnRequirementSpecificationUpdated="() => RefreshPage()"
-                                      IsDisabled="@(HasTestPlans(cycle))"/>
+                                      IsDisabled="@(CyclesModel.HasTestPlans(cycle))"/>
                     <CyclesDialogDelete Id="@cycle.Id"
                                         OnRequirementDeleted="() => RefreshPage()"
-                                        IsDisabled="@(HasTestPlans(cycle))"/>
+                                        IsDisabled="@(CyclesModel.HasTestPlans(cycle))"/>
                 </div>
             </Template>
         </RadzenDataGridColumn>
@@ -74,19 +72,12 @@
     {
         _cycles = await CyclesModel.GetCyclesByProjectId(ProjectId);
 
-        // Refresh the Home component (re-render it)
         await InvokeAsync(StateHasChanged);
     }
 
     protected override async Task OnInitializedAsync()
     {
         _cycles = await CyclesModel.GetCyclesByProjectId(ProjectId);
-    }
-
-    bool HasTestPlans(Cycles cycle)
-    {
-        using var db = DbContext.CreateDbContextAsync();
-        return db.Result.TestPlans.Any(tp => tp.CycleId == cycle.Id);
     }
 
 
