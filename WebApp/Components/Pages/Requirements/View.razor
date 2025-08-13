@@ -58,10 +58,10 @@
                         <RadzenDataGridColumn Property="Name" Title="Name"/>
                         <RadzenDataGridColumn Property="Description" Title="Description"/>
                         <RadzenDataGridColumn>
-                            <Template Context="testcases">
+                            <Template Context="ctx">
                                 <div class="btn-group">
                                     <RadzenButton Text="View"
-                                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases/view/{testcases.Id}", true))"
+                                                  Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases/view/{ctx.Id}", true))"
                                                   Size="ButtonSize.Small"
                                                   Icon="visibility"/>
                                 </div>

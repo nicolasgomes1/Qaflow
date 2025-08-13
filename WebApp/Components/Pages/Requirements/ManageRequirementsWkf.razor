@@ -1,9 +1,9 @@
 @page "/project/{ProjectId:int}/requirements/manage"
 @attribute [Authorize]
-
 @rendermode InteractiveServer
-
 <AlertTitle TitleText="Managing Requirements"/>
+<!-- Add the component with a reference -->
+<RequirementsDialogView @ref="requirementsDialog" Id="0"/>
 
 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
@@ -60,8 +60,9 @@
         </RadzenStack>
     </ChildContent>
     <Template>
-        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem" @ondblclick="ViewCard">
-            <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
+        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem" @ondblclick="@(() => ViewCard(context.Id))">
+
+        <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
                 <strong>@context.Name</strong>
                 <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(context.Priority)">
                     @context.Priority
@@ -76,6 +77,7 @@
 
 @code {
     [Parameter] public int ProjectId { get; set; }
+    private RequirementsDialogView requirementsDialog = null!;
 
 
     private IList<Requirements>? _requirementsData = [];
@@ -174,9 +176,14 @@
     }
 
 
-    private void ViewCard()
+    private async Task ViewCard(int id)
     {
-        Console.WriteLine($"Clicked on {_itemSelector}");
+        Console.WriteLine($"clicked on {id}");
+
+        // Set the ID and call the method
+        requirementsDialog.Id = id;
+        await requirementsDialog.ViewInlineDialog();
     }
+
 
 }
