@@ -1,9 +1,12 @@
 @page "/project/{ProjectId:int}/requirements/manage"
 @attribute [Authorize]
 @rendermode InteractiveServer
+@inject ILogger<ManageRequirementsWkf> Logger
+
 <AlertTitle TitleText="Managing Requirements"/>
+
 <!-- Add the component with a reference -->
-<RequirementsDialogView @ref="requirementsDialog" Id="0"/>
+<RequirementsDialogView @ref="_requirementsDialog" Id="0"/>
 
 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
@@ -77,7 +80,7 @@
 
 @code {
     [Parameter] public int ProjectId { get; set; }
-    private RequirementsDialogView requirementsDialog = null!;
+    private RequirementsDialogView _requirementsDialog = null!;
 
 
     private IList<Requirements>? _requirementsData = [];
@@ -178,11 +181,11 @@
 
     private async Task ViewCard(int id)
     {
-        Console.WriteLine($"clicked on {id}");
+        Logger.LogInformation($"clicked on {id}");
 
         // Set the ID and call the method
-        requirementsDialog.Id = id;
-        await requirementsDialog.ViewInlineDialog();
+        _requirementsDialog.Id = id;
+        await _requirementsDialog.ViewInlineDialog();
     }
 
 
