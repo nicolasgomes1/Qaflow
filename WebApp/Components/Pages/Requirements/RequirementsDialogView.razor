@@ -1,0 +1,26 @@
+[Authorize]
+
+@code {
+    private Requirements _requirements = new();
+
+    [EditorRequired] [Parameter] public int Id { get; set; }
+
+    public async Task ViewInlineDialog()
+    {
+        _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
+
+        await DialogService.OpenAsync($"View {nameof(Requirements)} {Id}", ds =>
+                @<div>
+                    <p>ID: @_requirements.Id</p>
+                    <p>Name: @_requirements.Name</p>
+                    <p>Description: @_requirements.Description</p>
+                    <p>Created At: @_requirements.CreatedAt</p>
+                    <p>Modified At: @_requirements.ModifiedAt</p>
+                    <p>Created By: @_requirements.CreatedBy</p>
+                    <p>Modified By: @_requirements.ModifiedBy</p>
+
+                </div>,
+            new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
+    }
+
+}
