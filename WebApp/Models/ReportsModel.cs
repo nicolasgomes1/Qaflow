@@ -6,6 +6,11 @@ namespace WebApp.Models;
 
 public class ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFactor)
 {
+    private static readonly ILoggerFactory LoggerFactory =
+        Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger(nameof(ReportsModel));
+
     public async Task<(double, double)> GetTestCasePercentagesAsync(int projectId)
     {
         await using var db = await dbContextFactor.CreateDbContextAsync();
@@ -28,6 +33,7 @@ public class ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFacto
             ? (double)testCasesWithoutRequirements / totalTestCases * 100
             : 0;
 
+        Logger.LogInformation($"Total Test Cases: {totalTestCases}");
         return (Math.Round(testCasesWithRequirementsPercentage, 2),
             Math.Round(testCasesWithoutRequirementsPercentage, 2));
     }
@@ -147,8 +153,8 @@ public class ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFacto
 
         var projectRequirementsSpecifications = await db.Requirements
             .Where(r => r.ProjectsId == projectId)
-            .CountAsync(
-                r => r.RequirementsSpecification != null && r.RequirementsSpecification.LinkedRequirements.Any());
+            .CountAsync(r =>
+                r.RequirementsSpecification != null && r.RequirementsSpecification.LinkedRequirements.Any());
         return projectRequirementsSpecifications;
     }
 
@@ -183,9 +189,8 @@ public class ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFacto
             .Where(te => te.IsActive == false)
             .CountAsync();
     }
-    
-    
-    
+
+
     public async Task<double> GetTestExecutionPassRateAsync(int projectId)
     {
         await using var db1 = await dbContextFactor.CreateDbContextAsync();

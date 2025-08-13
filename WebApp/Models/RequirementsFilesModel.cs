@@ -9,6 +9,11 @@ namespace WebApp.Models;
 public class RequirementsFilesModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
+    private static readonly ILoggerFactory LoggerFactory =
+        Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger(nameof(ReportsModel));
+
     public async Task SaveFilesToDb(List<IBrowserFile>? files, int requirementId, int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
@@ -33,6 +38,7 @@ public class RequirementsFilesModel(
         }
 
         await db.SaveChangesAsync();
+        Logger.LogInformation("Saved {files} to db", files.Count);
     }
 
     /// <summary>

@@ -102,6 +102,7 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
 
         existingTestExecution.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         existingTestExecution.ModifiedAt = DateTime.UtcNow;
+        existingTestExecution.WorkflowStatus = testExecution.WorkflowStatus;
 
         if (existingTestExecution.TestPlanId != SelectedTestPlan)
         {

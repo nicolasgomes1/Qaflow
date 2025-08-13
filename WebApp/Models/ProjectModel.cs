@@ -11,7 +11,7 @@ public class ProjectModel(
     private static readonly ILoggerFactory LoggerFactory =
         Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
 
-    private static readonly ILogger Logger = LoggerFactory.CreateLogger("ProjectModel");
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger(nameof(ProjectModel));
 
     /// <summary>
     ///     Get Project by Id

@@ -8,7 +8,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
     private static readonly ILoggerFactory LoggerFactory =
         Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
 
-    private static readonly ILogger Logger = LoggerFactory.CreateLogger("IntegrationsModel");
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger(nameof(IntegrationsModel));
 
     /// <summary>
     /// Creates a new integration and saves it to the database.

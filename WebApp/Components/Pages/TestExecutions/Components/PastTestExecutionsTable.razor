@@ -1,9 +1,10 @@
 ﻿<!-- Past Test Executions Table -->
 @attribute [Authorize]
 
-<RadzenCard Style="margin-top: 10px;" class="rz-shadow-10">
+<RadzenCard Style="margin-top: 10px;">
 
-    <h4 class="text-center text-primary mb-4">Past Execution Status</h4>
+    <AlertTitle TitleText="Past Execution Status"/>
+
 
     <RadzenDataGrid Data="@_testExecutionList" TItem="TestExecution" AllowPaging="false" AllowSorting="false"
                     RowRender="@OnRowRender" AllowAlternatingRows="false">

@@ -10,7 +10,7 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
     private static readonly ILoggerFactory LoggerFactory =
         Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
 
-    private static readonly ILogger Logger = LoggerFactory.CreateLogger("CyclesModel");
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger(nameof(CyclesModel));
 
 
     public async Task ArchiveExpiredCyclesAsync()

@@ -41,6 +41,17 @@ else
             <RadzenRequiredValidator Component="testplan" Text="Test Plan is required"/>
         </div>
 
+        <div class="form-group mb-4">
+            <RadzenLabel Text="Status"/>
+            <RadzenDropDown id="status"
+                            data-testid="testexecution_workflowstatus"
+                            class="input-style"
+                            @bind-Value="_testExecution.WorkflowStatus"
+                            Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                            Name="status"/>
+            <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+        </div>
+
         <!-- Priority Field -->
         <div class="form-group mb-4">
             <RadzenLabel Text="Priority"/>

@@ -13,6 +13,11 @@ public class RequirementsModel(
     RequirementsFilesModel requirementsFilesModel,
     UserService userService)
 {
+    private static readonly ILoggerFactory LoggerFactory =
+        Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger(nameof(RequirementsModel));
+
     public int SelectedRequirementSpecificationId = -1;
 
 
@@ -33,6 +38,7 @@ public class RequirementsModel(
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
+        Logger.LogInformation("Getting Requirements for Project {projectId}", projectId);
         return await db.Requirements.Where(rp => rp.ProjectsId == projectId).ToListAsync();
     }
 

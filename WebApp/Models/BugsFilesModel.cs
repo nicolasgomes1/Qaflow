@@ -11,7 +11,7 @@ public class BugsFilesModel(IDbContextFactory<ApplicationDbContext> dbContextFac
     private static readonly ILoggerFactory LoggerFactory =
         Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
 
-    private static readonly ILogger Logger = LoggerFactory.CreateLogger("BugsFilesModel");
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger(nameof(BugsFilesModel));
 
     public async Task SaveFilesToDb(List<IBrowserFile>? files, int bugId, int projectId)
     {

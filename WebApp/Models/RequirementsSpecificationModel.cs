@@ -9,6 +9,12 @@ public class RequirementsSpecificationModel(
     IDbContextFactory<ApplicationDbContext> dbContextFactory,
     UserService userService)
 {
+    private static readonly ILoggerFactory LoggerFactory =
+        Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger(nameof(RequirementsSpecificationModel));
+
+
     public async Task<RequirementsSpecification> AddRequirementsSpecification(
         RequirementsSpecification requirementsSpecification, int projectId)
     {
@@ -87,7 +93,6 @@ public class RequirementsSpecificationModel(
 
         var noExceptions = 0;
 
-        var logger = LoggerService.Logger;
         var found = await db.RequirementsSpecification.FindAsync(requirementSpecificationId);
         if (found == null) throw new Exception();
         var hasReq = found.LinkedRequirements.Any();
@@ -97,11 +102,11 @@ public class RequirementsSpecificationModel(
                 noExceptions = 0;
                 db.Remove(found);
                 await db.SaveChangesAsync();
-                logger.LogInformation("Removed Record");
+                Logger.LogInformation("Removed Record");
                 break;
             case true:
                 noExceptions = 1;
-                logger.LogInformation("Can't remove record has it has linked requirements");
+                Logger.LogInformation("Can't remove record has it has linked requirements");
                 break;
         }
 
