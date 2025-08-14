@@ -1,24 +1,11 @@
 @inject DialogService DialogService
 @attribute [Authorize]
 
-@*
-<RadzenButton Text="@Title"
-              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.requirements"]))"
-              MouseLeave="@AppTooltipService.HideTooltip"
-              Disabled="@IsDisabled"
-              ButtonStyle="ButtonStyle.Warning"
-              Click="@ShowInlineDialog">
-    <RadzenIcon Icon="add"/>
-    <RadzenIcon Icon="assignment"/>
-</RadzenButton>
-*@
-
 @code {
     private Requirements _requirements = new();
     private readonly List<IBrowserFile>? _uploadedFiles = [];
     private List<ApplicationUser> _usersList = [];
     private List<RequirementsSpecification> _requirementsSpecificationList = [];
-    //  private int _selectedRequirementSpecificationId;
 
     [EditorRequired] [Parameter] public EventCallback OnRequirementUpdated { get; set; }
 
@@ -54,7 +41,7 @@
 
         _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
         _usersList = await UserService.GetUsersList();
-        RequirementsModel.SelectedRequirementSpecificationId = -1;
+        RequirementsModel.SelectedRequirementSpecificationId = _requirements.RequirementsSpecification.Id;
         _uploadedFiles?.Clear();
 
         var result = await DialogService.OpenAsync("Update Requirement", ds =>
