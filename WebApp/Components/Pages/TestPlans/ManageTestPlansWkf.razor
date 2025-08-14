@@ -28,7 +28,7 @@
 
 <RadzenDropZoneContainer TItem="TestPlans" Data="testplansData"
                          ItemSelector="@ItemSelector"
-                         ItemRender="@OnItemRender"
+                         ItemRender="WkfManagementCardColor.OnItemRender<TestPlans>"
                          CanDrop="@CanDrop"
                          Drop="@OnDrop">
     <ChildContent>
@@ -97,15 +97,7 @@
                Math.Abs((int)request.Item.WorkflowStatus - (int)request.ToZone.Value) == 1;
     };
 
-    void OnItemRender(RadzenDropZoneItemRenderEventArgs<TestPlans> args)
-    {
-        args.Attributes["class"] = "rz-card rz-variant-filled rz-background-color-primary-light rz-color-on-primary-light";
 
-        if (args.Item.WorkflowStatus == WorkflowStatus.New)
-        {
-            args.Attributes["class"] += " rz-border-danger";
-        }
-    }
 
     async void OnDrop(RadzenDropZoneItemEventArgs<TestPlans> args)
     {

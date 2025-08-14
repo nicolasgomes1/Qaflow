@@ -35,7 +35,7 @@
 
 <RadzenDropZoneContainer TItem="Requirements" Data="_filteredRequirementsData"
                          ItemSelector="@_itemSelector"
-                         ItemRender="@OnItemRender"
+                         ItemRender="WkfManagementCardColor.OnItemRender<Requirements>"
                          CanDrop="@_canDrop"
                          Drop="@OnDrop">
     <ChildContent>
@@ -99,28 +99,6 @@
                Math.Abs((int)request.Item.WorkflowStatus - (int)request.ToZone.Value) == 1;
     };
 
-    void OnItemRender(RadzenDropZoneItemRenderEventArgs<Requirements> args)
-    {
-        args.Attributes["class"] = "rz-card rz-variant-filled rz-background-color-primary-light rz-color-on-primary-light";
-
-        switch (args.Item.WorkflowStatus)
-        {
-            case WorkflowStatus.New:
-                args.Attributes["class"] += " rz-border-danger";
-                break;
-            case WorkflowStatus.InReview:
-                args.Attributes["class"] += " rz-border-warning";
-                break;
-            case WorkflowStatus.Completed:
-                args.Attributes["class"] += " rz-border-success";
-                break;
-            case WorkflowStatus.Reopened:
-                args.Attributes["class"] += " rz-border-primary";
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
 
     async void OnDrop(RadzenDropZoneItemEventArgs<Requirements> args)
     {
