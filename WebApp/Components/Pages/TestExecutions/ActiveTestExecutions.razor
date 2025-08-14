@@ -12,7 +12,6 @@
                 PagerHorizontalAlign="HorizontalAlign.Left"
                 ShowPagingSummary="true"
                 Data="@_testExecution"
-                ColumnWidth="300px"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
                 @bind-Value="@_selectedTestExecutions">
@@ -56,12 +55,12 @@
             </Template>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn Property="@nameof(TestExecution.ModifiedAt)" Title="Modified At" Width="auto"/>
+        @*  <RadzenDataGridColumn Property="@nameof(TestExecution.ModifiedAt)" Title="Modified At" Width="auto"/> *@
         <RadzenDataGridColumn Property="@nameof(TestExecution.IsActive)" Title="Is Active" Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(TestExecution.ArchivedStatus)" Title="Archived Status" Width="auto"/>
 
 
-        <RadzenDataGridColumn>
+        <RadzenDataGridColumn Filterable="false" Sortable="false">
             <Template Context="ctx">
                 <RadzenButton Icon="visibility" ButtonStyle="ButtonStyle.Light" Style="color: blue;"
                               Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/execution/{ctx.Id}"))"
