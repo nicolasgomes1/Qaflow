@@ -16,6 +16,9 @@
                       Click="RefreshAssignedRequirements"/>
         <RadzenButton Icon="assignment" data-testid="all_assignment" Text="All Requirements"
                       Click="RefreshAllRequirements"/>
+        <RadzenTextBox Placeholder="Search requirements..."
+                       Change=@(args => SearchRequirements(args))
+                       style="width: 300px"/>
     </RadzenStack>
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
@@ -29,10 +32,9 @@
     </RadzenStack>
 </RadzenStack>
 
+<!-- Add search functionality -->
 
-
-
-<RadzenDropZoneContainer TItem="Requirements" Data="_requirementsData"
+<RadzenDropZoneContainer TItem="Requirements" Data="_filteredRequirementsData"
                          ItemSelector="@_itemSelector"
                          ItemRender="@OnItemRender"
                          CanDrop="@_canDrop"
@@ -87,6 +89,8 @@
     private RequirementsDialogEdit _requirementsDialogEdit = null!;
 
     private IList<Requirements>? _requirementsData = [];
+    private IList<Requirements>? _filteredRequirementsData = [];
+    private string _searchTerm = "";
 
     readonly Func<Requirements, RadzenDropZone<Requirements>, bool> _itemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
 
@@ -141,46 +145,54 @@
         }
 
         if (args.ToItem == null || args.ToItem == args.Item) return;
-        _requirementsData?.Remove(args.Item);
-        _requirementsData?.Insert(_requirementsData.IndexOf(args.ToItem), args.Item);
+        _filteredRequirementsData?.Remove(args.Item);
+        _filteredRequirementsData?.Insert(_filteredRequirementsData.IndexOf(args.ToItem), args.Item);
     }
 
     protected override async Task OnInitializedAsync()
     {
         _requirementsData = await RequirementsModel.GetRequirementsAssignedToAll(ProjectId);
+        _filteredRequirementsData = _requirementsData;
+    }
+
+    private void SearchRequirements(string searchTerm)
+    {
+        _searchTerm = searchTerm?.ToLower() ?? "";
+
+        if (string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            _filteredRequirementsData = _requirementsData;
+        }
+        else
+        {
+            _filteredRequirementsData = _requirementsData?
+                .Where(r => r.Name != null && r.Name.ToLower().Contains(_searchTerm))
+                .ToList();
+        }
+
+        StateHasChanged();
     }
 
     private async Task RefreshAssignedRequirementsFromDialog()
     {
         _requirementsData = await RequirementsModel.GetRequirementsAssignedToCurrentUser(ProjectId);
+        _filteredRequirementsData = _requirementsData;
         StateHasChanged();
     }
-
-//    private async Task<List<Requirements>> GetRequirementsAssignedToAll()
-//    {
-//        await using var db = await DbContext.CreateDbContextAsync();
-//        return await db.Requirements.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
-//    }
-
-
-    //   private async Task<List<Requirements>> GetRequirementsAssignedToCurrentUser()
-    //   {
-    //       await using var db = await DbContext.CreateDbContextAsync();
-    //       return await db.Requirements.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
-    //   }
 
     private async Task RefreshAssignedRequirements()
     {
         _requirementsData = await RequirementsModel.GetRequirementsAssignedToCurrentUser(ProjectId);
+        _filteredRequirementsData = _requirementsData;
         StateHasChanged();
     }
 
     private async Task RefreshAllRequirements()
     {
         _requirementsData = await RequirementsModel.GetRequirementsAssignedToAll(ProjectId);
+        _filteredRequirementsData = _requirementsData;
         StateHasChanged();
     }
-
 
     private async Task ViewCard(int id)
     {
@@ -219,7 +231,7 @@
 
     private async Task OpenContextMenuForCard(MouseEventArgs args, int id)
     {
-        var requirement = _requirementsData?.FirstOrDefault(r => r.Id == id);
+        var requirement = _filteredRequirementsData?.FirstOrDefault(r => r.Id == id);
         if (requirement == null) return;
 
 
@@ -251,5 +263,4 @@
         });
         await Task.CompletedTask;
     }
-
 }
