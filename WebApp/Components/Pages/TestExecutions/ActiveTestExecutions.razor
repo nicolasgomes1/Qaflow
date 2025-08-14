@@ -12,6 +12,7 @@
                 PagerHorizontalAlign="HorizontalAlign.Left"
                 ShowPagingSummary="true"
                 Data="@_testExecution"
+                Density="Density.Compact"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
                 @bind-Value="@_selectedTestExecutions">
@@ -58,7 +59,11 @@
         @*  <RadzenDataGridColumn Property="@nameof(TestExecution.ModifiedAt)" Title="Modified At" Width="auto"/> *@
         <RadzenDataGridColumn Property="@nameof(TestExecution.IsActive)" Title="Is Active" Width="auto"/>
         <RadzenDataGridColumn Property="@nameof(TestExecution.ArchivedStatus)" Title="Archived Status" Width="auto"/>
-
+        <RadzenDataGridColumn Property="@nameof(TestExecution.AssignedTo)" Title="Assigned To" Width="auto">
+            <Template Context="testcase">
+                @Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(testcase.AssignedTo)).Result
+            </Template>
+        </RadzenDataGridColumn>
 
         <RadzenDataGridColumn Filterable="false" Sortable="false">
             <Template Context="ctx">
