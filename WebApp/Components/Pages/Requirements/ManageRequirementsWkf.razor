@@ -7,6 +7,8 @@
 
 <!-- Add the component with a reference -->
 <RequirementsDialogView @ref="_requirementsDialog" Id="0"/>
+<RequirementsDialogEdit @ref="_requirementsDialogEdit" ProjectId="ProjectId" Id="0"
+                        OnRequirementUpdated="RefreshAllRequirements"/>
 
 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
@@ -63,9 +65,10 @@
         </RadzenStack>
     </ChildContent>
     <Template>
-        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem" @ondblclick="@(() => ViewCard(context.Id))">
+        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem"
+                     ContextMenu="args => OpenContextMenuForCard(args,context.Id)">
 
-        <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
+            <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
                 <strong>@context.Name</strong>
                 <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(context.Priority)">
                     @context.Priority
@@ -81,7 +84,7 @@
 @code {
     [Parameter] public int ProjectId { get; set; }
     private RequirementsDialogView _requirementsDialog = null!;
-
+    private RequirementsDialogEdit _requirementsDialogEdit = null!;
 
     private IList<Requirements>? _requirementsData = [];
 
@@ -181,12 +184,39 @@
 
     private async Task ViewCard(int id)
     {
-        Logger.LogInformation($"clicked on {id}");
+        Logger.LogInformation($"viewing {id}");
 
-        // Set the ID and call the method
         _requirementsDialog.Id = id;
         await _requirementsDialog.ViewInlineDialog();
+        ContextMenuService.Close();
     }
 
+    private async Task EditCard(int id)
+    {
+        Logger.LogInformation($"editing {id}");
+        _requirementsDialogEdit.Id = id;
+        await _requirementsDialogEdit.ShowInlineDialog();
+        ContextMenuService.Close();
+    }
+
+    private async Task OpenContextMenuForCard(MouseEventArgs args, int id)
+    {
+        var menuItems = new List<ContextMenuItem>();
+        menuItems.Add(new ContextMenuItem { Text = "View Requirement", Icon = "visibility", Value = "view" });
+        menuItems.Add(new ContextMenuItem { Text = "Edit Requirement", Icon = "edit", Value = "edit" });
+        ContextMenuService.Open(args, menuItems, async e =>
+        {
+            if (e.Value is "view")
+            {
+                await ViewCard(id);
+            }
+
+            if (e.Value is "edit")
+            {
+                await EditCard(id);
+            }
+        });
+        await Task.CompletedTask;
+    }
 
 }

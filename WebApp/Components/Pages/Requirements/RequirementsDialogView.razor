@@ -10,16 +10,58 @@
 
         await DialogService.OpenAsync($"View {nameof(Requirements)} {Id}", ds =>
                 @<div>
-                    <p>ID: @_requirements.Id</p>
-                    <p>Name: @_requirements.Name</p>
-                    <p>Description: @_requirements.Description</p>
-                    <p>Created At: @_requirements.CreatedAt</p>
-                    <p>Modified At: @_requirements.ModifiedAt</p>
-                    <p>Created By: @_requirements.CreatedBy</p>
-                    <p>Modified By: @_requirements.ModifiedBy</p>
+                    <RadzenFieldset Text="Requirements">
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_requirements.Id.ToString()"/>
+                        </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+
+                            <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_requirements.Name"/>
+                        </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_requirements.Description"/>
+                        </RadzenStack>
+
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_requirements.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
+                        </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_requirements.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
+                        </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_requirements.CreatedBy"/>
+                        </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_requirements.ModifiedBy"/>
+                        </RadzenStack>
+                    </RadzenFieldset>
+
+                    <RadzenFieldset Icon="visibility">
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Priority:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_requirements.Priority.ToString()"/>
+                        </RadzenStack>
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Workflow:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_requirements.WorkflowStatus.ToString()"/>
+                        </RadzenStack>
+                    </RadzenFieldset>
 
                 </div>,
-            new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
+                new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true, Resizable = true });
     }
 
 }

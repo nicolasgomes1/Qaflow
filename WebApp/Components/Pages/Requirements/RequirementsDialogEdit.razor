@@ -1,0 +1,141 @@
+@inject DialogService DialogService
+@attribute [Authorize]
+
+@*
+<RadzenButton Text="@Title"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.requirements"]))"
+              MouseLeave="@AppTooltipService.HideTooltip"
+              Disabled="@IsDisabled"
+              ButtonStyle="ButtonStyle.Warning"
+              Click="@ShowInlineDialog">
+    <RadzenIcon Icon="add"/>
+    <RadzenIcon Icon="assignment"/>
+</RadzenButton>
+*@
+
+@code {
+    private Requirements _requirements = new();
+    private readonly List<IBrowserFile>? _uploadedFiles = [];
+    private List<ApplicationUser> _usersList = [];
+    private List<RequirementsSpecification> _requirementsSpecificationList = [];
+    //  private int _selectedRequirementSpecificationId;
+
+    [EditorRequired] [Parameter] public EventCallback OnRequirementUpdated { get; set; }
+
+    [Parameter] public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Default value is false
+    /// </summary>
+    [Parameter]
+    public bool IsDisabled { get; set; } = false;
+
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+    [EditorRequired] [Parameter] public int Id { get; set; }
+
+
+    private async Task UpdateRequirement()
+    {
+        var result = await RequirementsModel.UpdateRequirement(_requirements, _uploadedFiles, ProjectId);
+        DialogService.Close(result);
+        StateHasChanged();
+        await FormNotificationService.NotifySuccess($"Requirement updated successfully with id {_requirements.Id}");
+        // Notify the parent that the requirement was created
+        if (OnRequirementUpdated.HasDelegate)
+        {
+            await OnRequirementUpdated.InvokeAsync();
+        }
+    }
+
+
+    public async Task ShowInlineDialog()
+    {
+        _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
+
+        _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
+        _usersList = await UserService.GetUsersList();
+        RequirementsModel.SelectedRequirementSpecificationId = -1;
+        _uploadedFiles?.Clear();
+
+        var result = await DialogService.OpenAsync("Update Requirement", ds =>
+            @<RadzenStack Gap="1.5rem" Style="height: 600px;">
+                <RadzenTemplateForm Data="_requirements" TItem="Requirements" Submit="@UpdateRequirement">
+                    <ValidationSummary class="alert alert-danger"/>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Name"/>
+                        <RadzenTextBox id="name"
+                                       @bind-Value="_requirements.Name"
+                                       class="input-style"
+                                       Name="name"/>
+                        <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Description"/>
+                        <RadzenTextArea id="description"
+                                        @bind-Value="_requirements.Description"
+                                        class="input-style"
+                                        Name="description"/>
+                        <RadzenRequiredValidator Component="description" Text="Description is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Priority"/>
+                        <RadzenDropDown id="priority"
+                                        @bind-Value="_requirements.Priority"
+                                        Data="EnumService.GetEnumValues<Priority>()"
+                                        class="input-style"
+                                        Name="priority"/>
+                        <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Status"/>
+                        <RadzenDropDown id="status"
+                                        @bind-Value="_requirements.WorkflowStatus"
+                                        Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                                        class="input-style"
+                                        Name="status"/>
+                        <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+                    </div>
+
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Requirements Specification"/>
+                        <RadzenDropDown id="requirements_specification"
+                                        class="w-100"
+                                        Data="@_requirementsSpecificationList"
+                                        @bind-Value="RequirementsModel.SelectedRequirementSpecificationId"
+                                        TextProperty="Name"
+                                        ValueProperty="Id"
+                                        AllowFiltering="true"
+                                        AllowVirtualization="true"
+                                        Name="requirementsSpecification"/>
+                        <RadzenRequiredValidator Component="requirementsSpecification"
+                                                 Text="Requirements Specification is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Assigned To"/>
+                        <RadzenDropDown id="assignedto"
+                                        Data="@_usersList"
+                                        @bind-Value="_requirements.AssignedTo"
+                                        TextProperty="UserName"
+                                        ValueProperty="Id"
+                                        class="input-style"
+                                        Name="assignedto"/>
+                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                    </div>
+
+                    <FileUpload UploadedFiles="_uploadedFiles"/>
+
+                    <!-- Submit button inside the form -->
+                    <RadzenButton Icon="update" Text="Requirement" ButtonStyle="ButtonStyle.Warning"
+                                  ButtonType="ButtonType.Submit"
+                                  Style="margin-bottom: 10px;"/>
+                </RadzenTemplateForm>
+            </RadzenStack>, new DialogOptions() { Draggable = true, CloseDialogOnOverlayClick = true, Resizable = true });
+    }
+
+}
