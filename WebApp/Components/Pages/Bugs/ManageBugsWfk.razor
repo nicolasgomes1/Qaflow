@@ -9,6 +9,9 @@
         <RadzenButton Icon="assignment_ind" Text="My Assignments" data-testid="my_assignment"
                       Click="RefreshAssignedBugs"/>
         <RadzenButton Icon="assignment" data-testid="all_assignment" Text="All Bugs" Click="@RefreshAllBugs"/>
+        <RadzenTextBox Placeholder="Search bugs..."
+                       Change=@(args => SearchBugs(args))
+                       style="width: 300px"/>
     </RadzenStack>
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
@@ -22,9 +25,9 @@
 
 </RadzenStack>
 
-<RadzenDropZoneContainer TItem="Bugs" Data="bugsData"
+<RadzenDropZoneContainer TItem="Bugs" Data="_filteredbugsData"
                          ItemSelector="@ItemSelector"
-                         ItemRender="@OnItemRender"
+                         ItemRender="WkfManagementCardColor.OnItemRender<Bugs>"
                          CanDrop="@CanDrop"
                          Drop="@OnDrop">
     <ChildContent>
@@ -77,7 +80,8 @@
     [Parameter] public int ProjectId { get; set; }
 
 
-    private IList<Bugs>? bugsData = [];
+    private IList<Bugs>? _bugsData = [];
+    private IList<Bugs>? _filteredbugsData = [];
 
     readonly Func<Bugs, RadzenDropZone<Bugs>, bool> ItemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
 
@@ -87,15 +91,6 @@
                Math.Abs((int)request.Item.WorkflowStatus - (int)request.ToZone.Value) == 1;
     };
 
-    void OnItemRender(RadzenDropZoneItemRenderEventArgs<Bugs> args)
-    {
-        args.Attributes["class"] = "rz-card rz-variant-filled rz-background-color-primary-light rz-color-on-primary-light";
-
-        if (args.Item.WorkflowStatus == WorkflowStatus.New)
-        {
-            args.Attributes["class"] += " rz-border-danger";
-        }
-    }
 
     async void OnDrop(RadzenDropZoneItemEventArgs<Bugs> args)
     {
@@ -110,14 +105,15 @@
         }
 
         if (args.ToItem == null || args.ToItem == args.Item) return;
-        bugsData?.Remove(args.Item);
-        bugsData?.Insert(bugsData.IndexOf(args.ToItem), args.Item);
+        _bugsData?.Remove(args.Item);
+        _bugsData?.Insert(_bugsData.IndexOf(args.ToItem), args.Item);
     }
 
     protected override async Task OnInitializedAsync()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        bugsData = await db.Bugs.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _bugsData = await db.Bugs.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _filteredbugsData = _bugsData;
     }
 
     private async Task<List<Bugs>> GetBugsAssignedToAll()
@@ -135,15 +131,37 @@
 
     private async Task RefreshAssignedBugs()
     {
-        bugsData = await GetBugsAssignedToCurrentUser();
+        _bugsData = await GetBugsAssignedToCurrentUser();
+        _filteredbugsData = _bugsData;
+
         StateHasChanged();
     }
 
     private async Task RefreshAllBugs()
     {
-        bugsData = await GetBugsAssignedToAll();
+        _bugsData = await GetBugsAssignedToAll();
+        _filteredbugsData = _bugsData;
+
         StateHasChanged();
     }
 
+    private string _searchTerm = "";
+
+    private void SearchBugs(string searchTerm)
+    {
+        _searchTerm = searchTerm?.ToLower() ?? "";
+        if (string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            _filteredbugsData = _bugsData;
+        }
+        else
+        {
+            _filteredbugsData = _bugsData?
+                .Where(r => r.Name != null && r.Name.ToLower().Contains(_searchTerm))
+                .ToList();
+        }
+
+        StateHasChanged();
+    }
 
 }
