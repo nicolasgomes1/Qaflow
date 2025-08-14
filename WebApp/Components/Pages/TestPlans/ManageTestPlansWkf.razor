@@ -1,5 +1,4 @@
 @page "/project/{ProjectId:int}/testplans/manage"
-@using WebApp.Components
 @rendermode InteractiveServer
 @attribute [Authorize]
 
@@ -84,8 +83,8 @@
 
     private async Task RefreshAssignedTestPlansFromDialog()
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-        _testplansData = await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _testplansData = await TestPlansModel.GetTestPlans(ProjectId);
+        await InvokeAsync(StateHasChanged);
     }
 
 
@@ -130,34 +129,24 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-        _testplansData = await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _testplansData = await TestPlansModel.GetTestPlans(ProjectId);
         _filteredtestplansData = _testplansData;
     }
 
-    private async Task<List<TestPlans>> GetTestPlansAssignedToAll()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
-    }
 
 
-    private async Task<List<TestPlans>> GetTestPlansAssignedToCurrentUser()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
-    }
+
 
     private async Task RefreshAssignedTestPlans()
     {
-        _testplansData = await GetTestPlansAssignedToCurrentUser();
+        _testplansData = await TestPlansModel.GetTestPlansAssignedToCurrentUser(ProjectId);
         _filteredtestplansData = _testplansData;
         StateHasChanged();
     }
 
     private async Task RefreshAllTestPlans()
     {
-        _testplansData = await GetTestPlansAssignedToAll();
+        _testplansData = await TestPlansModel.GetTestPlans(ProjectId);
         _filteredtestplansData = _testplansData;
 
         StateHasChanged();

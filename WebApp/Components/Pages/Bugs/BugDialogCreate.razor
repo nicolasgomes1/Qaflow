@@ -13,6 +13,7 @@
 @code {
     private Bugs _bugs = new();
     private readonly List<IBrowserFile>? _uploadedFiles = new();
+    private List<ApplicationUser> _usersList = [];
 
     [Parameter] public string Title { get; set; } = string.Empty;
 
@@ -48,6 +49,8 @@
     {
         _bugs = new Bugs();
         _uploadedFiles?.Clear();
+        _usersList = await UserService.GetUsersList();
+
         var result = await DialogService.OpenAsync("Create Bug", ds =>
             @<RadzenStack Gap="1.5rem" Style="height: 600px;">
                 <RadzenTemplateForm Data="_bugs" TItem="Bugs" Submit="@CreateNewBug">
@@ -107,6 +110,18 @@
                                         class="input-style"
                                         Name="bug_status"/>
                         <RadzenRequiredValidator Component="bug_status" Text="Bug Status is required"/>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <RadzenLabel Text="Assigned To"/>
+                        <RadzenDropDown id="assignedto"
+                                        Data="@_usersList"
+                                        @bind-Value="_bugs.AssignedTo"
+                                        TextProperty="UserName"
+                                        ValueProperty="Id"
+                                        class="input-style"
+                                        Name="assignedto"/>
+                        <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
                     </div>
 
                     <FileUpload UploadedFiles="_uploadedFiles"/>

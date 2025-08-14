@@ -67,7 +67,6 @@
                 <RadzenStack Orientation="Orientation.Vertical">
                     <p>
                         @Task.Run(async () => await UserService.GetUserNameFromUserIdAsync(context.AssignedTo)).Result
-
                     </p>
                 </RadzenStack>
 
@@ -111,27 +110,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-        _bugsData = await db.Bugs.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _bugsData = await BugsModel.GetBugsAsync(ProjectId);
         _filteredbugsData = _bugsData;
     }
 
-    private async Task<List<Bugs>> GetBugsAssignedToAll()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.Bugs.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
-    }
 
 
-    private async Task<List<Bugs>> GetBugsAssignedToCurrentUser()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.Bugs.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
-    }
+
 
     private async Task RefreshAssignedBugs()
     {
-        _bugsData = await GetBugsAssignedToCurrentUser();
+        _bugsData = await BugsModel.GetBugsAssignedToCurrentUser(ProjectId);
         _filteredbugsData = _bugsData;
 
         StateHasChanged();
@@ -139,7 +128,7 @@
 
     private async Task RefreshAllBugs()
     {
-        _bugsData = await GetBugsAssignedToAll();
+        _bugsData = await BugsModel.GetBugsAsync(ProjectId);
         _filteredbugsData = _bugsData;
 
         StateHasChanged();

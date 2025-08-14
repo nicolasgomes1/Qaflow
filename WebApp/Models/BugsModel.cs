@@ -18,11 +18,29 @@ public class BugsModel(
 
     public List<int> SelectedTestCasesIds { get; set; } = [];
 
+    /// <summary>
+    /// Retrieves a list of bugs associated with a specific project.
+    /// </summary>
+    /// <param name="projectId">The unique identifier of the project.</param>
+    /// <returns>A task representing the asynchronous operation. The task result contains a list of <see cref="Bugs"/> objects associated with the given project.</returns>
     public async Task<List<Bugs>> GetBugsAsync(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
         Logger.LogInformation($"Getting bugs for project {projectId}");
         return await db.Bugs.Where(bp => bp.ProjectsId == projectId).ToListAsync();
+    }
+
+    /// <summary>
+    /// Retrieves a list of bugs assigned to the current user within a specific project.
+    /// </summary>
+    /// <param name="projectId">The unique identifier of the project whose bugs are to be retrieved.</param>
+    /// <returns>A task representing the asynchronous operation. The task result contains a list of <see cref="Bugs"/> objects assigned to the current user for the specified project.</returns>
+    public async Task<List<Bugs>> GetBugsAssignedToCurrentUser(int projectId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        return await db.Bugs.Where(rp =>
+                rp.ProjectsId == projectId && rp.AssignedTo == userService.GetCurrentUserInfoAsync().Result.UserId)
+            .ToListAsync();
     }
 
     public async Task<Bugs> GetBugByIdAsync(int id)

@@ -25,6 +25,20 @@ public class TestPlansModel(
         return testPlans;
     }
 
+    public async Task<List<TestPlans>> GetTestPlans(int projectId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        return await db.TestPlans.Where(rp => rp.ProjectsId == projectId).ToListAsync();
+    }
+
+    public async Task<List<TestPlans>> GetTestPlansAssignedToCurrentUser(int projectId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        return await db.TestPlans.Where(rp =>
+                rp.ProjectsId == projectId && rp.AssignedTo == userService.GetCurrentUserInfoAsync().Result.UserId)
+            .ToListAsync();
+    }
+
 
     public async Task<List<TestPlans>> GetAllTestPlansWithWorkflowStatus(WorkflowStatus status, int projectId)
     {
