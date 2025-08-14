@@ -14,6 +14,9 @@
         <RadzenButton Icon="assignment"
                       data-testid="all_assignment"
                       Text="All Test Plans" Click="RefreshAllTestPlans"/>
+        <RadzenTextBox Placeholder="Search test plans..."
+                       Change=@(args => SearchTestCases(args))
+                       style="width: 300px"/>
     </RadzenStack>
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
         <TestPlansDialogCreate Title="@Loc["create.testplans"]" ProjectId="@ProjectId"
@@ -25,8 +28,7 @@
 </RadzenStack>
 
 
-
-<RadzenDropZoneContainer TItem="TestPlans" Data="testplansData"
+<RadzenDropZoneContainer TItem="TestPlans" Data="_filteredtestplansData"
                          ItemSelector="@ItemSelector"
                          ItemRender="WkfManagementCardColor.OnItemRender<TestPlans>"
                          CanDrop="@CanDrop"
@@ -83,11 +85,12 @@
     private async Task RefreshAssignedTestPlansFromDialog()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testplansData = await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _testplansData = await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
     }
 
 
-    private IList<TestPlans>? testplansData = [];
+    private IList<TestPlans>? _testplansData = [];
+    private IList<TestPlans>? _filteredtestplansData = [];
 
     Func<TestPlans, RadzenDropZone<TestPlans>, bool> ItemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
 
@@ -121,14 +124,15 @@
         }
 
         if (args.ToItem == null || args.ToItem == args.Item) return;
-        testplansData?.Remove(args.Item);
-        testplansData?.Insert(testplansData.IndexOf(args.ToItem), args.Item);
+        _testplansData?.Remove(args.Item);
+        _testplansData?.Insert(_testplansData.IndexOf(args.ToItem), args.Item);
     }
 
     protected override async Task OnInitializedAsync()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testplansData = await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _testplansData = await db.TestPlans.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _filteredtestplansData = _testplansData;
     }
 
     private async Task<List<TestPlans>> GetTestPlansAssignedToAll()
@@ -146,15 +150,36 @@
 
     private async Task RefreshAssignedTestPlans()
     {
-        testplansData = await GetTestPlansAssignedToCurrentUser();
+        _testplansData = await GetTestPlansAssignedToCurrentUser();
+        _filteredtestplansData = _testplansData;
         StateHasChanged();
     }
 
     private async Task RefreshAllTestPlans()
     {
-        testplansData = await GetTestPlansAssignedToAll();
+        _testplansData = await GetTestPlansAssignedToAll();
+        _filteredtestplansData = _testplansData;
+
         StateHasChanged();
     }
 
+    private string _searchTerm = "";
+
+    private void SearchTestCases(string searchTerm)
+    {
+        _searchTerm = searchTerm?.ToLower() ?? "";
+        if (string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            _filteredtestplansData = _testplansData;
+        }
+        else
+        {
+            _filteredtestplansData = _testplansData?
+                .Where(r => r.Name != null && r.Name.ToLower().Contains(_searchTerm))
+                .ToList();
+        }
+
+        StateHasChanged();
+    }
 
 }

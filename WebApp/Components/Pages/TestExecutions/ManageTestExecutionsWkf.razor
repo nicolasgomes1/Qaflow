@@ -12,6 +12,9 @@
         <RadzenButton Icon="assignment"
                       data-testid="all_assignment"
                       Text="All Test Executions" Click="RefreshAllTestExecutions"/>
+        <RadzenTextBox Placeholder="Search test executions..."
+                       Change=@(args => SearchTestExecutions(args))
+                       style="width: 300px"/>
     </RadzenStack>
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
@@ -22,7 +25,7 @@
     </RadzenStack>
 </RadzenStack>
 
-<RadzenDropZoneContainer TItem="TestExecution" Data="_testExecutionData"
+<RadzenDropZoneContainer TItem="TestExecution" Data="_filteredtestExecutionData"
                          ItemSelector="@ItemSelector"
                          ItemRender="WkfManagementCardColor.OnItemRender<TestExecution>"
                          CanDrop="@CanDrop"
@@ -77,10 +80,13 @@
 @code {
     [Parameter] public int ProjectId { get; set; }
     private List<TestExecution>? _testExecutionData = [];
+    private List<TestExecution>? _filteredtestExecutionData = [];
+
 
     protected override async Task OnInitializedAsync()
     {
         _testExecutionData = await TestExecutionModel.GetActiveTestExecutionsAsyncWkf(ProjectId);
+        _filteredtestExecutionData = _testExecutionData;
     }
 
 
@@ -122,6 +128,8 @@
     private async Task RefreshAssignedTestExecutionsFromDialog()
     {
         _testExecutionData = await TestExecutionModel.GetActiveTestExecutionsAsyncWkf(ProjectId);
+        _filteredtestExecutionData = _testExecutionData;
+
         StateHasChanged();
     }
 
@@ -129,12 +137,34 @@
     private async Task RefreshAssignedTestExecutions()
     {
         _testExecutionData = await TestExecutionModel.GetTestExecutionsAssignedToCurrentUser(ProjectId);
+        _filteredtestExecutionData = _testExecutionData;
         StateHasChanged();
     }
 
     private async Task RefreshAllTestExecutions()
     {
         _testExecutionData = await TestExecutionModel.GetTestExecutionsAssignedToAll(ProjectId);
+        _filteredtestExecutionData = _testExecutionData;
+        StateHasChanged();
+    }
+
+    private string _searchTerm = "";
+
+
+    private void SearchTestExecutions(string searchTerm)
+    {
+        _searchTerm = searchTerm?.ToLower() ?? "";
+        if (string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            _filteredtestExecutionData = _testExecutionData;
+        }
+        else
+        {
+            _filteredtestExecutionData = _testExecutionData?
+                .Where(r => r.Name != null && r.Name.ToLower().Contains(_searchTerm))
+                .ToList();
+        }
+
         StateHasChanged();
     }
 
