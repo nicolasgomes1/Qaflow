@@ -199,11 +199,39 @@
         ContextMenuService.Close();
     }
 
+    async Task DeleteCard(Requirements requirements)
+    {
+        Logger.LogInformation($"deleting {requirements}");
+        ContextMenuService.Close();
+
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        var confirmed = await DialogService.Confirm($"Are you sure you want to delete this Requirement?", $"Delete Requirement");
+
+        if (confirmed is true)
+        {
+            db.Requirements.Remove(requirements);
+            await db.SaveChangesAsync();
+        }
+
+        await RefreshAllRequirements();
+    }
+
     private async Task OpenContextMenuForCard(MouseEventArgs args, int id)
     {
+        var requirement = _requirementsData?.FirstOrDefault(r => r.Id == id);
+        if (requirement == null) return;
+
+
         var menuItems = new List<ContextMenuItem>();
         menuItems.Add(new ContextMenuItem { Text = "View Requirement", Icon = "visibility", Value = "view" });
         menuItems.Add(new ContextMenuItem { Text = "Edit Requirement", Icon = "edit", Value = "edit" });
+
+        if (requirement.WorkflowStatus != WorkflowStatus.Completed)
+        {
+            menuItems.Add(new ContextMenuItem { Text = "Delete Requirement", Icon = "delete", Value = "delete" });
+        }
+
         ContextMenuService.Open(args, menuItems, async e =>
         {
             if (e.Value is "view")
@@ -214,6 +242,11 @@
             if (e.Value is "edit")
             {
                 await EditCard(id);
+            }
+
+            if (e.Value is "delete")
+            {
+                await DeleteCard(requirement);
             }
         });
         await Task.CompletedTask;

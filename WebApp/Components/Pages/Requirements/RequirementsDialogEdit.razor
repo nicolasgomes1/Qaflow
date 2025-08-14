@@ -41,7 +41,7 @@
 
         _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
         _usersList = await UserService.GetUsersList();
-        RequirementsModel.SelectedRequirementSpecificationId = _requirements.RequirementsSpecification.Id;
+        RequirementsModel.SelectedRequirementSpecificationId = _requirements.RequirementsSpecificationId;
         _uploadedFiles?.Clear();
 
         var result = await DialogService.OpenAsync("Update Requirement", ds =>

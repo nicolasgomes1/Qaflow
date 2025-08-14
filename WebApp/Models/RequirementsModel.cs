@@ -18,7 +18,7 @@ public class RequirementsModel(
 
     private static readonly ILogger Logger = LoggerFactory.CreateLogger(nameof(RequirementsModel));
 
-    public int SelectedRequirementSpecificationId = -1;
+    public int? SelectedRequirementSpecificationId = -1;
 
 
     public async Task<List<Requirements>> DisplayRequirementsIndexPage(int projectId)
