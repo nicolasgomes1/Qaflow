@@ -279,4 +279,17 @@ public class TestExecutionModel
         return await db.TestExecution.Where(rp => rp.ProjectsId == projectId && rp.AssignedTo == currentUser)
             .ToListAsync();
     }
+
+    public async Task<List<TestExecution>> GetActiveTestExecutionsAssignedToCurrentUser(int projectId)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+
+        var currentUser = _userService.GetCurrentUserInfoAsync().Result.UserId;
+        return await db.TestExecution.Include(t => t.TestPlan)
+            .Where(rp => rp.ProjectsId == projectId &&
+                         rp.AssignedTo == currentUser &&
+                         rp.IsActive &&
+                         rp.WorkflowStatus == WorkflowStatus.Completed)
+            .ToListAsync();
+    }
 }

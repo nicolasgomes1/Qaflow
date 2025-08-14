@@ -19,6 +19,12 @@
 
     <HeaderTemplate>
         <RadzenAlert Text="Test Execution Ready!" AllowClose="false" Variant="Variant.Flat"></RadzenAlert>
+        <RadzenButton Icon="assignment_ind"
+                      data-testid="my_assignment"
+                      Text="My Assignments" Click="GetActiveTestExecutionsCurrentUser"/>
+        <RadzenButton Icon="assignment"
+                      data-testid="all_assignment"
+                      Text="All Test Executions" Click="GetActiveTestExecutions"/>
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn Property="@nameof(TestExecution.Id)" Filterable="false" Title="ID" Frozen="true"
@@ -93,6 +99,11 @@
     private async Task GetActiveTestExecutions()
     {
         _testExecution = await TestExecutionModel.GetActiveTestExecutionsAsync(ProjectId);
+    }
+
+    private async Task GetActiveTestExecutionsCurrentUser()
+    {
+        _testExecution = await TestExecutionModel.GetActiveTestExecutionsAssignedToCurrentUser(ProjectId);
     }
 
 
