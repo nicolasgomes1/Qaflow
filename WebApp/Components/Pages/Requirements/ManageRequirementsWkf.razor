@@ -2,7 +2,6 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
 @inject ILogger<ManageRequirementsWkf> Logger
-
 <AlertTitle TitleText="Managing Requirements"/>
 
 <!-- Add the component with a reference -->
@@ -147,13 +146,6 @@
                 .ToList();
         }
 
-        StateHasChanged();
-    }
-
-    private async Task RefreshAssignedRequirementsFromDialog()
-    {
-        _requirementsData = await RequirementsModel.GetRequirementsAssignedToCurrentUser(ProjectId);
-        _filteredRequirementsData = _requirementsData;
         StateHasChanged();
     }
 

@@ -10,6 +10,9 @@
         <RadzenButton Icon="assignment_ind" data-testid="my_assignment" Text="My Assignments"
                       Click="RefreshAssignedTestCases"/>
         <RadzenButton Icon="assignment" data-testid="all_assignment" Text="All Test Cases" Click="RefreshAllTestCases"/>
+        <RadzenTextBox Placeholder="Search test cases..."
+                       Change=@(args => SearchTestCases(args))
+                       style="width: 300px"/>
     </RadzenStack>
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
@@ -21,7 +24,7 @@
 </RadzenStack>
 
 
-<RadzenDropZoneContainer TItem="TestCases" Data="testcasesData"
+<RadzenDropZoneContainer TItem="TestCases" Data="_filteredtestcasesData"
                          ItemSelector="@ItemSelector"
                          ItemRender="WkfManagementCardColor.OnItemRender<TestCases>"
                          CanDrop="@CanDrop"
@@ -78,12 +81,14 @@
     private async Task RefreshAssignedTestCasesFromDialog()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testcasesData = await db.TestCases.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _testcasesData = await db.TestCases.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _filteredtestcasesData = _testcasesData;
         StateHasChanged();
     }
 
 
-    private IList<TestCases>? testcasesData = [];
+    private IList<TestCases>? _testcasesData = [];
+    private IList<TestCases>? _filteredtestcasesData = [];
 
     Func<TestCases, RadzenDropZone<TestCases>, bool> ItemSelector = (item, zone) => item.WorkflowStatus == (WorkflowStatus)zone.Value;
 
@@ -116,14 +121,15 @@
         }
 
         if (args.ToItem == null || args.ToItem == args.Item) return;
-        testcasesData?.Remove(args.Item);
-        testcasesData?.Insert(testcasesData.IndexOf(args.ToItem), args.Item);
+        _testcasesData?.Remove(args.Item);
+        _testcasesData?.Insert(_testcasesData.IndexOf(args.ToItem), args.Item);
     }
 
     protected override async Task OnInitializedAsync()
     {
         await using var db = await DbContext.CreateDbContextAsync();
-        testcasesData = await db.TestCases.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _testcasesData = await db.TestCases.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _filteredtestcasesData = _testcasesData;
     }
 
     private async Task<List<TestCases>> GetTestCasesAssignedToAll()
@@ -141,15 +147,37 @@
 
     private async Task RefreshAssignedTestCases()
     {
-        testcasesData = await GetTestCasesAssignedToCurrentUser();
+        _testcasesData = await GetTestCasesAssignedToCurrentUser();
+        _filteredtestcasesData = _testcasesData;
         StateHasChanged();
     }
 
     private async Task RefreshAllTestCases()
     {
-        testcasesData = await GetTestCasesAssignedToAll();
+        _testcasesData = await GetTestCasesAssignedToAll();
+        _filteredtestcasesData = _testcasesData;
+
         StateHasChanged();
     }
 
+    private string _searchTerm = "";
+
+    private void SearchTestCases(string searchTerm)
+    {
+        _searchTerm = searchTerm?.ToLower() ?? "";
+
+        if (string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            _filteredtestcasesData = _testcasesData;
+        }
+        else
+        {
+            _filteredtestcasesData = _testcasesData?
+                .Where(r => r.Name != null && r.Name.ToLower().Contains(_searchTerm))
+                .ToList();
+        }
+
+        StateHasChanged();
+    }
 
 }
