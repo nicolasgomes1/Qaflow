@@ -58,7 +58,8 @@
         </RadzenStack>
     </ChildContent>
     <Template>
-        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
+        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem"
+                     ContextMenu="args => OpenContextMenuForCard(args,context.Id)">
             <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
                 <strong>@context.Name</strong>
                 <RadzenBadge BadgeStyle="@StylesService.GetBadgeStylePriority(context.Priority)">
@@ -151,6 +152,51 @@
         }
 
         StateHasChanged();
+    }
+
+    private async Task OpenContextMenuForCard(MouseEventArgs args, int id)
+    {
+        var testPlans = _filteredbugsData?.FirstOrDefault(r => r.Id == id);
+        if (testPlans == null) return;
+
+
+        var menuItems = new List<ContextMenuItem>();
+        menuItems.Add(new ContextMenuItem { Text = "View Bug", Icon = "visibility", Value = "view" });
+        menuItems.Add(new ContextMenuItem { Text = "Edit Bug", Icon = "edit", Value = "edit" });
+
+        if (testPlans.WorkflowStatus != WorkflowStatus.Completed)
+        {
+            menuItems.Add(new ContextMenuItem { Text = "Delete Bug", Icon = "delete", Value = "delete" });
+        }
+
+        ContextMenuService.Open(args, menuItems, async e =>
+        {
+            switch (e.Value)
+            {
+                case "view":
+                    await ViewCard(id);
+                    break;
+                case "edit":
+                    await EditCard(id);
+                    break;
+                case "delete":
+                    await DeleteCard(testPlans);
+                    break;
+            }
+        });
+        await Task.CompletedTask;
+    }
+
+    private async Task ViewCard(int Id)
+    {
+    }
+
+    private async Task EditCard(int Id)
+    {
+    }
+
+    private async Task DeleteCard(Bugs bugs)
+    {
     }
 
 }
