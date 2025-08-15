@@ -96,4 +96,18 @@ public class UserService(
 
         return nonAdminUsers;
     }
+
+    /// <summary>
+    /// Get the assigned to user name from the user id
+    /// if no user is found return Not Assigned
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    public async Task<string> GetAssignedTo(string user)
+    {
+        if (string.IsNullOrEmpty(user))
+            return "Not Assigned";
+        var userName = await GetUserNameFromUserIdAsync(user);
+        return string.IsNullOrEmpty(userName) ? "Not Assigned" : userName;
+    }
 }

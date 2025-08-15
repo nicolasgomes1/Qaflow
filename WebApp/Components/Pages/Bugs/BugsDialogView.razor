@@ -12,13 +12,7 @@
         _bugs = await BugsModel.GetBugByIdAsync(Id);
         _existingFiles = await BugsFilesModel.GetBugFilesById(Id);
 
-        var assignedUser = Task.Run(async () =>
-        {
-            if (string.IsNullOrEmpty(_bugs.AssignedTo))
-                return "Not Assigned";
-            var userName = await UserService.GetUserNameFromUserIdAsync(_bugs.AssignedTo);
-            return string.IsNullOrEmpty(userName) ? "Not Assigned" : userName;
-        });
+        var assignedUser = await UserService.GetAssignedTo(_bugs.AssignedTo);
 
 
         await DialogService.OpenAsync($"View {nameof(Bugs)} {Id}", ds =>
@@ -64,7 +58,7 @@
                         <RadzenStack Orientation="Orientation.Horizontal">
                             <RadzenLabel Text="Assigned To:" Style="font-weight: bold;"/>
                             <RadzenLabel
-                                Text="@assignedUser.Result"/>
+                                Text="@assignedUser"/>
                         </RadzenStack>
                     </RadzenFieldset>
 
