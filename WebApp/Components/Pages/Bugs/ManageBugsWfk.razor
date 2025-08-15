@@ -1,7 +1,11 @@
 @page "/project/{ProjectId:int}/bugs/manage"
 @rendermode InteractiveServer
+@inject ILogger<ManageBugsWfk> Logger
 
 <AlertTitle TitleText="Managing Bugs"/>
+
+<BugsDialogView @ref="_bugsDialogView" Id="-1"/>
+
 
 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
 
@@ -78,7 +82,7 @@
 
 @code {
     [Parameter] public int ProjectId { get; set; }
-
+    BugsDialogView _bugsDialogView = null!;
 
     private IList<Bugs>? _bugsData = [];
     private IList<Bugs>? _filteredbugsData = [];
@@ -187,11 +191,20 @@
         await Task.CompletedTask;
     }
 
-    private async Task ViewCard(int Id)
+    private async Task ViewCard(int id)
     {
+        Logger.LogInformation($"viewing {id}");
+        await _bugsDialogView.SetParametersAsync(
+            ParameterView.FromDictionary(new Dictionary<string, object?>
+            {
+                { nameof(_bugsDialogView.Id), id }
+            })
+        );
+        await _bugsDialogView.ViewInlineDialog();
+        ContextMenuService.Close();
     }
 
-    private async Task EditCard(int Id)
+    private async Task EditCard(int id)
     {
     }
 

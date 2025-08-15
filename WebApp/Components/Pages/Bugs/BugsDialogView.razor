@@ -1,0 +1,95 @@
+@attribute [Authorize]
+
+@code {
+    private Bugs _bugs = new();
+    private List<BugsFiles>? _existingFiles = [];
+
+    [EditorRequired] [Parameter] public int Id { get; set; }
+
+
+    public async Task ViewInlineDialog()
+    {
+        _bugs = await BugsModel.GetBugByIdAsync(Id);
+        _existingFiles = await BugsFilesModel.GetBugFilesById(Id);
+
+        var assignedUser = Task.Run(async () =>
+        {
+            if (string.IsNullOrEmpty(_bugs.AssignedTo))
+                return "Not Assigned";
+            var userName = await UserService.GetUserNameFromUserIdAsync(_bugs.AssignedTo);
+            return string.IsNullOrEmpty(userName) ? "Not Assigned" : userName;
+        });
+
+
+        await DialogService.OpenAsync($"View {nameof(Bugs)} {Id}", ds =>
+                @<div>
+                    <RadzenFieldset Text="Bugs">
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_bugs.Id.ToString()"/>
+                        </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+
+                            <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_bugs.Name"/>
+                        </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_bugs.Description"/>
+                        </RadzenStack>
+
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_bugs.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
+                        </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_bugs.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
+                        </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_bugs.CreatedBy"/>
+                        </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_bugs.ModifiedBy"/>
+                        </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Assigned To:" Style="font-weight: bold;"/>
+                            <RadzenLabel
+                                Text="@assignedUser.Result"/>
+                        </RadzenStack>
+                    </RadzenFieldset>
+
+                    <RadzenFieldset Icon="visibility">
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Status:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_bugs.BugStatus.ToString()"/>
+                        </RadzenStack>
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Priority:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_bugs.Priority.ToString()"/>
+                        </RadzenStack>
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenLabel Text="Workflow:" Style="font-weight: bold;"/>
+                            <RadzenLabel Text="@_bugs.WorkflowStatus.ToString()"/>
+                        </RadzenStack>
+                    </RadzenFieldset>
+
+                    <RadzenFieldset Text="Files">
+                        <FileViewer Files="_existingFiles"
+                                    EntityName="@nameof(BugsFiles)"/>
+                    </RadzenFieldset>
+
+                </div>,
+            new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true, Resizable = true });
+    }
+
+}
