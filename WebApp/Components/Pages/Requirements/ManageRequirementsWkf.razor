@@ -5,8 +5,8 @@
 <AlertTitle TitleText="Managing Requirements"/>
 
 <!-- Add the component with a reference -->
-<RequirementsDialogView @ref="_requirementsDialog" Id="0"/>
-<RequirementsDialogEdit @ref="_requirementsDialogEdit" ProjectId="ProjectId" Id="0"
+<RequirementsDialogView @ref="_requirementsDialog" Id="-1"/>
+<RequirementsDialogEdit @ref="_requirementsDialogEdit" ProjectId="ProjectId" Id="-2"
                         OnRequirementUpdated="RefreshAllRequirements"/>
 
 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
@@ -167,7 +167,12 @@
     {
         Logger.LogInformation($"viewing {id}");
 
-        _requirementsDialog.Id = id;
+        await _requirementsDialog.SetParametersAsync(
+            ParameterView.FromDictionary(new Dictionary<string, object?>
+            {
+                { nameof(_requirementsDialog.Id), id }
+            })
+        );
         await _requirementsDialog.ViewInlineDialog();
         ContextMenuService.Close();
     }
@@ -175,7 +180,13 @@
     private async Task EditCard(int id)
     {
         Logger.LogInformation($"editing {id}");
-        _requirementsDialogEdit.Id = id;
+
+        await _requirementsDialogEdit.SetParametersAsync(
+            ParameterView.FromDictionary(new Dictionary<string, object?>
+            {
+                { nameof(_requirementsDialogEdit.Id), id }
+            })
+        );
         await _requirementsDialogEdit.ShowInlineDialog();
         ContextMenuService.Close();
     }
@@ -215,19 +226,17 @@
 
         ContextMenuService.Open(args, menuItems, async e =>
         {
-            if (e.Value is "view")
+            switch (e.Value)
             {
-                await ViewCard(id);
-            }
-
-            if (e.Value is "edit")
-            {
-                await EditCard(id);
-            }
-
-            if (e.Value is "delete")
-            {
-                await DeleteCard(requirement);
+                case "view":
+                    await ViewCard(id);
+                    break;
+                case "edit":
+                    await EditCard(id);
+                    break;
+                case "delete":
+                    await DeleteCard(requirement);
+                    break;
             }
         });
         await Task.CompletedTask;
