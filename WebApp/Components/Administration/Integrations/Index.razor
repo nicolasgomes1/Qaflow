@@ -40,11 +40,11 @@
                                   MouseLeave="@AppTooltipService.HideTooltip"
                                   Click="@(() => ViewIntegration(item.Id))" Size="ButtonSize.ExtraSmall"/>
                     <RadzenButton Icon="edit"
-                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Edit Project"))"
+                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Edit Integration"))"
                                   MouseLeave="AppTooltipService.HideTooltip"
                                   Click="@(() => EditIntegration(item.Id))" Size="ButtonSize.ExtraSmall"/>
                     <RadzenButton Icon="delete"
-                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Delete Project"))"
+                                  MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Delete Integration"))"
                                   MouseLeave="@AppTooltipService.HideTooltip"
                                   Click="@(() => DeleteData(item.Id))"
                                   Size="ButtonSize.ExtraSmall"/>
