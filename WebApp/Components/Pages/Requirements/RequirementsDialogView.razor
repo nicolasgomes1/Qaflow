@@ -1,12 +1,14 @@
 @attribute [Authorize]
 @code {
     private Requirements _requirements = new();
+    private List<RequirementsFile>? _existingFiles = [];
 
     [EditorRequired] [Parameter] public int Id { get; set; }
 
     public async Task ViewInlineDialog()
     {
         _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
+        _existingFiles = await RequirementsFilesModel.GetFilesByRequirementId(Id);
 
         await DialogService.OpenAsync($"View {nameof(Requirements)} {Id}", ds =>
                 @<div>
@@ -62,6 +64,11 @@
                             <RadzenLabel Text="Workflow:" Style="font-weight: bold;"/>
                             <RadzenLabel Text="@_requirements.WorkflowStatus.ToString()"/>
                         </RadzenStack>
+                    </RadzenFieldset>
+
+                    <RadzenFieldset Text="Files">
+                        <FileViewer Files="_existingFiles"
+                                    EntityName="@nameof(RequirementsFile)"/>
                     </RadzenFieldset>
 
                 </div>,

@@ -11,7 +11,7 @@
                  @((typeof(TItem).GetProperty("FileContent")?.GetValue(file, null) is byte[] content && content.Length > 0 ? $"{content.Length / 1024.0:F2} KB" : string.Empty))
             </RadzenColumn>
             <RadzenColumn>
-                <RadzenButton Text="Download"
+                <RadzenButton Icon="download"
                               Click="@(async () => await DownloadFile(file))"
                               Size="ButtonSize.Small"/>
             </RadzenColumn>

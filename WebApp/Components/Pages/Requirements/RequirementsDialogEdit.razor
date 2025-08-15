@@ -3,6 +3,8 @@
 
 @code {
     private Requirements _requirements = new();
+    private List<RequirementsFile> _existingFiles = [];
+
     private readonly List<IBrowserFile>? _uploadedFiles = [];
     private List<ApplicationUser> _usersList = [];
     private List<RequirementsSpecification> _requirementsSpecificationList = [];
@@ -38,11 +40,11 @@
     public async Task ShowInlineDialog()
     {
         _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
+        _existingFiles = await RequirementsFilesModel.GetFilesByRequirementId(Id);
 
         _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
         _usersList = await UserService.GetUsersList();
         RequirementsModel.SelectedRequirementSpecificationId = _requirements.RequirementsSpecificationId;
-        _uploadedFiles?.Clear();
 
         var result = await DialogService.OpenAsync("Update Requirement", ds =>
             @<RadzenStack Gap="1.5rem" Style="height: 600px;">
@@ -115,7 +117,11 @@
                         <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
                     </div>
 
-                    <FileUpload UploadedFiles="_uploadedFiles"/>
+                    <RadzenFieldset Text="Requirement Files">
+                        <FileUploadEdit UploadedFiles="_uploadedFiles"
+                                        EntityName="@nameof(RequirementsFile)"
+                                        ExistingFiles="@_existingFiles"/>
+                    </RadzenFieldset>
 
                     <!-- Submit button inside the form -->
                     <RadzenButton Icon="update" Text="Requirement" ButtonStyle="ButtonStyle.Warning"
