@@ -127,12 +127,14 @@
                         <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
                     </div>
 
-                    <FileUpload UploadedFiles="_uploadedFiles"/>
+                    <RadzenFieldset Text="Files">
+                        <FileUpload UploadedFiles="_uploadedFiles"/>
+                    </RadzenFieldset>
 
                     <!-- Submit button inside the form -->
                     <RadzenButton Icon="add" Text="Requirement" ButtonStyle="ButtonStyle.Warning"
                                   ButtonType="ButtonType.Submit"
-                                  Style="margin-bottom: 10px;"/>
+                                  Style="margin: 10px;"/>
                 </RadzenTemplateForm>
             </RadzenStack>, new DialogOptions() { Draggable = true, CloseDialogOnOverlayClick = true, Resizable = true });
     }

@@ -1,13 +1,9 @@
-<RadzenRow Gap="2rem" RowGap="2rem" class="rz-m-0 rz-m-md-12">
-    <RadzenColumn Size="12" SizeMD="4">
-        <RadzenCard Variant="Variant.Outlined">
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Files upload</RadzenText>
+<div class="form-group mb-4">
+    <RadzenLabel Text="Upload Files"/>
             <RadzenUpload
                 data-testid="fileupload"
                 Multiple="true" Icon="upload" Change="@HandleFileSelected" Style="width: 100%"/>
-        </RadzenCard>
-    </RadzenColumn>
-</RadzenRow>
+</div>
 
 @code{
 
