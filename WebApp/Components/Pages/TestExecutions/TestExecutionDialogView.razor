@@ -1,0 +1,73 @@
+
+@code {
+    private TestExecution _testExecution = new();
+
+    [EditorRequired] [Parameter] public int Id { get; set; }
+
+    public async Task ViewInlineDialog()
+    {
+        _testExecution = await TestExecutionModelv2.GetTestExecutionByIdAsync(Id);
+
+        await DialogService.OpenAsync($"View {nameof(TestExecution)} {Id}", ds =>
+                        @<div>
+                            <RadzenFieldset Text="Test Execution">
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testExecution.Id.ToString()"/>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+
+                                    <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testExecution.Name"/>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testExecution.Description"/>
+                                </RadzenStack>
+
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testExecution.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
+                                    <RadzenLabel
+                                            Text="@_testExecution.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testExecution.CreatedBy"/>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testExecution.ModifiedBy"/>
+                                </RadzenStack>
+                            </RadzenFieldset>
+
+                            <RadzenFieldset Icon="visibility">
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Linked Test Plan:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testExecution.TestPlanId.ToString()"/>
+                                </RadzenStack>
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Priority:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testExecution.Priority.ToString()"/>
+                                </RadzenStack>
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Workflow:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testExecution.WorkflowStatus.ToString()"/>
+                                </RadzenStack>
+                            </RadzenFieldset>
+
+
+                        </div>,
+                new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true, Resizable = true });
+    }
+
+}

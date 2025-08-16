@@ -103,6 +103,11 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
         existingTestExecution.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         existingTestExecution.ModifiedAt = DateTime.UtcNow;
         existingTestExecution.WorkflowStatus = testExecution.WorkflowStatus;
+        existingTestExecution.ArchivedStatus = testExecution.ArchivedStatus;
+        existingTestExecution.Name = testExecution.Name;
+        existingTestExecution.Description = testExecution.Description;
+        existingTestExecution.EstimatedTime = testExecution.EstimatedTime;
+        existingTestExecution.AssignedTo = testExecution.AssignedTo;
 
         if (existingTestExecution.TestPlanId != SelectedTestPlan)
         {
@@ -297,5 +302,21 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
         await db.SaveChangesAsync();
 
         return newExecution;
+    }
+
+
+    public async Task<TestExecution> GetTestExecutionByIdAsync(int executionId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        var testExecution = await db.TestExecution.FindAsync(executionId);
+        if (testExecution is null) throw new Exception("TestExecution not found");
+        return testExecution;
+    }
+
+    public async Task DeleteTestExecutionAsync(TestExecution testExecution)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        db.TestExecution.Remove(testExecution);
+        await db.SaveChangesAsync();
     }
 }
