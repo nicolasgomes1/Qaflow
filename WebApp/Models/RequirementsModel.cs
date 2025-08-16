@@ -182,4 +182,11 @@ public class RequirementsModel(
         if (current is not null)
             SelectedRequirementSpecificationId = (int)current;
     }
+
+    public async Task DeleteRequirement(Requirements requirement)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        db.Requirements.Remove(requirement);
+        await db.SaveChangesAsync();
+    }
 }

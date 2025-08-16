@@ -20,13 +20,16 @@
 
         await DialogService.OpenAsync($"View {nameof(RequirementsSpecification)}", ds =>
                 @<div>
-                    <p>ID: @_requirements.Id</p>
-                    <p>Name: @_requirements.Name</p>
-                    <p>Description: @_requirements.Description</p>
-                    <p>Created At: @_requirements.CreatedAt</p>
-                    <p>Modified At: @_requirements.ModifiedAt</p>
-                    <p>Created By: @_requirements.CreatedBy</p>
-                    <p>Modified By: @_requirements.ModifiedBy</p>
+                    <RadzenFieldset Text="Requirement Specification">
+                        <p>ID: @_requirements.Id</p>
+                        <p>Name: @_requirements.Name</p>
+                        <p>Description: @_requirements.Description</p>
+                        <p>Created At: @_requirements.CreatedAt</p>
+                        <p>Modified At: @_requirements.ModifiedAt</p>
+                        <p>Created By: @_requirements.CreatedBy</p>
+                        <p>Modified By: @_requirements.ModifiedBy</p>
+                    </RadzenFieldset>
+
 
                 </div>,
             new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });

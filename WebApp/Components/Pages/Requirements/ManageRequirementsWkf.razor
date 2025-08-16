@@ -196,14 +196,12 @@
         Logger.LogInformation($"deleting {requirements}");
         ContextMenuService.Close();
 
-        await using var db = await DbContext.CreateDbContextAsync();
 
         var confirmed = await DialogService.Confirm($"Are you sure you want to delete this Requirement?", $"Delete Requirement");
 
         if (confirmed is true)
         {
-            db.Requirements.Remove(requirements);
-            await db.SaveChangesAsync();
+            await RequirementsModel.DeleteRequirement(requirements);
         }
 
         await RefreshAllRequirements();
