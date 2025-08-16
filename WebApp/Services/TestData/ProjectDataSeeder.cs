@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Data.enums;
+using WebApp.Models;
 
 namespace WebApp.Services.TestData;
 
@@ -96,12 +97,15 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         await GetOrCreateCycle(dbContext, project, "Cycle 5");
 
         // Create or get test plans associated with the test cases
-        await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Alpha", "Alpha", USER, testCase1, cycle,
+        var testplan = await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Alpha", "Alpha", USER, testCase1,
+            cycle,
             WorkflowStatus.Completed);
         await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Alpha", "Beta", MANAGER, testCase2, cycle,
             WorkflowStatus.InReview);
         await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Beta", "no tests", USER, null, cycle,
             WorkflowStatus.New);
+
+        await GetOrCreateTestExecutionAsync(dbContext, project, testplan.Name, "Test Execution 1");
 
         await GetOrCreateBugsAsync(dbContext, project, "Bug 1", "Bug 1 Description", USER);
         await GetOrCreateBugsAsync(dbContext, project, "Bug 2", "Bug 2 Description", USER, BugStatus.Closed);
@@ -163,6 +167,8 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         };
 
         await dbContext.Requirements.AddAsync(newRequirement);
+        SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(newRequirement);
+
         await dbContext.SaveChangesAsync(); // Save to get the Id
         return newRequirement;
     }
@@ -325,24 +331,28 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
     }
 
 
-    private static async Task GetOrCreateTestPlanAsync(ApplicationDbContext dbContext, Projects projects, string name,
-        string description, string assignedUserName,
-        TestCases? testCase, Cycles? cycle, WorkflowStatus status = WorkflowStatus.Completed)
+    private static async Task<TestPlans> GetOrCreateTestPlanAsync(
+        ApplicationDbContext dbContext,
+        Projects projects,
+        string name,
+        string description,
+        string assignedUserName,
+        TestCases? testCase,
+        Cycles? cycle,
+        WorkflowStatus status = WorkflowStatus.Completed)
     {
         // Check if a test plan already exists
         var existingTestPlan = await dbContext.TestPlans
-            .Include(tp => tp.LinkedTestCases) // Include test cases to avoid lazy loading
+            .Include(tp => tp.LinkedTestCases)
             .FirstOrDefaultAsync(tp => tp.Projects == projects && tp.Name == name);
 
         var assignedUserId = await AssignedUserId(dbContext, assignedUserName);
-
 
         if (existingTestPlan != null)
         {
             // If the name has changed, create a new test plan
             if (existingTestPlan.Name != name)
             {
-                // Create a new test plan with the updated name
                 var newTestPlan = new TestPlans
                 {
                     Name = name,
@@ -359,22 +369,27 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
                 await dbContext.TestPlans.AddAsync(newTestPlan);
                 await dbContext.SaveChangesAsync();
 
-                if (testCase == null) return;
-                newTestPlan.LinkedTestCases.Add(testCase);
-                await dbContext.SaveChangesAsync();
+                if (testCase != null)
+                {
+                    newTestPlan.LinkedTestCases.Add(testCase);
+                    await dbContext.SaveChangesAsync();
+                }
+
+                return newTestPlan;
             }
             else
             {
-                if (testCase == null || existingTestPlan.LinkedTestCases.Any(tc => tc.Id == testCase.Id))
-                    return;
-                existingTestPlan.LinkedTestCases.Add(testCase);
-                await dbContext.SaveChangesAsync();
-            }
+                if (testCase != null && !existingTestPlan.LinkedTestCases.Any(tc => tc.Id == testCase.Id))
+                {
+                    existingTestPlan.LinkedTestCases.Add(testCase);
+                    await dbContext.SaveChangesAsync();
+                }
 
-            return;
+                return existingTestPlan;
+            }
         }
 
-
+        // No existing test plan, create a new one
         var newTestPlanForCreation = new TestPlans
         {
             Name = name,
@@ -390,15 +405,17 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             newTestPlanForCreation.ArchivedStatus = ArchivedStatus.Archived;
 
         await dbContext.TestPlans.AddAsync(newTestPlanForCreation);
-        await dbContext.SaveChangesAsync(); // Save to get the Id
+        await dbContext.SaveChangesAsync();
 
-        // If a test case is provided, associate it with the new test plan
         if (testCase != null)
         {
             newTestPlanForCreation.LinkedTestCases.Add(testCase);
-            await dbContext.SaveChangesAsync(); // Save the association
+            await dbContext.SaveChangesAsync();
         }
+
+        return newTestPlanForCreation;
     }
+
 
     private static async Task<Cycles> GetOrCreateCycle(ApplicationDbContext dbContext, Projects projects, string name)
     {
@@ -416,5 +433,58 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         await dbContext.Cycles.AddAsync(newCycle);
         await dbContext.SaveChangesAsync();
         return newCycle;
+    }
+
+
+    private static async Task<TestExecution> GetOrCreateTestExecutionAsync(
+        ApplicationDbContext dbContext,
+        Projects projects,
+        string testPlanName,
+        string name)
+    {
+        // Check if test execution already exists
+        var existingExecution = await dbContext.TestExecution
+            .FirstOrDefaultAsync(te => te.Name == name && te.Projects == projects);
+
+        if (existingExecution != null)
+            return existingExecution;
+
+        // Load the test plan with linked test cases
+        var testPlan = await dbContext.TestPlans
+            .Include(t => t.LinkedTestCases)
+            .FirstOrDefaultAsync(t => t.Name == testPlanName && t.Projects == projects);
+
+        if (testPlan == null)
+            throw new InvalidOperationException($"Test plan '{testPlanName}' not found for project '{projects.Id}'.");
+
+        // Create TestCaseExecutions for each linked TestCase
+        var testCaseExecutions = testPlan.LinkedTestCases.Select(tc => new TestCaseExecution
+        {
+            TestCaseId = tc.Id,
+            ExecutionStatus = ExecutionStatus.NotRun,
+            CreatedBy = USER,
+            CreatedAt = DateTime.UtcNow,
+            ModifiedAt = DateTime.UtcNow
+        }).ToList();
+
+        // Create the TestExecution entity
+        var newTestExecution = new TestExecution
+        {
+            Name = name,
+            Projects = projects,
+            ProjectsId = projects.Id,
+            TestPlan = testPlan,
+            TestPlanId = testPlan.Id,
+            LinkedTestCaseExecutions = testCaseExecutions,
+            CreatedBy = USER,
+            CreatedAt = DateTime.UtcNow,
+            ModifiedAt = DateTime.UtcNow,
+            WorkflowStatus = WorkflowStatus.New
+        };
+
+        await dbContext.TestExecution.AddAsync(newTestExecution);
+        await dbContext.SaveChangesAsync();
+
+        return newTestExecution;
     }
 }

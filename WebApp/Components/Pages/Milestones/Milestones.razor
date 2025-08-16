@@ -1,5 +1,6 @@
 @page "/project/{ProjectId:int}/milestones"
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 <MilestoneGauge CurrentValue="@_mydouble" ExpectedValue="69" Title="Test Execution Pass Rate"></MilestoneGauge>
 
