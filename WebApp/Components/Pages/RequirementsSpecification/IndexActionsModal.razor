@@ -1,8 +1,5 @@
 ﻿@attribute [Authorize]
-@using WebApp.Components.Administration.Cycles
 @typeparam TItem
-@inject TooltipService TooltipService
-
 <div style="display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: nowrap;">
     <RadzenDataGridColumn TItem="TItem" Sortable="false" Filterable="false" Resizable="false" Width="100px"
                           Reorderable="false" Title="Actions" Pickable="false">

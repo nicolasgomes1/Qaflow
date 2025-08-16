@@ -64,5 +64,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<TestExecutionModelv2>();
         services.AddScoped<TestCasesReporting>();
         services.AddScoped<CyclesModel>();
+        services.AddScoped<GridSettingsModel>();
     }
 }

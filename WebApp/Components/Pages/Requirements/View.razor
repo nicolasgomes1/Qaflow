@@ -43,7 +43,7 @@
             </RadzenRow>
         </RadzenTabsItem>
         <RadzenTabsItem data-testid="requirement_files" Text="@ContextFilesTitle()" Disabled="@RequirementHasNoFiles">
-            <FileViewer Files="_existingFiles"
+            <FileViewer Files="ExistingFiles"
                         EntityName="@nameof(RequirementsFile)"/>
         </RadzenTabsItem>
         <RadzenTabsItem Text="@ContextTestsTitle()" Disabled="@RequirementsHasNoTests">
@@ -82,7 +82,7 @@
 
     [Parameter] public int ProjectId { get; set; }
 
-    private List<RequirementsFile>? _existingFiles { get; set; }
+    private List<RequirementsFile>? ExistingFiles { get; set; }
 
     private string ContextFilesTitle()
     {
@@ -99,13 +99,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _existingFiles = await RequirementsFilesModel.GetFilesByRequirementId(Id);
+        ExistingFiles = await RequirementsFilesModel.GetFilesByRequirementId(Id);
         _requirements = await RequirementsModel.GetRequirementByIdAsync(Id);
         _specificationName = _requirements.RequirementsSpecification?.Name ?? string.Empty;
     }
 
 
-    private bool RequirementHasNoFiles => _existingFiles != null && !_existingFiles.Any();
+    private bool RequirementHasNoFiles => ExistingFiles != null && !ExistingFiles.Any();
 
     private bool RequirementsHasNoTests => _requirements.LinkedTestCases != null && !_requirements.LinkedTestCases.Any();
 

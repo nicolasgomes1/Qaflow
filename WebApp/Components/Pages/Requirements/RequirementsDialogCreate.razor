@@ -1,6 +1,4 @@
-@inject DialogService DialogService
 @attribute [Authorize]
-
 
 <RadzenButton Text="@Title"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.requirements"]))"
@@ -17,7 +15,6 @@
     private readonly List<IBrowserFile>? _uploadedFiles = [];
     private List<ApplicationUser> _usersList = [];
     private List<RequirementsSpecification> _requirementsSpecificationList = [];
-    //  private int _selectedRequirementSpecificationId;
 
     [Parameter] public EventCallback OnRequirementCreated { get; set; }
 

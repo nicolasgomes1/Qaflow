@@ -155,12 +155,8 @@ else
         DataGridSettingsService.SetCurrentGridId(GridId);
 
         //   await RequirementsModel.DisplayRequirementsIndexPage();
-
-
         _requirements = await RequirementsModel.DisplayRequirementsIndexPage(ProjectId);
-
-
-        _gridSettings = await GetCUrrentGridUserSettings("Requirements");
+        _gridSettings = await GridSettingsModel.GetCUrrentGridUserSettings("Requirements");
         _isLoading = false;
     }
 
@@ -171,8 +167,9 @@ else
         {
             await DataGridSettingsService.LoadSettingsAsync();
             _isLoading = false; // Stop showing the loading spinner after settings are applied
-            StateHasChanged(); // Re-render with updated settings
         }
+
+        StateHasChanged(); // Re-render with updated settings
     }
 
     private async Task OnPageSizeChanged(int newSize)
@@ -182,27 +179,5 @@ else
         StateHasChanged();
     }
 
-
-    private async Task<GridSettings> GetCUrrentGridUserSettings(string gridName)
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        var user = UserService.GetCurrentUserInfoAsync().Result.UserName;
-        if (user == null) throw new Exception("User not found");
-
-        var gridSetting = await db.GridSettings
-            .Where(x => x.UserName == user && x.GridName == gridName)
-            .FirstOrDefaultAsync();
-
-        if (gridSetting != null) return gridSetting;
-        gridSetting = new GridSettings
-        {
-            UserName = user,
-            GridName = gridName
-        };
-        db.GridSettings.Add(gridSetting);
-        await db.SaveChangesAsync();
-
-        return gridSetting;
-    }
 
 }
