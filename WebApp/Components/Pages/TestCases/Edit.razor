@@ -2,15 +2,8 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 
-<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
-             Size="AlertSize.Small" Variant="Variant.Filled"
-             Shade="Shade.Default" Icon="edit"
-             Text="@(req)"/>
 
-@code{
-    private string req => $"Editing test case {Id}";
-
-}
+<AlertTitle TitleText=@($"Editing test case {Id}")/>
 
 @if (_isLoading)
 {
@@ -106,7 +99,7 @@ else
 
                         async Task RetrieveCurrentTeststepsFromdb()
                         {
-                            TestCasesModel.TestStepsList = await GetTestStepsForTestCase();
+                            TestCasesModel.TestStepsList = await TestStepsModel.GetTestStepsForTestCase(Id);
                         }
 
 
@@ -161,7 +154,7 @@ else
     {
         _usersList = await UserService.GetUsersList();
 
-        TestCasesModel.TestStepsList = await GetTestStepsForTestCase();
+        TestCasesModel.TestStepsList = await TestStepsModel.GetTestStepsForTestCase(Id);
 
         _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
         _testCases = await TestCasesModel.GetTestCasesByIdAsync(Id);
@@ -198,12 +191,6 @@ else
 
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Case with Id {_testCases.Id} Updated Successfully");
-    }
-
-    async Task<List<TestSteps>> GetTestStepsForTestCase()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestSteps.Where(t => t.TestCasesId == Id && t.ArchivedStatus == ArchivedStatus.Active).ToListAsync();
     }
 
 

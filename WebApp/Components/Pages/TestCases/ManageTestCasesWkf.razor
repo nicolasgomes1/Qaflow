@@ -87,8 +87,7 @@
 
     private async Task RefreshAssignedTestCasesFromDialog()
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-        _testcasesData = await db.TestCases.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _testcasesData = await TestCasesModel.GetTestCasesAssignedToAll(ProjectId);
         _filteredtestcasesData = _testcasesData;
         StateHasChanged();
     }
@@ -134,34 +133,21 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-        _testcasesData = await db.TestCases.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
+        _testcasesData = await TestCasesModel.GetTestCasesAssignedToAll(ProjectId);
         _filteredtestcasesData = _testcasesData;
     }
 
-    private async Task<List<TestCases>> GetTestCasesAssignedToAll()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestCases.Where(rp => rp.ProjectsId == ProjectId).ToListAsync();
-    }
-
-
-    private async Task<List<TestCases>> GetTestCasesAssignedToCurrentUser()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestCases.Where(rp => rp.ProjectsId == ProjectId && rp.AssignedTo == UserService.GetCurrentUserInfoAsync().Result.UserId).ToListAsync();
-    }
 
     private async Task RefreshAssignedTestCases()
     {
-        _testcasesData = await GetTestCasesAssignedToCurrentUser();
+        _testcasesData = await TestCasesModel.GetTestCasesAssignedToCurrentUser(ProjectId);
         _filteredtestcasesData = _testcasesData;
         StateHasChanged();
     }
 
     private async Task RefreshAllTestCases()
     {
-        _testcasesData = await GetTestCasesAssignedToAll();
+        _testcasesData = await TestCasesModel.GetTestCasesAssignedToAll(ProjectId);
         _filteredtestcasesData = _testcasesData;
 
         StateHasChanged();
@@ -250,14 +236,12 @@
         Logger.LogInformation("deleting {testCases}", testCases);
         ContextMenuService.Close();
 
-        await using var db = await DbContext.CreateDbContextAsync();
 
         var confirmed = await DialogService.Confirm($"Are you sure you want to delete this Test Case?", $"Delete Test Case");
 
         if (confirmed is true)
         {
-            db.TestCases.Remove(testCases);
-            await db.SaveChangesAsync();
+            await TestCasesModel.DeleteTestCase(testCases);
         }
 
         await RefreshAllTestCases();

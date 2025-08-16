@@ -5,10 +5,10 @@
 <MilestoneGauge CurrentValue="@_mydouble" ExpectedValue="69" Title="Test Execution Pass Rate"></MilestoneGauge>
 
 <RadzenStack Orientation="Orientation.Horizontal">
-    <MilestoneGauge CurrentValue="@CurrentValueLow" ExpectedValue="30" Title="@MilestoneTitleL"></MilestoneGauge>
-    <MilestoneGauge CurrentValue="@CurrentValueMedium" ExpectedValue="50" Title="@MilestoneTitleM"></MilestoneGauge>
-    <MilestoneGauge CurrentValue="@CurrentValueHigh" ExpectedValue="70" Title="@MilestoneTitleH"></MilestoneGauge>
-    <MilestoneGauge CurrentValue="CurrentValueCritical" ExpectedValue="90" Title="@MilestoneTitleC"></MilestoneGauge>
+    <MilestoneGauge CurrentValue="@_currentValueLow" ExpectedValue="30" Title="@MilestoneTitleL"></MilestoneGauge>
+    <MilestoneGauge CurrentValue="@_currentValueMedium" ExpectedValue="50" Title="@MilestoneTitleM"></MilestoneGauge>
+    <MilestoneGauge CurrentValue="@_currentValueHigh" ExpectedValue="70" Title="@MilestoneTitleH"></MilestoneGauge>
+    <MilestoneGauge CurrentValue="_currentValueCritical" ExpectedValue="90" Title="@MilestoneTitleC"></MilestoneGauge>
 </RadzenStack>
 
 
@@ -17,10 +17,10 @@
 {
     [Parameter] public int ProjectId { get; set; }
 
-    private double CurrentValueLow;
-    private double CurrentValueMedium;
-    private double CurrentValueHigh;
-    private double CurrentValueCritical;
+    private double _currentValueLow;
+    private double _currentValueMedium;
+    private double _currentValueHigh;
+    private double _currentValueCritical;
 
     private string MilestoneTitleL => $"Test Execution With {EnumService.GetSingleEnum(Priority.Low).ToString()} Priority";
     private string MilestoneTitleM => $"Test Execution With {EnumService.GetSingleEnum(Priority.Medium).ToString()} Priority";
@@ -32,10 +32,10 @@
     protected override async Task OnInitializedAsync()
     {
         _mydouble = await ReportsModel.GetTestExecutionPassRateAsync(ProjectId);
-        CurrentValueLow = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Low, ProjectId);
-        CurrentValueMedium = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Medium, ProjectId);
-        CurrentValueHigh = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.High, ProjectId);
-        CurrentValueCritical = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Critical, ProjectId);
+        _currentValueLow = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Low, ProjectId);
+        _currentValueMedium = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Medium, ProjectId);
+        _currentValueHigh = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.High, ProjectId);
+        _currentValueCritical = await TestExecutionModel.GetRationofTestExecutionsByPriorityAsync(Priority.Critical, ProjectId);
     }
 
 

@@ -325,4 +325,25 @@ public class TestCasesModel(
             .Include(tc => tc.TestPlans)
             .ToListAsync();
     }
+
+    public async Task DeleteTestCase(TestCases testCases)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        db.TestCases.Remove(testCases);
+        await db.SaveChangesAsync();
+    }
+
+    public async Task<List<TestCases>> GetTestCasesAssignedToAll(int projectId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        return await db.TestCases.Where(rp => rp.ProjectsId == projectId).ToListAsync();
+    }
+
+    public async Task<List<TestCases>> GetTestCasesAssignedToCurrentUser(int projectId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        return await db.TestCases.Where(rp =>
+                rp.ProjectsId == projectId && rp.AssignedTo == userService.GetCurrentUserInfoAsync().Result.UserId)
+            .ToListAsync();
+    }
 }
