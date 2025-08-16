@@ -29,13 +29,13 @@ public class TestCasesModelTests : IClassFixture<TestFixture>
             Description = "Description",
             ProjectsId = project.Id
         };
-        
-        await _tc.AddTestCases(testCase,null, project.Id);
-        
+
+        await _tc.AddTestCases(testCase, null, project.Id);
+
         var dbtest = _db.TestCases.Where(x => x.Name == name).FirstOrDefaultAsync();
         Assert.NotNull(dbtest);
     }
-    
+
     [Fact]
     public async Task TestCasesModel_GetTestCaseDataTests()
     {
@@ -49,10 +49,10 @@ public class TestCasesModelTests : IClassFixture<TestFixture>
             Description = "Description",
             ProjectsId = project.Id
         };
-        
-        await _tc.AddTestCases(testCase,null, project.Id);
-        
-        var dbtest = await _tc.GetTestCaseData(testCase.Id);
+
+        await _tc.AddTestCases(testCase, null, project.Id);
+
+        var dbtest = await _tc.GetTestCasesByIdAsync(testCase.Id);
         Assert.NotNull(dbtest);
     }
 }

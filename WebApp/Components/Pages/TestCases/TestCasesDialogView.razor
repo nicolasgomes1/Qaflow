@@ -1,0 +1,68 @@
+@attribute [Authorize]
+
+@code {
+    private TestCases _testCases = new();
+    private List<TestCasesFile>? _existingFiles = [];
+    [EditorRequired] [Parameter] public int Id { get; set; }
+    private readonly List<IBrowserFile>? _uploadedFiles = [];
+
+    public async Task ViewInlineDialog()
+    {
+        _testCases = await TestCasesModel.GetTestCasesByIdAsync(Id);
+        _existingFiles = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
+
+        await DialogService.OpenAsync($"View {nameof(TestCases)} {Id}", ds =>
+                        @<div>
+                            <RadzenFieldset Text="Test Case">
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testCases.Id.ToString()"/>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testCases.Name"/>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testCases.Description"/>
+                                </RadzenStack>
+
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testCases.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testCases.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testCases.CreatedBy"/>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testCases.ModifiedBy"/>
+                                </RadzenStack>
+                            </RadzenFieldset>
+
+                            <RadzenFieldset Text="Files">
+                                <FileViewer Files="_existingFiles"
+                                            EntityName="@nameof(TestCases)"/>
+                            </RadzenFieldset>
+                        </div>,
+                new DialogOptions
+                {
+                        CloseDialogOnOverlayClick = true,
+                        Draggable = true,
+                        CloseDialogOnEsc = true,
+                        Resizable = true
+                });
+    }
+
+}

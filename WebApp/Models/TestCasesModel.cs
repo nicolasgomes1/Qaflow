@@ -68,7 +68,7 @@ public class TestCasesModel(
     /// <param name="testCaseId"></param>
     /// <returns>TestCase with TestSteps and Requirements</returns>
     /// <exception cref="Exception"></exception>
-    public async Task<TestCases> GetTestCaseData(int testCaseId)
+    public async Task<TestCases> GetTestCasesByIdAsync(int testCaseId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 

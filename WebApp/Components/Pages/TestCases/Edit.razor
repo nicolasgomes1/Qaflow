@@ -164,7 +164,7 @@ else
         TestCasesModel.TestStepsList = await GetTestStepsForTestCase();
 
         _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
-        _testCases = await TestCasesModel.GetTestCaseData(Id);
+        _testCases = await TestCasesModel.GetTestCasesByIdAsync(Id);
 
         await TestCasesModel.GetAssociatedRequirements(_testCases);
         ExistingFiles = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
