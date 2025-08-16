@@ -108,6 +108,10 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
         existingTestExecution.Description = testExecution.Description;
         existingTestExecution.EstimatedTime = testExecution.EstimatedTime;
         existingTestExecution.AssignedTo = testExecution.AssignedTo;
+        existingTestExecution.Priority = testExecution.Priority;
+        existingTestExecution.ExecutionStatus = testExecution.ExecutionStatus;
+        existingTestExecution.Version = testExecution.Version;
+        existingTestExecution.EstimatedTime = testExecution.EstimatedTime;
 
         if (existingTestExecution.TestPlanId != SelectedTestPlan)
         {
