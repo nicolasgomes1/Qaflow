@@ -7,7 +7,7 @@
 
         <AlertTitle TitleText="Associated Test Cases"></AlertTitle>
 
-        <RadzenDataGrid Data="@_testCases" TItem="TestCases" PageSize="10" AllowPaging="true" AllowSorting="true">
+        <RadzenDataGrid Data="@_testCases" TItem="TestCases" PageSize="20" AllowPaging="true" AllowSorting="true">
             <Columns>
                 <RadzenDataGridColumn Property="@nameof(TestCases.Id)" Title="ID" Width="70px"/>
                 <RadzenDataGridColumn Property="@nameof(TestCases.Name)" Title="Name"/>

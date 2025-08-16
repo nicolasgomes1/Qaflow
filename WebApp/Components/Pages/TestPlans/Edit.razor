@@ -1,18 +1,8 @@
 ﻿@page "/project/{ProjectId:int}/testplans/edit/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
-@inject CyclesModel CyclesModel
-<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
-             Size="AlertSize.Small" Variant="Variant.Filled"
-             Shade="Shade.Default" Icon="edit"
-             Text="@(req)"/>
 
-@code{
-    private string req => $"Editing test plan {Id}";
-
-}
-
-
+<AlertTitle TitleText=@($"Editing test plan {Id})")/>
 
 
 @if (_isLoading)
@@ -97,7 +87,7 @@ else
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Files" data-testid="testplan_files">
                     <FileUploadEdit
-                        ExistingFiles="Files"
+                        ExistingFiles="_files"
                         EntityName="@nameof(TestPlansFile)"
                         UploadedFiles="@_uploadedFiles"/>
                 </RadzenTabsItem>
@@ -116,7 +106,7 @@ else
     [Parameter] public int ProjectId { get; set; }
 
     private List<ApplicationUser> _usersList = [];
-    private List<TestPlansFile>? Files = [];
+    private List<TestPlansFile>? _files = [];
 
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
@@ -137,7 +127,7 @@ else
         _testCasesList = await TestCasesModel.GetTestCasesWithWorkflowStatus(ProjectId, WorkflowStatus.Completed);
         _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
         await TestPlansModel.GetAssociatedTestCases(Id);
-        Files = await TestPlansFilesModel.GetFilesByTestPlanId(Id, ProjectId);
+        _files = await TestPlansFilesModel.GetFilesByTestPlanId(Id, ProjectId);
         _cyclesList = await CyclesModel.GetCyclesByProjectId(ProjectId);
 
         if (_testPlans.ArchivedStatus.Equals(ArchivedStatus.Archived))

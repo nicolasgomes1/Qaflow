@@ -1,18 +1,8 @@
 ﻿@page "/project/{ProjectId:int}/testplans/view/{Id:int}"
-@using WebApp.Components.Pages.TestCases
 @rendermode InteractiveServer
 @attribute [Authorize]
 
-<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
-             Size="AlertSize.Small" Variant="Variant.Filled"
-             Shade="Shade.Default" Icon="visibility"
-             Text="@(req)"/>
-
-@code{
-    private string req => $"Viewing test plan {Id}";
-
-}
-
+<AlertTitle TitleText="@($"Viewing test plan {Id}")"/>
 
 <RadzenTabs RenderMode="TabRenderMode.Client">
     <Tabs>
