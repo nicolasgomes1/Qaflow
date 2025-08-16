@@ -1,6 +1,11 @@
 @page "/project/{ProjectId:int}/testplans/manage"
 @rendermode InteractiveServer
 @attribute [Authorize]
+@inject ILogger<ManageTestPlansWkf> Logger
+
+<TestPlansDialogView @ref="_testPlansDialogView" Id="-1" ProjectId="@ProjectId"/>
+<TestPlansDialogEdit @ref="_testPlansDialogEdit" Id="-2" ProjectId="@ProjectId"
+                     OnTestPlanUpdated="RefreshAllTestPlans"/>
 
 <AlertTitle TitleText="Managing Test Plans"/>
 
@@ -80,7 +85,8 @@
 
 @code {
     [Parameter] public int ProjectId { get; set; }
-
+    private TestPlansDialogView _testPlansDialogView = null!;
+    private TestPlansDialogEdit _testPlansDialogEdit = null!;
 
     private async Task RefreshAssignedTestPlansFromDialog()
     {
@@ -205,16 +211,46 @@
         await Task.CompletedTask;
     }
 
-    private async Task ViewCard(int Id)
+    private async Task ViewCard(int id)
     {
+        await _testPlansDialogView.SetParametersAsync(ParameterView.FromDictionary(new Dictionary<string, object?>
+            {
+                { nameof(_testPlansDialogView.Id), id }
+            })
+        );
+        await _testPlansDialogView.ViewInlineDialog();
+        ContextMenuService.Close();
     }
 
-    private async Task EditCard(int Id)
+    private async Task EditCard(int id)
     {
+        Logger.LogInformation($"editing {id}");
+        await _testPlansDialogEdit.SetParametersAsync(
+            ParameterView.FromDictionary(new Dictionary<string, object?>
+            {
+                { nameof(_testPlansDialogEdit.Id), id }
+            })
+        );
+        await _testPlansDialogEdit.ShowInlineDialog();
+        ContextMenuService.Close();
     }
 
     private async Task DeleteCard(TestPlans testPlans)
     {
+        Logger.LogInformation("deleting {tp}", testPlans);
+        ContextMenuService.Close();
+
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        var confirmed = await DialogService.Confirm($"Are you sure you want to delete this Test Plan?", $"Delete Test Plan");
+
+        if (confirmed is true)
+        {
+            db.TestPlans.Remove(testPlans);
+            await db.SaveChangesAsync();
+        }
+
+        await RefreshAllTestPlans();
     }
 
 }

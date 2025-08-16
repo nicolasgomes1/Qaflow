@@ -111,29 +111,37 @@ public class TestPlansModel(
         return testPlan;
     }
 
-    public async Task UpdateTestPlan(int testPlanId, List<IBrowserFile>? files, int projectId)
+
+    public async Task UpdateTestPlan(TestPlans updatedTestPlan, List<IBrowserFile>? files, int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
         var testPlan = await db.TestPlans
-            .Include(tp => tp.LinkedTestCases)
-            .Include(tp => tp.Cycle) // Add this line to include the Cycle
-            .FirstOrDefaultAsync(tp => tp.Id == testPlanId);
-        if (testPlan is null) throw new Exception("Test plan not found");
+                           .Include(tp => tp.LinkedTestCases)
+                           .Include(tp => tp.Cycle)
+                           .FirstOrDefaultAsync(tp => tp.Id == updatedTestPlan.Id)
+                       ?? throw new Exception("Test plan not found");
 
-        db.Update(testPlan);
-        testPlan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(testPlan);
+
+        testPlan.Name = updatedTestPlan.Name;
+        testPlan.Description = updatedTestPlan.Description;
+        testPlan.WorkflowStatus = updatedTestPlan.WorkflowStatus;
+        testPlan.AssignedTo = updatedTestPlan.AssignedTo;
+        testPlan.Priority = updatedTestPlan.Priority;
         testPlan.ProjectsId = projectId;
         testPlan.CycleId = SelectedCycleId;
+        testPlan.ModifiedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
 
-        // Update test cases of testplan
         testPlan.LinkedTestCases = await db.TestCases
             .Where(tc => SelectedTestCasesIds.Contains(tc.Id))
             .ToListAsync();
 
+        db.TestPlans.Update(testPlan);
         await db.SaveChangesAsync();
 
-        if (files != null && files.Count != 0) await testPlansFilesModel.SaveFilesToDb(files, testPlanId, projectId);
+        if (files is { Count: > 0 })
+            await testPlansFilesModel.SaveFilesToDb(files, testPlan.Id, projectId);
     }
 
     public async Task<List<TestPlans>> GetTestPlansProjectTree(int projectId)

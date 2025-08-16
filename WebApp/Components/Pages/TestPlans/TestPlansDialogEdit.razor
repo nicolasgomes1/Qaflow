@@ -1,0 +1,126 @@
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+@inject CyclesModel CyclesModel
+
+@code {
+    private TestPlans _testPlans = new();
+    private List<TestPlansFile>? _existingFiles = [];
+    private readonly List<IBrowserFile>? _uploadedFiles = [];
+    private List<ApplicationUser> _usersList = [];
+    private List<Cycles> _cyclesList = [];
+    [EditorRequired] [Parameter] public EventCallback OnTestPlanUpdated { get; set; }
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+    [EditorRequired] [Parameter] public int Id { get; set; }
+
+
+    private async Task UpdateTestPlan()
+    {
+        await TestPlansModel.UpdateTestPlan(_testPlans, _uploadedFiles, ProjectId);
+        DialogService.Close();
+        StateHasChanged();
+        await FormNotificationService.NotifySuccess($"Test Plan updated successfully with id {_testPlans.Id}");
+        // Notify the parent that the requirement was created
+        if (OnTestPlanUpdated.HasDelegate)
+        {
+            await OnTestPlanUpdated.InvokeAsync();
+        }
+    }
+
+    public async Task ShowInlineDialog()
+    {
+        _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
+        _existingFiles = await TestPlansFilesModel.GetFilesByTestPlanId(Id, ProjectId);
+        _cyclesList = await CyclesModel.GetCyclesByProjectId(ProjectId);
+
+        _usersList = await UserService.GetUsersList();
+
+        var result = await DialogService.OpenAsync("Update Test Plan", ds =>
+                @<RadzenStack Gap="1.5rem" Style="height: 600px;">
+                    <RadzenTemplateForm Data="_testPlans" TItem="TestPlans" Submit="@UpdateTestPlan">
+                        <ValidationSummary class="alert alert-danger"/>
+
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Name"/>
+                            <RadzenTextBox id="name"
+                                           @bind-Value="_testPlans.Name"
+                                           class="input-style"
+                                           Name="name"/>
+                            <RadzenRequiredValidator Component="name" Text="Name is required"/>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Description"/>
+                            <RadzenTextArea id="description"
+                                            @bind-Value="_testPlans.Description"
+                                            class="input-style"
+                                            Name="description"/>
+                            <RadzenRequiredValidator Component="description" Text="Description is required"/>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Cycles"/>
+                            <RadzenDropDown id="cycles"
+                                            data-testid="testplan_cycles"
+                                            Data="@_cyclesList"
+                                            @bind-Value="TestPlansModel.SelectedCycleId"
+                                            TextProperty="Name"
+                                            ValueProperty="Id"
+                                            Name="cycles"
+                                            Placeholder="Select a cycle"
+                                            class="input-style"/>
+
+                            <RadzenRequiredValidator Component="cycles"
+                                                     Text="Cycle is required"
+                                                     DefaultValue="-1"/>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Priority"/>
+                            <RadzenDropDown id="priority"
+                                            @bind-Value="_testPlans.Priority"
+                                            Data="EnumService.GetEnumValues<Priority>()"
+                                            class="input-style"
+                                            Name="priority"/>
+                            <RadzenRequiredValidator Component="priority" Text="Priority is required"/>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Status"/>
+                            <RadzenDropDown id="status"
+                                            @bind-Value="_testPlans.WorkflowStatus"
+                                            Data="EnumService.GetEnumValues<WorkflowStatus>()"
+                                            class="input-style"
+                                            Name="status"/>
+                            <RadzenRequiredValidator Component="status" Text="Workflow Status is required"/>
+                        </div>
+
+
+                        <div class="form-group mb-4">
+                            <RadzenLabel Text="Assigned To"/>
+                            <RadzenDropDown id="assignedto"
+                                            Data="@_usersList"
+                                            @bind-Value="_testPlans.AssignedTo"
+                                            TextProperty="UserName"
+                                            ValueProperty="Id"
+                                            class="input-style"
+                                            Name="assignedto"/>
+                            <RadzenRequiredValidator Component="assignedto" Text="User assignment is required"/>
+                        </div>
+
+                        <RadzenFieldset Text="Test Plans Files">
+                            <FileUploadEdit UploadedFiles="_uploadedFiles"
+                                            EntityName="@nameof(TestPlansFile)"
+                                            ExistingFiles="@_existingFiles"/>
+                        </RadzenFieldset>
+
+                        <!-- Submit button inside the form -->
+                        <RadzenButton Icon="update" Text="Test Plan" ButtonStyle="ButtonStyle.Warning"
+                                      ButtonType="ButtonType.Submit"
+                                      Style="margin-bottom: 10px;"/>
+                    </RadzenTemplateForm>
+                </RadzenStack>, new DialogOptions() { Draggable = true, CloseDialogOnOverlayClick = true, Resizable = true });
+    }
+
+
+}

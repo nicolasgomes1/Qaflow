@@ -1,58 +1,65 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
+
 @code {
-    private TestCases _testCases = new();
-    private List<TestCasesFile>? _existingFiles = [];
+    private TestPlans _testPlans = new();
+    private List<TestPlansFile>? _existingFiles = [];
     [EditorRequired] [Parameter] public int Id { get; set; }
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     public async Task ViewInlineDialog()
     {
-        _testCases = await TestCasesModel.GetTestCasesByIdAsync(Id);
-        _existingFiles = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
+        _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
+        _existingFiles = await TestPlansFilesModel.GetFilesByTestPlanId(Id, ProjectId);
 
-        await DialogService.OpenAsync($"View {nameof(TestCases)} {Id}", ds =>
+        await DialogService.OpenAsync($"View {nameof(TestPlans)} {Id}", ds =>
                         @<div>
-                            <RadzenFieldset Text="Test Case">
+                            <RadzenFieldset Text="Test Plan">
                                 <RadzenStack Orientation="Orientation.Horizontal">
                                     <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
-                                    <RadzenLabel Text="@_testCases.Id.ToString()"/>
+                                    <RadzenLabel Text="@_testPlans.Id.ToString()"/>
                                 </RadzenStack>
 
                                 <RadzenStack Orientation="Orientation.Horizontal">
                                     <RadzenLabel Text="Name:" Style="font-weight: bold;"/>
-                                    <RadzenLabel Text="@_testCases.Name"/>
+                                    <RadzenLabel Text="@_testPlans.Name"/>
                                 </RadzenStack>
 
                                 <RadzenStack Orientation="Orientation.Horizontal">
                                     <RadzenLabel Text="Description:" Style="font-weight: bold;"/>
-                                    <RadzenLabel Text="@_testCases.Description"/>
+                                    <RadzenLabel Text="@_testPlans.Description"/>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Cycle:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text="@_testPlans.Cycle?.Name"/>
                                 </RadzenStack>
 
 
                                 <RadzenStack Orientation="Orientation.Horizontal">
                                     <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
-                                    <RadzenLabel Text="@_testCases.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
+                                    <RadzenLabel Text="@_testPlans.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
                                 </RadzenStack>
 
                                 <RadzenStack Orientation="Orientation.Horizontal">
                                     <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
-                                    <RadzenLabel Text="@_testCases.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
+                                    <RadzenLabel Text="@_testPlans.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
                                 </RadzenStack>
 
                                 <RadzenStack Orientation="Orientation.Horizontal">
                                     <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
-                                    <RadzenLabel Text="@_testCases.CreatedBy"/>
+                                    <RadzenLabel Text="@_testPlans.CreatedBy"/>
                                 </RadzenStack>
 
                                 <RadzenStack Orientation="Orientation.Horizontal">
                                     <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
-                                    <RadzenLabel Text="@_testCases.ModifiedBy"/>
+                                    <RadzenLabel Text="@_testPlans.ModifiedBy"/>
                                 </RadzenStack>
                             </RadzenFieldset>
 
                             <RadzenFieldset Text="Files">
                                 <FileViewer Files="_existingFiles"
-                                            EntityName="@nameof(TestCases)"/>
+                                            EntityName="@nameof(TestPlans)"/>
                             </RadzenFieldset>
                         </div>,
                 new DialogOptions
