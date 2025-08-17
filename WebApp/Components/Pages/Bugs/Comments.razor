@@ -1,42 +1,64 @@
-<RadzenButton Text="Comment" Icon="add" IconColor="red" Shade="Shade.Light" Variant="Variant.Outlined"
-              ButtonStyle="ButtonStyle.Primary" Click="@ShowInlineDialog"/>
+<RadzenButton Text="Add Comment" Icon="add_circle" IconColor="green"
+              Shade="Shade.Light" Variant="Variant.Filled"
+              ButtonStyle="ButtonStyle.Primary"
+              Style="margin-bottom: 15px;"
+              Click="@(() => ShowInlineDialog(false, null))"/>
 
 <RadzenDataList AllowVirtualization="false"
                 WrapItems="true" AllowPaging="true"
-                Data="@_comments" TItem="BugsComments" PageSize="5" PagerHorizontalAlign="HorizontalAlign.Left"
+                Data="@_comments" TItem="BugsComments" PageSize="5"
+                PagerHorizontalAlign="HorizontalAlign.Center"
                 ShowPagingSummary="true" @ref="_listgrid">
+
     <Template Context="comment">
-        <RadzenCard Style="width: 100%; border: none; padding: 10px 0; border-bottom: 1px solid #ddd;">
-            <RadzenRow>
-                <!-- User Information -->
-                <RadzenColumn Size="6">
-                    <RadzenLabel Text="Created By:" Style="font-weight: bold; margin-right: 5px;"/>
-                    <RadzenText TextStyle="TextStyle.Body2">
-                        @(comment.CreatedBy)
-                    </RadzenText>
+        <RadzenCard Style="width: 100%; margin-bottom: 10px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <!-- User Info -->
+                <RadzenColumn Size="10">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div
+                            style="width: 35px; height: 35px; border-radius: 50%; background: #e0e0e0; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #555;">
+                            @(string.IsNullOrWhiteSpace(comment.CreatedBy) ? "?" : comment.CreatedBy.Substring(0, 1).ToUpper())
+                        </div>
+                        <div>
+                            <RadzenLabel Text="@comment.CreatedBy" Style="font-weight: bold; display: block;"/>
+                            <RadzenText TextStyle="TextStyle.Caption">
+                                @comment.CreatedAt.ToString("g")
+                            </RadzenText>
+                        </div>
+                    </div>
                 </RadzenColumn>
 
-                <!-- Comment Content -->
-                <RadzenColumn Size="6" Style="word-wrap: break-word; white-space: normal;">
-                    <RadzenLabel Text="Comment:" Style="font-weight: bold; margin-right: 5px;"/>
-                    <RadzenText TextStyle="TextStyle.Body2">
-                        @(comment.Comment)
-                    </RadzenText>
+                <!-- Action buttons -->
+                <RadzenColumn Size="2" Style="text-align: right;">
+                    <RadzenButton Icon="edit" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Light"
+                                  Click="@(() => ShowInlineDialog(true, comment))"
+                                  Style="margin-right:5px;"/>
+                    <RadzenButton Icon="delete" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Danger"
+                                  Click="@(() => DeleteComment(comment))"/>
                 </RadzenColumn>
             </RadzenRow>
+
+            <!-- Comment Content -->
+            <div style="margin-top: 10px; padding-left: 45px;">
+                <RadzenText TextStyle="TextStyle.Body1" Style="white-space: pre-wrap; line-height: 1.5;">
+                    @comment.Comment
+                </RadzenText>
+            </div>
         </RadzenCard>
     </Template>
 </RadzenDataList>
 
 
-
 @code {
-
     [Parameter] public int Id { get; set; }
 
     RadzenDataList<BugsComments> _listgrid = new();
-
     IEnumerable<BugsComments> _comments = [];
+
+    private BugsComments _comment = new();
+    private bool _isEdit = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -49,40 +71,62 @@
         StateHasChanged();
     }
 
-    private BugsComments _comment = new();
-
-    private async Task CreateNewComment()
+    private async Task DeleteComment(BugsComments comment)
     {
-        await BugsCommentsModel.AddBugComment(Id, _comment);
-        DialogService.Close();
-
-        // Reload comments list
+        await BugsCommentsModel.DeleteBugComment(comment.Id);
         await LoadComments();
     }
 
-    async Task ShowInlineDialog()
+    private async Task SaveComment()
     {
-        _comment = new BugsComments(); // Replace BugsComments with the appropriate model initialization if needed
+        if (_isEdit)
+        {
+            await BugsCommentsModel.UpdateBugComment(_comment.Id, _comment);
+            DialogService.Close();
+        }
+        else
+        {
+            await BugsCommentsModel.AddBugComment(Id, _comment);
+            DialogService.Close();
+        }
 
-        await DialogService.OpenAsync("Create Bug Comment", ds =>
-            @<RadzenStack Gap="1.5rem" Style="height: 300px;">
-                <RadzenTemplateForm Data="_comment" TItem="BugsComments" Submit="@CreateNewComment">
-                    <div class="form-group mb-4">
-                        <RadzenLabel Text="Comment"/>
-                        <RadzenTextArea id="comment"
-                                        Style="height: 200px;"
-                                       @bind-Value="_comment.Comment"
-                                       class="input-style"
-                                       Name="comment"/>
-                        <RadzenRequiredValidator Component="comment" Text="Comment is required"/>
-                    </div>
-
-                    <!-- Submit button inside the form -->
-                    <RadzenButton Icon="add" IconColor="red" Text="Create Comment" ButtonStyle="ButtonStyle.Primary"
-                                  ButtonType="ButtonType.Submit"
-                                  Style="margin-bottom: 10px;"/>
-                </RadzenTemplateForm>
-            </RadzenStack>, new DialogOptions() { Draggable = true, CloseDialogOnEsc = true, CloseDialogOnOverlayClick = true, Resizable = true });
+        // DialogService.Close();
+        await LoadComments();
     }
 
+    async Task ShowInlineDialog(bool isEdit, BugsComments? comment)
+    {
+        _isEdit = isEdit;
+
+        if (_isEdit && comment != null)
+        {
+            // bind to the SAME object (so form updates)
+            _comment = comment;
+        }
+        else
+        {
+            // fresh new comment for create
+            _comment = new BugsComments();
+        }
+
+        await DialogService.OpenAsync(_isEdit ? "Edit Comment" : "Create Comment", ds =>
+                @<RadzenStack Gap="1rem" Style="height: 280px;">
+                    <RadzenTemplateForm Data="_comment" TItem="BugsComments" Submit="@SaveComment">
+
+                        <RadzenLabel Text="Comment"/>
+                        <RadzenTextArea id="comment"
+                                        Style="height: 150px; width: 100%;"
+                                        @bind-Value="_comment.Comment"
+                                        Name="comment"/>
+                        <RadzenRequiredValidator Component="comment" Text="Comment is required"/>
+
+                        <RadzenButton Icon="save" Text="@(_isEdit ? "Update" : "Create")"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                  ButtonType="ButtonType.Submit"
+                                      Style="margin-top: 15px;"/>
+                </RadzenTemplateForm>
+                </RadzenStack>,
+            new DialogOptions() { Draggable = true, CloseDialogOnEsc = true, CloseDialogOnOverlayClick = true, Resizable = false });
+    }
 }
+
