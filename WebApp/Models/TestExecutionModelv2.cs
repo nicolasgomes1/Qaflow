@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using WebApp.Data;
 using WebApp.Data.enums;
 using WebApp.Services;
@@ -321,6 +322,19 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
         db.TestExecution.Remove(testExecution);
+        await db.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Update Card when drag and drop in db for TestExecutions
+    /// </summary>
+    /// <param name="args"></param>
+    public async Task UpdateCardOnDragDrop(RadzenDropZoneItemEventArgs<TestExecution> args)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        args.Item.ModifiedBy = userService.GetCurrentUserNameAsync().Result;
+        args.Item.ModifiedAt = DateTime.UtcNow;
+        db.TestExecution.Update(args.Item);
         await db.SaveChangesAsync();
     }
 }

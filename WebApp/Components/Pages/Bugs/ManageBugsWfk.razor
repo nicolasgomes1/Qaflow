@@ -101,12 +101,16 @@
     {
         if (args.FromZone != args.ToZone)
         {
-            args.Item.WorkflowStatus = (WorkflowStatus)args.ToZone.Value;
+            args.Item.ArchivedStatus = args.Item.WorkflowStatus switch
+            {
+                WorkflowStatus.Completed => ArchivedStatus.Archived,
+                WorkflowStatus.InReview => ArchivedStatus.Active,
+                WorkflowStatus.Reopened => ArchivedStatus.Active,
+                WorkflowStatus.New => ArchivedStatus.Active,
+                _ => args.Item.ArchivedStatus
+            };
 
-            await using var db = await DbContext.CreateDbContextAsync();
-            args.Item.ModifiedBy = UserService.GetCurrentUserNameAsync().Result;
-            db.Bugs.Update(args.Item);
-            await db.SaveChangesAsync();
+            await BugsModel.UpdateCardOnDragDrop(args);
         }
 
         if (args.ToItem == null || args.ToItem == args.Item) return;

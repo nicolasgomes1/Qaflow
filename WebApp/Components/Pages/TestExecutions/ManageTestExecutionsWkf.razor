@@ -126,10 +126,7 @@
                 _ => args.Item.ArchivedStatus
             };
 
-            await using var db = await DbContext.CreateDbContextAsync();
-            args.Item.ModifiedBy = UserService.GetCurrentUserNameAsync().Result;
-            db.TestExecution.Update(args.Item);
-            await db.SaveChangesAsync();
+            await TestExecutionModelv2.UpdateCardOnDragDrop(args);
         }
 
         if (args.ToItem == null || args.ToItem == args.Item) return;

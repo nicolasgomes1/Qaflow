@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using WebApp.Data;
 using WebApp.Data.enums;
 using WebApp.Services;
@@ -129,5 +130,18 @@ public class BugsModel(
             await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);
         Logger.LogInformation($"Bug {bug.Id} updated");
         return bug;
+    }
+
+    /// <summary>
+    /// Update Card when drag and drop in db for Bugs
+    /// </summary>
+    /// <param name="args"></param>
+    public async Task UpdateCardOnDragDrop(RadzenDropZoneItemEventArgs<Bugs> args)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        args.Item.ModifiedBy = userService.GetCurrentUserNameAsync().Result;
+        args.Item.ModifiedAt = DateTime.UtcNow;
+        db.Bugs.Update(args.Item);
+        await db.SaveChangesAsync();
     }
 }
