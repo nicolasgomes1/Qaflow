@@ -114,16 +114,14 @@
                 _ => args.Item.ArchivedStatus
             };
 
-            await using var db = await DbContext.CreateDbContextAsync();
-            args.Item.ModifiedBy = UserService.GetCurrentUserNameAsync().Result;
-            db.Requirements.Update(args.Item);
-            await db.SaveChangesAsync();
+            await RequirementsModel.UpdateCardOnDragDrop(args);
         }
 
         if (args.ToItem == null || args.ToItem == args.Item) return;
         _filteredRequirementsData?.Remove(args.Item);
         _filteredRequirementsData?.Insert(_filteredRequirementsData.IndexOf(args.ToItem), args.Item);
     }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -152,16 +150,38 @@
     private async Task RefreshAssignedRequirements()
     {
         _requirementsData = await RequirementsModel.GetRequirementsAssignedToCurrentUser(ProjectId);
-        _filteredRequirementsData = _requirementsData;
+        // Re-apply any existing search filter
+        if (!string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            _filteredRequirementsData = _requirementsData?
+                .Where(r => r.Name != null && r.Name.ToLower().Contains(_searchTerm))
+                .ToList();
+        }
+        else
+        {
+            _filteredRequirementsData = _requirementsData;
+        }
         StateHasChanged();
     }
+
 
     private async Task RefreshAllRequirements()
     {
         _requirementsData = await RequirementsModel.GetRequirementsAssignedToAll(ProjectId);
-        _filteredRequirementsData = _requirementsData;
+        // Re-apply any existing search filter
+        if (!string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            _filteredRequirementsData = _requirementsData?
+                .Where(r => r.Name != null && r.Name.ToLower().Contains(_searchTerm))
+                .ToList();
+        }
+        else
+        {
+            _filteredRequirementsData = _requirementsData;
+        }
         StateHasChanged();
     }
+
 
     private async Task ViewCard(int id)
     {

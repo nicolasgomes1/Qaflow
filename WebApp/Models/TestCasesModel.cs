@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using WebApp.Api.Jira;
 using WebApp.Data;
 using WebApp.Data.enums;
@@ -345,5 +346,18 @@ public class TestCasesModel(
         return await db.TestCases.Where(rp =>
                 rp.ProjectsId == projectId && rp.AssignedTo == userService.GetCurrentUserInfoAsync().Result.UserId)
             .ToListAsync();
+    }
+
+    /// <summary>
+    /// Update Card when drag and drop in db for TestCases
+    /// </summary>
+    /// <param name="args"></param>
+    public async Task UpdateCardOnDragDrop(RadzenDropZoneItemEventArgs<TestCases> args)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        args.Item.ModifiedBy = userService.GetCurrentUserNameAsync().Result;
+        args.Item.ModifiedAt = DateTime.UtcNow;
+        db.TestCases.Update(args.Item);
+        await db.SaveChangesAsync();
     }
 }

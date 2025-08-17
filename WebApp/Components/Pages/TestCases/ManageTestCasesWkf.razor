@@ -120,16 +120,14 @@
                 _ => args.Item.ArchivedStatus
             };
 
-            await using var db = await DbContext.CreateDbContextAsync();
-            args.Item.ModifiedBy = UserService.GetCurrentUserNameAsync().Result;
-            db.TestCases.Update(args.Item);
-            await db.SaveChangesAsync();
+            await TestCasesModel.UpdateCardOnDragDrop(args);
         }
 
         if (args.ToItem == null || args.ToItem == args.Item) return;
         _testcasesData?.Remove(args.Item);
         _testcasesData?.Insert(_testcasesData.IndexOf(args.ToItem), args.Item);
     }
+
 
     protected override async Task OnInitializedAsync()
     {

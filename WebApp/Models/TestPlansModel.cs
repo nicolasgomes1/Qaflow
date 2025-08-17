@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using WebApp.Data;
 using WebApp.Data.enums;
 using WebApp.Services;
@@ -153,5 +154,18 @@ public class TestPlansModel(
             .Where(p => p.ProjectsId == projectId)
             .Include(tp => tp.LinkedTestCases)
             .ToListAsync();
+    }
+
+    /// <summary>
+    /// Update Card when drag and drop in db for TestPlan
+    /// </summary>
+    /// <param name="args"></param>
+    public async Task UpdateCardOnDragDrop(RadzenDropZoneItemEventArgs<TestPlans> args)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        args.Item.ModifiedBy = userService.GetCurrentUserNameAsync().Result;
+        args.Item.ModifiedAt = DateTime.UtcNow;
+        db.TestPlans.Update(args.Item);
+        await db.SaveChangesAsync();
     }
 }

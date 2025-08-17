@@ -123,10 +123,7 @@
                 _ => args.Item.ArchivedStatus
             };
 
-            await using var db = await DbContext.CreateDbContextAsync();
-            args.Item.ModifiedBy = UserService.GetCurrentUserNameAsync().Result;
-            db.TestPlans.Update(args.Item);
-            await db.SaveChangesAsync();
+            await TestPlansModel.UpdateCardOnDragDrop(args);
         }
 
         if (args.ToItem == null || args.ToItem == args.Item) return;
@@ -134,14 +131,12 @@
         _testplansData?.Insert(_testplansData.IndexOf(args.ToItem), args.Item);
     }
 
+
     protected override async Task OnInitializedAsync()
     {
         _testplansData = await TestPlansModel.GetTestPlans(ProjectId);
         _filteredtestplansData = _testplansData;
     }
-
-
-
 
 
     private async Task RefreshAssignedTestPlans()
