@@ -38,7 +38,7 @@
 
     private List<TestExecution> _testExecutionList = [];
 
-
+    
     protected override async Task OnInitializedAsync()
     {
         _testExecutionList = await TestExecutionModel.GetPastTestExecutions(Id);

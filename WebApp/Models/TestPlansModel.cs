@@ -94,12 +94,13 @@ public class TestPlansModel(
             .Where(tc => SelectedTestCasesIds.Contains(tc.Id))
             .ToListAsync();
 
-
+        SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(testPlan);
         if (testcases.Count != SelectedTestCasesIds.Count)
             throw new Exception("Not all test cases were found.");
 
 
         testPlan.LinkedTestCases = testcases;
+
 
         // Save the test plan
         await db.TestPlans.AddAsync(testPlan);

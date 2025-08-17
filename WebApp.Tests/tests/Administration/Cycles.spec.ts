@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as actions from '../../TestSteps/ReusableTestSteps';
 import * as login from '../../TestSteps/LoginbyRole';
+import * as filter from '../../TestSteps/FilterSteps';
 
 test.beforeEach('Login User',async ({ page }) => {
     login.LoginbyRole(page, login.Users.Admin);
@@ -35,12 +36,7 @@ test('Create a new Cycle', async ({ page }) => {
         await page.locator('.rz-notification-item > div:nth-child(2)').click();
     }
 
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
-    await page.getByLabel('Name filter value').click();
-    await page.getByLabel('Name filter value').fill(cycle_name);
-    await page.getByRole('button', { name: 'Apply' }).click();
-    await expect(page.locator('tr', { hasText: cycle_name })).toBeVisible();
+    await filter.filterTableModel(page, cycle_name);
 
     await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
     
@@ -59,13 +55,9 @@ test('Cycle with linked entities cannot be deleted or edited', async ({ page }) 
     await actions.click_element(page, 'admin_menu');
     await actions.click_element(page, 'manage_cycles');
 
-    
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
-    await page.getByLabel('Name filter value').click();
-    await page.getByLabel('Name filter value').fill(cycle_name);
-    await page.getByRole('button', { name: 'Apply' }).click();
-    await expect(page.locator('tr', { hasText: cycle_name })).toBeVisible();
+
+    await filter.filterTableModel(page, cycle_name);
+
 
     await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
 

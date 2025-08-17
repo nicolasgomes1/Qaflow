@@ -66,7 +66,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
         await GetOrCreateRequirementAsync(dbContext, project, "Requirement B", "requirement is B", MANAGER);
 
-        for (var i = 1; i <= 50; i++)
+        for (var i = 1; i <= 20; i++)
             await GetOrCreateRequirementAsync(dbContext, project, $"Requirement {i}", $"requirement number is {i}",
                 MANAGER);
 
@@ -82,11 +82,12 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
             await GetOrCreateTestCaseAsync(dbContext, project, "Test Case 2", "Sample test case 2", MANAGER, null);
         await GetOrCreateTestCaseAsync(dbContext, project, "Test Case 3", "Sample test case ", USER, requirement);
 
-        for (var i = 1; i <= 50; i++)
+        for (var i = 1; i <= 10; i++)
             await GetOrCreateTestCaseAsync(dbContext, project, $"Test Case {i}.", $"Test Case number is {i}.", USER,
                 null);
 
-        await GetOrCreateTestCaseWithStepsAsync(dbContext, project, "Test Case 4", "Sample test case 4", null,
+        await GetOrCreateTestCaseWithStepsAsync(dbContext, project, "Test Case With Test Steps", "Sample test case 4",
+            null,
             testSteps);
 
 

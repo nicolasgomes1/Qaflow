@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as actions from '../../TestSteps/ReusableTestSteps';
 import * as login from '../../TestSteps/LoginbyRole';
+import * as filter from '../../TestSteps/FilterSteps';
 
 test.beforeEach('Login User',async ({ page }) => {
     login.LoginbyRole(page, login.Users.Admin);
@@ -31,13 +32,9 @@ test('Create a new User', async ({page}) =>{
 
     await actions.validate_button(page, 'users_create');
 
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').hover();
-    await page.getByRole('columnheader', { name: 'Name sort filter_alt' }).locator('i').click();
-    await page.getByLabel('Name filter value').click();
-    await page.getByLabel('Name filter value').fill(user_name);
-    await page.getByRole('button', { name: 'Apply' }).click();
-    await expect(page.locator('tr', { hasText: user_name })).toBeVisible();
 
+    await filter.filterTableModel(page, user_name);
+    
     await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
 
     await actions.click_button(page, 'users_delete');
