@@ -3,7 +3,7 @@ using Projects;
 var builder = DistributedApplication.CreateBuilder(args);
 
 
-//var tests = builder.AddNpmApp("webapptests", "../WebApp.Tests", "start");
+var tests = builder.AddNpmApp("webapp-e2e-tests", "../WebApp.Tests", "start");
 
 
 var dbPassword = builder.AddParameter("DatabasePassword", false);
@@ -23,7 +23,7 @@ var app = builder.AddProject<WebApp>("webapp")
 
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
 {
-    //   tests.WaitFor(app);
+    tests.WaitFor(app);
 }
 
 builder.Build().Run();
