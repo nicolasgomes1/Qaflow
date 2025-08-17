@@ -85,7 +85,6 @@ test('Edit New Requirement Specification', async ({ page })=> {
 
 });
 
-
 test('View New Requirement Specification', async ({ page })=> {
     test.slow();
     const Random = Math.floor(Math.random() * 1000000);
@@ -126,7 +125,6 @@ test('View New Requirement Specification', async ({ page })=> {
 
     
 });
-
 
 test('Delete Requirement Specification', async ({ page })=> {
 
