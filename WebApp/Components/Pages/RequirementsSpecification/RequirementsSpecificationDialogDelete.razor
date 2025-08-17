@@ -19,11 +19,6 @@
         {
             var hey = await RequirementsSpecificationModel.DeleteRequirementsSpecification(item);
 
-            if (OnRequirementDeleted.HasDelegate)
-            {
-                await OnRequirementDeleted.InvokeAsync();
-            }
-
             switch (hey)
             {
                 case true:
@@ -32,6 +27,11 @@
                 case false:
                     await FormNotificationService.NotifySuccess($"Requirements Specification with Id {item} was successfully deleted");
                     break;
+            }
+
+            if (OnRequirementDeleted.HasDelegate)
+            {
+                await OnRequirementDeleted.InvokeAsync();
             }
         }
     }

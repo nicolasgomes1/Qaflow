@@ -162,6 +162,12 @@ async function validate_input(page: Page, id: string, value: string)
     await expect(el).toHaveValue(value);
 }
 
+async function fill_input_and_validate(page: Page, id: string, value: string)
+{
+    await fill_input(page, id, value);
+    await validate_input(page, id, value);
+}
+
 async function select_dropdown_option(page: Page, id: string, option: string)
 {
     const el = page.getByTestId(id);
@@ -331,4 +337,8 @@ async function UploadFile(page: Page, id: string) {
 
 
 
-export { click_button, validate_button, fill_input, select_dropdown_option, submit_form, validate_input, validate_page_has_text, closeModal, LaunchProject, UploadFile, click_element, fill_date_picker, validate_button_disabled, check_checkbox };
+export { 
+    click_button, validate_button, fill_input, select_dropdown_option, 
+    submit_form, validate_input, validate_page_has_text, closeModal, 
+    LaunchProject, UploadFile, click_element, fill_date_picker, 
+    validate_button_disabled, check_checkbox, fill_input_and_validate };

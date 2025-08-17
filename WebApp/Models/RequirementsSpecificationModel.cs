@@ -93,7 +93,9 @@ public class RequirementsSpecificationModel(
 
         var noExceptions = 0;
 
-        var found = await db.RequirementsSpecification.FindAsync(requirementSpecificationId);
+        var found = await db.RequirementsSpecification
+            .Include(t => t.LinkedRequirements)
+            .FirstOrDefaultAsync(t => t.Id == requirementSpecificationId);
         if (found == null) throw new Exception();
         var hasReq = found.LinkedRequirements.Any();
         switch (hasReq)

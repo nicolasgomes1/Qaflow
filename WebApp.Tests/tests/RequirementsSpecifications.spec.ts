@@ -13,8 +13,6 @@ test.afterEach('Logout User',async ({ page }) => {
 });
 
 
-
-
 test('Create New Requirement Specification', async ({ page })=> {
     test.slow();
     const Random = Math.floor(Math.random() * 1000000);
@@ -26,12 +24,13 @@ test('Create New Requirement Specification', async ({ page })=> {
     await actions.click_button(page, 'requirements_specification_create');
 
     const name = 'Test Requirement Playwright' + Random;
-    await actions.fill_input(page, 'requirements_specification_name', name);
-    await actions.validate_input(page, 'requirements_specification_name', name);
-
+    
+    await actions.fill_input_and_validate(page, 'requirements_specification_name', name);
+    
     const description ='Test Requirement Playwright Description' + Random;
-    await actions.fill_input(page, 'requirements_specification_description', description);
-    await actions.validate_input(page, 'requirements_specification_description', description);
+
+    await actions.fill_input_and_validate(page, 'requirements_specification_description', description);
+    
 
     await actions.closeModal(page, "submit_dialog");
     await actions.validate_button(page, 'requirements_specification_create');
@@ -43,7 +42,7 @@ test('Create New Requirement Specification', async ({ page })=> {
     // Ensure the dialog is visible
     const dialog = page.locator('.rz-dialog');
 
-// Check if the dialog is visible
+    // Check if the dialog is visible
     await expect(dialog).toBeVisible();
 
     await page.getByRole('button', { name: 'Ok' }).first().click();
@@ -85,10 +84,36 @@ test('View New Requirement Specification', async ({ page })=> {
     await expect(dialog.locator(`text=${name}`)).toBeVisible();
     await expect(dialog.locator(`text=${description}`)).toBeVisible();
 
-   const close = page.locator('.rz-dialog-titlebar-close');
+    const close = page.locator('.rz-dialog-titlebar-close');
     await close.click({force: true});
 
 
     
 });
 
+
+test('Delete Requirement Specification', async ({ page })=> {
+
+    test.slow();
+    const Random = Math.floor(Math.random() * 1000000);
+
+    await actions.LaunchProject(page, 'Demo Project Without Data' );
+
+    await actions.click_button(page, 'd_requirementsSpecification');
+
+    await actions.click_button(page, 'requirements_specification_create');
+    await page.waitForLoadState('networkidle')
+    const name = 'Test Requirement Playwright' + Random;
+    await actions.fill_input(page, 'requirements_specification_name', name);
+
+    const description ='Test Requirement Playwright Description' + Random;
+    await actions.fill_input(page, 'requirements_specification_description',description );
+
+    await actions.closeModal(page, "submit_dialog");
+
+    await actions.validate_button(page, 'requirements_specification_create');
+
+    await filter.filterTableModel(page, name);
+
+    await actions.click_button(page, 'delete');
+})
