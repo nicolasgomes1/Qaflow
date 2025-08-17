@@ -13,8 +13,8 @@
         <RadzenTabsItem Text="Test Execution">
             <ViewTestExecutionData Id="Id" ProjectId="ProjectId"/>
         </RadzenTabsItem>
-        <RadzenTabsItem Text="Past Test Execution">
-            <PastTestExecutionsTable Id="Id" ProjectId="ProjectId"/>
+        <RadzenTabsItem Text="Past Test Execution" Disabled="@(_testExecutionList.Count == 0)">
+            <PastTestExecutionsTable Id="Id" ProjectId="ProjectId" TestExecutionList="_testExecutionList"/>
         </RadzenTabsItem>
 
         <RadzenTabsItem Text="Associated Test Cases">
@@ -44,12 +44,15 @@
 
     private TestExecution _testExecution = new();
     private TestExecution _newTestExecution = new();
+    private List<TestExecution> _testExecutionList = [];
+
     int _selectedIndex;
     bool _isArchived;
 
     protected override async Task OnInitializedAsync()
     {
         _testExecution = await TestExecutionModel.GetTestExecutionbyIdAsync(Id);
+        _testExecutionList = await TestExecutionModel.GetPastTestExecutions(Id);
 
         if (_testExecution.IsActive == false)
         {

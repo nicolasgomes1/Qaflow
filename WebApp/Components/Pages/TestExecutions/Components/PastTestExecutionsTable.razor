@@ -6,7 +6,7 @@
     <AlertTitle TitleText="Past Execution Status"/>
 
 
-    <RadzenDataGrid Data="@_testExecutionList" TItem="TestExecution" AllowPaging="false" AllowSorting="false"
+    <RadzenDataGrid Data="@TestExecutionList" TItem="TestExecution" AllowPaging="false" AllowSorting="false"
                     RowRender="@OnRowRender" AllowAlternatingRows="false">
         <Columns>
             <RadzenDataGridColumn Property="@nameof(TestExecution.Id)" Title="ID" Width="70px"/>
@@ -36,13 +36,8 @@
 
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
-    private List<TestExecution> _testExecutionList = [];
+    [Parameter] public List<TestExecution> TestExecutionList { get; set; } = [];
 
-    
-    protected override async Task OnInitializedAsync()
-    {
-        _testExecutionList = await TestExecutionModel.GetPastTestExecutions(Id);
-    }
 
     private void OnRowRender(RowRenderEventArgs<TestExecution> args)
     {
