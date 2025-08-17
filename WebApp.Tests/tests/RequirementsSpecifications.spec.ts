@@ -54,7 +54,8 @@ test('Edit New Requirement Specification', async ({ page })=> {
     const Random = Math.floor(Math.random() * 1000000);
     const name = 'Test Requirements Playwright' + Random;
     const description ='Test Requirement Playwright Description' + Random;
-    
+    const editedName = 'Test Requirement Playwright duck' + Random;
+
     await actions.LaunchProject(page, 'Demo Project Without Data' );
 
     await actions.click_button(page, 'd_requirementsSpecification');
@@ -75,7 +76,6 @@ test('Edit New Requirement Specification', async ({ page })=> {
 
     await actions.clear_input(page, 'requirements_specification_name');
     
-    const editedName = 'Test Requirement Playwright duck' + Random;
     await actions.fill_input_and_validate(page, 'requirements_specification_name', editedName);
     await actions.closeModal(page, "submit_dialog");
 
