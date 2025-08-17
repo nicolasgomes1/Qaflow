@@ -49,6 +49,42 @@ test('Create New Requirement Specification', async ({ page })=> {
     await expect(page.getByRole('table')).not.toContainText('Test Requirement Playwright' + Random);
 });
 
+test('Edit New Requirement Specification', async ({ page })=> {
+    test.slow();
+    const Random = Math.floor(Math.random() * 1000000);
+    const name = 'Test Requirements Playwright' + Random;
+    const description ='Test Requirement Playwright Description' + Random;
+    
+    await actions.LaunchProject(page, 'Demo Project Without Data' );
+
+    await actions.click_button(page, 'd_requirementsSpecification');
+
+    await actions.click_button(page, 'requirements_specification_create');
+    
+    await actions.fill_input_and_validate(page, 'requirements_specification_name', name);
+    await actions.fill_input_and_validate(page, 'requirements_specification_description', description);
+    
+    await actions.closeModal(page, "submit_dialog");
+    await actions.validate_button(page, 'requirements_specification_create');
+
+    await filter.filterTableModel(page, name);
+    
+    await actions.click_button(page, 'edit');
+    await actions.validate_input(page, 'requirements_specification_name', name);
+    await actions.validate_input(page, 'requirements_specification_description', description);
+
+    await actions.clear_input(page, 'requirements_specification_name');
+    
+    const editedName = 'Test Requirement Playwright duck' + Random;
+    await actions.fill_input_and_validate(page, 'requirements_specification_name', editedName);
+    await actions.closeModal(page, "submit_dialog");
+
+    await filter.filterTableModel(page, editedName);
+    await expect(page.getByRole('table')).toContainText(editedName);
+
+
+});
+
 
 test('View New Requirement Specification', async ({ page })=> {
     test.slow();

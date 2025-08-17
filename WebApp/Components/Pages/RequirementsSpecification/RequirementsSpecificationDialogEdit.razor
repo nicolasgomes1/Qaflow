@@ -50,6 +50,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Name"/>
                         <RadzenTextBox id="name"
+                                       data-testid="requirements_specification_name"
                                        @bind-Value="_requirements.Name"
                                        class="input-style"
                                        Name="name"/>
@@ -59,6 +60,7 @@
                     <div class="form-group mb-4">
                         <RadzenLabel Text="Description"/>
                         <RadzenTextArea id="description"
+                                        data-testid="requirements_specification_description"
                                         @bind-Value="_requirements.Description"
                                         class="input-style"
                                         Name="description"/>
@@ -68,6 +70,7 @@
 
                     <!-- Submit button inside the form -->
                     <RadzenButton Icon="update" Text="Requirements Specification" ButtonStyle="ButtonStyle.Warning"
+                                  data-testid="submit_dialog"
                                   ButtonType="ButtonType.Submit"
                                   Style="margin-bottom: 10px;"/>
                 </RadzenTemplateForm>

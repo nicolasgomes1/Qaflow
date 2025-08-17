@@ -7,7 +7,7 @@
     "test:chromium": "playwright test --project=\"Google Chrome\" --headed",
     "test:headless": "playwright test --project=\"Google Chrome\" && npx playwright show-report",
     "posttest:requirements": "playwright test ./tests/Requirements.spec.ts --retries=0 --headed --project=\"Google Chrome\"",
-    "posttest:requirementsspec": "playwright test ./tests/RequirementsSpecifications.spec.ts:130  --retries=0 --headed --project=\"Google Chrome\"",
+    "posttest:requirementsspec": "playwright test ./tests/RequirementsSpecifications.spec.ts:52  --retries=0 --headed --project=\"Google Chrome\"",
     "posttest:testplans": "playwright test ./tests/TestPlans.spec.ts  --retries=0 --headed --project=\"Google Chrome\"",
     "posttest:testcases": "playwright test ./tests/TestCases.spec.ts  --retries=0 --headed --project=\"Google Chrome\"",
     "posttest:cycles": "playwright test ./tests/Administration/Cycles.spec.ts  --retries=0 --headed --project=\"Google Chrome\"",
