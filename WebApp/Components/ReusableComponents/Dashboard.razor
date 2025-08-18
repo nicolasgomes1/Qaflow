@@ -1,4 +1,5 @@
-﻿<RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
+﻿@using Microsoft.AspNetCore.Mvc.ModelBinding
+<RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
     <RadzenCard Style="max-width: 300px; flex: 1 1 420px; margin: 10px;">
         <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
                      AlignItems="AlignItems.Center">
@@ -31,6 +32,7 @@
             <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal"
                          JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
                 <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_requirementsCount"/>
+                <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_requirementsSpecificationCount"/>
                 <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@_requirementsWithSpec"/>
                 <RadzenBadge BadgeStyle="BadgeStyle.Base" Text="@($" {req}%")"/>
 
@@ -278,6 +280,7 @@
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     private string _requirementsCount = string.Empty;
+    private string _requirementsSpecificationCount = string.Empty;
     private string _testCasesCount = string.Empty;
     private string _testPlansCount = string.Empty;
     private string _testExecutionsCount = string.Empty;
@@ -296,6 +299,7 @@
         _testCasesCount = ReportsModel.LoadTotalTestCases(ProjectId);
         _testPlansCount = ReportsModel.LoadTotalTestPlans(ProjectId);
         _testExecutionsCount = ReportsModel.LoadTotalTestExecutions(ProjectId);
+        _requirementsSpecificationCount = await ReportsModel.LoadTotalRequirementsSpecifications(ProjectId);
         _bugsCount = ReportsModel.LoadTotalBugs(ProjectId);
         _testExecutionsReady = await TestExecutionModel.GetTestExecutionsReadyToExecuteAsync(ProjectId);
         _testcaseByTypeAcceptance = await TestCasesReporting.GetTestCasesByTestType(ProjectId, TestTypes.AcceptanceTest);

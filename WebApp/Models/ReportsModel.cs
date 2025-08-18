@@ -158,6 +158,12 @@ public class ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFacto
         return projectRequirementsSpecifications;
     }
 
+    public async Task<int> GetRequirementsSpecifications(int projectId)
+    {
+        await using var db = await dbContextFactor.CreateDbContextAsync();
+        return await db.RequirementsSpecification.CountAsync(rs => rs.ProjectsId == projectId);
+    }
+
     public async Task<double> RequirementsCoveredBySpecifications(int projectId)
     {
         var projectRequirementsSpecifications = await TotalRequirementsSpecifications(projectId);
@@ -177,6 +183,15 @@ public class ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFacto
         return requirementsWithSpecificationsCount == 0
             ? "No Requirements with Spec"
             : $"Requirements with Spec: {requirementsWithSpecificationsCount}";
+    }
+
+    public async Task<string> LoadTotalRequirementsSpecifications(int projectId)
+    {
+        var projectRequirementsSpecifications = await GetRequirementsSpecifications(projectId);
+        var projectReqSpec = projectRequirementsSpecifications.ToString();
+        return projectReqSpec == "0"
+            ? "No Requirements Specifications"
+            : $"Requirements Specifications: {projectReqSpec}";
     }
 
 
