@@ -118,9 +118,9 @@ public class ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFacto
         return projectTestCases == "0" ? "No Test Cases" : $"Test Cases: {projectTestCases}";
     }
 
-    public string LoadTotalTestPlans(int projectId)
+    public async Task<string> LoadTotalTestPlans(int projectId)
     {
-        using var db = dbContextFactor.CreateDbContext();
+        await using var db = await dbContextFactor.CreateDbContextAsync();
 
         var projectTestPlans = db.TestPlans.Count(tp => tp.ProjectsId == projectId)
             .ToString();
@@ -138,9 +138,9 @@ public class ReportsModel(IDbContextFactory<ApplicationDbContext> dbContextFacto
         return projectTestExecutions == "0" ? "No Test Executions" : $"Test Executions: {projectTestExecutions}";
     }
 
-    public string LoadTotalBugs(int projectId)
+    public async Task<string> LoadTotalBugs(int projectId)
     {
-        using var db = dbContextFactor.CreateDbContext();
+        await using var db = await dbContextFactor.CreateDbContextAsync();
 
         var projectBugs = db.Bugs.Count(b => b.ProjectsId == projectId).ToString();
         return projectBugs == "0" ? "No Bugs" : $"Bugs: {projectBugs}";

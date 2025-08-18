@@ -27,6 +27,11 @@
                                     <RadzenLabel Text="@_testExecution.Description"/>
                                 </RadzenStack>
 
+                                <RadzenStack Orientation="Orientation.Horizontal">
+                                    <RadzenLabel Text="Estimated Time:" Style="font-weight: bold;"/>
+                                    <RadzenLabel Text=@_testExecution.EstimatedTime.ToString(@"hh\:mm\:ss")/>
+                                </RadzenStack>
+
 
                                 <RadzenStack Orientation="Orientation.Horizontal">
                                     <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>

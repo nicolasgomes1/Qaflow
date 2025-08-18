@@ -68,6 +68,10 @@
                         @bind-Value="TestExecutionModelv2.SelectedTestPlan"
                         TextProperty="Name"
                         ValueProperty="Id"
+                        AllowFiltering="true"
+                        AllowClear="true"
+                        AllowVirtualization="true"
+                        Placeholder="Only completed test plans will be displayed"
                         class="input-style"
                         Name="testplan"/>
         <RadzenRequiredValidator Component="testplan" Text="Test Plan is required" DefaultValue="-1"/>

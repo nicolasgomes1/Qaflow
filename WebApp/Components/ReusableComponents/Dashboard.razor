@@ -309,10 +309,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _requirementsWithSpec = await ReportsModel.RequirementsWithRequirementspecifications(ProjectId);
 
-
-        req = await ReportsModel.RequirementsCoveredBySpecifications(ProjectId);
 
         await RefreshRequirementsSpecification();
         await RefreshRequirements();
@@ -330,6 +327,8 @@
     private async Task RefreshRequirements()
     {
         _requirementsCount = await ReportsModel.LoadTotalRequirements(ProjectId);
+        _requirementsWithSpec = await ReportsModel.RequirementsWithRequirementspecifications(ProjectId);
+        req = await ReportsModel.RequirementsCoveredBySpecifications(ProjectId);
     }
 
     private async Task RefreshTestCases()
@@ -342,12 +341,12 @@
 
     private async Task RefreshTestPlans()
     {
-        _testPlansCount = ReportsModel.LoadTotalTestPlans(ProjectId);
+        _testPlansCount = await ReportsModel.LoadTotalTestPlans(ProjectId);
     }
 
     private async Task RefreshBugs()
     {
-        _bugsCount = ReportsModel.LoadTotalBugs(ProjectId);
+        _bugsCount = await ReportsModel.LoadTotalBugs(ProjectId);
     }
 
     private async Task RefreshTestExecutions()

@@ -107,13 +107,12 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
         existingTestExecution.ArchivedStatus = testExecution.ArchivedStatus;
         existingTestExecution.Name = testExecution.Name;
         existingTestExecution.Description = testExecution.Description;
-        existingTestExecution.EstimatedTime = testExecution.EstimatedTime;
         existingTestExecution.AssignedTo = testExecution.AssignedTo;
         existingTestExecution.Priority = testExecution.Priority;
         existingTestExecution.ExecutionStatus = testExecution.ExecutionStatus;
         existingTestExecution.Version = testExecution.Version;
-        existingTestExecution.EstimatedTime = testExecution.EstimatedTime;
-
+        existingTestExecution.EstimatedTime =
+            TimeSpan.FromMinutes(int.TryParse(EstimatedTimeInput, out var minutes) ? minutes : 0);
         if (existingTestExecution.TestPlanId != SelectedTestPlan)
         {
             var newTestPlan = await db.TestPlans

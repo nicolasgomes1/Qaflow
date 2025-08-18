@@ -30,6 +30,16 @@ else
         </div>
 
         <div class="form-group mb-4">
+            <RadzenLabel Text="Estimated Time (in minutes)"/>
+            <RadzenTextBox id="estimatedTime"
+                           data-testid="testexecution_estimatedtime"
+                           @bind-Value="TestExecutionModelv2.EstimatedTimeInput"
+                           Placeholder="Enter time in minutes"
+                           class="input-style"
+                           Name="estimatedTime"/>
+        </div>
+
+        <div class="form-group mb-4">
             <RadzenLabel Text="Test Plan"/>
             <RadzenDropDown id="testplan"
                             Data="@_testPlansList"
