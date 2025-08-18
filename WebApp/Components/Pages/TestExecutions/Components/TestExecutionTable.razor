@@ -2,20 +2,24 @@
 
 <RadzenDataGrid AllowFiltering="true"
                 AllowColumnResize="true"
-                AllowAlternatingRows="false"
+                AllowColumnReorder="true"
+                AllowAlternatingRows="true"
                 FilterMode="FilterMode.Advanced"
                 AllowSorting="true"
-                PageSize="10"
                 AllowPaging="true"
-                Density="Density.Compact"
+                AllowColumnPicking="true"
                 PagerHorizontalAlign="HorizontalAlign.Left"
                 ShowPagingSummary="true"
+                AllowVirtualization="true"
                 Data="@_testexecution"
-                ColumnWidth="300px"
+                ColumnWidth="auto"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
                 @bind-Value="@_selectedTestExecutions"
-                @ref="_dataGrid">
+                @bind-Settings="@DataGridSettingsService.Settings"
+                @ref="_dataGrid"
+                PageSizeOptions="@_pageSizeOptions"
+                Density="Density.Compact">
     <HeaderTemplate>
         <RadzenButton Text="Test Execution"
                       data-testid="create-testexecutions"
@@ -101,6 +105,7 @@
 
     private IList<TestExecution> _selectedTestExecutions = [];
     private List<TestExecution> _testexecution = [];
+    readonly IEnumerable<int> _pageSizeOptions = [10, 20, 30, 40, 50];
 
     private RadzenDataGrid<TestExecution> _dataGrid = new();
 

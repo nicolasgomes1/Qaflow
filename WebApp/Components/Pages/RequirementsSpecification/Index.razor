@@ -6,20 +6,26 @@
     <RequirementsDialogCreate Title="" ProjectId="ProjectId" OnRequirementCreated="() => RefreshPage()"/>
 </div>
 
-<RadzenDataGrid Data="@_requirementsSpecification"
-                ColumnWidth="auto"
-                TItem="RequirementsSpecification"
-                AllowFiltering="true"
+<RadzenDataGrid AllowFiltering="true"
+                AllowColumnResize="true"
+                AllowColumnReorder="true"
+                AllowAlternatingRows="true"
+                FilterMode="FilterMode.Advanced"
                 AllowSorting="true"
                 AllowPaging="true"
                 AllowColumnPicking="true"
-                PageSize="10"
-                Density="Density.Compact"
+                PagerHorizontalAlign="HorizontalAlign.Left"
+                ShowPagingSummary="true"
+                AllowVirtualization="true"
+                Data="@_requirementsSpecification"
+                ColumnWidth="auto"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
                 @bind-Value="@_selectedRequirementsSpecifications"
+                @bind-Settings="@DataGridSettingsService.Settings"
                 @ref="_dataGrid"
-                AllowVirtualization="true">
+                PageSizeOptions="@_pageSizeOptions"
+                Density="Density.Compact">
 
     <HeaderTemplate>
         <RequirementsSpecificationDialogCreate Title="Requirement Specification" ProjectId="ProjectId"
@@ -59,6 +65,7 @@
 
 @code{
     [Parameter] public int ProjectId { get; set; }
+    readonly IEnumerable<int> _pageSizeOptions = [10, 20, 30, 40, 50];
 
 
     private IList<RequirementsSpecification> _selectedRequirementsSpecifications = [];

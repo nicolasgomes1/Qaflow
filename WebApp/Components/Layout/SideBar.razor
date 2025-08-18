@@ -85,7 +85,7 @@
         if (ProjectId != 0)
         {
             _hasProjectSet = true;
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         }
     }
 

@@ -2,21 +2,26 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
 
-<RadzenDataGrid TItem="Bugs"
-                Data="_bugs"
-                Density="Density.Compact"
-                AllowFiltering="true"
+<RadzenDataGrid AllowFiltering="true"
+                AllowColumnResize="true"
+                AllowColumnReorder="true"
+                AllowAlternatingRows="true"
+                FilterMode="FilterMode.Advanced"
                 AllowSorting="true"
-                ColumnWidth="auto"
                 AllowPaging="true"
                 AllowColumnPicking="true"
-                PageSize="10"
                 PagerHorizontalAlign="HorizontalAlign.Left"
                 ShowPagingSummary="true"
+                AllowVirtualization="true"
+                Data="@_bugs"
+                ColumnWidth="auto"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single"
                 @bind-Value="@_selectedBugs"
-                @ref="_dataGrid">
+                @bind-Settings="@DataGridSettingsService.Settings"
+                @ref="_dataGrid"
+                PageSizeOptions="@_pageSizeOptions"
+                Density="Density.Compact">
 
 
     @code{
@@ -99,6 +104,7 @@
 
 @code {
     [Parameter] public int ProjectId { get; set; }
+    readonly IEnumerable<int> _pageSizeOptions = [10, 20, 30, 40, 50];
 
     private RadzenDataGrid<Bugs> _dataGrid = new();
 

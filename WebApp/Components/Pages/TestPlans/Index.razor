@@ -10,22 +10,24 @@ else
 {
     <RadzenDataGrid AllowFiltering="true"
                     AllowColumnResize="true"
-                    AllowAlternatingRows="false"
+                    AllowColumnReorder="true"
+                    AllowAlternatingRows="true"
                     FilterMode="FilterMode.Advanced"
                     AllowSorting="true"
-                    PageSize="@_pageSizeFilter"
                     AllowPaging="true"
                     AllowColumnPicking="true"
                     PagerHorizontalAlign="HorizontalAlign.Left"
                     ShowPagingSummary="true"
+                    AllowVirtualization="true"
                     Data="@_testplans"
-                    ColumnWidth="300px"
-                    Density="Density.Compact"
+                    ColumnWidth="auto"
                     LogicalFilterOperator="LogicalFilterOperator.Or"
                     SelectionMode="DataGridSelectionMode.Single"
                     @bind-Value="@_selectedTestPlans"
                     @bind-Settings="@DataGridSettingsService.Settings"
-                    @ref="_dataGrid">
+                    @ref="_dataGrid"
+                    PageSizeOptions="@_pageSizeOptions"
+                    Density="Density.Compact">
 
         <HeaderTemplate>
             <RadzenButton Text="Test Plan"
@@ -101,11 +103,6 @@ else
 
         </Columns>
 
-        <FooterTemplate>
-            <RadzenGridRow>
-                <PageSizeSelector PageSizeChanged="OnPageSizeChanged"/>
-            </RadzenGridRow>
-        </FooterTemplate>
     </RadzenDataGrid>
 }
 
@@ -116,20 +113,14 @@ else
     private IEnumerable<TestPlans>? _testplans;
 
     private IList<TestPlans> _selectedTestPlans = [];
+    readonly IEnumerable<int> _pageSizeOptions = [10, 20, 30, 40, 50];
 
     private readonly string _gridId = "testplans"; // Unique identifier for this grid
 
     private bool _isLoading = true;
-    int _pageSizeFilter = 10;
 
     private RadzenDataGrid<TestPlans> _dataGrid = new();
 
-    private async Task OnPageSizeChanged(int newSize)
-    {
-        _pageSizeFilter = newSize;
-        await Task.Delay(1);
-        StateHasChanged();
-    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -149,8 +140,6 @@ else
         if (firstRender)
         {
             await DataGridSettingsService.LoadSettingsAsync();
-            _isLoading = false; // Stop showing the loading spinner after settings are applied
-            StateHasChanged(); // Re-render with updated settings
         }
     }
 
