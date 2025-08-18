@@ -72,7 +72,7 @@ async function validate_button_disabled(page: Page, id: string) {
  * @param {string} id - data-testid to locate the element.
  * @param {string} value - value to be filled in the input element.
  */
-async function fill_input(page: Page, id: string, value: string) {
+export async function fill_input(page: Page, id: string, value: string) {
     const maxTries = 3;
     let retryCount = 0;
 
@@ -81,37 +81,44 @@ async function fill_input(page: Page, id: string, value: string) {
             const el = page.getByTestId(id);
             await el.waitFor({ state: 'visible', timeout: 5000 });
 
-            // Force click to avoid hidden overlay issues
+            // Force focus to avoid overlays
             await el.click({ force: true });
 
-            // Clear the input before filling
-            await el.fill('');
+            // ✅ Clear safely by selecting all + delete
+            await el.press('ControlOrMeta+A');
+            await el.press('Delete');
+
+            // ✅ Now type the value
             await el.fill(value);
 
-            // Wait briefly to ensure UI catches up
+            // Brief pause for UI reactivity
             await page.waitForTimeout(100);
 
-            // Trigger blur by pressing Tab
+            // Trigger blur
             await el.press('Tab');
 
-            // Double-check value
+            // Verify value
             await expect(el).toHaveValue(value, { timeout: 3000 });
 
-            break; // Success
+            return; // success
         } catch (error) {
             retryCount++;
-            console.warn(`Attempt ${retryCount} failed to fill input with data-testid="${id}". Retrying...`);
+            console.warn(
+                `Attempt ${retryCount} failed to fill input with data-testid="${id}". Retrying...`
+            );
+
             if (retryCount === maxTries) {
-                console.error(`❌ Failed to fill input with data-testid="${id}" after ${maxTries} attempts.`);
-                throw error; // Let the test fail
+                console.error(
+                    `❌ Failed to fill input with data-testid="${id}" after ${maxTries} attempts.`
+                );
+                throw error;
             }
 
-            // Add short backoff to reduce retry flakiness
+            // small backoff
             await page.waitForTimeout(250);
         }
     }
 }
-
 async function check_checkbox(page: Page, id: string) {
     const checkbox = page.getByTestId(id);
     await checkbox.waitFor({ state: 'visible' });
@@ -343,6 +350,7 @@ async function UploadFile(page: Page, id: string) {
 
 
 
+// @ts-ignore
 export { 
     click_button, validate_button, fill_input, select_dropdown_option, 
     submit_form, validate_input, validate_page_has_text, closeModal, 
