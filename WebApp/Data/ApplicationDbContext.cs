@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using WebApp.Services;
 
 namespace WebApp.Data;
 
@@ -180,11 +181,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey(tse => tse.TestStepsId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<TestExecution>()
-            .HasMany<TestCaseExecution>(tce => tce.LinkedTestCaseExecutions)
-            .WithOne()
-            .OnDelete(DeleteBehavior.Cascade);
-
         modelBuilder.Entity<TestCaseExecution>()
             .HasMany<TestStepsExecution>(tse => tse.LinkedTestStepsExecution)
             .WithOne()
@@ -199,5 +195,46 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasMany<TestPlans>()
             .WithOne(t => t.Cycle)
             .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    /// <summary>
+    /// Save and Update with user information and timestamp automatically
+    /// </summary>
+    /// <param name="userService"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    public Task<int> SaveChangesAsync(UserService userService, CancellationToken cancellationToken = default)
+    {
+        var now = DateTime.UtcNow;
+        var user = userService.GetCurrentUserInfoAsync().Result.UserName;
+
+        foreach (var e in ChangeTracker.Entries<BaseEntity>())
+        {
+            switch (e.State)
+            {
+                case EntityState.Added:
+                    e.Entity.CreatedAt = now;
+                    e.Entity.CreatedBy = user;
+                    e.Entity.ModifiedAt = now;
+                    e.Entity.ModifiedBy = user;
+                    break;
+
+                case EntityState.Modified:
+                    e.Entity.ModifiedAt = now;
+                    e.Entity.ModifiedBy = user;
+                    break;
+                case EntityState.Detached:
+                    break;
+                case EntityState.Unchanged:
+                    break;
+                case EntityState.Deleted:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
     }
 }

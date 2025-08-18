@@ -17,7 +17,7 @@ namespace WebApp.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -321,6 +321,9 @@ namespace WebApp.Data.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ArchivedStatus")
+                        .HasColumnType("integer");
 
                     b.Property<int>("BugId")
                         .HasColumnType("integer");
@@ -757,9 +760,6 @@ namespace WebApp.Data.Migrations
                     b.Property<int>("TestExecutionId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("TestExecutionId1")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Version")
                         .HasColumnType("integer");
 
@@ -768,8 +768,6 @@ namespace WebApp.Data.Migrations
                     b.HasIndex("TestCaseId");
 
                     b.HasIndex("TestExecutionId");
-
-                    b.HasIndex("TestExecutionId1");
 
                     b.ToTable("TestCaseExecution");
                 });
@@ -1454,15 +1452,11 @@ namespace WebApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApp.Data.TestExecution", null)
+                    b.HasOne("WebApp.Data.TestExecution", "TestExecution")
                         .WithMany("LinkedTestCaseExecutions")
                         .HasForeignKey("TestExecutionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("WebApp.Data.TestExecution", "TestExecution")
-                        .WithMany()
-                        .HasForeignKey("TestExecutionId1");
 
                     b.Navigation("TestCases");
 

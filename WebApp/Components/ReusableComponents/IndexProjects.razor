@@ -108,7 +108,7 @@
     async Task GoToProject(int projectId)
     {
         await ProjectState.SetCurrentProjectAsync(projectId);
-        NavigationManager.NavigateTo($"/project/{projectId}");
+        NavigationManager.NavigateTo($"/project/{projectId}", true);
     }
 
     void EditProject(int projectId)

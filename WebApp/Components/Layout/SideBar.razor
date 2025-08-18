@@ -65,8 +65,10 @@
         {
             ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
             if (ProjectId != 0)
+            {
                 _hasProjectSet = true;
-            await InvokeAsync(StateHasChanged);
+                StateHasChanged();
+            }
         }
     }
 
@@ -80,8 +82,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await InvokeAsync(StateHasChanged);
-        await Task.CompletedTask;
+        if (ProjectId != 0)
+        {
+            _hasProjectSet = true;
+            InvokeAsync(StateHasChanged);
+        }
     }
 
 

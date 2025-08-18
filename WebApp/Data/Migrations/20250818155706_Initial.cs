@@ -372,11 +372,12 @@ namespace WebApp.Data.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Comment = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    BugId = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     ModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    BugId = table.Column<int>(type: "integer", nullable: false)
+                    ArchivedStatus = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -741,7 +742,6 @@ namespace WebApp.Data.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TestExecutionId = table.Column<int>(type: "integer", nullable: false),
-                    TestExecutionId1 = table.Column<int>(type: "integer", nullable: true),
                     TestCaseId = table.Column<int>(type: "integer", nullable: false),
                     ExecutionStatus = table.Column<int>(type: "integer", nullable: false),
                     Version = table.Column<int>(type: "integer", nullable: false),
@@ -769,11 +769,6 @@ namespace WebApp.Data.Migrations
                         principalTable: "TestExecution",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TestCaseExecution_TestExecution_TestExecutionId1",
-                        column: x => x.TestExecutionId1,
-                        principalTable: "TestExecution",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -936,11 +931,6 @@ namespace WebApp.Data.Migrations
                 name: "IX_TestCaseExecution_TestExecutionId",
                 table: "TestCaseExecution",
                 column: "TestExecutionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TestCaseExecution_TestExecutionId1",
-                table: "TestCaseExecution",
-                column: "TestExecutionId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestCases_BugsId",

@@ -16,12 +16,12 @@
         {
             if (ProjectId is 0)
             {
-                NavigationManager.NavigateTo("/");
+                NavigationManager.NavigateTo("/", true);
                 FormNotificationService.NotifyInfo("Returning to the Hub Home Page as no Project is selected");
                 return;
             }
 
-            NavigationManager.NavigateTo($"/project/{ProjectId}");
+            NavigationManager.NavigateTo($"/project/{ProjectId}", true);
             FormNotificationService.NotifyInfo("Returning to Home Page");
         }
 
@@ -139,6 +139,7 @@
     protected override async Task OnInitializedAsync()
     {
         await UpdateAuthenticationState();
+        StateHasChanged(); // Ensure UI updates
         NavigationManager.LocationChanged += OnLocationChanged;
     }
 
@@ -146,7 +147,7 @@
     {
         await ProjectState.ResetCurrentProjectAsync();
         //  ProjectStateService.ClearProjectId();
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/", true);
     }
 
     private async Task UpdateAuthenticationState()

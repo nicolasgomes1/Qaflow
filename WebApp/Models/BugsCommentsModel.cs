@@ -16,13 +16,13 @@ public class BugsCommentsModel(IDbContextFactory<ApplicationDbContext> dbContext
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        bugsComment.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
-        bugsComment.CreatedAt = DateTime.UtcNow;
+        // bugsComment.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
+        // bugsComment.CreatedAt = DateTime.UtcNow;
         bugsComment.BugId = bugId;
 
 
         await db.BugsComments.AddAsync(bugsComment);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(userService);
     }
 
     public async Task DeleteBugComment(int bugCommentId)
@@ -41,10 +41,10 @@ public class BugsCommentsModel(IDbContextFactory<ApplicationDbContext> dbContext
         if (bugCommentDb is null) throw new Exception("Bug Comment not found");
 
         bugCommentDb.Comment = bugsComment.Comment;
-        bugCommentDb.ModifiedAt = DateTime.UtcNow;
-        bugCommentDb.ModifiedBy = (await userService.GetCurrentUserInfoAsync()).UserName;
+        //  bugCommentDb.ModifiedAt = DateTime.UtcNow;
+        //  bugCommentDb.ModifiedBy = (await userService.GetCurrentUserInfoAsync()).UserName;
 
         db.BugsComments.Update(bugCommentDb);
-        await db.SaveChangesAsync(); // <--- missing!
+        await db.SaveChangesAsync(userService);
     }
 }
