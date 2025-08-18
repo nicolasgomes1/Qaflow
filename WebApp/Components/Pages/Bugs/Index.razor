@@ -112,6 +112,7 @@
     async Task RefreshData()
     {
         _bugs = await BugsModel.GetBugsAsync(ProjectId);
+        await InvokeAsync(StateHasChanged);
     }
 
 

@@ -77,10 +77,7 @@
                 if (item is null) throw new Exception($"{item} is null");
                 db.Remove(item);
                 await db.SaveChangesAsync();
-                if (OnActionExecuted.HasDelegate)
-                {
-                    await InvokeAsync(StateHasChanged);
-                }
+                await OnActionExecuted.InvokeAsync();
             }
         }
         catch (Exception e)

@@ -84,7 +84,9 @@
             try
             {
                 await ProjectModel.RemoveProject(projectId);
+
                 NavigationManager.NavigateTo("/");
+                await RefreshPage();
             }
             catch (Exception ex)
             {
