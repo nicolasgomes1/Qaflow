@@ -27,7 +27,7 @@
                       ButtonStyle="ButtonStyle.Warning"
                       MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Requirements List"))"
                       MouseLeave="@AppTooltipService.HideTooltip"
-                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements", true))'/>
+                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements"))'/>
     </RadzenStack>
 </RadzenStack>
 

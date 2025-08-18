@@ -72,7 +72,7 @@
 
     private void ViewIntegration(int integrationId)
     {
-        NavigationManager.NavigateTo($"/integrations/view/{integrationId}", true);
+        NavigationManager.NavigateTo($"/integrations/view/{integrationId}");
     }
 
     private async Task DeleteData(int integrationId)
@@ -83,12 +83,12 @@
             await IntegrationsModel.RemoveIntegrationAsync(integrationId);
         }
 
-        NavigationManager.NavigateTo("/integrations", true);
+        NavigationManager.NavigateTo("/integrations");
     }
 
     private void EditIntegration(int integrationId)
     {
-        NavigationManager.NavigateTo($"/integrations/edit/{integrationId}", true);
+        NavigationManager.NavigateTo($"/integrations/edit/{integrationId}");
     }
 
 }

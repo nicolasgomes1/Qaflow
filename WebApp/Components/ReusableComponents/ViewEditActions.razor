@@ -33,13 +33,13 @@
     private void CancelUrl()
     {
         var url = $"project/{_projectId}/{EntityName}";
-        NavigationManager.NavigateTo(url, true);
+        NavigationManager.NavigateTo(url);
     }
 
     private void EditUrl()
     {
         var url = $"project/{_projectId}/{EntityName}/edit/{EntityId}";
-        NavigationManager.NavigateTo(url, true);
+        NavigationManager.NavigateTo(url);
     }
 
 }

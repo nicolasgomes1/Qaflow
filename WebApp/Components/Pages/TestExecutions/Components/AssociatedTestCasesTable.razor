@@ -18,7 +18,7 @@
                         <div class="btn-group">
                             <RadzenButton
                                 Icon="visibility"
-                                Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases/view/{testcases.Id}", true))"
+                                Click="@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases/view/{testcases.Id}"))"
                                 Size="ButtonSize.Small"
                                 MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "View Test Case"))"
                                 MouseLeave="@AppTooltipService.HideTooltip"/>

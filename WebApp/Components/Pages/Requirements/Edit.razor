@@ -144,7 +144,7 @@ else
         _requirementsSpecificationList = await RequirementsModel.GetAssociatedRequirementsSpecifications(ProjectId);
         if (_requirements.ArchivedStatus.Equals(ArchivedStatus.Archived))
         {
-            NavigationManager.NavigateTo($"project/{ProjectId}/requirements", true);
+            NavigationManager.NavigateTo($"project/{ProjectId}/requirements");
         }
 
 

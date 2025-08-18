@@ -26,7 +26,7 @@
         <TestPlansDialogCreate Title="@Loc["create.testplans"]" ProjectId="@ProjectId"
                                OnTestPlanCreated="RefreshAssignedTestPlansFromDialog"/>
         <RadzenButton Icon="list"
-                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testplans", true))'/>
+                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testplans"))'/>
     </RadzenStack>
 
 </RadzenStack>

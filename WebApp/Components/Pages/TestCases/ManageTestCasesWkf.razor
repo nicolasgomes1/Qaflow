@@ -24,7 +24,7 @@
         <TestCasesDialogCreate Title="@Loc["create.testcases"]" ProjectId="ProjectId"
                                OnTestCaseCreated="@RefreshAssignedTestCasesFromDialog"/>
         <RadzenButton Icon="list"
-                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases", true))'/>
+                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases"))'/>
     </RadzenStack>
 </RadzenStack>
 

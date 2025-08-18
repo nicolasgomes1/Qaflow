@@ -27,7 +27,7 @@
         <TestExecutionDialogCreate Title="@Loc["create.testexecution"]" ProjectId="ProjectId"
                                    OnTestExecutionCreated="@RefreshAssignedTestExecutionsFromDialog"/>
         <RadzenButton Icon="list"
-                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution", true))'/>
+                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution"))'/>
     </RadzenStack>
 </RadzenStack>
 

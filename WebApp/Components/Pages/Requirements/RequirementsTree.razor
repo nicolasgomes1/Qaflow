@@ -60,7 +60,7 @@
         {
             var uri = e.Value.ToString();
             if (uri == null) throw new InvalidOperationException("URI is null");
-            NavigationManager.NavigateTo(uri, true);
+            NavigationManager.NavigateTo(uri);
         });
     }
 

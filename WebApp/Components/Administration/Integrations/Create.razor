@@ -52,7 +52,7 @@
     private async Task CreateNewIntegration()
     {
         await IntegrationsModel.AddIntegration(_integrations);
-        NavigationManager.NavigateTo("/integrations", true);
+        NavigationManager.NavigateTo("/integrations");
         await FormNotificationService.NotifySuccess("Integration Created Successfully");
     }
 

@@ -24,7 +24,7 @@
                       ButtonStyle="ButtonStyle.Warning"
                       MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Bugs List"))"
                       MouseLeave="@AppTooltipService.HideTooltip"
-                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs", true))'/>
+                      Click='@(() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs"))'/>
     </RadzenStack>
 
 </RadzenStack>

@@ -81,7 +81,7 @@
                 }
 
                 await db.SaveChangesAsync();
-                NavigationManager.NavigateTo($"/project/{project}/{EntityName}", true);
+                NavigationManager.NavigateTo($"/project/{project}/{EntityName}");
             }
             catch (Exception e)
             {

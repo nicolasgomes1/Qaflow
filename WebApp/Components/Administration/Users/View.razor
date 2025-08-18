@@ -39,11 +39,11 @@
                           Click='() => NavigationManager.NavigateTo($"/Users/Edit/{Id}")'/>
             <RadzenButton Text="Cancel"
                           Visible='IsUserAdmin()'
-                          Click='() => NavigationManager.NavigateTo("/Users/Index", true)'
+                          Click='() => NavigationManager.NavigateTo("/Users/Index")'
                           ButtonType="ButtonType.Button"/>
             <RadzenButton Text="Go Back"
                           Visible='!IsUserAdmin()'
-                          Click='() => NavigationManager.NavigateTo("/", true)'
+                          Click='() => NavigationManager.NavigateTo("/")'
                           ButtonType="ButtonType.Button"/>
         </div>
     }

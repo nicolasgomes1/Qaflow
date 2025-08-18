@@ -108,7 +108,7 @@ else
 
         if (!_testExecution.IsActive)
         {
-            NavigationManager.NavigateTo(CancelUrl(), true);
+            NavigationManager.NavigateTo(CancelUrl());
         }
 
         _isLoading = false;
@@ -118,7 +118,7 @@ else
     {
         // await TestExecutionModel.UpdateTestExecution(Id, _testExecution);
         await TestExecutionModelv2.UpdateTestExecution(_testExecution, ProjectId);
-        NavigationManager.NavigateTo($"project/{ProjectId}/testexecution", true);
+        NavigationManager.NavigateTo($"project/{ProjectId}/testexecution");
     }
 
 }
