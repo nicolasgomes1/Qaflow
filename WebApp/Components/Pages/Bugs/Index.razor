@@ -29,7 +29,7 @@
     <HeaderTemplate>
         <RadzenButton Text="Bug"
                       data-testid="create_bug"
-                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs/create", true)'
+                      Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/bugs/create")'
                       Size="ButtonSize.Medium"
                       Icon="add"
                       MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create new Bug"))"

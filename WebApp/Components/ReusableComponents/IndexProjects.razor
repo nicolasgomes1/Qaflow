@@ -84,7 +84,7 @@
             try
             {
                 await ProjectModel.RemoveProject(projectId);
-                NavigationManager.NavigateTo("/", true);
+                NavigationManager.NavigateTo("/");
             }
             catch (Exception ex)
             {
@@ -102,23 +102,23 @@
 
     private void CreateProject()
     {
-        NavigationManager.NavigateTo("/projects/create", true);
+        NavigationManager.NavigateTo("/projects/create");
     }
 
     async Task GoToProject(int projectId)
     {
         await ProjectState.SetCurrentProjectAsync(projectId);
-        NavigationManager.NavigateTo($"/project/{projectId}", true);
+        NavigationManager.NavigateTo($"/project/{projectId}");
     }
 
     void EditProject(int projectId)
     {
-        NavigationManager.NavigateTo($"/projects/edit/{projectId}", true);
+        NavigationManager.NavigateTo($"/projects/edit/{projectId}");
     }
 
     void ViewProject(int projectId)
     {
-        NavigationManager.NavigateTo($"/projects/view/{projectId}", true);
+        NavigationManager.NavigateTo($"/projects/view/{projectId}");
     }
 
     private async Task RefreshPage()

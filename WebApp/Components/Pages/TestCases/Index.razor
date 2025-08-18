@@ -34,7 +34,7 @@ else
         <HeaderTemplate>
             <RadzenButton Text="Test Case"
                           data-testid="create_testcase"
-                          Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases/create", true)'
+                          Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testcases/create")'
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Create Test Case"))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Size="ButtonSize.Medium"

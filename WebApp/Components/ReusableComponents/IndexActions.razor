@@ -72,7 +72,7 @@
                 await db.SaveChangesAsync();
             }
 
-            NavigationManager.NavigateTo($"/project/{ProjectId}/{EntityName.ToLower()}", true);
+            NavigationManager.NavigateTo($"/project/{ProjectId}/{EntityName.ToLower()}");
         }
         catch (Exception e)
         {
