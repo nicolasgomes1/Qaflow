@@ -10,13 +10,15 @@ else
 {
     <RadzenDataGrid AllowFiltering=_gridSettings.IsFilterEnabled
                     AllowColumnResize="true"
+                    AllowColumnReorder="true"
                     AllowAlternatingRows="true"
+                    FilterMode="FilterMode.Advanced"
                     AllowSorting="true"
                     AllowPaging="true"
                     AllowColumnPicking="true"
-                    PageSize="@_pageSizeFilter"
                     PagerHorizontalAlign="HorizontalAlign.Left"
                     ShowPagingSummary="true"
+                    AllowVirtualization="true"
                     Data="@_requirements"
                     ColumnWidth="auto"
                     LogicalFilterOperator="LogicalFilterOperator.Or"
@@ -25,6 +27,7 @@ else
                     @bind-Settings="@DataGridSettingsService.Settings"
                     @ref="_dataGrid"
                     AllowVirtualization="true"
+                    PageSizeOptions="@_pageSizeOptions"
                     Density="@Density.Compact">
         
         <HeaderTemplate>
@@ -50,17 +53,6 @@ else
                           Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")'/>
             <UploadRequirementsCsv OnUploadCompleted="RefreshPage" ProjectId="ProjectId"/>
 
-            @code{
-
-                private async Task RefreshPage()
-                {
-                    _requirements = await RequirementsModel.GetRequirementsToValidateAgainstCsv(ProjectId);
-
-                    // Refresh the Home component (re-render it)
-                    await InvokeAsync(StateHasChanged);
-                }
-
-            }
         </HeaderTemplate>
         <Columns>
             <RadzenDataGridColumn Property="@nameof(Requirements.Id)" Filterable="false" Title="ID" Frozen="true"
@@ -126,12 +118,6 @@ else
                           OnActionExecuted="RefreshData"/>
         </Columns>
 
-        <!-- Footer Template for the Totals Row -->
-        <FooterTemplate>
-            <RadzenGridRow>
-                <PageSizeSelector PageSizeChanged="OnPageSizeChanged"/>
-            </RadzenGridRow>
-        </FooterTemplate>
     </RadzenDataGrid>
 }
 
@@ -147,7 +133,7 @@ else
     private IEnumerable<Requirements> _requirements = [];
     private IList<Requirements> _selectedRequirements = [];
 
-    int _pageSizeFilter = 10;
+    readonly IEnumerable<int> _pageSizeOptions = [10, 20, 30, 40, 50];
 
     private GridSettings _gridSettings = new();
 
@@ -156,8 +142,15 @@ else
         DataGridSettingsService.SetCurrentGridId(GridId);
 
         await RefreshData();
-        _gridSettings = await GridSettingsModel.GetCUrrentGridUserSettings("Requirements");
         _isLoading = false;
+    }
+
+    private async Task RefreshPage()
+    {
+        _requirements = await RequirementsModel.GetRequirementsToValidateAgainstCsv(ProjectId);
+
+        // Refresh the Home component (re-render it)
+        await InvokeAsync(StateHasChanged);
     }
 
     async Task RefreshData()
@@ -172,18 +165,8 @@ else
         if (firstRender)
         {
             await DataGridSettingsService.LoadSettingsAsync();
-            _isLoading = false; // Stop showing the loading spinner after settings are applied
+            _gridSettings = await GridSettingsModel.GetCUrrentGridUserSettings("Requirements");
         }
-
-        StateHasChanged(); // Re-render with updated settings
     }
-
-    private async Task OnPageSizeChanged(int newSize)
-    {
-        _pageSizeFilter = newSize;
-        await Task.Delay(1);
-        StateHasChanged();
-    }
-
 
 }

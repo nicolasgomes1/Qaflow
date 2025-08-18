@@ -1,7 +1,7 @@
 ﻿@page "/project/{ProjectId:int}/testcases"
+@rendermode InteractiveServer
 @attribute [Authorize]
 
-@rendermode InteractiveServer
 
 
 @if (_isLoading)
@@ -12,10 +12,10 @@ else
 {
     <RadzenDataGrid AllowFiltering="true"
                     AllowColumnResize="true"
+                    AllowColumnReorder="true"
                     AllowAlternatingRows="true"
                     FilterMode="FilterMode.Advanced"
                     AllowSorting="true"
-                    PageSize="@_pageSizeFilter"
                     AllowPaging="true"
                     AllowColumnPicking="true"
                     PagerHorizontalAlign="HorizontalAlign.Left"
@@ -25,11 +25,12 @@ else
                     ColumnWidth="auto"
                     LogicalFilterOperator="LogicalFilterOperator.Or"
                     SelectionMode="DataGridSelectionMode.Single"
-                    AllowColumnReorder="true"
-                    Density="Density.Compact"
                     @bind-Value="@_selectedTestCases"
                     @bind-Settings="@DataGridSettingsService.Settings"
-                    @ref="_dataGrid">
+                    @ref="_dataGrid"
+                    AllowVirtualization="true"
+                    PageSizeOptions="@_pageSizeOptions"
+                    Density="Density.Compact">
 
         <HeaderTemplate>
             <RadzenButton Text="Test Case"
@@ -53,14 +54,7 @@ else
 
             @code{
 
-                private async Task RefreshPage()
-                {
-                    //simply get the list of test cases for the current project
-                    _testcases = await TestCasesModel.GetTestCasesToValidateAgainstCsv(ProjectId);
 
-                    // Refresh the Home component (re-render it)
-                    await InvokeAsync(StateHasChanged);
-                }
 
             }
 
@@ -127,11 +121,7 @@ else
 
         </Columns>
 
-        <FooterTemplate>
-            <RadzenGridRow>
-                <PageSizeSelector PageSizeChanged="OnPageSizeChanged"/>
-            </RadzenGridRow>
-        </FooterTemplate>
+
     </RadzenDataGrid>
 }
 
@@ -140,19 +130,14 @@ else
 
 
     private bool _isLoading = true;
-    int _pageSizeFilter = 10;
     private const string GridId = "testcases"; // Unique identifier for this grid
     private RadzenDataGrid<TestCases> _dataGrid = new();
 
     private IEnumerable<TestCases> _testcases = [];
     private IList<TestCases> _selectedTestCases = [];
 
-    private async Task OnPageSizeChanged(int newSize)
-    {
-        _pageSizeFilter = newSize;
-        await Task.Delay(1);
-        StateHasChanged();
-    }
+    readonly IEnumerable<int> _pageSizeOptions = [10, 20, 30, 40, 50];
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -166,6 +151,15 @@ else
         _testcases = await TestCasesModel.DisplayTestCasesIndexPage(ProjectId);
     }
 
+    private async Task RefreshPage()
+    {
+        //simply get the list of test cases for the current project
+        _testcases = await TestCasesModel.GetTestCasesToValidateAgainstCsv(ProjectId);
+
+        // Refresh the Home component (re-render it)
+        await InvokeAsync(StateHasChanged);
+    }
+
 
     // Ensure JavaScript interop calls are made after the component is rendered
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -173,8 +167,6 @@ else
         if (firstRender)
         {
             await DataGridSettingsService.LoadSettingsAsync();
-            _isLoading = false; // Stop showing the loading spinner after settings are applied
-            StateHasChanged(); // Re-render with updated settings
         }
     }
 
