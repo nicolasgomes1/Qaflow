@@ -96,7 +96,8 @@ else
                     </RadzenBadge>
                 </Template>
             </RadzenDataGridColumn>
-            <IndexActions TItem="TestPlans" EntityName="TestPlans" ProjectId="ProjectId"/>
+            <IndexActions TItem="TestPlans" EntityName="TestPlans" ProjectId="ProjectId"
+                          OnActionExecuted="RefreshData"/>
 
         </Columns>
 
@@ -133,10 +134,15 @@ else
     protected override async Task OnInitializedAsync()
     {
         DataGridSettingsService.SetCurrentGridId(_gridId);
-
-        _testplans = await TestPlansModel.DisplayTestPlansIndexPage(ProjectId);
+        await RefreshData();
         _isLoading = false;
     }
+
+    async Task RefreshData()
+    {
+        _testplans = await TestPlansModel.DisplayTestPlansIndexPage(ProjectId);
+    }
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

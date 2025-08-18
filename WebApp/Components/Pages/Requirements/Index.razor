@@ -122,7 +122,8 @@ else
             </RadzenDataGridColumn>
 
             <!-- Action Buttons column -->
-            <IndexActions TItem="Requirements" EntityName="Requirements" ProjectId="ProjectId"/>
+            <IndexActions TItem="Requirements" EntityName="Requirements" ProjectId="ProjectId"
+                          OnActionExecuted="RefreshData"/>
         </Columns>
 
         <!-- Footer Template for the Totals Row -->
@@ -154,11 +155,16 @@ else
     {
         DataGridSettingsService.SetCurrentGridId(GridId);
 
-        //   await RequirementsModel.DisplayRequirementsIndexPage();
-        _requirements = await RequirementsModel.DisplayRequirementsIndexPage(ProjectId);
+        await RefreshData();
         _gridSettings = await GridSettingsModel.GetCUrrentGridUserSettings("Requirements");
         _isLoading = false;
     }
+
+    async Task RefreshData()
+    {
+        _requirements = await RequirementsModel.DisplayRequirementsIndexPage(ProjectId);
+    }
+
 
     // Ensure JavaScript interop calls are made after the component is rendered
     protected override async Task OnAfterRenderAsync(bool firstRender)

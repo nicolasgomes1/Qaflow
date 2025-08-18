@@ -12,7 +12,7 @@ using WebApp.Data;
 namespace WebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250818155706_Initial")]
+    [Migration("20250818170321_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1468,15 +1468,18 @@ namespace WebApp.Data.Migrations
 
             modelBuilder.Entity("WebApp.Data.TestCases", b =>
                 {
-                    b.HasOne("WebApp.Data.Bugs", null)
+                    b.HasOne("WebApp.Data.Bugs", "Bugs")
                         .WithMany("LinkedTestCases")
-                        .HasForeignKey("BugsId");
+                        .HasForeignKey("BugsId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("WebApp.Data.Projects", "Projects")
                         .WithMany("TestCases")
                         .HasForeignKey("ProjectsId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Bugs");
 
                     b.Navigation("Projects");
                 });

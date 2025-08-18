@@ -38,4 +38,6 @@ public class TestCases : BaseEntity
     public ICollection<TestCasesJira> TestCasesJira { get; set; } = [];
 
     public ICollection<TestCasesFile> LinkedTestCasesFiles { get; set; } = [];
+
+    public Bugs? Bugs { get; set; }
 }

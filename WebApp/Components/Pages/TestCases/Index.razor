@@ -122,7 +122,8 @@ else
                     </RadzenBadge>
                 </Template>
             </RadzenDataGridColumn>
-            <IndexActions TItem="TestCases" EntityName="TestCases" ProjectId="ProjectId"/>
+            <IndexActions TItem="TestCases" EntityName="TestCases" ProjectId="ProjectId"
+                          OnActionExecuted="RefreshData"/>
 
         </Columns>
 
@@ -156,9 +157,15 @@ else
     protected override async Task OnInitializedAsync()
     {
         DataGridSettingsService.SetCurrentGridId(GridId);
-        _testcases = await TestCasesModel.DisplayTestCasesIndexPage(ProjectId);
+        await RefreshData();
         _isLoading = false;
     }
+
+    async Task RefreshData()
+    {
+        _testcases = await TestCasesModel.DisplayTestCasesIndexPage(ProjectId);
+    }
+
 
     // Ensure JavaScript interop calls are made after the component is rendered
     protected override async Task OnAfterRenderAsync(bool firstRender)

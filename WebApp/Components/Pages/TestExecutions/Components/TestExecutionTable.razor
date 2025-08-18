@@ -89,7 +89,8 @@
             </Template>
         </RadzenDataGridColumn>
 
-        <IndexActions TItem="TestExecution" EntityName="TestExecution" ProjectId="ProjectId"/>
+        <IndexActions TItem="TestExecution" EntityName="TestExecution" ProjectId="ProjectId"
+                      OnActionExecuted="RefreshData"/>
 
     </Columns>
 </RadzenDataGrid>
@@ -107,9 +108,14 @@
     {
         if (OnInitializedMethod != null)
         {
-            var result = await OnInitializedMethod();
-            _testexecution = result;
+            await RefreshData();
         }
+    }
+
+    async Task RefreshData()
+    {
+        var result = await OnInitializedMethod!();
+        _testexecution = result;
     }
 
 }

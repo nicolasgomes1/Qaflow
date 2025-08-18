@@ -195,6 +195,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasMany<TestPlans>()
             .WithOne(t => t.Cycle)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder
+            .Entity<Bugs>()
+            .HasMany(b => b.LinkedTestCases) // Specify the navigation property
+            .WithOne(t => t.Bugs) // Specify the inverse navigation property
+            .HasForeignKey("BugsId") // Specify the foreign key explicitly
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
     /// <summary>
@@ -224,14 +231,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                     e.Entity.ModifiedAt = now;
                     e.Entity.ModifiedBy = user;
                     break;
-                case EntityState.Detached:
-                    break;
-                case EntityState.Unchanged:
-                    break;
-                case EntityState.Deleted:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 

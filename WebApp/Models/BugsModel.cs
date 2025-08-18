@@ -26,8 +26,8 @@ public class BugsModel(
     /// <returns>A task representing the asynchronous operation. The task result contains a list of <see cref="Bugs"/> objects associated with the given project.</returns>
     public async Task<List<Bugs>> GetBugsAsync(int projectId)
     {
-        await using var db = await dbContextFactory.CreateDbContextAsync();
         Logger.LogInformation($"Getting bugs for project {projectId}");
+        await using var db = await dbContextFactory.CreateDbContextAsync();
         return await db.Bugs.Where(bp => bp.ProjectsId == projectId).ToListAsync();
     }
 
@@ -46,11 +46,11 @@ public class BugsModel(
 
     public async Task<Bugs> GetBugByIdAsync(int id)
     {
+        Logger.LogInformation($"Getting bug {id}");
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
         var bug = await db.Bugs.FindAsync(id);
         if (bug is null) throw new Exception("Bug not found");
-        Logger.LogInformation($"Getting bug {id}");
         return bug;
     }
 
@@ -71,8 +71,6 @@ public class BugsModel(
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        bug.CreatedAt = DateTime.UtcNow;
-        bug.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         bug.ProjectsId = projectId;
         bug.LinkedTestCases = new List<TestCases>();
 
@@ -92,7 +90,7 @@ public class BugsModel(
         await db.Bugs.AddAsync(bug);
 
 
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(userService);
 
         // If there are files, attempt to save them
         if (files != null && files.Count != 0) await bugsFilesModel.SaveFilesToDb(files, bug.Id, projectId);

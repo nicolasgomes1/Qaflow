@@ -41,8 +41,8 @@ public class BugsFilesModel(IDbContextFactory<ApplicationDbContext> dbContextFac
 
     public async Task<List<BugsFiles>> GetBugFilesById(int bugId)
     {
-        await using var db = await dbContextFactory.CreateDbContextAsync();
         Logger.LogInformation($"Getting files for bug {bugId}");
+        await using var db = await dbContextFactory.CreateDbContextAsync();
         return await db.BugsFiles.Where(bf => bf.BugId == bugId).ToListAsync();
     }
 }

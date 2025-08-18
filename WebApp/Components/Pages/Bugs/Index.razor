@@ -89,7 +89,7 @@
         </RadzenDataGridColumn>
 
         <!-- Action Buttons column -->
-        <IndexActions TItem="Bugs" EntityName="@nameof(Bugs)" ProjectId="ProjectId"/>
+        <IndexActions TItem="Bugs" EntityName="@nameof(Bugs)" ProjectId="ProjectId" OnActionExecuted="@RefreshData"/>
     </Columns>
 
 </RadzenDataGrid>
@@ -105,6 +105,11 @@
     private IEnumerable<Bugs> _bugs = new List<Bugs>();
 
     protected override async Task OnInitializedAsync()
+    {
+        await RefreshData();
+    }
+
+    async Task RefreshData()
     {
         _bugs = await BugsModel.GetBugsAsync(ProjectId);
     }

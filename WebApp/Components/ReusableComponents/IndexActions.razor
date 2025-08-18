@@ -42,6 +42,9 @@
 @code {
     [Parameter] public string EntityName { get; set; } = string.Empty;
 
+    [EditorRequired] [Parameter] public EventCallback OnActionExecuted { get; set; }
+
+
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
     /*
      * Component used for static pages No Modals
@@ -55,6 +58,10 @@
     private void EditItem(TItem item)
     {
         NavigationManager.NavigateTo($"/project/{ProjectId}/{EntityName.ToLower()}/edit/{GetId(item)}");
+        if (OnActionExecuted.HasDelegate)
+        {
+            InvokeAsync(StateHasChanged);
+        }
     }
 
     private async Task DeleteItem(TItem item)
@@ -70,9 +77,11 @@
                 if (item is null) throw new Exception($"{item} is null");
                 db.Remove(item);
                 await db.SaveChangesAsync();
+                if (OnActionExecuted.HasDelegate)
+                {
+                    await InvokeAsync(StateHasChanged);
+                }
             }
-
-            NavigationManager.NavigateTo($"/project/{ProjectId}/{EntityName.ToLower()}");
         }
         catch (Exception e)
         {

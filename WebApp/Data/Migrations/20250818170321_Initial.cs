@@ -450,7 +450,8 @@ namespace WebApp.Data.Migrations
                         name: "FK_TestCases_Bugs_BugsId",
                         column: x => x.BugsId,
                         principalTable: "Bugs",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_TestCases_Projects_ProjectsId",
                         column: x => x.ProjectsId,
