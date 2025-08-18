@@ -17,7 +17,7 @@
     private readonly List<IBrowserFile>? _uploadedFiles = [];
     private List<ApplicationUser> _usersList = [];
 
-    [Parameter] public EventCallback OnTestCaseCreated { get; set; }
+    [EditorRequired] [Parameter] public EventCallback OnTestCaseCreated { get; set; }
 
     [Parameter] public string Title { get; set; } = string.Empty;
 
@@ -41,10 +41,7 @@
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Case created successfully with id {_testCases.Id}");
 
-        if (OnTestCaseCreated.HasDelegate)
-        {
-            await OnTestCaseCreated.InvokeAsync();
-        }
+        await OnTestCaseCreated.InvokeAsync();
     }
 
     private string _estimatedTimeInput = string.Empty;

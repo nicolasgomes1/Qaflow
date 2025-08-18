@@ -15,20 +15,6 @@
             </strong>
         </div>
 
-        <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap"
-                     JustifyContent="JustifyContent.Center"
-                     AlignItems="AlignItems.Center">
-            <RadzenCard>
-                <RequirementsSpecificationDialogCreate ProjectId="ProjectId" OnRequirementCreated="StateHasChanged"/>
-                <RequirementsDialogCreate Title="" ProjectId="ProjectId"/>
-                <TestCasesDialogCreate Title="" ProjectId="ProjectId"/>
-                <TestPlansDialogCreate Title="" ProjectId="ProjectId"/>
-                <TestExecutionDialogCreate Title="" ProjectId="ProjectId"/>
-                <BugDialogCreate Title="" ProjectId="ProjectId"/>
-            </RadzenCard>
-
-        </RadzenStack>
-
 
         <div>
             <Dashboard ProjectId="ProjectId"/>

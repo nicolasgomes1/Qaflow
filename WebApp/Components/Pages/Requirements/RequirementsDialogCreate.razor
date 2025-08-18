@@ -16,7 +16,7 @@
     private List<ApplicationUser> _usersList = [];
     private List<RequirementsSpecification> _requirementsSpecificationList = [];
 
-    [Parameter] public EventCallback OnRequirementCreated { get; set; }
+    [EditorRequired] [Parameter] public EventCallback OnRequirementCreated { get; set; }
 
     [Parameter] public string Title { get; set; } = string.Empty;
 
@@ -38,10 +38,7 @@
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Requirement created successfully with id {_requirements.Id}");
         // Notify the parent that the requirement was created
-        if (OnRequirementCreated.HasDelegate)
-        {
-            await OnRequirementCreated.InvokeAsync();
-        }
+        await OnRequirementCreated.InvokeAsync();
     }
 
 

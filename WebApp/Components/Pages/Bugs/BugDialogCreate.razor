@@ -38,10 +38,7 @@
         DialogService.Close(result);
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Bug created successfully with id {_bugs.Id}");
-        if (OnBugsCreated.HasDelegate)
-        {
-            await OnBugsCreated.InvokeAsync();
-        }
+        await OnBugsCreated.InvokeAsync();
     }
 
 

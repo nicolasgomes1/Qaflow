@@ -1,4 +1,19 @@
-﻿@using Microsoft.AspNetCore.Mvc.ModelBinding
+﻿<RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap"
+             JustifyContent="JustifyContent.Center"
+             AlignItems="AlignItems.Center">
+    <RadzenCard>
+        <RequirementsSpecificationDialogCreate ProjectId="ProjectId"
+                                               OnRequirementCreated="RefreshRequirementsSpecification"/>
+        <RequirementsDialogCreate Title="" ProjectId="ProjectId" OnRequirementCreated="RefreshRequirements"/>
+        <TestCasesDialogCreate Title="" ProjectId="ProjectId" OnTestCaseCreated="RefreshTestCases"/>
+        <TestPlansDialogCreate Title="" ProjectId="ProjectId" OnTestPlanCreated="RefreshTestPlans"/>
+        <TestExecutionDialogCreate Title="" ProjectId="ProjectId" OnTestExecutionCreated="RefreshTestExecutions"/>
+        <BugDialogCreate Title="" ProjectId="ProjectId" OnBugsCreated="RefreshBugs"/>
+    </RadzenCard>
+
+</RadzenStack>
+
+
 <RadzenStack Wrap="FlexWrap.Wrap" Orientation="Orientation.Horizontal">
     <RadzenCard Style="max-width: 300px; flex: 1 1 420px; margin: 10px;">
         <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center"
@@ -295,18 +310,50 @@
     protected override async Task OnInitializedAsync()
     {
         _requirementsWithSpec = await ReportsModel.RequirementsWithRequirementspecifications(ProjectId);
-        _requirementsCount = await ReportsModel.LoadTotalRequirements(ProjectId);
-        _testCasesCount = ReportsModel.LoadTotalTestCases(ProjectId);
-        _testPlansCount = ReportsModel.LoadTotalTestPlans(ProjectId);
-        _testExecutionsCount = ReportsModel.LoadTotalTestExecutions(ProjectId);
+
+
+        req = await ReportsModel.RequirementsCoveredBySpecifications(ProjectId);
+
+        await RefreshRequirementsSpecification();
+        await RefreshRequirements();
+        await RefreshTestCases();
+        await RefreshTestPlans();
+        await RefreshBugs();
+        await RefreshTestExecutions();
+    }
+
+    private async Task RefreshRequirementsSpecification()
+    {
         _requirementsSpecificationCount = await ReportsModel.LoadTotalRequirementsSpecifications(ProjectId);
-        _bugsCount = ReportsModel.LoadTotalBugs(ProjectId);
-        _testExecutionsReady = await TestExecutionModel.GetTestExecutionsReadyToExecuteAsync(ProjectId);
+    }
+
+    private async Task RefreshRequirements()
+    {
+        _requirementsCount = await ReportsModel.LoadTotalRequirements(ProjectId);
+    }
+
+    private async Task RefreshTestCases()
+    {
+        _testCasesCount = ReportsModel.LoadTotalTestCases(ProjectId);
         _testcaseByTypeAcceptance = await TestCasesReporting.GetTestCasesByTestType(ProjectId, TestTypes.AcceptanceTest);
         _testcaseByTypeRegression = await TestCasesReporting.GetTestCasesByTestType(ProjectId, TestTypes.RegressionTest);
         _testcaseByTypeSmoke = await TestCasesReporting.GetTestCasesByTestType(ProjectId, TestTypes.SmokeTest);
+    }
 
-        req = await ReportsModel.RequirementsCoveredBySpecifications(ProjectId);
+    private async Task RefreshTestPlans()
+    {
+        _testPlansCount = ReportsModel.LoadTotalTestPlans(ProjectId);
+    }
+
+    private async Task RefreshBugs()
+    {
+        _bugsCount = ReportsModel.LoadTotalBugs(ProjectId);
+    }
+
+    private async Task RefreshTestExecutions()
+    {
+        _testExecutionsCount = ReportsModel.LoadTotalTestExecutions(ProjectId);
+        _testExecutionsReady = await TestExecutionModel.GetTestExecutionsReadyToExecuteAsync(ProjectId);
     }
 
 }

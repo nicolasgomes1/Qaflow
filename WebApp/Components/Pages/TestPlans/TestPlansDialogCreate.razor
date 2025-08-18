@@ -18,7 +18,7 @@
 
     [Parameter] public string Title { get; set; } = string.Empty;
 
-    [Parameter] public EventCallback OnTestPlanCreated { get; set; }
+    [EditorRequired] [Parameter] public EventCallback OnTestPlanCreated { get; set; }
 
     private List<Cycles> _cyclesList = [];
 
@@ -42,10 +42,7 @@
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Test Plan created successfully with id {_testPlans.Id}");
 
-        if (OnTestPlanCreated.HasDelegate)
-        {
-            await OnTestPlanCreated.InvokeAsync();
-        }
+        await OnTestPlanCreated.InvokeAsync();
     }
 
     protected override async Task OnInitializedAsync()
