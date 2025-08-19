@@ -15,14 +15,42 @@
 
     private async Task OpenFileUpload()
     {
-        await DialogService.OpenAsync($"Import {nameof(TestCases)} from CSV", ds =>
-        {
-            return @<RadzenStack Orientation="Orientation.Vertical">
+        var result = await DialogService.OpenAsync($"Import {nameof(TestCases)} from CSV", ds =>
+                @<RadzenStack Orientation="Orientation.Vertical">
+                    <RadzenFieldset Text="Expected CSV format" Style="margin-bottom: 15px">
+                        <table style="width:100%; border-collapse: collapse; font-size:14px; text-align:left;">
+                            <thead style="background-color:#f5f5f5;">
+                            <tr>
+                                <th style="padding:6px; border:1px solid #ddd;">Name</th>
+                                <th style="padding:6px; border:1px solid #ddd;">Description</th>
+                                <th style="padding:6px; border:1px solid #ddd;">Priority</th>
+                                <th style="padding:6px; border:1px solid #ddd;">Test Type</th>
+                                <th style="padding:6px; border:1px solid #ddd;">Test Scope</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td style="padding:6px; border:1px solid #ddd;">My Test Case</td>
+                                <td style="padding:6px; border:1px solid #ddd;">My Description</td>
+                                <td style="padding:6px; border:1px solid #ddd;">High</td>
+                                <td style="padding:6px; border:1px solid #ddd;">AcceptanceTest</td>
+                                <td style="padding:6px; border:1px solid #ddd;">UiTests</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div style="margin-top:10px; font-size:12px; color:gray;">
+                            ⚠️ Ensure your CSV file includes these columns in the same order separated by commas.
+                            <br/>
+                            ⚠️ If Test Case already exists with same Name, it will be skipped.
+                        </div>
+                    </RadzenFieldset>
                 <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload"
                               Change="@(args => SaveFileContent(args))"/>
                 <RadzenButton Text="Submit" Icon="check" Click="ProcessCsvFile" Style="margin-top: 10px;"/>
-            </RadzenStack>;
-        }, new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
+                </RadzenStack>
+            , new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
     }
 
     private async Task SaveFileContent(UploadChangeEventArgs args)

@@ -151,13 +151,10 @@ public class RequirementsModel(
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
         requirement.ProjectsId = projectId;
-        requirement.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         requirement.WorkflowStatus = WorkflowStatus.New;
-        requirement.CreatedAt = DateTime.UtcNow;
-        requirement.ModifiedAt = DateTime.UtcNow;
         requirement.ArchivedStatus = ArchivedStatus.Active;
         db.Requirements.Add(requirement);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(userService);
         return requirement;
     }
 

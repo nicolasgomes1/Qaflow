@@ -30,6 +30,7 @@ else
                     Density="@Density.Compact">
         
         <HeaderTemplate>
+
             <RadzenButton Text="Requirement"
                           Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/requirements/create")'
                           Size="ButtonSize.Medium"
@@ -45,12 +46,16 @@ else
                           Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
             <DeleteallDataForModel EntityName="@(nameof(Requirements))"
                                    EntityList="_requirements"/>
-            <ExportGridDataCsv Grid="@_dataGrid"/>
+
             <RadzenButton Icon="assessment"
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment"))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/requirements/manage")'/>
+
+
+            <ExportGridDataCsv Grid="@_dataGrid"/>
             <UploadRequirementsCsv OnUploadCompleted="RefreshPage" ProjectId="ProjectId"/>
+
 
         </HeaderTemplate>
         <Columns>
