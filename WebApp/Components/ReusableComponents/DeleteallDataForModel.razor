@@ -9,8 +9,6 @@
               MouseLeave="@AppTooltipService.HideTooltip"/>
 
 
-@inject TooltipService TooltipService
-
 @code {
 
     [EditorRequired] [Parameter] public string EntityName { get; set; } = string.Empty;
@@ -32,7 +30,6 @@
     {
         var project = _projectId;
 
-        await using var db = await DbContext.CreateDbContextAsync();
 
         var confirmed = await DialogService.Confirm($"Are you sure you want to delete all {EntityName}?", $"Delete All {EntityName}",
             new ConfirmOptions()
@@ -44,7 +41,14 @@
         {
             try
             {
-                db.RemoveRange(EntityList);
+                await using var db = await DbContext.CreateDbContextAsync();
+
+                foreach (var entity in EntityList)
+                {
+                    db.Remove(entity);
+                }
+
+                await db.SaveChangesAsync();
 
 
                 switch (EntityName)
@@ -80,12 +84,12 @@
                     }
                 }
 
-                await db.SaveChangesAsync();
                 NavigationManager.NavigateTo($"/project/{project}/{EntityName}");
             }
             catch (Exception e)
             {
-                await FormNotificationService.NotifyError($"Error {e}");
+                await FormNotificationService.NotifyError($"Could not delete data as doing so would cause data integrity degradation");
+                Logger.LogError("Error {Exception}", e);
             }
         }
     }
