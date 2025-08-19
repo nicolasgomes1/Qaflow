@@ -89,7 +89,11 @@ public abstract class BaseComponentTest : TestContext, IClassFixture<TestFixture
             typeof(TestExecutionTimerServicev2),
             typeof(TestCaseExecutionTimerService),
             typeof(UiUserVisibility),
-            typeof(IDbContextFactory<ApplicationDbContext>)
+            typeof(IDbContextFactory<ApplicationDbContext>),
+            typeof(BugsCommentsModel),
+            typeof(CyclesModel),
+            typeof(TestStepsModel),
+            typeof(GridSettingsModel)
         };
 
         foreach (var serviceType in servicesToRegister)

@@ -98,6 +98,10 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<TestExecutionTimerServicev2>();
         serviceCollection.AddScoped<TestCaseExecutionTimerService>();
         serviceCollection.AddScoped<UiUserVisibility>();
+        serviceCollection.AddScoped<BugsCommentsModel>();
+        serviceCollection.AddScoped<CyclesModel>();
+        serviceCollection.AddScoped<TestStepsModel>();
+        serviceCollection.AddScoped<GridSettingsModel>();
 
         serviceCollection.AddSingleton<IEmailSender<ApplicationUser>, TestEmailSender>();
 
