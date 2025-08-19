@@ -1,16 +1,8 @@
 @page "/project/{ProjectId:int}/bugs/edit/{Id:int}"
 @rendermode InteractiveServer
 
-<RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Warning"
-             Size="AlertSize.Small" Variant="Variant.Filled"
-             Shade="Shade.Default" Icon="edit"
-             Text="@(req)"/>
 
-@code{
-    private string req => $"Editing Bug {Id}";
-
-}
-
+<AlertTitle TitleText="@($"Editing Bug {Id}")"/>
 
 
 <RadzenTemplateForm Data="@_bugs" Submit="@UpdateBug" TItem="Bugs">

@@ -102,6 +102,8 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<CyclesModel>();
         serviceCollection.AddScoped<TestStepsModel>();
         serviceCollection.AddScoped<GridSettingsModel>();
+        serviceCollection.AddScoped<TestStepExecutionFileModel>();
+
 
         serviceCollection.AddSingleton<IEmailSender<ApplicationUser>, TestEmailSender>();
 

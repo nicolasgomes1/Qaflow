@@ -1,21 +1,26 @@
+@inject ILogger<AddTestStepExecutionFile> Logger
+
 <RadzenCard Variant="Variant.Outlined">
     <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Upload a file for Test Step Execution</RadzenText>
     <RadzenUpload id="singleFileUpload" @ref="_uploadSingle" ChooseText="Click to choose a file" Auto="false"
                   Multiple="false"
                   Change="@(args => OnChange(args, "Uploading file"))" Style="width: 100%"/>
 
-    @if (_fileBytes != null)
+    @if (TestStepExecutionFileModel.FileBytes != null)
     {
         <RadzenStack Orientation="Orientation.Vertical">
 
-            <RadzenImage Path="@($"data:image/jpeg;base64,{Convert.ToBase64String(_fileBytes)}")"
+            <RadzenImage
+                Path="@($"data:image/jpeg;base64,{Convert.ToBase64String(TestStepExecutionFileModel.FileBytes)}")"
                          AlternateText="Uploaded image"
                          Style="max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; padding: 5px;"/>
         </RadzenStack>
     }
 
     <RadzenStack Orientation="Orientation.Vertical">
-        <RadzenButton Text="Upload" Click="@(() => UploadFileToDatabase(TestStepExecutionId))" class="rz-mt-4"/>
+        <RadzenButton Text="Upload"
+                      Click="@(() => TestStepExecutionFileModel.UploadFileToDatabase(_selectedFile, TestStepExecutionId, ProjectId))"
+                      class="rz-mt-4"/>
     </RadzenStack>
 </RadzenCard>
 
@@ -23,7 +28,6 @@
 @code {
     RadzenUpload? _uploadSingle;
     IBrowserFile? _selectedFile;
-    byte[]? _fileBytes;
 
     [EditorRequired] [Parameter] public int TestStepExecutionId { get; set; }
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
@@ -33,61 +37,8 @@
     {
         if (args.Files.Count() != 1) return;
         _selectedFile = args.Files.First(); // Get the selected file
-        Console.WriteLine($@"{name} file selected: {_selectedFile.Name}, {_selectedFile.Size} bytes");
+        Logger.LogInformation(@"{Name} file selected: {SelectedFileName}, {SelectedFileSize} bytes", name, _selectedFile.Name, _selectedFile.Size);
     }
 
-    async Task UploadFileToDatabase(int teststepexecutionId)
-    {
-        if (_selectedFile == null)
-        {
-            Console.WriteLine(@"No file selected for upload.");
-            return;
-        }
-
-        await using var db = await DbContext.CreateDbContextAsync();
-        try
-        {
-            using var stream = new MemoryStream();
-            await _selectedFile.OpenReadStream().CopyToAsync(stream);
-            _fileBytes = stream.ToArray();
-
-            var testStepExecution = await db.TestStepsExecution.FindAsync(teststepexecutionId);
-            if (testStepExecution == null)
-            {
-                Console.WriteLine(@"Test Step Execution not found.");
-                return;
-            }
-
-            var existingFile = await db.TestStepsExecutionFiles
-                .FirstOrDefaultAsync(file => file.TestStepExecutionId == teststepexecutionId);
-
-            var fileToSave = existingFile ?? new TestStepsExecutionFile
-            {
-                TestStepExecutionId = teststepexecutionId,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            fileToSave.FileContent = _fileBytes;
-            fileToSave.FileName = _selectedFile.Name;
-            fileToSave.UploadedAt = DateTime.UtcNow;
-            fileToSave.TSEFProjectId = ProjectId;
-
-            if (existingFile == null)
-            {
-                db.TestStepsExecutionFiles.Add(fileToSave);
-                Console.WriteLine(@"New file uploaded and saved to the database.");
-            }
-            else
-            {
-                Console.WriteLine(@"Existing file updated in the database.");
-            }
-
-            await db.SaveChangesAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($@"Error uploading file: {ex.Message}");
-        }
-    }
 
 }
