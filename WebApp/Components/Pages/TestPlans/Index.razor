@@ -41,11 +41,14 @@ else
                           Size="ButtonSize.Medium" Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
 
             <DeleteallDataForModel EntityName="@(nameof(TestPlans))" EntityList="_testplans"/>
-            <ExportGridDataCsv Grid="_dataGrid"/>
             <RadzenButton Icon="assessment"
                           MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Make Assessment"))"
                           MouseLeave="@AppTooltipService.HideTooltip"
                           Click='() => NavigationManager.NavigateTo($"project/{ProjectId}/testplans/manage")'/>
+            <ExportGridDataCsv Grid="_dataGrid"/>
+
+            <UploadTestPlansCsv OnUploadCompleted="RefreshData" ProjectId="ProjectId"/>
+
         </HeaderTemplate>
         <Columns>
             <RadzenDataGridColumn Property="@nameof(TestPlans.Id)" Filterable="false" Title="ID" Frozen="true"
