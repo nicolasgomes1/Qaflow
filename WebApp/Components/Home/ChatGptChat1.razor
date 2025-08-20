@@ -12,69 +12,76 @@
         </RadzenStack>
     </RadzenCard>
 
-    <!-- Radzen AI Chat -->
-    <RadzenAIChat @ref="_chat"
-                  Title="AI Assistant"
-                  Placeholder="Ask me anything..."
-                  Style="height: 500px;"
-                  MessageSent="OnMessageSent"
-                  ResponseReceived="OnResponseReceived"
-                  ChatCleared="OnChatCleared"/>
+    <!-- Classic Chat UI -->
+    <RadzenCard Class="rz-p-4 rz-mt-4" Variant="Variant.Outlined" Style="height:500px; overflow-y:auto;">
+        @foreach (var message in Messages)
+        {
+            <div class="@($"chat-message {(message.IsUser ? "user" : "assistant")}")">
+                <b>@(message.IsUser ? "You:" : "AI:")</b> @message.Text
+            </div>
+        }
+    </RadzenCard>
+
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" Class="rz-mt-2">
+        <RadzenTextBox @bind-Value="UserInput" Placeholder="Ask me anything..." Style="flex:1"/>
+        <RadzenButton Text="Send" Click="SendMessage"/>
+    </RadzenStack>
 </RadzenStack>
 
 @code {
-    RadzenAIChat? _chat;
 
     private string? _apiKey;
-    private const string Endpoint = "https://api.openai.com/v1/responses";
-
-    private readonly HttpClient _httpClient = new()
-    {
-        BaseAddress = new Uri("https://api.openai.com/")
-    };
-
 
     protected override void OnInitialized()
     {
-        //TODO see how to remove from here
+        // Try multiple possible environment variable names
+        _apiKey = Environment.GetEnvironmentVariable("OpenApi_Key_Dev") ??
+                  Configuration["Parameters:OpenAIApiKey"] ??
+                  throw new InvalidOperationException("OpenAI API key configuration is missing");
 
-        _apiKey = "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";
-
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+        Console.WriteLine($"API Key found: {!string.IsNullOrEmpty(_apiKey)}"); // Debug log
     }
 
-    async Task OnMessageSent(string userMessage)
+
+    private string UserInput = string.Empty;
+
+    private List<ChatMessage> Messages = new();
+
+    private async Task SendMessage()
     {
-        System.Console.WriteLine($"Message sent: {userMessage}", AlertStyle.Info);
+        if (string.IsNullOrWhiteSpace(UserInput)) return;
 
-        // Send to OpenAI
-        var (response, promptTokens, completionTokens) = await GetCompletion(userMessage);
+        // Add user message
+        Messages.Add(new ChatMessage(UserInput, true));
+        var currentInput = UserInput;
+        UserInput = string.Empty;
 
-        if (!string.IsNullOrEmpty(response))
+        StateHasChanged();
+
+        try
         {
-            // Combine AI response with tokens info
-            var fullResponse = $"{response}\n\n---\n_Tokens used — Prompt: {promptTokens}, Completion: {completionTokens}_";
+            var (response, promptTokens, completionTokens) = await GetCompletion(currentInput);
 
-            // Add assistant response with inline tokens
-            _chat!.AddMessage(fullResponse, false);
+            if (!string.IsNullOrEmpty(response))
+            {
+                var fullResponse = $"{response}\n\n---\n_Tokens used — Prompt: {promptTokens}, Completion: {completionTokens}_";
+                Messages.Add(new ChatMessage(fullResponse, false));
+            }
+        }
+        catch (Exception ex)
+        {
+            Messages.Add(new ChatMessage($"Error: {ex.Message}", false));
         }
 
         StateHasChanged();
     }
 
-
-    void OnResponseReceived(string response)
-    {
-        Console.WriteLine($"AI Response: {response.Substring(0, Math.Min(50, response.Length))}...", AlertStyle.Success);
-    }
-
-    void OnChatCleared()
-    {
-        Console.WriteLine("Chat cleared", AlertStyle.Warning);
-    }
-
     private async Task<(string? content, int promptTokens, int completionTokens)> GetCompletion(string prompt)
     {
+        using var _httpClient = new HttpClient();
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _apiKey);
+
         var data = new
         {
             model = "gpt-4.1-nano",
@@ -89,21 +96,31 @@
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync();
-            throw new HttpRequestException($"OpenAI API request failed with status {response.StatusCode}: {errorContent}");
+            throw new HttpRequestException($"OpenAI API request failed: {errorContent}");
         }
 
         var responseContent = await response.Content.ReadAsStringAsync();
-
         using JsonDocument doc = JsonDocument.Parse(responseContent);
-        JsonElement root = doc.RootElement;
-        Console.WriteLine(responseContent);
+        var root = doc.RootElement;
+
         var promptTokens = root.GetProperty("usage").GetProperty("input_tokens").GetInt32();
         var completionTokens = root.GetProperty("usage").GetProperty("output_tokens").GetInt32();
-
         var messageContent = root.GetProperty("output")[0].GetProperty("content")[0].GetProperty("text").GetString();
+
         return (messageContent, promptTokens, completionTokens);
     }
 
+    public class ChatMessage
+    {
+        public ChatMessage(string text, bool isUser)
+        {
+            Text = text;
+            IsUser = isUser;
+        }
+
+        public string Text { get; set; }
+        public bool IsUser { get; set; }
+    }
 }
 
 

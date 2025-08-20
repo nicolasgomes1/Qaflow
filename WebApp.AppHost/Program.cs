@@ -12,6 +12,8 @@ var postgres = builder.AddPostgres("postgres", password: dbPassword)
     .WithPgWeb().WithDataVolume("data", false);
 var postgresdb = postgres.AddDatabase("postgresdb");
 
+var key = builder.AddParameter("OpenAIApiKey", false); // Store securely!
+
 
 // Add a project and set up dependencies on the database
 var app = builder.AddProject<WebApp>("webapp")
@@ -19,7 +21,8 @@ var app = builder.AddProject<WebApp>("webapp")
     .WaitFor(postgres)
     .WithReference(postgresdb)
     .WaitFor(postgresdb)
-    .WithHttpHealthCheck("/health");
+    .WithHttpHealthCheck("/health")
+    .WithEnvironment("OpenApi_Key_Dev", key);
 
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
 {
