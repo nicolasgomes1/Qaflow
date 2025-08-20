@@ -183,7 +183,7 @@ public class TestPlansModel(
         testPlan.Cycle = existingCycles.FirstOrDefault(c => c.Name == validCycle);
 
         db.TestPlans.Add(testPlan);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(userService);
         return testPlan;
     }
 }
