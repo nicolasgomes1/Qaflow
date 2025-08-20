@@ -1,5 +1,6 @@
 using WebApp.Api;
 using WebApp.Components.Pages.Requirements;
+using WebApp.Components.ReusableComponents.UploadCsv;
 using WebApp.Models;
 using WebApp.Services;
 using WebApp.Services.TestData;
@@ -27,6 +28,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GenerateJwtToken>();
         services.AddScoped<FetchApiData>();
         services.AddScoped<UiUserVisibility>();
+        services.AddScoped<ManageCsvUpload>();
     }
 
     /// <summary>

@@ -6,8 +6,6 @@
               MouseLeave="@AppTooltipService.HideTooltip"/>
 
 @code {
-    private IEnumerable<RequirementsSpecification> _requirementsSpecifications = [];
-    private string _fileContent = string.Empty;
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     /// <summary>
@@ -46,98 +44,18 @@
                                 </div>
                             </RadzenFieldset>
                             <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload"
-                                          Change="@(SaveFileContent)"/>
-                            <RadzenButton Text="Submit" Icon="check" Click="ProcessCsvFile" Style="margin-top: 10px;"/>
+                                          Change="@(ManageCsvUpload.SaveFileContent)"/>
+                            <RadzenButton Text="Submit" Icon="check"
+                                          Click="() => ManageCsvUpload.ProcessRequirementsSpecificationCsvFile(OnUploadCompleted, ProjectId)"
+                                          Style="margin-top: 10px;"/>
                         </RadzenStack>
                 , new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
     }
 
-    int _currentLine = 0;
-    int _validLines;
-    int _invalidLines;
-    int _totalLines;
-
-    private async Task SaveFileContent(UploadChangeEventArgs args)
-    {
-        if (!args.Files.Any()) throw new Exception("No files found.");
-
-        var file = args.Files.First();
-        using var memoryStream = new MemoryStream();
-        await file.OpenReadStream().CopyToAsync(memoryStream);
-        memoryStream.Position = 0;
-
-        using var reader = new StreamReader(memoryStream);
-        _fileContent = await reader.ReadToEndAsync();
-
-        if (string.IsNullOrWhiteSpace(_fileContent))
-        {
-            await FormNotificationService.NotifyError("No file content found. Please upload a CSV file.");
-        }
-    }
 
 
-    private async Task ProcessCsvFile()
-    {
-        var csvlines = _fileContent.Split('\n').Skip(1);
-        _totalLines = csvlines.Count();
 
-        _requirementsSpecifications = await RequirementsSpecificationModel.GetRequirementsSpecificationListAsync(ProjectId);
 
-        _currentLine = 0;
-        _validLines = 0;
-        _invalidLines = 0;
-
-        foreach (var line in csvlines)
-        {
-            _currentLine++;
-
-            if (string.IsNullOrWhiteSpace(line))
-            {
-                _invalidLines++;
-                continue;
-            }
-
-            var values = line.Split(',');
-            if (values.Length < 2)
-            {
-                _invalidLines++;
-                continue;
-            }
-
-            var requirmentsSpecification = new RequirementsSpecification
-            {
-                    Name = values[0].Trim(),
-                    Description = values[1].Trim()
-            };
-
-            if (string.IsNullOrWhiteSpace(requirmentsSpecification.Name) || string.IsNullOrWhiteSpace(requirmentsSpecification.Description))
-            {
-                _invalidLines++;
-                continue;
-            }
-
-            if (_requirementsSpecifications.Any(r => r.Name == requirmentsSpecification.Name && r.Description == requirmentsSpecification.Description))
-            {
-                _invalidLines++;
-                continue;
-            }
-
-            await RequirementsSpecificationModel.AddRequirementsSpecificationFromCsv(requirmentsSpecification, ProjectId);
-            _validLines++;
-        }
-
-        DialogService.Close();
-        await OnUploadCompleted.InvokeAsync();
-
-        if (_validLines == 0)
-        {
-            await FormNotificationService.NotifyError($"No {nameof(RequirementsSpecificationModel)} found in the CSV file.");
-        }
-        else
-        {
-            await FormNotificationService.NotifySuccess($"{nameof(RequirementsSpecificationModel)} CSV imported successfully with {_validLines} requirements specifications and {_invalidLines} invalid lines.");
-        }
-    }
 
 
 }
