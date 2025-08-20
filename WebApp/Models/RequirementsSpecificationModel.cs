@@ -115,4 +115,16 @@ public class RequirementsSpecificationModel(
         if (noExceptions == 0) return false;
         return true;
     }
+
+    public async Task<RequirementsSpecification> AddRequirementsSpecificationFromCsv(
+        RequirementsSpecification requirementSpecification, int projectId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        requirementSpecification.ProjectsId = projectId;
+        db.RequirementsSpecification.Add(requirementSpecification);
+        await db.SaveChangesAsync(userService);
+
+        return requirementSpecification;
+    }
 }

@@ -2,6 +2,7 @@
 
 <RadzenButton Icon="csv" Click="OpenFileUpload"
               Visible="UiUserVisibility.IsAuthorized()"
+              Variant="Variant.Outlined"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Upload requirements data from csv"))"
               MouseLeave="@AppTooltipService.HideTooltip"/>
 

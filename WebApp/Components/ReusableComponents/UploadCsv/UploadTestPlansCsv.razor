@@ -1,6 +1,7 @@
 @attribute [Authorize(Roles = "Admin, Manager")]
 <RadzenButton Icon="csv" Click="OpenFileUpload"
               Visible="UiUserVisibility.IsAuthorized()"
+              Variant="Variant.Outlined"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Upload test Plans data from csv"))"
               MouseLeave="@AppTooltipService.HideTooltip"/>
 

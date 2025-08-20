@@ -30,9 +30,16 @@
     <HeaderTemplate>
         <RequirementsSpecificationDialogCreate Title="Requirement Specification" ProjectId="ProjectId"
                                                OnRequirementCreated="() => RefreshPage()"/>
+        <RadzenButton Icon="autorenew"
+                      MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Show All"))"
+                      MouseLeave="@AppTooltipService.HideTooltip"
+                      Size="ButtonSize.Medium" Click=@(() => DataGridSettingsService.ClearSettingsAsync())/>
+
         <DeleteallDataForModel EntityName="@(nameof(RequirementsSpecification))"
                                EntityList="_requirementsSpecification"/>
         <ExportGridDataCsv Grid="@_dataGrid"/>
+
+        <UploadRequirementsSpecificationsCsv ProjectId="ProjectId" OnUploadCompleted="RefreshPage"/>
 
     </HeaderTemplate>
 
