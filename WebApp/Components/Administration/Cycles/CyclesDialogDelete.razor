@@ -15,7 +15,7 @@
     private async Task DeleteItem(int item)
     {
         var confirmed = await DialogService.Confirm(
-            $"Are you sure you want to delete this {nameof(CyclesModel)}?",
+            $"Are you sure you want to delete this {nameof(Cycles)}?",
             $"Delete {nameof(Cycles)}");
 
         if (confirmed is true)
