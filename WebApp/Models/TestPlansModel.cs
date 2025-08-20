@@ -163,10 +163,8 @@ public class TestPlansModel(
     public async Task UpdateCardOnDragDrop(RadzenDropZoneItemEventArgs<TestPlans> args)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-        args.Item.ModifiedBy = userService.GetCurrentUserNameAsync().Result;
-        args.Item.ModifiedAt = DateTime.UtcNow;
         db.TestPlans.Update(args.Item);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(userService);
     }
 
     public async Task<TestPlans> AddTestPlanFromCsv(TestPlans testPlan, int projectId)
