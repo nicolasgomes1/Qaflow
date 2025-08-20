@@ -100,4 +100,15 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
         Logger.LogInformation($"Checking if cycle {cycle.Name} has test plans");
         return db.Result.TestPlans.Any(tp => tp.CycleId == cycle.Id);
     }
+
+
+    public async Task AddCyclesFromCsv(Cycles cycles, int projectId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        cycles.ProjectsId = projectId;
+        cycles.ArchivedStatus = ArchivedStatus.Active;
+        db.Cycles.Add(cycles);
+        await db.SaveChangesAsync(userService);
+        Logger.LogInformation($"Cycle {cycles.Name} added from csv");
+    }
 }

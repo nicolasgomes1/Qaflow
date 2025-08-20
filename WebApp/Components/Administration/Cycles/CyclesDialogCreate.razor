@@ -32,11 +32,8 @@
         DialogService.Close(result);
         StateHasChanged();
         await FormNotificationService.NotifySuccess($"Cycle created successfully with id {_cycles.Id}");
-        // Notify the parent that the requirement was created
-        if (OnCycleCreated.HasDelegate)
-        {
-            await OnCycleCreated.InvokeAsync();
-        }
+
+        await OnCycleCreated.InvokeAsync();
     }
 
     async Task ShowInlineDialog()
@@ -106,7 +103,6 @@
 
                         bool ValidateStartDate()
                         {
-                            // if either is not set, don't fail here (let RequiredValidator handle missing values)
                             return _cycles.StartDate < _cycles.EndDate;
                         }
 

@@ -20,6 +20,7 @@
         <CyclesDialogCreate Title="Cycles" ProjectId="ProjectId"
                             OnCycleCreated="() => RefreshPage()"/>
         <DeleteallDataForModel EntityName="@nameof(Cycles)" EntityList="@_cycles"/>
+        <UploadCyclesCsv OnUploadCompleted="RefreshPage" ProjectId="ProjectId"/>
 
 
     </HeaderTemplate>

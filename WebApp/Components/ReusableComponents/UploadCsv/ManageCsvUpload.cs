@@ -15,13 +15,14 @@ public class ManageCsvUpload
     private readonly DialogService _dialogService;
     private readonly RequirementsSpecificationModel _requirementsSpecificationModel;
     private readonly TestCasesModel _testCasesModel;
+    private readonly CyclesModel _cyclesModel;
     private readonly TestPlansModel _testPlansModel;
     private string _fileContent = string.Empty;
 
     public ManageCsvUpload(FormNotificationService formNotificationService, ProjectModel projectModel,
         DialogService dialogService, RequirementsModel requirementsModel,
         RequirementsSpecificationModel requirementsSpecificationModel, TestCasesModel testCasesModel,
-        TestPlansModel testPlansModel)
+        TestPlansModel testPlansModel, CyclesModel cyclesModel)
     {
         _formNotificationService = formNotificationService;
         _projectModel = projectModel;
@@ -30,6 +31,7 @@ public class ManageCsvUpload
         _requirementsSpecificationModel = requirementsSpecificationModel;
         _testCasesModel = testCasesModel;
         _testPlansModel = testPlansModel;
+        _cyclesModel = cyclesModel;
     }
 
     private IEnumerable<Projects> _projects = [];
@@ -37,6 +39,7 @@ public class ManageCsvUpload
     private IEnumerable<RequirementsSpecification> _requirementsSpecifications = [];
     private IEnumerable<TestPlans> _testPlans = [];
     private IEnumerable<TestCases> _testCases = [];
+    private IEnumerable<Cycles> _cycles = [];
 
 
     int _currentLine = 0;
@@ -392,6 +395,94 @@ public class ManageCsvUpload
         {
             await _formNotificationService.NotifySuccess(
                 $"{nameof(TestCases)} CSV imported successfully with {_validLines} test cases and {_invalidLines} invalid lines.");
+        }
+    }
+
+    public async Task ProcessCyclesCsvFile(EventCallback onUploadCompleted, int projectId)
+    {
+        var csvlines = _fileContent.Split('\n').Skip(1);
+        _totalLines = csvlines.Count();
+
+        _cycles = await _cyclesModel.GetCyclesByProjectId(projectId);
+
+        _currentLine = 0;
+        _validLines = 0;
+        _invalidLines = 0;
+
+        foreach (var line in csvlines)
+        {
+            _currentLine++;
+
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            var values = line.Split(',');
+            // Require Name, StartDate, EndDate
+            if (values.Length < 3)
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            // Parse dates safely; if parsing fails, mark as invalid
+            var name = values[0].Trim();
+            if (!DateTime.TryParse(values[1].Trim(), out var parsedStart))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            if (!DateTime.TryParse(values[2].Trim(), out var parsedEnd))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            var cycles = new Cycles
+            {
+                Name = name,
+                // Keep behavior consistent with existing code: mark as UTC without conversion
+                StartDate = DateTime.SpecifyKind(parsedStart, DateTimeKind.Utc),
+                EndDate = DateTime.SpecifyKind(parsedEnd, DateTimeKind.Utc)
+            };
+
+            if (string.IsNullOrWhiteSpace(cycles.Name))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            // Start must be strictly earlier than End
+            if (cycles.StartDate >= cycles.EndDate)
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            if (_cycles.Any(r => r.Name == cycles.Name))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            await _cyclesModel.AddCyclesFromCsv(cycles, projectId);
+            _validLines++;
+        }
+
+        _dialogService.Close();
+        await onUploadCompleted.InvokeAsync();
+
+        if (_validLines == 0)
+        {
+            await _formNotificationService.NotifyError($"No {nameof(Cycles)} found in the CSV file.");
+        }
+        else
+        {
+            await _formNotificationService.NotifySuccess(
+                $"{nameof(Cycles)} CSV imported successfully with {_validLines} cycles and {_invalidLines} invalid lines.");
         }
     }
 }
