@@ -23,14 +23,23 @@
                         <RadzenLabel Text="Priority:" Style="font-weight: bold;"/>
                         <RadzenLabel Text="@_testPlans.Priority.ToString()"/>
 
+                        <RadzenLabel Text="Is Archived:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testPlans.ArchivedStatus.ToString()"/>
+
+                        <RadzenLabel Text="Cycle:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@(_testPlans.Cycle?.Name ?? "No cycle assigned")"/>
+
                         <RadzenLabel Text="Created At:" Style="font-weight: bold;"/>
                         <RadzenLabel Text="@_testPlans.CreatedAt.ToString(CultureInfo.CurrentCulture)"/>
 
                         <RadzenLabel Text="Modified At:" Style="font-weight: bold;"/>
                         <RadzenLabel Text="@_testPlans.ModifiedAt.ToString(CultureInfo.CurrentCulture)"/>
 
-                        <RadzenLabel Text="Cycle:" Style="font-weight: bold;"/>
-                        <RadzenLabel Text="@(_testPlans.Cycle?.Name ?? "No cycle assigned")"/>
+                        <RadzenLabel Text="Created By:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testPlans.CreatedBy"/>
+
+                        <RadzenLabel Text="Modified By:" Style="font-weight: bold;"/>
+                        <RadzenLabel Text="@_testPlans.ModifiedBy"/>
 
 
                     </div>
@@ -82,7 +91,7 @@
 </RadzenTabs>
 
 
-<ViewEditActions EntityName="testplans" EntityId="_testPlans.Id"/>
+<ViewEditActions EntityName="testplans" EntityId="_testPlans.Id" IsArchived="_isArchived"/>
 
 @code {
     [Parameter] public int Id { get; set; }
@@ -107,10 +116,11 @@
     }
 
     private TestPlans _testPlans = new();
-
+    private bool _isArchived = true;
     protected override async Task OnInitializedAsync()
     {
         _testPlans = await TestPlansModel.GetTestPlanByIdAsync(Id);
+        if (_testPlans.ArchivedStatus == ArchivedStatus.Archived) _isArchived = false;
         Files = await TestPlansFilesModel.GetFilesByTestPlanId(Id, ProjectId);
     }
 

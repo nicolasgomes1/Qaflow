@@ -108,6 +108,8 @@ public class TestCasesModel(
 
         db.TestCases.Add(testcase);
 
+        SetArchivedStatus.SetArchivedStatusBasedOnWorkflow(testcase);
+
         testcase.ProjectsId = projectId;
         testcase.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         testcase.EstimatedTime = TimeSpan.FromMinutes(int.TryParse(EstimatedTimeInput, out var minutes) ? minutes : 0);

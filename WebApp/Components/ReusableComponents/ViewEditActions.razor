@@ -1,5 +1,5 @@
 <div style="margin-top: 10px;">
-    <RadzenButton Text="Edit" Click="EditUrl"/>
+    <RadzenButton Text="Edit" Click="EditUrl" Visible="IsArchived"/>
     <RadzenButton Text="Back" Click="CancelUrl"/>
 </div>
 
@@ -17,6 +17,8 @@
     /// </summary>
     [Parameter]
     public int EntityId { get; set; }
+
+    [Parameter] public bool IsArchived { get; set; } = false;
 
 
     private int _projectId;
