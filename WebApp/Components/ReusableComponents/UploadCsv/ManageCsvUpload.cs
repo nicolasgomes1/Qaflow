@@ -14,22 +14,29 @@ public class ManageCsvUpload
     private readonly RequirementsModel _requirementsModel;
     private readonly DialogService _dialogService;
     private readonly RequirementsSpecificationModel _requirementsSpecificationModel;
+    private readonly TestCasesModel _testCasesModel;
+    private readonly TestPlansModel _testPlansModel;
     private string _fileContent = string.Empty;
 
     public ManageCsvUpload(FormNotificationService formNotificationService, ProjectModel projectModel,
         DialogService dialogService, RequirementsModel requirementsModel,
-        RequirementsSpecificationModel requirementsSpecificationModel)
+        RequirementsSpecificationModel requirementsSpecificationModel, TestCasesModel testCasesModel,
+        TestPlansModel testPlansModel)
     {
         _formNotificationService = formNotificationService;
         _projectModel = projectModel;
         _dialogService = dialogService;
         _requirementsModel = requirementsModel;
         _requirementsSpecificationModel = requirementsSpecificationModel;
+        _testCasesModel = testCasesModel;
+        _testPlansModel = testPlansModel;
     }
 
     private IEnumerable<Projects> _projects = [];
     private IEnumerable<Requirements> _requirements = [];
     private IEnumerable<RequirementsSpecification> _requirementsSpecifications = [];
+    private IEnumerable<TestPlans> _testPlans = [];
+    private IEnumerable<TestCases> _testCases = [];
 
 
     int _currentLine = 0;
@@ -252,6 +259,139 @@ public class ManageCsvUpload
         {
             await _formNotificationService.NotifySuccess(
                 $"{nameof(RequirementsSpecificationModel)} CSV imported successfully with {_validLines} requirements specifications and {_invalidLines} invalid lines.");
+        }
+    }
+
+    public async Task ProcessTestPlansCsvFile(EventCallback onUploadCompleted, int projectId)
+    {
+        var csvlines = _fileContent.Split('\n').Skip(1);
+        _totalLines = csvlines.Count();
+
+        _testPlans = await _testPlansModel.GetTestPlans(projectId);
+
+        _currentLine = 0;
+        _validLines = 0;
+        _invalidLines = 0;
+
+        foreach (var line in csvlines)
+        {
+            _currentLine++;
+
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            var values = line.Split(',');
+            if (values.Length < 2)
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            var testplans = new TestPlans
+            {
+                Name = values[0].Trim(),
+                Description = values[1].Trim(),
+                Priority = Enum.Parse<Priority>(values[2].Trim()),
+                Cycle = new Cycles { Name = values[3].Trim() }
+            };
+
+            if (string.IsNullOrWhiteSpace(testplans.Name) || string.IsNullOrWhiteSpace(testplans.Description))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            if (_testPlans.Any(r => r.Name == testplans.Name && r.Description == testplans.Description))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            await _testPlansModel.AddTestPlanFromCsv(testplans, projectId);
+            _validLines++;
+        }
+
+        _dialogService.Close();
+        await onUploadCompleted.InvokeAsync();
+
+        if (_validLines == 0)
+        {
+            await _formNotificationService.NotifyError($"No {nameof(TestPlans)} found in the CSV file.");
+        }
+        else
+        {
+            await _formNotificationService.NotifySuccess(
+                $"{nameof(TestPlans)} CSV imported successfully with {_validLines} test plans and {_invalidLines} invalid lines.");
+        }
+    }
+
+    public async Task ProcessTestCasesCsvFile(EventCallback onUploadCompleted, int projectId)
+    {
+        var csvlines = _fileContent.Split('\n').Skip(1);
+        _totalLines = csvlines.Count();
+
+        _testCases = await _testCasesModel.GetTestCasesToValidateAgainstCsv(projectId);
+
+        _currentLine = 0;
+        _validLines = 0;
+        _invalidLines = 0;
+
+        foreach (var line in csvlines)
+        {
+            _currentLine++;
+
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            var values = line.Split(',');
+            if (values.Length < 2)
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            var testCases = new TestCases
+            {
+                Name = values[0].Trim(),
+                Description = values[1].Trim(),
+                Priority = Enum.Parse<Priority>(values[2].Trim()),
+                TestType = Enum.Parse<TestTypes>(values[3].Trim()),
+                TestScope = Enum.Parse<TestScope>(values[4].Trim())
+            };
+
+            if (string.IsNullOrWhiteSpace(testCases.Name) || string.IsNullOrWhiteSpace(testCases.Description))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            if (_testCases.Any(r => r.Name == testCases.Name && r.Description == testCases.Description))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            await _testCasesModel.AddTestCasesFromCsv(testCases, projectId);
+            _validLines++;
+        }
+
+        _dialogService.Close();
+        await onUploadCompleted.InvokeAsync();
+
+        if (_validLines == 0)
+        {
+            await _formNotificationService.NotifyError($"No {nameof(TestCases)} found in the CSV file.");
+        }
+        else
+        {
+            await _formNotificationService.NotifySuccess(
+                $"{nameof(TestCases)} CSV imported successfully with {_validLines} test cases and {_invalidLines} invalid lines.");
         }
     }
 }

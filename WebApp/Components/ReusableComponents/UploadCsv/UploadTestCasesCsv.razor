@@ -7,8 +7,6 @@
               MouseLeave="@AppTooltipService.HideTooltip"/>
 
 @code {
-    private IEnumerable<TestCases> _testCases = [];
-    private string _fileContent = string.Empty;
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
     /// <summary>
@@ -51,99 +49,13 @@
                         </div>
                     </RadzenFieldset>
                 <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload"
-                              Change="@(args => SaveFileContent(args))"/>
-                <RadzenButton Text="Submit" Icon="check" Click="ProcessCsvFile" Style="margin-top: 10px;"/>
+                              Change="@(args => ManageCsvUpload.SaveFileContent(args))"/>
+                    <RadzenButton Text="Submit" Icon="check"
+                                  Click="() => ManageCsvUpload.ProcessTestCasesCsvFile(OnUploadCompleted, ProjectId)"
+                                  Style="margin-top: 10px;"/>
                 </RadzenStack>
             , new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
     }
-
-    private async Task SaveFileContent(UploadChangeEventArgs args)
-    {
-        if (!args.Files.Any()) throw new Exception("No files found.");
-
-        var file = args.Files.First();
-        using var memoryStream = new MemoryStream();
-        await file.OpenReadStream().CopyToAsync(memoryStream);
-        memoryStream.Position = 0;
-
-        using var reader = new StreamReader(memoryStream);
-        _fileContent = await reader.ReadToEndAsync();
-
-        if (string.IsNullOrWhiteSpace(_fileContent))
-        {
-            await FormNotificationService.NotifyError("No file content found. Please upload a CSV file.");
-        }
-    }
-
-    int _currentLine = 0;
-    int _validLines;
-    int _invalidLines;
-    int _totalLines;
-
-    private async Task ProcessCsvFile()
-    {
-        var csvlines = _fileContent.Split('\n').Skip(1);
-        _totalLines = csvlines.Count();
-
-        _testCases = await TestCasesModel.GetTestCasesToValidateAgainstCsv(ProjectId);
-
-        _currentLine = 0;
-        _validLines = 0;
-        _invalidLines = 0;
-
-        foreach (var line in csvlines)
-        {
-            _currentLine++;
-
-            if (string.IsNullOrWhiteSpace(line))
-            {
-                _invalidLines++;
-                continue;
-            }
-
-            var values = line.Split(',');
-            if (values.Length < 2)
-            {
-                _invalidLines++;
-                continue;
-            }
-
-            var testCases = new TestCases
-            {
-                Name = values[0].Trim(),
-                Description = values[1].Trim(),
-                Priority = Enum.Parse<Priority>(values[2].Trim()),
-                TestType = Enum.Parse<TestTypes>(values[3].Trim()),
-                TestScope = Enum.Parse<TestScope>(values[4].Trim())
-            };
-
-            if (string.IsNullOrWhiteSpace(testCases.Name) || string.IsNullOrWhiteSpace(testCases.Description))
-            {
-                _invalidLines++;
-                continue;
-            }
-
-            if (_testCases.Any(r => r.Name == testCases.Name && r.Description == testCases.Description))
-            {
-                _invalidLines++;
-                continue;
-            }
-
-            await TestCasesModel.AddTestCasesFromCsv(testCases, ProjectId);
-            _validLines++;
-        }
-
-        DialogService.Close();
-        await OnUploadCompleted.InvokeAsync();
-
-        if (_validLines == 0)
-        {
-            await FormNotificationService.NotifyError($"No {nameof(TestCases)} found in the CSV file.");
-        }
-        else
-        {
-            await FormNotificationService.NotifySuccess($"{nameof(TestCases)} CSV imported successfully with {_validLines} blog posts and {_invalidLines} invalid lines.");
-        }
-    }
+    
 
 }
