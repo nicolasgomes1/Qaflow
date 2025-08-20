@@ -1,4 +1,4 @@
-@page "/chatgptchat1"
+@page "/chatgptchat"
 @using System.Net.Http.Headers
 @using System.Text.Json
 @rendermode InteractiveServer
@@ -38,9 +38,7 @@
     {
         //TODO see how to remove from here
 
-        _apiKey = Environment.GetEnvironmentVariable("OpenApiKey") ??
-                  Configuration["OpenApiKey"] ??
-                  throw new InvalidOperationException("OpenApiKey configuration is missing");
+        _apiKey = "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";
 
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
     }
@@ -80,14 +78,14 @@
         var data = new
         {
             model = "gpt-4.1-nano",
-            input = prompt, // ✅ use input instead of messages
+            input = prompt,
             temperature = 0.7
         };
 
         var jsonString = JsonSerializer.Serialize(data);
         var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PostAsync("v1/responses", content);
+        var response = await _httpClient.PostAsync("https://api.openai.com/v1/responses", content);
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync();
@@ -98,14 +96,11 @@
 
         using JsonDocument doc = JsonDocument.Parse(responseContent);
         JsonElement root = doc.RootElement;
+        Console.WriteLine(responseContent);
+        var promptTokens = root.GetProperty("usage").GetProperty("input_tokens").GetInt32();
+        var completionTokens = root.GetProperty("usage").GetProperty("output_tokens").GetInt32();
 
-        // ✅ Responses API has different usage field names
-        var promptTokens = root.GetProperty("usage").GetProperty("prompt_tokens").GetInt32();
-        var completionTokens = root.GetProperty("usage").GetProperty("completion_tokens").GetInt32();
-
-        // ✅ Different response shape: "output_text" is the merged string output
-        var messageContent = root.GetProperty("output_text").GetString();
-
+        var messageContent = root.GetProperty("output")[0].GetProperty("content")[0].GetProperty("text").GetString();
         return (messageContent, promptTokens, completionTokens);
     }
 
