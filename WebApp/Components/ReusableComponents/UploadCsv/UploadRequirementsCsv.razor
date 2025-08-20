@@ -1,7 +1,9 @@
+@attribute [Authorize(Roles = "Admin, Manager")]
+
 <RadzenButton Icon="csv" Click="OpenFileUpload"
+              Visible="UiUserVisibility.IsAuthorized()"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Upload requirements data from csv"))"
               MouseLeave="@AppTooltipService.HideTooltip"/>
-@inject UserService UserService
 
 @code {
     private IEnumerable<Requirements> _requirements = [];

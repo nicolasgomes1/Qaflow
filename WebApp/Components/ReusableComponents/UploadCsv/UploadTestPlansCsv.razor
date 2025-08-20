@@ -1,4 +1,6 @@
+@attribute [Authorize(Roles = "Admin, Manager")]
 <RadzenButton Icon="csv" Click="OpenFileUpload"
+              Visible="UiUserVisibility.IsAuthorized()"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Upload test Plans data from csv"))"
               MouseLeave="@AppTooltipService.HideTooltip"/>
 
@@ -6,7 +8,6 @@
     private IEnumerable<TestPlans> _testPlans = [];
     private string _fileContent = string.Empty;
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
-
 
     /// <summary>
     /// Event callback to be invoked when the upload is completed. It will refresh the page on parent component.
@@ -25,6 +26,8 @@
                                 <th style="padding:6px; border:1px solid #ddd;">Name</th>
                                 <th style="padding:6px; border:1px solid #ddd;">Description</th>
                                 <th style="padding:6px; border:1px solid #ddd;">Priority</th>
+                                <th style="padding:6px; border:1px solid #ddd;">Cycles</th>
+
                             </tr>
                             </thead>
                             <tbody>
@@ -32,6 +35,8 @@
                                 <td style="padding:6px; border:1px solid #ddd;">My Test Case</td>
                                 <td style="padding:6px; border:1px solid #ddd;">My Description</td>
                                 <td style="padding:6px; border:1px solid #ddd;">High</td>
+                                <td style="padding:6px; border:1px solid #ddd;">Cycle x</td>
+
                             </tr>
                             </tbody>
                         </table>
@@ -39,11 +44,11 @@
                         <div style="margin-top:10px; font-size:12px; color:gray;">
                             ⚠️ Ensure your CSV file includes these columns in the same order separated by commas.
                             <br/>
-                            ⚠️ If Test Case already exists with same Name, it will be skipped.
+                            ⚠️ If Test Plan already exists with same Name, it will be skipped.
                         </div>
                     </RadzenFieldset>
                     <RadzenUpload ChooseText="Choose CSV" Accept=".csv" Style="width: 100%" Icon="upload"
-                                  Change="@(args => SaveFileContent(args))"/>
+                                  Change="@(SaveFileContent)"/>
                     <RadzenButton Text="Submit" Icon="check" Click="ProcessCsvFile" Style="margin-top: 10px;"/>
                 </RadzenStack>
             , new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, CloseDialogOnEsc = true });
@@ -56,10 +61,87 @@
 
     private async Task SaveFileContent(UploadChangeEventArgs args)
     {
+        if (!args.Files.Any()) throw new Exception("No files found.");
+
+        var file = args.Files.First();
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+
+        using var reader = new StreamReader(memoryStream);
+        _fileContent = await reader.ReadToEndAsync();
+
+        if (string.IsNullOrWhiteSpace(_fileContent))
+        {
+            await FormNotificationService.NotifyError("No file content found. Please upload a CSV file.");
+        }
     }
+
 
     private async Task ProcessCsvFile()
     {
+        var csvlines = _fileContent.Split('\n').Skip(1);
+        _totalLines = csvlines.Count();
+
+        _testPlans = await TestPlansModel.GetTestPlans(ProjectId);
+
+        _currentLine = 0;
+        _validLines = 0;
+        _invalidLines = 0;
+
+        foreach (var line in csvlines)
+        {
+            _currentLine++;
+
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            var values = line.Split(',');
+            if (values.Length < 2)
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            var testplans = new TestPlans
+            {
+                Name = values[0].Trim(),
+                Description = values[1].Trim(),
+                Priority = Enum.Parse<Priority>(values[2].Trim()),
+                Cycle = new Cycles { Name = values[3].Trim() }
+            };
+
+            if (string.IsNullOrWhiteSpace(testplans.Name) || string.IsNullOrWhiteSpace(testplans.Description))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            if (_testPlans.Any(r => r.Name == testplans.Name && r.Description == testplans.Description))
+            {
+                _invalidLines++;
+                continue;
+            }
+
+            await TestPlansModel.AddTestPlanFromCsv(testplans, ProjectId);
+            _validLines++;
+        }
+
+        DialogService.Close();
+        await OnUploadCompleted.InvokeAsync();
+
+        if (_validLines == 0)
+        {
+            await FormNotificationService.NotifyError($"No {nameof(TestPlans)} found in the CSV file.");
+        }
+        else
+        {
+            await FormNotificationService.NotifySuccess($"{nameof(TestPlans)} CSV imported successfully with {_validLines} test plans and {_invalidLines} invalid lines.");
+        }
     }
+
 
 }

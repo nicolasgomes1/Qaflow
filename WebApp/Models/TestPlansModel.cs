@@ -168,4 +168,22 @@ public class TestPlansModel(
         db.TestPlans.Update(args.Item);
         await db.SaveChangesAsync();
     }
+
+    public async Task<TestPlans> AddTestPlanFromCsv(TestPlans testPlan, int projectId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var existingCycles = await db.Cycles.Where(c => c.ProjectsId == projectId).ToListAsync();
+        testPlan.ProjectsId = projectId;
+        testPlan.WorkflowStatus = WorkflowStatus.New;
+        testPlan.ArchivedStatus = ArchivedStatus.Active;
+
+        var validCycle = testPlan.Cycle?.Name ?? string.Empty;
+
+        testPlan.Cycle = existingCycles.FirstOrDefault(c => c.Name == validCycle);
+
+        db.TestPlans.Add(testPlan);
+        await db.SaveChangesAsync();
+        return testPlan;
+    }
 }
