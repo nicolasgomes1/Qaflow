@@ -27,39 +27,4 @@ public class GridSettingsModel(IDbContextFactory<ApplicationDbContext> dbContext
 
         return gridSetting;
     }
-
-
-    public async Task<IEnumerable<GridSettings>> LoadGridSettings()
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var user = userService.GetCurrentUserInfoAsync().Result.UserName;
-
-        if (string.IsNullOrEmpty(user))
-            throw new Exception("User not found");
-
-        return await dbContext.GridSettings
-            .Where(gs => gs.UserName == user)
-            .ToListAsync();
-    }
-
-    public async Task DeleteGridSettings(GridSettings gridSettings)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        dbContext.GridSettings.Remove(gridSettings);
-        await dbContext.SaveChangesAsync();
-    }
-
-    public async Task AddGridSettings(GridSettings gridSettings)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        dbContext.GridSettings.Add(gridSettings);
-        await dbContext.SaveChangesAsync();
-    }
-
-    public async Task UpdateGridSettings(GridSettings gridSettings)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        dbContext.GridSettings.Update(gridSettings);
-        await dbContext.SaveChangesAsync();
-    }
 }

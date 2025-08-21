@@ -184,11 +184,4 @@ public class TestPlansModel(
         await db.SaveChangesAsync(userService);
         return testPlan;
     }
-
-    public async Task DeleteTestPlan(TestPlans testPlans)
-    {
-        await using var db = await dbContextFactory.CreateDbContextAsync();
-        db.TestPlans.Remove(testPlans);
-        await db.SaveChangesAsync(userService);
-    }
 }
