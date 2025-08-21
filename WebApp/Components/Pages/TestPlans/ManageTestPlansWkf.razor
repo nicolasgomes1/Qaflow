@@ -235,14 +235,12 @@
         Logger.LogInformation("deleting {tp}", testPlans);
         ContextMenuService.Close();
 
-        await using var db = await DbContext.CreateDbContextAsync();
 
         var confirmed = await DialogService.Confirm($"Are you sure you want to delete this Test Plan?", $"Delete Test Plan");
 
         if (confirmed is true)
         {
-            db.TestPlans.Remove(testPlans);
-            await db.SaveChangesAsync();
+            await TestPlansModel.DeleteTestPlan(testPlans);
         }
 
         await RefreshAllTestPlans();

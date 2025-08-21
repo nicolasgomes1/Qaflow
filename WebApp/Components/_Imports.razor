@@ -44,7 +44,7 @@
 @inject TestExecutionTimerServicev2 TestExecutionTimerService
 @inject TestStepsExecutionTimerService TestStepsExecutionTimerService
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IDbContextFactory<ApplicationDbContext> DbContext
+@inject IDbContextFactory<ApplicationDbContext> DbContext1
 @inject FormNotificationService FormNotificationService
 @inject ProjectModel ProjectModel
 @inject UserService UserService
@@ -89,3 +89,5 @@
 @inject CyclesModel CyclesModel
 @inject BugsCommentsModel BugsCommentsModel
 @inject TestStepExecutionFileModel TestStepExecutionFileModel
+
+@inject IDbContextFactory<ApplicationDbContext> DbContext

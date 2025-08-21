@@ -81,21 +81,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadGridSettings();
+        _gridSettings = await GridSettingsModel.LoadGridSettings();
+
     }
 
-    async Task LoadGridSettings()
-    {
-        await using var dbContext = await DbContext.CreateDbContextAsync();
-        var user = UserService.GetCurrentUserInfoAsync().Result.UserName;
-
-        if (string.IsNullOrEmpty(user))
-            throw new Exception("User not found");
-
-        _gridSettings = await dbContext.GridSettings
-            .Where(gs => gs.UserName == user)
-            .ToListAsync();
-    }
 
     async Task InsertRow()
     {
@@ -166,7 +155,7 @@
         await dbContext.SaveChangesAsync();
 
         // Reload grid data to reflect changes
-        await LoadGridSettings();
+        await GridSettingsModel.LoadGridSettings();
         await _gridSettingsGrid.Reload();
 
         _gridSettingsToInsert.Remove(gridSetting);
@@ -175,10 +164,7 @@
 
     async Task DeleteRow(GridSettings gridSetting)
     {
-        await using var dbContext = await DbContext.CreateDbContextAsync();
-
-        dbContext.Remove(gridSetting);
-        await dbContext.SaveChangesAsync();
+        await GridSettingsModel.DeleteGridSettings(gridSetting);
 
         _gridSettings = _gridSettings.Where(gs => gs.Id != gridSetting.Id).ToList();
         await _gridSettingsGrid.Reload();
@@ -186,13 +172,10 @@
 
     async Task OnCreateRow(GridSettings gridSetting)
     {
-        await using var dbContext = await DbContext.CreateDbContextAsync();
-
-        dbContext.Add(gridSetting);
-        await dbContext.SaveChangesAsync();
+        await GridSettingsModel.AddGridSettings(gridSetting);
 
         // Reload grid data to include the new row
-        await LoadGridSettings();
+        await GridSettingsModel.LoadGridSettings();
         await _gridSettingsGrid.Reload();
 
         _gridSettingsToInsert.Remove(gridSetting);
@@ -201,13 +184,10 @@
 
     async Task OnUpdateRow(GridSettings gridSetting)
     {
-        await using var dbContext = await DbContext.CreateDbContextAsync();
-
-        dbContext.Update(gridSetting);
-        await dbContext.SaveChangesAsync();
+        await GridSettingsModel.UpdateGridSettings(gridSetting);
 
         // Reload grid data to reflect changes
-        await LoadGridSettings();
+        await GridSettingsModel.LoadGridSettings();
         await _gridSettingsGrid.Reload();
 
         _gridSettingsToInsert.Remove(gridSetting);
