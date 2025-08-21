@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace WebApp.Data.Migrations
+namespace WebApp.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -49,28 +49,6 @@ namespace WebApp.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GridSettings",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    GridName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    IsCompactMode = table.Column<bool>(type: "boolean", nullable: false),
-                    IsVirtualizationEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    IsFilterEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    IsSortingEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GridSettings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1100,9 +1078,6 @@ namespace WebApp.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "BugsFiles");
-
-            migrationBuilder.DropTable(
-                name: "GridSettings");
 
             migrationBuilder.DropTable(
                 name: "Integrations");

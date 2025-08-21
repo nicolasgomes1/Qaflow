@@ -139,7 +139,6 @@ else
 
     readonly IEnumerable<int> _pageSizeOptions = [10, 20, 30, 40, 50];
 
-    private GridSettings _gridSettings = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -169,7 +168,6 @@ else
         if (firstRender)
         {
             await DataGridSettingsService.LoadSettingsAsync();
-            _gridSettings = await GridSettingsModel.GetCUrrentGridUserSettings("Requirements");
         }
     }
 

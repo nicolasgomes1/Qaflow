@@ -101,7 +101,6 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<BugsCommentsModel>();
         serviceCollection.AddScoped<CyclesModel>();
         serviceCollection.AddScoped<TestStepsModel>();
-        serviceCollection.AddScoped<GridSettingsModel>();
         serviceCollection.AddScoped<TestStepExecutionFileModel>();
 
 

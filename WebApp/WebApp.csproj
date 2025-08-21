@@ -88,6 +88,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Components\Administration\Settings\"/>
         <Folder Include="Data\Migrations\"/>
     </ItemGroup>
 

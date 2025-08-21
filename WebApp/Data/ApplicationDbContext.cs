@@ -10,7 +10,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Projects> Projects { get; set; }
     public DbSet<TestCasesJira> TestCasesJira { get; set; }
     public DbSet<Integrations> Integrations { get; set; }
-    public DbSet<GridSettings> GridSettings { get; set; }
     public DbSet<Cycles> Cycles { get; set; }
 
     public DbSet<Requirements> Requirements { get; set; }

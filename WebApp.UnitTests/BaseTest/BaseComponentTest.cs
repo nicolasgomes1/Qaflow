@@ -93,7 +93,6 @@ public abstract class BaseComponentTest : TestContext, IClassFixture<TestFixture
             typeof(BugsCommentsModel),
             typeof(CyclesModel),
             typeof(TestStepsModel),
-            typeof(GridSettingsModel),
             typeof(TestStepExecutionFileModel)
         };
 
