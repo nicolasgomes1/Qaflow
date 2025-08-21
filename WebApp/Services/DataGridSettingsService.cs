@@ -31,28 +31,46 @@ public class DataGridSettingsService(IJSRuntime jsRuntime)
     // Save DataGrid state for the current grid to local storage
     private async Task SaveSettingsAsync(DataGridSettings? settings)
     {
-        if (settings != null && _currentGridId != null)
+        try
         {
-            var storageKey = GetStorageKey(_currentGridId);
-            var serializedSettings = JsonSerializer.Serialize(settings);
-            await jsRuntime.InvokeVoidAsync("window.localStorage.setItem", storageKey, serializedSettings);
+            if (settings != null && _currentGridId != null)
+            {
+                var storageKey = GetStorageKey(_currentGridId);
+                var serializedSettings = JsonSerializer.Serialize(settings);
+                await jsRuntime.InvokeVoidAsync("window.localStorage.setItem", storageKey, serializedSettings);
+            }
+        }
+        catch (Exception)
+        {
+            // Log error if needed
         }
     }
+
 
     // Load DataGrid state for the current grid from local storage
     public async Task<DataGridSettings?> LoadSettingsAsync()
     {
-        if (_currentGridId == null) return null;
-
-        var storageKey = GetStorageKey(_currentGridId);
-        var savedSettings = await jsRuntime.InvokeAsync<string>("window.localStorage.getItem", storageKey);
-        if (!string.IsNullOrEmpty(savedSettings))
+        try
         {
-            _settings = JsonSerializer.Deserialize<DataGridSettings>(savedSettings);
-        }
+            if (_currentGridId == null) return null;
 
-        return _settings; // Return the loaded settings for the current grid
+            var storageKey = GetStorageKey(_currentGridId);
+            var savedSettings = await jsRuntime.InvokeAsync<string>("window.localStorage.getItem", storageKey);
+            if (!string.IsNullOrEmpty(savedSettings))
+            {
+                _settings = JsonSerializer.Deserialize<DataGridSettings>(savedSettings);
+            }
+
+            return _settings;
+        }
+        catch (Exception)
+        {
+            // If there's any error loading settings, return null and start fresh
+            _settings = null;
+            return null;
+        }
     }
+
 
     // Clear the DataGrid settings for the current grid
     public async Task ClearSettingsAsync()

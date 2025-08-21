@@ -16,12 +16,12 @@
         {
             if (ProjectId is 0)
             {
-                NavigationManager.NavigateTo("/", true);
+                NavigationManager.NavigateTo("/");
                 FormNotificationService.NotifyInfo("Returning to the Hub Home Page as no Project is selected");
                 return;
             }
 
-            NavigationManager.NavigateTo($"/project/{ProjectId}", true);
+            NavigationManager.NavigateTo($"/project/{ProjectId}");
             FormNotificationService.NotifyInfo("Returning to Home Page");
         }
 

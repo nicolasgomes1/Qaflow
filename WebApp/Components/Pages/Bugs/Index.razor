@@ -105,6 +105,7 @@
 @code {
     [Parameter] public int ProjectId { get; set; }
     readonly IEnumerable<int> _pageSizeOptions = [10, 20, 30, 40, 50];
+    private const string GridId = "bugs"; // Unique identifier for this grid
 
     private RadzenDataGrid<Bugs> _dataGrid = new();
 
@@ -112,6 +113,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        DataGridSettingsService.SetCurrentGridId(GridId);
+        await DataGridSettingsService.LoadSettingsAsync(); // Add this line here
         await RefreshData();
     }
 

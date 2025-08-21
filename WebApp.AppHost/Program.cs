@@ -5,7 +5,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 //var tests = builder.AddNpmApp("webapp-e2e-tests", "../WebApp.Tests", "start");
 
-
+//postgres user is postgres
 var dbPassword = builder.AddParameter("DatabasePassword", false);
 // Configure PostgreSQL and ensure it returns an IResourceBuilder
 var postgres = builder.AddPostgres("postgres", password: dbPassword)

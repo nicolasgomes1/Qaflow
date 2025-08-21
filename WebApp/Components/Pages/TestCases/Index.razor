@@ -141,6 +141,8 @@ else
     protected override async Task OnInitializedAsync()
     {
         DataGridSettingsService.SetCurrentGridId(GridId);
+        await DataGridSettingsService.LoadSettingsAsync(); // Add this line here
+
         await RefreshData();
         _isLoading = false;
     }
@@ -165,7 +167,7 @@ else
     {
         if (firstRender)
         {
-            await DataGridSettingsService.LoadSettingsAsync();
+            await Task.CompletedTask;
         }
     }
 

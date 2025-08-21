@@ -73,6 +73,7 @@
 @code{
     [Parameter] public int ProjectId { get; set; }
     readonly IEnumerable<int> _pageSizeOptions = [10, 20, 30, 40, 50];
+    private const string GridId = "requirementsSpecification"; // Unique identifier for this grid
 
 
     private IList<RequirementsSpecification> _selectedRequirementsSpecifications = [];
@@ -82,6 +83,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        DataGridSettingsService.SetCurrentGridId(GridId);
+        await DataGridSettingsService.LoadSettingsAsync(); // Add this line here
         await RefreshPage();
     }
 

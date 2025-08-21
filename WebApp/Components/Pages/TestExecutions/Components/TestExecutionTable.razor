@@ -102,6 +102,7 @@
 @code {
     [Parameter] public Func<Task<List<TestExecution>>>? OnInitializedMethod { get; set; }
     [EditorRequired] [Parameter] public int ProjectId { get; set; }
+    private const string GridId = "testexecution"; // Unique identifier for this grid
 
     private IList<TestExecution> _selectedTestExecutions = [];
     private List<TestExecution> _testexecution = [];
@@ -113,6 +114,8 @@
     {
         if (OnInitializedMethod != null)
         {
+            DataGridSettingsService.SetCurrentGridId(GridId);
+            await DataGridSettingsService.LoadSettingsAsync(); // Add this line here
             await RefreshData();
         }
     }
