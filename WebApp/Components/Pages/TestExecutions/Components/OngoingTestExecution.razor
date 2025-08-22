@@ -171,6 +171,25 @@
 
 }
 
+@code{
+
+    bool IsTestCaseNotRunning(int testCaseId)
+    {
+        return !TestCaseTimerService.IsTestCaseRunning(testCaseId);
+    }
+
+    bool IsTestCasePausedOrNotRunning(int testCaseId)
+    {
+        return !TestCaseTimerService.IsTestCaseRunning(testCaseId) || TestCaseTimerService.IsTestCasePaused(testCaseId);
+    }
+
+    bool IsTestCasePaused(int testCaseId)
+    {
+        return !TestCaseTimerService.IsTestCasePaused(testCaseId);
+    }
+
+}
+
 <!-- UI for displaying the test cases and handling start/end actions -->
 <RadzenDataGrid @ref="_testCaseGrid" Data="@AssociatedTestCasesExecution" TItem="TestCaseExecution" PageSize="10"
                 AllowPaging="true" AllowSorting="true" Style="margin-top: 10px"
@@ -209,25 +228,6 @@
             <Template Context="testCaseExecution">
                 <!-- Start Test Execution Button -->
 
-
-                @code{
-
-                    bool IsTestCaseNotRunning(int testCaseId)
-                    {
-                        return !TestCaseTimerService.IsTestCaseRunning(testCaseId);
-                    }
-
-                    bool IsTestCasePausedOrNotRunning(int testCaseId)
-                    {
-                        return !TestCaseTimerService.IsTestCaseRunning(testCaseId) || TestCaseTimerService.IsTestCasePaused(testCaseId);
-                    }
-
-                    bool IsTestCasePaused(int testCaseId)
-                    {
-                        return !TestCaseTimerService.IsTestCasePaused(testCaseId);
-                    }
-
-                }
 
                 <RadzenButton Icon="timer_play"
                               Click="@(() => StartTestCase(testCaseExecution))"
@@ -330,7 +330,7 @@
                     </RadzenDataGridColumn>
 
                     <!-- Start/End buttons for each test step -->
-                    <RadzenDataGridColumn TItem="TestStepsExecution" Title="Actions">
+                    <RadzenDataGridColumn TItem="TestStepsExecution" Title="Actions" Frozen="true">
                         <Template Context="testStepExecution">
                             <RadzenButton Icon="timer_play" Click="@(() => StartTestStep(testStepExecution))"
                                           Disabled="@(ExecutionInProgress == false)"/>
