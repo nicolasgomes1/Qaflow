@@ -5,27 +5,47 @@
 @inject ILogger<View> Logger
 @attribute [Authorize(Roles = "Admin")]
 
+<AlertTitle TitleText=@($"View Integration {Id}")/>
+
 <RadzenCard Style="width: 50%; padding: 20px; margin-bottom:20px">
-    <div style="display: grid; grid-template-columns: 1fr 2fr; row-gap: 10px;">
+    <RadzenStack Orientation="Orientation.Vertical">
+        <RadzenStack Orientation="Orientation.Horizontal">
+            <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@Integrations.Id.ToString()"/>
+        </RadzenStack>
 
-        <RadzenLabel Text="Id:" Style="font-weight: bold;"/>
-        <RadzenLabel Text="@Integrations.Id.ToString()"/>
+        <RadzenStack Orientation="Orientation.Horizontal">
 
-        <RadzenLabel Text="Integration Type:" Style="font-weight: bold;"/>
-        <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@Integrations.IntegrationType.ToString()"/>
+            <RadzenLabel Text="Integration Type:" Style="font-weight: bold;"/>
+            <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@Integrations.IntegrationType.ToString()"/>
+        </RadzenStack>
 
-        <RadzenLabel Text="Base Url:" Style="font-weight: bold;"/>
-        <RadzenLabel Text="@Integrations.BaseUrl"/>
+        <RadzenStack Orientation="Orientation.Horizontal">
 
-        <RadzenLabel Text="username:" Style="font-weight: bold;"/>
-        <RadzenLabel Text="@Integrations.Username"/>
+            <RadzenLabel Text="Base Url:" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@Integrations.BaseUrl"/>
+        </RadzenStack>
 
-        <RadzenLabel Text="Api Key" Style="font-weight: bold;"/>
-        <RadzenLabel Text="@Integrations.ApiKey"/>
+        <RadzenStack Orientation="Orientation.Horizontal">
 
-        <RadzenLabel Text="Unique Identifier Key"/>
-        <RadzenLabel Text="@Integrations.UniqueKey"/>
-    </div>
+            <RadzenLabel Text="Username:" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@Integrations.Username"/>
+        </RadzenStack>
+
+        <RadzenStack Orientation="Orientation.Horizontal">
+
+            <RadzenLabel Text="Api Key" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@Integrations.ApiKey"/>
+        </RadzenStack>
+
+        <RadzenStack Orientation="Orientation.Horizontal">
+
+            <RadzenLabel Text="Unique Identifier Key" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@Integrations.UniqueKey"/>
+        </RadzenStack>
+    </RadzenStack>
+
+
 </RadzenCard>
 
 <div style="margin-top: 10px;">

@@ -5,7 +5,7 @@
 @inject ILogger<Index> Logger
 @attribute [Authorize(Roles = "Admin, Manager")]
 
-
+<AlertTitle TitleText="External Integrations"/>
 <RadzenDataGrid TItem="Integrations" Data="_integrations">
     <HeaderTemplate>
         <RadzenButton Click="CreateIntegration"
