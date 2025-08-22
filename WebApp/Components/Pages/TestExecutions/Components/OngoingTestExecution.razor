@@ -260,18 +260,19 @@
         @if (testCaseExecution.LinkedTestStepsExecution is { Count: > 0 })
         {
             <RadzenDataGrid @ref="_testStepsGrid" Data="@testCaseExecution.LinkedTestStepsExecution"
+                            GridLines="DataGridGridLines.Both" Density="Density.Compact"
                             TItem="TestStepsExecution" AllowPaging="false" AllowSorting="false">
                 <Columns>
                     <RadzenDataGridColumn TItem="TestStepsExecution" Property="@nameof(TestStepsExecution.TestStepsId)"
-                                          Title="Step Id" Width="100px"/>
-                    <RadzenDataGridColumn TItem="TestStepsExecution" Property="Duration" Title="Duration" Width="200px">
+                                          Title="Step Id" Width="60px"/>
+                    <RadzenDataGridColumn TItem="TestStepsExecution" Property="Duration" Title="Duration" Width="90px">
                         <Template Context="testStepExecution">
                             @testStepExecution.Duration.ToString(@"hh\:mm\:ss")
                         </Template>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="TestStepsExecution"
                                           Property="@nameof(TestStepsExecution.ExecutionStatus)" Title="Status"
-                                          Width="150px">
+                                          Width="100px">
                         <EditTemplate Context="testStepExecution">
                             <RadzenDropDown @bind-Value="testStepExecution.ExecutionStatus"
                                             Data="@(EnumService.GetEnumFilteredValues<ExecutionStatus>(ExecutionStatus.NotRun))"

@@ -1,8 +1,8 @@
 @inject ILogger<AddTestStepExecutionFile> Logger
 
 <RadzenCard Variant="Variant.Outlined">
-    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Upload a file for Test Step Execution</RadzenText>
-    <RadzenUpload id="singleFileUpload" @ref="_uploadSingle" ChooseText="Click to choose a file" Auto="false"
+    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Upload a file</RadzenText>
+    <RadzenUpload id="singleFileUpload" @ref="_uploadSingle" ChooseText="Upload" Auto="false"
                   Multiple="false"
                   Change="@(args => OnChange(args, "Uploading file"))" Style="width: 100%"/>
 
@@ -12,7 +12,7 @@
 
             <RadzenImage
                 Path="@($"data:image/jpeg;base64,{Convert.ToBase64String(TestStepExecutionFileModel.FileBytes)}")"
-                         AlternateText="Uploaded image"
+                AlternateText="Save"
                          Style="max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; padding: 5px;"/>
         </RadzenStack>
     }
