@@ -18,30 +18,11 @@
     RadzenDataGrid<TestStepsExecution> _testStepsGrid = new();
 
 
-    private async Task<TestExecution> GetTestExecution(int testExecutionId)
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestExecution.FindAsync(testExecutionId) ?? throw new Exception("Test Execution Not Found");
-    }
-
-
     private async Task GetExecutionData()
     {
-        await using var db = await DbContext.CreateDbContextAsync();
-
-
-        _testExecution = await GetTestExecution(Id);
-
-
-        AssociatedTestCasesExecution = await db.TestCaseExecution
-            .Include(tse => tse.LinkedTestStepsExecution)
-            .Where(tce => tce.TestExecutionId == _testExecution.Id)
-            .ToListAsync();
-
-        AssociatedTestStepsExecution = await db.TestStepsExecution
-            .Where(tse => tse.TestCaseExecution != null && tse.TestCaseExecution.TestExecutionId == _testExecution.Id)
-            .Include(ts => ts.TestSteps)
-            .ToListAsync();
+        _testExecution = await TestExecutionModelv2.GetTestExecutionByIdAsync(Id);
+        AssociatedTestCasesExecution = await TestExecutionModelv2.GetTestExecutionsForTestExecution(_testExecution.Id);
+        AssociatedTestStepsExecution = await TestExecutionModelv2.GetTestStepsExecutionsForTestExecution(_testExecution.Id);
     }
 
 
@@ -246,6 +227,7 @@
 
                 <!-- End Test Execution Button -->
                 <RadzenButton Icon="timer_off"
+                              ButtonStyle="ButtonStyle.Success"
                               Click="@(() => EndTestCase(testCaseExecution))"
                               Disabled="@IsTestCaseNotRunning(testCaseExecution.TestCaseId)"/>
 
@@ -339,7 +321,8 @@
                         <Template Context="testStepExecution">
                             <RadzenButton Icon="timer_play" Click="@(() => StartTestStep(testStepExecution))"
                                           Disabled="@(ExecutionInProgress == false)"/>
-                            <RadzenButton Icon="timer_off" Click="@(() => EndTestStep(testStepExecution))"
+                            <RadzenButton Icon="timer_off" ButtonStyle="ButtonStyle.Success"
+                                          Click="@(() => EndTestStep(testStepExecution))"
                                           Disabled="@(ExecutionInProgress == false)"/>
                         </Template>
                     </RadzenDataGridColumn>

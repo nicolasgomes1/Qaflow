@@ -1,12 +1,11 @@
 @inject DialogService DialogService
 
 
-<RadzenButton Text="@Title" Icon="add"
+<RadzenButton Text="@Title"
               Disabled="@IsDisabled"
               MouseEnter="@(args => AppTooltipService.ShowTooltip(args, Loc["create.bug"]))"
               MouseLeave="@AppTooltipService.HideTooltip"
               ButtonStyle="ButtonStyle.Danger" Click="@ShowInlineDialog">
-    <RadzenIcon Icon="add"/>
     <RadzenIcon Icon="bug_report"/>
 </RadzenButton>
 

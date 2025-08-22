@@ -53,6 +53,7 @@
                     <RadzenButton
                         MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "End Current Test Execution"))"
                         MouseLeave="@AppTooltipService.HideTooltip"
+                        ButtonStyle="ButtonStyle.Success"
                         Size="ButtonSize.Large"
                         Disabled="@(!ExecutionInProgress || IsPaused)"
                         Icon="timer_off"
@@ -63,6 +64,7 @@
                         MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Cancel Current Test Execution"))"
                         MouseLeave="@AppTooltipService.HideTooltip"
                         ButtonType="ButtonType.Reset"
+                        ButtonStyle="ButtonStyle.Danger"
                         Size="ButtonSize.Large"
                         Icon="cancel"
                         Click="@(() => CancelExecution())"
@@ -75,6 +77,7 @@
                         Size="ButtonSize.Large"
                         Click="@(() => SuspendExecution())"
                         Disabled="@(!ExecutionInProgress || IsPaused)"
+                        ButtonStyle="ButtonStyle.Warning"
                         Icon="pause_circle_filled"/>
 
                     <!-- Resume From Suspended Execution Button -->
@@ -82,6 +85,7 @@
                         MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "Resume From Suspended Execution"))"
                         MouseLeave="@AppTooltipService.HideTooltip"
                         Size="ButtonSize.Large"
+                        ButtonStyle="ButtonStyle.Warning"
                         Click="@(() => ResumeFromSuspendedExecution())"
                         Icon="pause_circle_filled"
                         Disabled="IsExecutionStarted(Id)"/>

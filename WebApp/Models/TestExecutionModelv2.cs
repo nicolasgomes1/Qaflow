@@ -336,4 +336,24 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
         db.TestExecution.Update(args.Item);
         await db.SaveChangesAsync();
     }
+
+    public async Task<List<TestCaseExecution>> GetTestExecutionsForTestExecution(int testExecutionId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestCaseExecution
+            .Include(tse => tse.LinkedTestStepsExecution)
+            .Where(tce => tce.TestExecutionId == testExecutionId)
+            .ToListAsync();
+    }
+
+    public async Task<List<TestStepsExecution>> GetTestStepsExecutionsForTestExecution(int testExecutionId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        return await db.TestStepsExecution
+            .Where(tse => tse.TestCaseExecution != null && tse.TestCaseExecution.TestExecutionId == testExecutionId)
+            .Include(ts => ts.TestSteps)
+            .ToListAsync();
+    }
 }
