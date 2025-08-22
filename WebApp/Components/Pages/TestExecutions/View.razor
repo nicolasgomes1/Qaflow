@@ -7,6 +7,12 @@
               MouseLeave="TooltipService.Close"
               Icon="content_copy" Disabled="_isArchived" Text="Duplicate"/>
 
+<RadzenButton Icon="start"
+              MouseEnter="@(args => AppTooltipService.ShowTooltip(args, "The Current Test Execution Will be executed"))"
+              MouseLeave="TooltipService.Close"
+              Visible="IsTestExecutionReadyToExecute()"
+              Click='() => NavigationManager.NavigateTo($"/project/{ProjectId}/testexecution/execution/{Id}")'/>
+
 @*Version 2*@
 <RadzenTabs @bind-SelectedIndex="@_selectedIndex">
     <Tabs>
@@ -69,6 +75,13 @@
     private bool IsTestExecutionNotRun()
     {
         return _testExecution.ExecutionStatus == ExecutionStatus.NotRun;
+    }
+
+    private bool IsTestExecutionReadyToExecute()
+    {
+        if (_testExecution.IsActive == true && _testExecution.WorkflowStatus == WorkflowStatus.Completed)
+            return true;
+        return false;
     }
 
 
