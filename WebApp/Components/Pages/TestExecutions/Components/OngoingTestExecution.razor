@@ -224,7 +224,7 @@
             </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="TestCaseExecution" Title="Actions">
+        <RadzenDataGridColumn TItem="TestCaseExecution" Title="Actions" MinWidth="470px">
             <Template Context="testCaseExecution">
                 <!-- Start Test Execution Button -->
 
@@ -295,19 +295,24 @@
 
                     <RadzenDataGridColumn TItem="TestStepsExecution" Title="Actual result" Width="200px">
                         <EditTemplate Context="testStepExecution">
-                            <RadzenTextBox @bind-Value="testStepExecution.ActualResult" Style="width: 100%;"/>
+                            <RadzenTextArea @bind-Value="testStepExecution.ActualResult"
+                                            Style="width: 100%; height: 150px; font-size: 1rem; white-space: normal; word-break: break-word; overflow-wrap: anywhere;"/>
                         </EditTemplate>
 
                         <Template Context="testStepExecution">
-                            @testStepExecution.ActualResult
+                            <div style="white-space: normal; word-break: break-word; overflow-wrap: anywhere;">
+                                @testStepExecution.ActualResult
+                            </div>
                         </Template>
                     </RadzenDataGridColumn>
+
 
                     <RadzenDataGridColumn TItem="TestStepsExecution"
                                           Property="@nameof(TestStepsExecution.ExecutionNotes)" Title="Notes"
                                           Width="auto">
                         <EditTemplate Context="testStepExecution">
-                            <RadzenTextArea @bind-Value="testStepExecution.ExecutionNotes" Style="width: 100%;"/>
+                            <RadzenTextArea @bind-Value="testStepExecution.ExecutionNotes"
+                                            Style="width:100%; height: 150px; font-size:1.2rem; resize: none;"/>
                         </EditTemplate>
                     </RadzenDataGridColumn>
 
@@ -330,7 +335,7 @@
                     </RadzenDataGridColumn>
 
                     <!-- Start/End buttons for each test step -->
-                    <RadzenDataGridColumn TItem="TestStepsExecution" Title="Actions" Frozen="true">
+                    <RadzenDataGridColumn TItem="TestStepsExecution" Title="Actions" MinWidth="150px">
                         <Template Context="testStepExecution">
                             <RadzenButton Icon="timer_play" Click="@(() => StartTestStep(testStepExecution))"
                                           Disabled="@(ExecutionInProgress == false)"/>
