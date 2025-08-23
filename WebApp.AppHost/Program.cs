@@ -7,8 +7,9 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 //postgres user is postgres
 var dbPassword = builder.AddParameter("DatabasePassword", false);
+var user = builder.AddParameter("DatabaseUser", false);
 // Configure PostgreSQL and ensure it returns an IResourceBuilder
-var postgres = builder.AddPostgres("postgres", password: dbPassword)
+var postgres = builder.AddPostgres("postgres", userName: user, password: dbPassword)
     .WithPgWeb().WithDataVolume("data", false);
 var postgresdb = postgres.AddDatabase("postgresdb");
 
