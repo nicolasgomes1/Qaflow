@@ -30,6 +30,8 @@ public class IntegrationDataSeeder(IServiceProvider serviceProvider) : IHostedSe
 
     private static async Task<Integrations> GetOrCreateIntegrationAsync(ApplicationDbContext dbContext)
     {
+        var project = await ProjectDataSeeder.GetOrCreateProjectAsync(dbContext, "Demo Project With Data");
+
         var integration =
             await dbContext.Integrations.FirstOrDefaultAsync(p => p.IntegrationType == IntegrationType.Jira);
         if (integration != null) return integration;
@@ -39,8 +41,10 @@ public class IntegrationDataSeeder(IServiceProvider serviceProvider) : IHostedSe
             Username = "nicolasdiasgomes@gmail.com",
             BaseUrl = "https://qawebmaster.atlassian.net",
             ApiKey =
-                "ATATT3xFfGF0wVSvi8EeTnlFjtFO0fTILF54Vz4rCtHgxFEofpOARSWh_MaH_qSJTD5hi5fP8ubZv2w301lnf66Jx-llk0NnppHr6LRzh6RSZdS3yaDzsNATd3_h9-yWbrCfApgiuK9eHYna0bw4VRjT9ITC7J-3fFeD7wngx6mw57cKzuBhYqA=7F44A4CE",
-            UniqueKey = "Jira-01"
+                "jirakey",
+            UniqueKey = "Jira-01",
+            JiraProjectKey = "MFLP",
+            ProjectsId = project.Id,
         };
         dbContext.Integrations.Add(integration);
         await dbContext.SaveChangesAsync();
