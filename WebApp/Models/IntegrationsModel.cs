@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
+using WebApp.Data.enums;
 
 namespace WebApp.Models;
 
@@ -29,19 +30,22 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
     /// <summary>
     /// Updates an existing integration in the database.
     /// </summary>
-    /// <param name="integration">The integration entity to be updated.</param>
+    /// <param name="updatedIntegration">The integration entity to be updated.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     /// <exception cref="DbUpdateException">Thrown when the database update fails.</exception>
-    public async Task UpdateIntegration(int integrationId)
+    public async Task UpdateIntegration(Integrations updatedIntegration)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        var integration = await db.Integrations.FindAsync(integrationId);
-        if (integration is null) throw new Exception("Bug not found");
-        db.Integrations.Update(integration);
+        var integration = await db.Integrations.FindAsync(updatedIntegration.Id);
+        if (integration is null) throw new Exception("Integration not found");
+    
+        // Update the properties
+        db.Entry(integration).CurrentValues.SetValues(updatedIntegration);
         await db.SaveChangesAsync();
         Logger.LogInformation("Updated integration");
     }
+
 
 
     /// <summary>
@@ -89,5 +93,20 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
         await db.SaveChangesAsync();
         Logger.LogInformation("Removed integration with id:  {id}", integrationId);
         ;
+    }
+    
+    public async Task<bool> HasIntegrations(int projectId)
+    {
+                await using var db = await dbContextFactory.CreateDbContextAsync();
+                
+                var existing = await db.Integrations.Where(p => p.IntegrationType == IntegrationType.Jira && p.ProjectsId == projectId).AnyAsync();
+                return existing;
+    }
+    
+    public async Task<Integrations?> GetIntegrationByProjectId(int projectId)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        var integration =  await db.Integrations.FirstOrDefaultAsync(x => x.ProjectsId == projectId);
+        return integration ?? null;
     }
 }

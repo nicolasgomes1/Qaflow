@@ -141,6 +141,8 @@
     [Parameter] public int ProjectId { get; set; }
     private List<ApplicationUser> _usersList = [];
 
+    private Integrations? _integrations = new();
+    
     int _selectedIndex;
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
@@ -152,10 +154,16 @@
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
+        _integrations = await IntegrationsModel.GetIntegrationByProjectId(ProjectId);
 
         _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
         // TestCasesModel.JiraIntegrations = await JiraService.GetProjectIssuesAsync("MFLP");
-        TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync("Jira-01", "MFLP");
+    var hasIntegrations = await IntegrationsModel.HasIntegrations(ProjectId);
+
+    if (hasIntegrations)
+    {
+    TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync(_integrations.UniqueKey, _integrations.JiraProjectKey);
+    }
     }
 
     private async Task CreateTestCase()

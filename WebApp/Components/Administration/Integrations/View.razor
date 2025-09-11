@@ -39,9 +39,18 @@
         </RadzenStack>
 
         <RadzenStack Orientation="Orientation.Horizontal">
-
             <RadzenLabel Text="Unique Identifier Key" Style="font-weight: bold;"/>
             <RadzenLabel Text="@Integrations.UniqueKey"/>
+        </RadzenStack>
+
+        <RadzenStack Orientation="Orientation.Horizontal">
+            <RadzenLabel Text="Integration Type" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@Integrations.IntegrationType.ToString()"/>
+        </RadzenStack>
+        
+        <RadzenStack Orientation="Orientation.Horizontal">
+            <RadzenLabel Text="Project" Style="font-weight: bold;"/>
+            <RadzenLabel Text="@Integrations.ProjectsId.ToString()"/>
         </RadzenStack>
     </RadzenStack>
 

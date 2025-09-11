@@ -138,6 +138,8 @@ else
     [Parameter] public int ProjectId { get; set; }
     private List<ApplicationUser> _usersList = [];
 
+    private Integrations? _integrations = new();
+    
     private bool _isLoading = true;
 
     private TestCases _testCases = new();
@@ -153,7 +155,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         _usersList = await UserService.GetUsersList();
-
+        _integrations = await IntegrationsModel.GetIntegrationByProjectId(ProjectId);
         TestCasesModel.TestStepsList = await TestStepsModel.GetTestStepsForTestCase(Id);
 
         _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
@@ -161,11 +163,16 @@ else
 
         await TestCasesModel.GetAssociatedRequirements(_testCases);
         ExistingFiles = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
-        //  TestCasesModel.JiraIntegrations = await JiraService.GetProjectIssuesAsync("MFLP");
-        TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync("Jira-01", "MFLP");
 
-        _currentjiraIntegrations = await TestCasesJiraModel.GetSelectedJiraTickets(Id);
-        TestCasesModel.SelectedJiraTicketIds = _currentjiraIntegrations.Select(j => j.JiraId.ToString()).ToList();
+
+        if (_integrations is not null)
+        {
+            TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync(_integrations.UniqueKey, _integrations.JiraProjectKey);
+
+            _currentjiraIntegrations = await TestCasesJiraModel.GetSelectedJiraTickets(Id);
+            TestCasesModel.SelectedJiraTicketIds = _currentjiraIntegrations.Select(j => j.JiraId.ToString()).ToList();
+        }
+
 
         if (_testCases.ArchivedStatus.Equals(ArchivedStatus.Archived))
         {

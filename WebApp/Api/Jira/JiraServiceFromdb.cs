@@ -8,6 +8,12 @@ namespace WebApp.Api.Jira;
 
 public class JiraServiceFromDb(HttpClient httpClient, IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
+    private static readonly ILoggerFactory LoggerFactory =
+        Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+
+    private static readonly ILogger Logger = LoggerFactory.CreateLogger(nameof(JiraServiceFromDb));
+
+    
     /// <summary>
     /// Retrieves Jira issues for a given project from Jira using the service configured from DB.
     /// </summary>
@@ -24,7 +30,7 @@ public class JiraServiceFromDb(HttpClient httpClient, IDbContextFactory<Applicat
             string.IsNullOrWhiteSpace(integration.Username) ||
             string.IsNullOrWhiteSpace(integration.ApiKey))
         {
-            throw new ArgumentException("Jira API configuration values are missing or invalid.");
+            Logger.LogError("Jira API configuration values are missing or invalid.");
         }
 
         // Configure the HttpClient with the database values
@@ -44,13 +50,15 @@ public class JiraServiceFromDb(HttpClient httpClient, IDbContextFactory<Applicat
     /// <exception cref="Exception">Thrown when the integration is not found.</exception>
     private async Task<Integrations> GetIntegrationByUniqueKeyAsync(string uniqueKey)
     {
+        
+        
         using var dbContext = dbContextFactory.CreateDbContext();
         var integration = await dbContext.Integrations
             .FirstOrDefaultAsync(x => x.UniqueKey == uniqueKey);
 
         if (integration == null)
         {
-            throw new Exception($"Integration with key '{uniqueKey}' not found.");
+            Logger.LogTrace("Integration with key '{UniqueKey}' not found.", uniqueKey);
         }
 
         return integration;

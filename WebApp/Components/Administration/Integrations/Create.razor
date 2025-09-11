@@ -36,6 +36,16 @@
                        Name="apikey"/>
         <RadzenRequiredValidator Component="apikey" Text="API KEY is required"/>
     </div>
+    
+    <div class="form-group mb-4">
+        <RadzenLabel Text="API Integration unique Key"/>
+        <RadzenTextBox id="uniquekey"
+                       @bind-Value="_integrations.UniqueKey"
+                       Placeholder="Put here your unique string for example Jira-01"
+                       class="input-style"
+                       Name="uniquekey"/>
+        <RadzenRequiredValidator Component="uniquekey" Text="Unique KEY is required"/>
+    </div>
 
     <div class="form-group mb-4">
         <RadzenLabel Text="Integration Type"/>
@@ -46,6 +56,19 @@
                         Name="integration-type"/>
         <RadzenRequiredValidator Component="integration-type" Text="Integration Type is required"/>
     </div>
+    
+    <div class="form-group mb-4">
+        <RadzenLabel Text="Projects"/>
+        <RadzenDropDown id="project-id"
+                        @bind-Value="_integrations.ProjectsId"
+                        Data="@_projectsList"
+                        TextProperty="Name"
+                        ValueProperty="Id"
+                        class="input-style"
+                        Name="project-id"/>
+        <RadzenRequiredValidator Component="project-id" Text="Project is required"/>
+    </div>
+
 
     <CreateEditActions EntityName="integrations" CreateEdit="Create"/>
 </RadzenTemplateForm>
@@ -53,6 +76,12 @@
 
 @code {
     private readonly Integrations _integrations = new();
+    private List<Projects> _projectsList = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _projectsList = await ProjectModel.GetProjects();
+    }
 
 
     private async Task CreateNewIntegration()

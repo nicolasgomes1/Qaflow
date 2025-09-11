@@ -115,7 +115,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         await GetOrCreateBugsAsync(dbContext, project, "Bug 5", "Bug 5 Description", MANAGER, BugStatus.Open);
     }
 
-    private static async Task<Projects> GetOrCreateProjectAsync(ApplicationDbContext dbContext, string projectName)
+    public static async Task<Projects> GetOrCreateProjectAsync(ApplicationDbContext dbContext, string projectName)
     {
         var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("Projects");
 

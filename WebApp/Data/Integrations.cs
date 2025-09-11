@@ -35,4 +35,14 @@ public class Integrations
     [MaxLength(50)]
     [Required]
     public string UniqueKey { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Unique key to identify the Project Name in Jira if more than one available for the same type normally like WEB or API
+    /// </summary>
+    [MaxLength(50)]
+    [Required]
+    public string JiraProjectKey { get; set; } = string.Empty;
+    
+    public int ProjectsId { get; set; }
+    public Projects? Projects { get; set; }
 }
