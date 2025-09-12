@@ -18,9 +18,9 @@ public class JiraServiceFromDb(HttpClient httpClient, IDbContextFactory<Applicat
     /// Retrieves Jira issues for a given project from Jira using the service configured from DB.
     /// </summary>
     /// <param name="uniqueKey">The unique key of the integration to retrieve from DB.</param>
-    /// <param name="projectId">The Jira project ID for which to fetch issues.</param>
+    /// <param name="jiraprojectId">The Jira project ID for which to fetch issues.</param>
     /// <returns>Returns a list of JiraTask objects representing the issues.</returns>
-    public async Task<List<JiraTask>> GetProjectIssuesFromDbAsync(string uniqueKey, string projectId)
+    public async Task<List<JiraTask>> GetProjectIssuesFromDbAsync(string uniqueKey, string jiraprojectId)
     {
         // Retrieve integration configuration from DB
         var integration = await GetIntegrationByUniqueKeyAsync(uniqueKey);
@@ -39,7 +39,7 @@ public class JiraServiceFromDb(HttpClient httpClient, IDbContextFactory<Applicat
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
 
         // Now call the API to get the Jira issues
-        return await GetProjectIssuesAsync(projectId);
+        return await GetProjectIssuesAsync(jiraprojectId);
     }
 
     /// <summary>
@@ -78,7 +78,10 @@ public class JiraServiceFromDb(HttpClient httpClient, IDbContextFactory<Applicat
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync();
-            throw new HttpRequestException($"Failed to fetch Jira issues: {response.StatusCode}, {errorContent}");
+            Logger.LogError("Failed to fetch Jira issues: {StatusCode}, {ErrorContent}", response.StatusCode, errorContent);
+            return [];
+           //TODO NEED TO SEE WTF THE ISSUE WITH THE API
+            // throw new HttpRequestException($"Failed to fetch Jira issues: {response.StatusCode}, {errorContent}");
         }
 
         var content = await response.Content.ReadAsStringAsync();
