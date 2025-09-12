@@ -25,6 +25,7 @@ public class JiraServiceFromDb(HttpClient httpClient, IDbContextFactory<Applicat
         // Retrieve integration configuration from DB
         var integration = await GetIntegrationByUniqueKeyAsync(uniqueKey);
 
+        if (integration == null) return [];
         // Ensure that required values (BaseUrl, Username, ApiKey) are available
         if (string.IsNullOrWhiteSpace(integration.BaseUrl) ||
             string.IsNullOrWhiteSpace(integration.Username) ||
@@ -48,7 +49,7 @@ public class JiraServiceFromDb(HttpClient httpClient, IDbContextFactory<Applicat
     /// <param name="uniqueKey">The unique key of the integration to retrieve.</param>
     /// <returns>Returns the integration with the specified unique key.</returns>
     /// <exception cref="Exception">Thrown when the integration is not found.</exception>
-    private async Task<Integrations> GetIntegrationByUniqueKeyAsync(string uniqueKey)
+    private async Task<Integrations?> GetIntegrationByUniqueKeyAsync(string uniqueKey)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var integration = await dbContext.Integrations

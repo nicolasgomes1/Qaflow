@@ -173,7 +173,6 @@ else
 
         _usersList = await UserService.GetUsersList();
         _integrations = await IntegrationsModel.GetIntegrationByProjectId(ProjectId);
-
         _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
 
         if (HasExternalIntegrationsEnabled)
@@ -181,6 +180,7 @@ else
             var hasIntegrations = await IntegrationsModel.HasIntegrations(ProjectId);
             if (hasIntegrations)
             {
+                if (_integrations is null) return;
                 TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync(_integrations.UniqueKey, _integrations.JiraProjectKey);
             }
         }

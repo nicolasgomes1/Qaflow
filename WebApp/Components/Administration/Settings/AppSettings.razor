@@ -55,7 +55,7 @@
 
 @code {
     IList<QAflowSettings> _selectedSettings = [];
-    RadzenDataGrid<QAflowSettings> _grid;
+    RadzenDataGrid<QAflowSettings> _grid = null!;
     List<QAflowSettings> _qAflowSettingsList = [];
     
     protected override async Task OnInitializedAsync()
