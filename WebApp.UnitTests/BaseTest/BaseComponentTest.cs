@@ -93,7 +93,8 @@ public abstract class BaseComponentTest : TestContext, IClassFixture<TestFixture
             typeof(BugsCommentsModel),
             typeof(CyclesModel),
             typeof(TestStepsModel),
-            typeof(TestStepExecutionFileModel)
+            typeof(TestStepExecutionFileModel),
+            typeof(QAflowSettingsModel)
         };
 
         foreach (var serviceType in servicesToRegister)
