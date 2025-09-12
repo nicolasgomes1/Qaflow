@@ -60,12 +60,12 @@
 
                         @if (HasOwnIntegrationsEnabled)
                         {
-                            <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank"></RadzenMenuItem>
+                            <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank" data-testid="manage_api"></RadzenMenuItem>
                         }
                         
                         @if (HasExternalIntegrationsEnabled)
                         {
-                            <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations" data-testid="manage_settings"/>
+                            <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations" data-testid="manage_integrations"/>
                         }
                         <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
                         <Timeline/>
