@@ -31,6 +31,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Bugs> Bugs { get; set; }
     public DbSet<BugsFiles> BugsFiles { get; set; }
     public DbSet<BugsComments> BugsComments { get; set; }
+    
+    public DbSet<QAflowSettings> QAflowSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

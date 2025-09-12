@@ -38,6 +38,7 @@ public static class ServiceCollectionExtensions
     public static void AddSeedingServices(this IServiceCollection services)
     {
         services.AddHostedService<RoleSeeder>();
+        services.AddHostedService<QaFlowSettingsDataSeeder>();
         services.AddHostedService<ProjectDataSeeder>();
         services.AddHostedService<IntegrationDataSeeder>();
     }
@@ -69,5 +70,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<TestStepsModel>();
         services.AddScoped<BugsCommentsModel>();
         services.AddScoped<TestStepExecutionFileModel>();
+        services.AddScoped<QAflowSettingsModel>();
     }
 }

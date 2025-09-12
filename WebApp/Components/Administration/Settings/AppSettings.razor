@@ -1,0 +1,75 @@
+@page "/settings"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
+@inject ILogger<AppSettings> Logger
+
+<RadzenDataGrid TItem="QAflowSettings" 
+                Data="_qAflowSettingsList"
+                EditMode="DataGridEditMode.Single"
+                @ref="_grid"
+                @bind-Value=@_selectedSettings>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(QAflowSettings.QAflowOptionsSettings)"
+                              Title="Settings"
+                              Width="auto">
+            <Template>
+                @context.QAflowOptionsSettings
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Property="@nameof(QAflowSettings.IsIntegrationEnabled)"
+                              Title="Enabled"
+                              Width="auto">
+            <Template>
+                @if(@context.IsIntegrationEnabled)
+                {
+                    <RadzenBadge BadgeStyle="BadgeStyle.Success">
+                        Enabled
+                    </RadzenBadge>
+                }
+                else
+                {
+                    <RadzenBadge BadgeStyle="BadgeStyle.Danger">
+                        Disabled
+                    </RadzenBadge>
+                }
+            </Template>
+
+            <EditTemplate Context="setting">
+                <RadzenCheckBox @bind-Value="@setting.IsIntegrationEnabled" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="QAflowSettings" Width="100px">
+            <Template Context="setting">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" 
+                             Click=@(() => _grid.EditRow(setting)) />
+            </Template>
+            <EditTemplate Context="setting">
+                <RadzenButton Icon="save" ButtonStyle="ButtonStyle.Primary" 
+                             Click=@(() => SaveRow(setting)) />
+                <RadzenButton Icon="cancel" ButtonStyle="ButtonStyle.Light" 
+                             Click=@(() => _grid.CancelEditRow(setting)) />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    IList<QAflowSettings> _selectedSettings = [];
+    RadzenDataGrid<QAflowSettings> _grid;
+    List<QAflowSettings> _qAflowSettingsList = [];
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync();
+    }
+
+
+
+    async Task SaveRow(QAflowSettings setting)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+        db.Update(setting);
+        await db.SaveChangesAsync();
+        await _grid.UpdateRow(setting);
+    }
+}

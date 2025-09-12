@@ -4,8 +4,13 @@
 
 <AlertTitle TitleText="Creating new Test Case"/>
 
-
-<RadzenTemplateForm Data="@_testCases" TItem="TestCases" Submit="CreateTestCase">
+@if (_isLoading)
+{
+    <ProgressBar/>
+}
+else
+{
+    <RadzenTemplateForm Data="@_testCases" TItem="TestCases" Submit="CreateTestCase">
     <ValidationSummary class="alert alert-danger"/>
 
     <RadzenTabs RenderMode="TabRenderMode.Client" @bind-SelectedIndex="@_selectedIndex">
@@ -112,6 +117,8 @@
                 <FileUpload UploadedFiles="_uploadedFiles"/>
             </RadzenTabsItem>
 
+            @if(HasExternalIntegrationsEnabled)
+            {
             <RadzenTabsItem Text="Integration">
                 <RadzenLabel Text="External Jira Id"/>
                 <RadzenDropDown id="integration"
@@ -127,7 +134,7 @@
                                 Name="integration"/>
 
             </RadzenTabsItem>
-
+            }
         </Tabs>
     </RadzenTabs>
 
@@ -136,34 +143,49 @@
 
 </RadzenTemplateForm>
 
+}
+
 
 @code {
     [Parameter] public int ProjectId { get; set; }
     private List<ApplicationUser> _usersList = [];
 
     private Integrations? _integrations = new();
-    
+    private List<QAflowSettings> _qAflowSettingsList = [];
+    private bool _isLoading = true;
+
     int _selectedIndex;
     private readonly List<IBrowserFile>? _uploadedFiles = [];
 
     private readonly TestCases _testCases = new();
 
     private List<Requirements> _requirementsList = [];
+    private bool HasExternalIntegrationsEnabled => _qAflowSettingsList.Any(t => t is { QAflowOptionsSettings: QAflowOptionsSettings.ExternalIntegrations, IsIntegrationEnabled: true });
 
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync();
+    }
 
     protected override async Task OnInitializedAsync()
     {
+
         _usersList = await UserService.GetUsersList();
         _integrations = await IntegrationsModel.GetIntegrationByProjectId(ProjectId);
 
         _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
-        // TestCasesModel.JiraIntegrations = await JiraService.GetProjectIssuesAsync("MFLP");
-    var hasIntegrations = await IntegrationsModel.HasIntegrations(ProjectId);
 
-    if (hasIntegrations)
-    {
-    TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync(_integrations.UniqueKey, _integrations.JiraProjectKey);
-    }
+        if (HasExternalIntegrationsEnabled)
+        {
+            var hasIntegrations = await IntegrationsModel.HasIntegrations(ProjectId);
+            if (hasIntegrations)
+            {
+                TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync(_integrations.UniqueKey, _integrations.JiraProjectKey);
+            }
+        }
+        
+        _isLoading = false;
     }
 
     private async Task CreateTestCase()

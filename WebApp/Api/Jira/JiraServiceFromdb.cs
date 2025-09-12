@@ -50,9 +50,7 @@ public class JiraServiceFromDb(HttpClient httpClient, IDbContextFactory<Applicat
     /// <exception cref="Exception">Thrown when the integration is not found.</exception>
     private async Task<Integrations> GetIntegrationByUniqueKeyAsync(string uniqueKey)
     {
-        
-        
-        using var dbContext = dbContextFactory.CreateDbContext();
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var integration = await dbContext.Integrations
             .FirstOrDefaultAsync(x => x.UniqueKey == uniqueKey);
 

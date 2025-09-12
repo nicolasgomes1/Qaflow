@@ -56,8 +56,17 @@
 
 
                         <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
-                        <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank"></RadzenMenuItem>
-                        <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"/>
+                        <RadzenMenuItem Icon="settings" Text="QAFlow Settings" Path="/settings"></RadzenMenuItem>
+
+                        @if (HasOwnIntegrationsEnabled)
+                        {
+                            <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank"></RadzenMenuItem>
+                        }
+                        
+                        @if (HasExternalIntegrationsEnabled)
+                        {
+                            <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"/>
+                        }
                         <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
                         <Timeline/>
                     </RadzenMenuItem>
@@ -67,8 +76,6 @@
             {
                 <RadzenMenu>
                     <RadzenMenuItem Text="General" Icon="badge">
-                        <RadzenMenuItem Text="Grid Settings" Icon="display_settings" Path="/Gridsettings"/>
-                        <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
                         <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
                         <Timeline/>
                     </RadzenMenuItem>
@@ -78,8 +85,6 @@
             {
                 <RadzenMenu>
                     <RadzenMenuItem Text="General" Icon="badge">
-                        <RadzenMenuItem Text="Grid Settings" Icon="display_settings" Path="/Gridsettings"/>
-                        <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
                         <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank"></RadzenMenuItem>
                         <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"/>
                         <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
@@ -121,6 +126,7 @@
     private bool _isManager; // Flag to check if the user is a Manager
     [Parameter] public int ProjectId { get; set; }
 
+    private List<QAflowSettings> _qAflowSettingsList = [];
 
     string path => $"/project/{ProjectId}/Cycles";
 
@@ -133,11 +139,16 @@
         }
     }
 
+    private bool HasExternalIntegrationsEnabled => _qAflowSettingsList.Any(t => t is { QAflowOptionsSettings: QAflowOptionsSettings.ExternalIntegrations, IsIntegrationEnabled: true });
+    private bool HasOwnIntegrationsEnabled => _qAflowSettingsList.Any(t => t is { QAflowOptionsSettings: QAflowOptionsSettings.OwnIntegrations, IsIntegrationEnabled: true });
+
+
 
     protected override async Task OnInitializedAsync()
     {
         await UpdateAuthenticationState();
         StateHasChanged(); // Ensure UI updates
+        _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync();
         NavigationManager.LocationChanged += OnLocationChanged;
     }
 

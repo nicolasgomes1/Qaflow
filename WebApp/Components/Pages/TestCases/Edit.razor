@@ -111,20 +111,24 @@ else
                                     UploadedFiles="_uploadedFiles"
                                     ExistingFiles="ExistingFiles"/>
                 </RadzenTabsItem>
-                <RadzenTabsItem Text="Integration">
-                    <RadzenLabel Text="External Jira Id"/>
-                    <RadzenDropDown id="integration"
-                                    AllowFiltering="true"
-                                    AllowVirtualization="true"
-                                    Placeholder="Select Jira Ticket"
-                                    Data="@TestCasesModel.JiraIntegrations"
-                                    @bind-Value="TestCasesModel.SelectedJiraTicketIds"
-                                    TextProperty="key"
-                                    ValueProperty="Id"
-                                    Multiple="true"
-                                    class="input-style"
-                                    Name="integration"/>
-                </RadzenTabsItem>
+                
+                @if(HasExternalIntegrationsEnabled)
+                {
+                    <RadzenTabsItem Text="Integration">
+                        <RadzenLabel Text="External Jira Id"/>
+                        <RadzenDropDown id="integration"
+                                        AllowFiltering="true"
+                                        AllowVirtualization="true"
+                                        Placeholder="Select Jira Ticket"
+                                        Data="@TestCasesModel.JiraIntegrations"
+                                        @bind-Value="TestCasesModel.SelectedJiraTicketIds"
+                                        TextProperty="key"
+                                        ValueProperty="Id"
+                                        Multiple="true"
+                                        class="input-style"
+                                        Name="integration"/>
+                    </RadzenTabsItem>
+                }
             </Tabs>
         </RadzenTabs>
 
@@ -143,6 +147,7 @@ else
     private bool _isLoading = true;
 
     private TestCases _testCases = new();
+    private List<QAflowSettings> _qAflowSettingsList = [];
 
     int _selectedIndex;
     private readonly List<IBrowserFile>? _uploadedFiles = [];
@@ -151,11 +156,19 @@ else
     private List<Requirements> _requirementsList = [];
 
     private List<TestCasesJira> _currentjiraIntegrations = [];
+    private bool HasExternalIntegrationsEnabled => _qAflowSettingsList.Any(t => t is { QAflowOptionsSettings: QAflowOptionsSettings.ExternalIntegrations, IsIntegrationEnabled: true });
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync();
+
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
+       // _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync();
         _usersList = await UserService.GetUsersList();
-        _integrations = await IntegrationsModel.GetIntegrationByProjectId(ProjectId);
         TestCasesModel.TestStepsList = await TestStepsModel.GetTestStepsForTestCase(Id);
 
         _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
@@ -164,7 +177,9 @@ else
         await TestCasesModel.GetAssociatedRequirements(_testCases);
         ExistingFiles = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
 
-
+        if(HasExternalIntegrationsEnabled)
+        {
+        _integrations = await IntegrationsModel.GetIntegrationByProjectId(ProjectId);
         if (_integrations is not null)
         {
             TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync(_integrations.UniqueKey, _integrations.JiraProjectKey);
@@ -172,7 +187,7 @@ else
             _currentjiraIntegrations = await TestCasesJiraModel.GetSelectedJiraTickets(Id);
             TestCasesModel.SelectedJiraTicketIds = _currentjiraIntegrations.Select(j => j.JiraId.ToString()).ToList();
         }
-
+        }
 
         if (_testCases.ArchivedStatus.Equals(ArchivedStatus.Archived))
         {

@@ -88,10 +88,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Components\Administration\Settings\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <AdditionalFiles Include="Components\Administration\Cycles\CyclesDialogCreate.razor"/>
         <AdditionalFiles Include="Components\Administration\Cycles\CyclesDialogDelete.razor"/>
         <AdditionalFiles Include="Components\Administration\Cycles\CyclesDialogEdit.razor"/>
