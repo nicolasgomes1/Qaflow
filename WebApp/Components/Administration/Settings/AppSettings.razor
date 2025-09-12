@@ -35,18 +35,18 @@
             </Template>
 
             <EditTemplate Context="setting">
-                <RadzenCheckBox @bind-Value="@setting.IsIntegrationEnabled" />
+                <RadzenCheckBox @bind-Value="@setting.IsIntegrationEnabled" data-testid="checkbox" />
             </EditTemplate>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="QAflowSettings" Width="100px">
             <Template Context="setting">
-                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" 
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" data-testid="edit_button"
                              Click=@(() => _grid.EditRow(setting)) />
             </Template>
             <EditTemplate Context="setting">
-                <RadzenButton Icon="save" ButtonStyle="ButtonStyle.Primary" 
+                <RadzenButton Icon="save" ButtonStyle="ButtonStyle.Primary"  data-testid="save_button"
                              Click=@(() => SaveRow(setting)) />
-                <RadzenButton Icon="cancel" ButtonStyle="ButtonStyle.Light" 
+                <RadzenButton Icon="cancel" ButtonStyle="ButtonStyle.Light" data-testid="cancel_button"
                              Click=@(() => _grid.CancelEditRow(setting)) />
             </EditTemplate>
         </RadzenDataGridColumn>

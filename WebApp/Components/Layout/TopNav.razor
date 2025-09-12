@@ -56,7 +56,7 @@
 
 
                         <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
-                        <RadzenMenuItem Icon="settings" Text="QAFlow Settings" Path="/settings"></RadzenMenuItem>
+                        <RadzenMenuItem Icon="settings" data-testid="manage_settings" Text="QAFlow Settings" Path="/settings"></RadzenMenuItem>
 
                         @if (HasOwnIntegrationsEnabled)
                         {
@@ -65,7 +65,7 @@
                         
                         @if (HasExternalIntegrationsEnabled)
                         {
-                            <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"/>
+                            <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations" data-testid="manage_settings"/>
                         }
                         <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
                         <Timeline/>
