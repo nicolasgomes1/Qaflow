@@ -11,4 +11,12 @@ public class QAflowSettingsModel(IDbContextFactory<ApplicationDbContext> dbConte
         var settings = await db.QAflowSettings.ToListAsync();
         return settings;
     }
+
+    public async Task<QAflowSettings> UpdateApplicationSettingsAsync(QAflowSettings settings)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        db.QAflowSettings.Update(settings);
+        await db.SaveChangesAsync();
+        return settings;
+    }
 }

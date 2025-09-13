@@ -11,14 +11,14 @@ using WebApp.UnitTests.DIContainers;
 namespace WebApp.UnitTests.Models;
 
 [TestSubject(typeof(RequirementsModel))]
-public class RequirementsModelTest : IClassFixture<TestFixture>
+public class RequirementsModelTests : IClassFixture<TestFixture>
 {
     private readonly ApplicationDbContext _db;
     private readonly RequirementsModel _rm;
     private readonly ProjectModel _pm;
     private readonly RequirementsFilesModel _rfm;
 
-    public RequirementsModelTest(TestFixture fixture)
+    public RequirementsModelTests(TestFixture fixture)
     {
         // Resolve services via ServiceProvider
         _db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();

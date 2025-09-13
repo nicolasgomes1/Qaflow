@@ -74,6 +74,7 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<RoleSeeder>();
         serviceCollection.AddScoped<IntegrationDataSeeder>();
         serviceCollection.AddScoped<ProjectDataSeeder>();
+        serviceCollection.AddScoped<QaFlowSettingsDataSeeder>();
         serviceCollection.AddScoped<BugsModel>();
         serviceCollection.AddScoped<BugsFilesModel>();
         serviceCollection.AddScoped<RequirementsSpecificationModel>();
@@ -145,6 +146,9 @@ public class TestFixture : IDisposable
 
             var projectSeeder = scopedServices.GetRequiredService<ProjectDataSeeder>();
             projectSeeder.StartAsync(CancellationToken.None).GetAwaiter().GetResult();
+
+            var settingsSeeder = scopedServices.GetService<QaFlowSettingsDataSeeder>();
+            settingsSeeder.StartAsync(CancellationToken.None).GetAwaiter().GetResult();
         }
         catch (Exception e)
         {

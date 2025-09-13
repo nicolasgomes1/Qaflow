@@ -10,12 +10,12 @@ using Xunit.Abstractions;
 namespace WebApp.UnitTests.Models;
 
 [TestSubject(typeof(BugsModel))]
-public class BugsModelTest : IClassFixture<TestFixture>
+public class BugsModelTests : IClassFixture<TestFixture>
 {
     private readonly ApplicationDbContext db;
     private readonly BugsModel bm;
 
-    public BugsModelTest(TestFixture fixture)
+    public BugsModelTests(TestFixture fixture)
     {
         db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         bm = fixture.ServiceProvider.GetRequiredService<BugsModel>();
