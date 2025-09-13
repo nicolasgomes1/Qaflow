@@ -200,4 +200,15 @@ public class BugsModelTests : IClassFixture<TestFixture>
         // Check ArchivedStatus property based on workflow status
         Assert.Equal(ArchivedStatus.Archived, finalBug.ArchivedStatus);
     }
+
+    [Fact]
+    public async Task BugModel_DeleteBug()
+    {
+        var intialCount = await db.Bugs.CountAsync();
+        var bug = await db.Bugs.Where(x => x.Name == "Bug 1").FirstOrDefaultAsync();
+        if (bug == null) throw new Exception("Bug not found");
+        await bm.DeleteBug(bug);
+        var finalCount = await db.Bugs.CountAsync();
+        Assert.Equal(intialCount - 1, finalCount);
+    }
 }
