@@ -148,6 +148,7 @@ public class TestFixture : IDisposable
             projectSeeder.StartAsync(CancellationToken.None).GetAwaiter().GetResult();
 
             var settingsSeeder = scopedServices.GetService<QaFlowSettingsDataSeeder>();
+            if (settingsSeeder is null) throw new Exception("Settings seeder is null");
             settingsSeeder.StartAsync(CancellationToken.None).GetAwaiter().GetResult();
         }
         catch (Exception e)

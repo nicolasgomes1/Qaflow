@@ -130,7 +130,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _testStepsExecutionFiles = await GetTestStepsExecutionFiles();
+        _testStepsExecutionFiles = await TestStepExecutionFileModel.GetTestStepsExecutionFiles(ProjectId);
 
         _testExecution = await TestExecutionModel.GetTestExecutionByIdAsync(Id);
         _associatedTestCasesExecution = await TestExecutionModel.GetTestCaseExecutionData(Id);
@@ -138,17 +138,7 @@ else
 
     private List<TestExecution> _testExecutionsWithTests = [];
 
-    /// <summary>
-    /// Returns a list of test steps execution files for the current project
-    /// </summary>
-    /// <returns></returns>
-    private async Task<List<TestStepsExecutionFile>> GetTestStepsExecutionFiles()
-    {
-        await using var db = await DbContext.CreateDbContextAsync();
-        return await db.TestStepsExecutionFiles
-            .Where(tsef => tsef.TSEFProjectId == ProjectId)
-            .ToListAsync();
-    }
+
 
     /// <summary>
     /// Returns the test execution file for the given test step execution id

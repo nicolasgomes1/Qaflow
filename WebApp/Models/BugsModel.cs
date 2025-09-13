@@ -142,4 +142,11 @@ public class BugsModel(
         db.Bugs.Update(args.Item);
         await db.SaveChangesAsync();
     }
+
+    public async Task DeleteBug(Bugs bug)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+        db.Bugs.Remove(bug);
+        await db.SaveChangesAsync();
+    }
 }

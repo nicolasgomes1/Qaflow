@@ -48,7 +48,7 @@ public class RequirementsFilesModelTests  : IClassFixture<TestFixture>
             .ToListAsync();
 
         // Assert the number of files increased by the expected amount
-        Assert.Equal(fileCountBefore + _files.Count, savedFiles.Count);
+        Assert.Equal(fileCountBefore + _files!.Count, savedFiles.Count);
 
         // Verify file names were saved correctly
         foreach (var expectedFile in _files)

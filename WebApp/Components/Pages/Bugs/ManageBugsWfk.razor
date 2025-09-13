@@ -227,14 +227,12 @@
         Logger.LogInformation($"deleting {bugs}");
         ContextMenuService.Close();
 
-        await using var db = await DbContext.CreateDbContextAsync();
 
         var confirmed = await DialogService.Confirm($"Are you sure you want to delete this Bug?", $"Delete Bug");
 
         if (confirmed is true)
         {
-            db.Bugs.Remove(bugs);
-            await db.SaveChangesAsync();
+            await BugsModel.DeleteBug(bugs);
         }
 
         await RefreshAllBugs();
