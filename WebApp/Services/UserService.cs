@@ -110,4 +110,10 @@ public class UserService(
         var userName = await GetUserNameFromUserIdAsync(user);
         return string.IsNullOrEmpty(userName) ? "Not Assigned" : userName;
     }
+    
+    public async Task<bool> IsUserAdmin(string userId)
+    {
+        var user = await userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        return user != null && await userManager.IsInRoleAsync(user, nameof(UserRoles.Admin));
+    }
 }

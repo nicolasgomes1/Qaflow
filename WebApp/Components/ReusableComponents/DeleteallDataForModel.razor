@@ -2,6 +2,7 @@
 
 <RadzenButton Icon="delete_forever"
               Click="@(DeleteAllModelData)"
+              Visible="@IsUserAdmin"
               Size="ButtonSize.Medium"
               data-testid="delete_all"
               ButtonStyle="ButtonStyle.Danger"
@@ -16,15 +17,27 @@
     [EditorRequired] [Parameter] public IEnumerable<object> EntityList { get; set; } = new List<object>();
 
     private int _projectId;
+    private bool _isUserAdmin;
+    private bool IsUserAdmin => _isUserAdmin;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             _projectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
+
+
             StateHasChanged(); // Ensure UI updates
         }
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentUser = await UserService.GetCurrentUserInfoAsync();
+        if(currentUser.UserId is null) return;
+        _isUserAdmin = await UserService.IsUserAdmin(currentUser.UserId);
+    }
+
 
     private async Task DeleteAllModelData()
     {
