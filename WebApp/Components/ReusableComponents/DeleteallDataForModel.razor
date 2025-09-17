@@ -38,6 +38,18 @@
         _isUserAdmin = await UserService.IsUserAdmin(currentUser.UserId);
     }
 
+    async Task DeleteAllEntities(IEnumerable<object> entities)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        foreach (var entity in entities)
+        {
+            db.Remove(entity);
+        }
+
+        await db.SaveChangesAsync();
+    }
+
 
     private async Task DeleteAllModelData()
     {
@@ -54,14 +66,7 @@
         {
             try
             {
-                await using var db = await DbContext.CreateDbContextAsync();
-
-                foreach (var entity in EntityList)
-                {
-                    db.Remove(entity);
-                }
-
-                await db.SaveChangesAsync();
+                await DeleteAllEntities(EntityList);
 
 
                 switch (EntityName)
@@ -97,7 +102,7 @@
                     }
                 }
 
-                NavigationManager.NavigateTo($"/project/{project}/{EntityName}");
+                NavigationManager.NavigateTo($"/project/{project}/{EntityName}", true);
             }
             catch (Exception e)
             {
