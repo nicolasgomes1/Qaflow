@@ -3,17 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Data.enums;
 using WebApp.Models;
-using WebApp.UnitTests.BaseTest;
 using WebApp.UnitTests.DIContainers;
-using Xunit.Abstractions;
 
 namespace WebApp.UnitTests.Models;
 
 [TestSubject(typeof(BugsModel))]
 public class BugsModelTests : IClassFixture<TestFixture>
 {
-    private readonly ApplicationDbContext db;
     private readonly BugsModel bm;
+    private readonly ApplicationDbContext db;
 
     public BugsModelTests(TestFixture fixture)
     {

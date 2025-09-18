@@ -7,12 +7,11 @@ using WebApp.UnitTests.DIContainers;
 namespace WebApp.UnitTests.Models;
 
 [TestSubject(typeof(QAflowSettings))]
-
 public class QaflowSettingsModelTests : IClassFixture<TestFixture>
 {
     private readonly ApplicationDbContext db;
     private readonly QAflowSettingsModel qaflowSettingsModel;
-    
+
     public QaflowSettingsModelTests(TestFixture fixture)
     {
         db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -35,21 +34,18 @@ public class QaflowSettingsModelTests : IClassFixture<TestFixture>
         var settings = await qaflowSettingsModel.GetApplicationSettingsAsync();
         Assert.NotNull(settings);
 
-        var selectedSetting = settings.FirstOrDefault(x => x.QAflowOptionsSettings == QAflowOptionsSettings.ExternalIntegrations);
+        var selectedSetting =
+            settings.FirstOrDefault(x => x.QAflowOptionsSettings == QAflowOptionsSettings.ExternalIntegrations);
         Assert.NotNull(selectedSetting);
         Assert.False(selectedSetting.IsIntegrationEnabled);
-        
+
         // Toggle the IsIntegrationEnabled property
         selectedSetting.IsIntegrationEnabled = true;
         var updated = await qaflowSettingsModel.UpdateApplicationSettingsAsync(selectedSetting);
-        
+
         var newSettings = await qaflowSettingsModel.GetApplicationSettingsAsync();
-        var updatedfromdb = newSettings.FirstOrDefault(x => x.QAflowOptionsSettings == QAflowOptionsSettings.ExternalIntegrations);
+        var updatedfromdb =
+            newSettings.FirstOrDefault(x => x.QAflowOptionsSettings == QAflowOptionsSettings.ExternalIntegrations);
         Assert.True(updatedfromdb is { IsIntegrationEnabled: true });
     }
-
-    
-    
-    
-    
 }

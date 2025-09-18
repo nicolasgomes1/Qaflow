@@ -10,7 +10,6 @@ namespace WebApp.UnitTests.Controllers;
 [TestSubject(typeof(CultureSelector))]
 public class CultureControllerTest
 {
-
     [Fact]
     public void TestCultureIsSetCorrectly()
     {
@@ -36,18 +35,16 @@ public class CultureControllerTest
         var expectedCookieValue = CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture));
         Assert.Equal(expectedCookieValue, GetCookieValue(cookieHeader, CookieRequestCultureProvider.DefaultCookieName));
     }
-    
+
     private static string GetCookieValue(string cookieHeader, string cookieName)
     {
         var cookies = cookieHeader.Split(';');
         foreach (var cookie in cookies)
         {
             var parts = cookie.Split('=');
-            if (parts[0].Trim() == cookieName)
-            {
-                return System.Net.WebUtility.UrlDecode(parts[1].Trim());
-            }
+            if (parts[0].Trim() == cookieName) return WebUtility.UrlDecode(parts[1].Trim());
         }
+
         return string.Empty;
     }
 }

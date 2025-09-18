@@ -7,7 +7,6 @@ namespace WebApp.UnitTests.Services;
 [TestSubject(typeof(FormNotificationService))]
 public class FormNotificationServiceTest
 {
-
     [Fact]
     public async Task TestNotifySuccess()
     {
@@ -27,7 +26,7 @@ public class FormNotificationServiceTest
         Assert.Equal(message, notification.Detail);
         Assert.Equal(4000, notification.Duration);
     }
-    
+
     [Fact]
     public async Task TestNotifyError()
     {
@@ -47,7 +46,7 @@ public class FormNotificationServiceTest
         Assert.Equal(message, notification.Detail);
         Assert.Equal(4000, notification.Duration);
     }
-    
+
     [Fact]
     public async Task TestNotifyWarning()
     {
@@ -67,7 +66,7 @@ public class FormNotificationServiceTest
         Assert.Equal(message, notification.Detail);
         Assert.Equal(4000, notification.Duration);
     }
-    
+
     [Fact]
     public async Task TestNotifyInfo()
     {

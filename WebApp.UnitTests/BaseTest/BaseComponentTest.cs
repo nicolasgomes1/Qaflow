@@ -1,3 +1,7 @@
+using Bunit;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Radzen;
 using WebApp.Api.Jira;
 using WebApp.Data;
 using WebApp.Models;
@@ -5,12 +9,6 @@ using WebApp.Services;
 using WebApp.UnitTests.DIContainers;
 
 namespace WebApp.UnitTests.BaseTest;
-
-using Bunit;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Radzen;
 
 public abstract class BaseComponentTest : TestContext, IClassFixture<TestFixture>
 {
@@ -36,10 +34,7 @@ public abstract class BaseComponentTest : TestContext, IClassFixture<TestFixture
             "Radzen.addDocumentClickHandler", "Radzen.removeDocumentClickHandler"
         };
 
-        foreach (var interop in radzenInterops)
-        {
-            JSInterop.SetupVoid(interop, _ => true);
-        }
+        foreach (var interop in radzenInterops) JSInterop.SetupVoid(interop, _ => true);
     }
 
     private void RegisterServices()
@@ -98,9 +93,7 @@ public abstract class BaseComponentTest : TestContext, IClassFixture<TestFixture
         };
 
         foreach (var serviceType in servicesToRegister)
-        {
             Services.AddSingleton(serviceType, _fixture.ServiceProvider.GetRequiredService(serviceType));
-        }
     }
 
     private void RegisterStandaloneServices()

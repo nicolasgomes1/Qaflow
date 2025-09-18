@@ -55,11 +55,11 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
     }
 
 
-    public async Task<Cycles> GetCycleById(int cycleId)
+    public async Task<Cycles?> GetCycleById(int cycleId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
         Logger.LogInformation($"Getting cycle {cycleId}");
-        return await db.Cycles.FindAsync(cycleId) ?? throw new Exception("Cycle not found");
+        return await db.Cycles.FindAsync(cycleId);
     }
 
     public async Task<List<Cycles>> GetCyclesByProjectId(int projectId)

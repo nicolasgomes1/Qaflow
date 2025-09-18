@@ -1,3 +1,5 @@
+using Projects;
+
 namespace WebApp.UnitTests;
 
 public class IntegrationTest
@@ -11,27 +13,28 @@ public class IntegrationTest
     //
     // 2. Uncomment the following example test and update 'Projects.MyAspireApp_AppHost' to match your AppHost project:
     //
-    [Fact (Skip = "Integration test")]
+    [Fact]
     public async Task GetWebResourceRootReturnsOkStatusCode()
-     {
-         // Arrange
-         var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.WebApp_AppHost>();
-         appHost.Services.ConfigureHttpClientDefaults(clientBuilder =>
-         {
-             clientBuilder.AddStandardResilienceHandler(); 
-         });
-         // To output logs to the xUnit.net ITestOutputHelper, consider adding a package from https://www.nuget.org/packages?q=xunit+logging
-    
-         await using var app = await appHost.BuildAsync();
-         var resourceNotificationService = app.Services.GetRequiredService<ResourceNotificationService>();
-         await app.StartAsync();
+    {
+        // Arrange
+        var appHost = await DistributedApplicationTestingBuilder.CreateAsync<WebApp_AppHost>();
+        appHost.Services.ConfigureHttpClientDefaults(clientBuilder =>
+        {
+            clientBuilder.AddStandardResilienceHandler();
+        });
+        // To output logs to the xUnit.net ITestOutputHelper, consider adding a package from https://www.nuget.org/packages?q=xunit+logging
 
-    //     // Act
-         var httpClient = app.CreateHttpClient("webapp");
-         await resourceNotificationService.WaitForResourceAsync("webapp", KnownResourceStates.Running).WaitAsync(TimeSpan.FromSeconds(30));
-         var response = await httpClient.GetAsync("/");
+        await using var app = await appHost.BuildAsync();
+        var resourceNotificationService = app.Services.GetRequiredService<ResourceNotificationService>();
+        await app.StartAsync();
 
-         // Assert
-         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-     }
+        //     // Act
+        var httpClient = app.CreateHttpClient("webapp");
+        await resourceNotificationService.WaitForResourceAsync("webapp", KnownResourceStates.Running)
+            .WaitAsync(TimeSpan.FromSeconds(30));
+        var response = await httpClient.GetAsync("/");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
 }

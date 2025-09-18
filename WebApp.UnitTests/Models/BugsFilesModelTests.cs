@@ -7,12 +7,18 @@ using WebApp.UnitTests.Models.Helpers;
 
 namespace WebApp.UnitTests.Models;
 
-public class BugsFilesModelTests  : IClassFixture<TestFixture>
+public class BugsFilesModelTests : IClassFixture<TestFixture>
 {
-    private readonly ApplicationDbContext db;
+    private readonly List<IBrowserFile>? _files =
+    [
+        new TestBrowserFileImpl("test1.txt", 100),
+        new TestBrowserFileImpl("test2.txt", 200)
+    ];
+
     private readonly BugsFilesModel bm;
-    private readonly ProjectModel pm;
     private readonly BugsModel bm1;
+    private readonly ApplicationDbContext db;
+    private readonly ProjectModel pm;
 
     public BugsFilesModelTests(TestFixture fixture)
     {
@@ -21,11 +27,6 @@ public class BugsFilesModelTests  : IClassFixture<TestFixture>
         pm = fixture.ServiceProvider.GetRequiredService<ProjectModel>();
         bm1 = fixture.ServiceProvider.GetRequiredService<BugsModel>();
     }
-
-    private readonly List<IBrowserFile>? _files = [
-        new TestBrowserFileImpl("test1.txt", 100),
-        new TestBrowserFileImpl("test2.txt", 200)
-    ];
 
 
     [Fact]
@@ -52,16 +53,9 @@ public class BugsFilesModelTests  : IClassFixture<TestFixture>
         Assert.Equal(fileCountBefore + _files!.Count, savedFiles.Count);
 
         // Verify file names were saved correctly
-        foreach (var expectedFile in _files)
-        {
-            Assert.Contains(savedFiles, f => f.FileName == expectedFile.Name);
-        }
-        
+        foreach (var expectedFile in _files) Assert.Contains(savedFiles, f => f.FileName == expectedFile.Name);
+
         var filesAfter = await bm.GetBugFilesById(bugById.Id);
         Assert.Equal(2, filesAfter.Count);
     }
-
-
 }
-
-

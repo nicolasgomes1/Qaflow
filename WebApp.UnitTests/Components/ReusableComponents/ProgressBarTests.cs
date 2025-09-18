@@ -15,18 +15,15 @@ public class ProgressBarTests : BaseComponentTest
     public void CanRenderTheProgressBar()
     {
         var cut = RenderComponent<ProgressBar>();
-        
-        Assert.NotNull(cut.Find("[data-testid='progress_bar']"));
 
+        Assert.NotNull(cut.Find("[data-testid='progress_bar']"));
     }
-    
+
     [Fact]
     public void CanRenderTheProgressBarWithDIfferentParameter()
     {
         var cut = RenderComponent<ProgressBar>(p => p.Add(r => r.Template, "Fuck Off"));
-        
-        Assert.NotNull(cut.Find("[data-testid='progress_bar']"));
 
+        Assert.NotNull(cut.Find("[data-testid='progress_bar']"));
     }
-        
 }

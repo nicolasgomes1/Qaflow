@@ -1,29 +1,22 @@
 using Bunit;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using Radzen;
 using WebApp.Api.Jira;
 using WebApp.Data;
 using WebApp.Models;
 using WebApp.Services;
 using WebApp.Services.TestData;
 using WebApp.UnitTests.BaseTest;
-using WebApp.UnitTests.Components;
-using WebApp.UnitTests.Models;
 using RequirementsSpecificationModel = WebApp.Models.RequirementsSpecificationModel;
 
 namespace WebApp.UnitTests.DIContainers;
 
 public class TestFixture : IDisposable
 {
-    public IServiceProvider ServiceProvider { get; private set; }
-
     public TestFixture()
     {
         var serviceCollection = new ServiceCollection();
@@ -35,11 +28,11 @@ public class TestFixture : IDisposable
             BaseUrl = "https://qawebmaster.atlassian.net",
             Username = "nicolasdiasgomes@gmail.com",
             ApiKey =
-                "ATATT3xFfGF0wVSvi8EeTnlFjtFO0fTILF54Vz4rCtHgxFEofpOARSWh_MaH_qSJTD5hi5fP8ubZv2w301lnf66Jx-llk0NnppHr6LRzh6RSZdS3yaDzsNATd3_h9-yWbrCfApgiuK9eHYna0bw4VRjT9ITC7J-3fFeD7wngx6mw57cKzuBhYqA=7F44A4CE"
+                "mynewapikey"
         };
 
         // Register the JiraApiOptions with the DI container
-        serviceCollection.AddSingleton(Microsoft.Extensions.Options.Options.Create(jiraOptions));
+        serviceCollection.AddSingleton(Options.Create(jiraOptions));
 
 
         // Set up in-memory database
@@ -157,6 +150,8 @@ public class TestFixture : IDisposable
             throw;
         }
     }
+
+    public IServiceProvider ServiceProvider { get; }
 
 
     public void Dispose()

@@ -9,11 +9,18 @@ namespace WebApp.UnitTests.Models;
 
 public class TestPlansFilesModelTests : IClassFixture<TestFixture>
 {
+    private readonly List<IBrowserFile>? _files =
+    [
+        new TestBrowserFileImpl("test1.txt", 100),
+        new TestBrowserFileImpl("test2.txt", 200),
+        new TestBrowserFileImpl("test3.txt", 900)
+    ];
+
     private readonly ApplicationDbContext db;
-    private readonly TestPlansFilesModel rm;
     private readonly ProjectModel pm;
+    private readonly TestPlansFilesModel rm;
     private readonly TestPlansModel rm1;
-    
+
     public TestPlansFilesModelTests(TestFixture fixture)
     {
         db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -21,21 +28,15 @@ public class TestPlansFilesModelTests : IClassFixture<TestFixture>
         pm = fixture.ServiceProvider.GetRequiredService<ProjectModel>();
         rm1 = fixture.ServiceProvider.GetRequiredService<TestPlansModel>();
     }
-    
-    private readonly List<IBrowserFile>? _files = [
-        new TestBrowserFileImpl("test1.txt", 100),
-        new TestBrowserFileImpl("test2.txt", 200),
-        new TestBrowserFileImpl("test3.txt", 900)
 
-    ];
-    
     [Fact]
     public async Task TestPlansFilesModel_SaveFilesToDb()
     {
         var projects = await pm.GetProjects();
         var project = projects.FirstOrDefault(r => r.Name == "Demo Project With Data");
         if (project == null) throw new Exception("Project not found");
-        var testplan = await db.TestPlans.Where(x => x.Name == "Test Plan Alpha").Include(t => t.TestPlansFiles).FirstOrDefaultAsync();
+        var testplan = await db.TestPlans.Where(x => x.Name == "Test Plan Alpha").Include(t => t.TestPlansFiles)
+            .FirstOrDefaultAsync();
         if (testplan == null) throw new Exception("Test Plan not found");
         var testplanById = await rm1.GetTestPlanByIdAsync(testplan.Id);
 
@@ -53,11 +54,8 @@ public class TestPlansFilesModelTests : IClassFixture<TestFixture>
         Assert.Equal(fileCountBefore + _files!.Count, savedFiles.Count);
 
         // Verify file names were saved correctly
-        foreach (var expectedFile in _files)
-        {
-            Assert.Contains(savedFiles, f => f.FileName == expectedFile.Name);
-        }
-        
+        foreach (var expectedFile in _files) Assert.Contains(savedFiles, f => f.FileName == expectedFile.Name);
+
         var filesAfter = await rm.GetFilesByTestPlanId(testplanById.Id, project.Id);
         Assert.Equal(3, filesAfter.Count);
     }

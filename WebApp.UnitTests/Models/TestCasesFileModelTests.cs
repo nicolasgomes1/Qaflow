@@ -9,11 +9,17 @@ namespace WebApp.UnitTests.Models;
 
 public class TestCasesFileModelTests : IClassFixture<TestFixture>
 {
+    private readonly List<IBrowserFile>? _files =
+    [
+        new TestBrowserFileImpl("test1.txt", 100),
+        new TestBrowserFileImpl("test2.txt", 200)
+    ];
+
     private readonly ApplicationDbContext db;
-    private readonly TestCasesFilesModel tm;
     private readonly ProjectModel pm;
+    private readonly TestCasesFilesModel tm;
     private readonly TestCasesModel tm1;
-    
+
     public TestCasesFileModelTests(TestFixture fixture)
     {
         db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -21,19 +27,15 @@ public class TestCasesFileModelTests : IClassFixture<TestFixture>
         pm = fixture.ServiceProvider.GetRequiredService<ProjectModel>();
         tm1 = fixture.ServiceProvider.GetRequiredService<TestCasesModel>();
     }
-    
-    private readonly List<IBrowserFile>? _files = [
-        new TestBrowserFileImpl("test1.txt", 100),
-        new TestBrowserFileImpl("test2.txt", 200)
-    ];
-    
+
     [Fact]
     public async Task TestCasesFilesModel_SaveFilesToDb()
     {
         var projects = await pm.GetProjects();
         var project = projects.FirstOrDefault(r => r.Name == "Demo Project With Data");
         if (project == null) throw new Exception("Project not found");
-        var testcase = await db.TestCases.Where(x => x.Name == "Test Case 1").Include(t => t.LinkedTestCasesFiles).FirstOrDefaultAsync();
+        var testcase = await db.TestCases.Where(x => x.Name == "Test Case 1").Include(t => t.LinkedTestCasesFiles)
+            .FirstOrDefaultAsync();
         if (testcase == null) throw new Exception("Test Case not found");
         var testcaseById = await tm1.GetTestCasesByIdAsync(testcase.Id);
 
@@ -51,11 +53,8 @@ public class TestCasesFileModelTests : IClassFixture<TestFixture>
         Assert.Equal(fileCountBefore + _files!.Count, savedFiles.Count);
 
         // Verify file names were saved correctly
-        foreach (var expectedFile in _files)
-        {
-            Assert.Contains(savedFiles, f => f.FileName == expectedFile.Name);
-        }
-        
+        foreach (var expectedFile in _files) Assert.Contains(savedFiles, f => f.FileName == expectedFile.Name);
+
         var filesAfter = await tm.GetFilesByTestCaseId(testcaseById.Id);
         Assert.Equal(2, filesAfter.Count);
     }
