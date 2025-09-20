@@ -44,7 +44,7 @@ public class IntegrationDataSeeder(IServiceProvider serviceProvider) : IHostedSe
                 "jirakey",
             UniqueKey = "Jira-01",
             JiraProjectKey = "MFLP",
-            ProjectsId = project.Id,
+            ProjectsId = project.Id
         };
         dbContext.Integrations.Add(integration);
         await dbContext.SaveChangesAsync();

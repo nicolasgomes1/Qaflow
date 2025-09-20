@@ -2,24 +2,41 @@ namespace WebApp.Services;
 
 public class TestExecutionTimerServicev2 : IDisposable
 {
-    private TimeSpan _timeElapsed;
-    private DateTime _startExecutionTime;
-    private DateTime? _pauseTime; // Time when paused
-    private readonly PeriodicTimer _periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(1)); // 1 second interval
+    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromSeconds(1)); // 1 second interval
+
+    private int? _currentTestExecutionId; // Store the current test execution ID
     private bool _executionInProgress;
     private bool _isPaused; // Track whether execution is paused
-    public TimeSpan GetElapsedTime() => _timeElapsed;
+    private DateTime? _pauseTime; // Time when paused
+    private DateTime _startExecutionTime;
+    private TimeSpan _timeElapsed;
 
-    public bool IsExecutionInProgress() => _executionInProgress;
 
-    public bool IsPaused() => _isPaused; // Check if paused
+    public void Dispose()
+    {
+        _periodicTimer.Dispose();
+    }
+
+    public TimeSpan GetElapsedTime()
+    {
+        return _timeElapsed;
+    }
+
+    public bool IsExecutionInProgress()
+    {
+        return _executionInProgress;
+    }
+
+    public bool IsPaused()
+    {
+        return _isPaused;
+        // Check if paused
+    }
 
     // Event to notify when the elapsed time is updated, including testExecutionId
     public event Action<TimeSpan, int>? OnTimeUpdated;
 
     public event Action? OnExecutionStateChanged; // Event to notify state changes
-
-    private int? _currentTestExecutionId; // Store the current test execution ID
 
     public async Task StartExecutionAndTrackTime(int testExecutionId)
     {
@@ -30,7 +47,7 @@ public class TestExecutionTimerServicev2 : IDisposable
         _startExecutionTime = DateTime.UtcNow;
         _timeElapsed = TimeSpan.Zero;
         _currentTestExecutionId = testExecutionId;
-        
+
         OnExecutionStateChanged?.Invoke();
 
         // Start the timer loop
@@ -113,10 +130,7 @@ public class TestExecutionTimerServicev2 : IDisposable
 
         _timeElapsed = DateTime.UtcNow - _startExecutionTime;
 
-        if (_currentTestExecutionId.HasValue)
-        {
-            OnTimeUpdated?.Invoke(_timeElapsed, _currentTestExecutionId.Value);
-        }
+        if (_currentTestExecutionId.HasValue) OnTimeUpdated?.Invoke(_timeElapsed, _currentTestExecutionId.Value);
     }
 
     public async Task EndExecution(int testExecutionId)
@@ -137,12 +151,5 @@ public class TestExecutionTimerServicev2 : IDisposable
         _currentTestExecutionId = null;
         OnExecutionStateChanged?.Invoke();
         await Task.CompletedTask;
-    }
-
-
-
-    public void Dispose()
-    {
-        _periodicTimer.Dispose();
     }
 }

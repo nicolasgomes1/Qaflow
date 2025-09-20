@@ -1,4 +1,3 @@
-using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Services;
@@ -49,10 +48,16 @@ public class RequirementsSpecificationModel(
 
 
     /// <summary>
-    /// Retrieves a list of requirements specifications associated with a specific project.
+    ///     Retrieves a list of requirements specifications associated with a specific project.
     /// </summary>
-    /// <param name="projectId">The unique identifier of the project for which the requirements specifications are to be retrieved.</param>
-    /// <returns>A task representing an asynchronous operation. The task result contains a list of requirements specifications associated with the specified project.</returns>
+    /// <param name="projectId">
+    ///     The unique identifier of the project for which the requirements specifications are to be
+    ///     retrieved.
+    /// </param>
+    /// <returns>
+    ///     A task representing an asynchronous operation. The task result contains a list of requirements specifications
+    ///     associated with the specified project.
+    /// </returns>
     public async Task<List<RequirementsSpecification>> GetRequirementsSpecificationListAsync(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
@@ -64,13 +69,14 @@ public class RequirementsSpecificationModel(
     }
 
     /// <summary>
-    /// Retrieves a specific requirements specification by its unique identifier.
+    ///     Retrieves a specific requirements specification by its unique identifier.
     /// </summary>
     /// <param name="requirementsSpecificationId">
-    /// The unique identifier of the requirements specification to retrieve.
+    ///     The unique identifier of the requirements specification to retrieve.
     /// </param>
     /// <returns>
-    /// A task representing an asynchronous operation. The task result contains the requirements specification associated with the provided identifier.
+    ///     A task representing an asynchronous operation. The task result contains the requirements specification associated
+    ///     with the provided identifier.
     /// </returns>
     public async Task<RequirementsSpecification> GetRequirementsSpecificationByIdAsync(int requirementsSpecificationId)
     {
@@ -82,10 +88,13 @@ public class RequirementsSpecificationModel(
     }
 
     /// <summary>
-    /// Deletes a specific requirements specification identified by its unique identifier.
+    ///     Deletes a specific requirements specification identified by its unique identifier.
     /// </summary>
     /// <param name="requirementSpecificationId">The unique identifier of the requirements specification to be deleted.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result is a boolean where true indicates the deletion was not possible due to linked requirements, and false indicates successful deletion.</returns>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result is a boolean where true indicates the
+    ///     deletion was not possible due to linked requirements, and false indicates successful deletion.
+    /// </returns>
     public async Task<bool> DeleteRequirementsSpecification(int requirementSpecificationId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();

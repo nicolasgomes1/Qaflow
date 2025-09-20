@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 using WebApp.Data;
-using WebApp.Data.enums;
 using WebApp.Services;
 
 namespace WebApp.Models;
@@ -20,10 +19,13 @@ public class BugsModel(
     public List<int> SelectedTestCasesIds { get; set; } = [];
 
     /// <summary>
-    /// Retrieves a list of bugs associated with a specific project.
+    ///     Retrieves a list of bugs associated with a specific project.
     /// </summary>
     /// <param name="projectId">The unique identifier of the project.</param>
-    /// <returns>A task representing the asynchronous operation. The task result contains a list of <see cref="Bugs"/> objects associated with the given project.</returns>
+    /// <returns>
+    ///     A task representing the asynchronous operation. The task result contains a list of <see cref="Bugs" /> objects
+    ///     associated with the given project.
+    /// </returns>
     public async Task<List<Bugs>> GetBugsAsync(int projectId)
     {
         Logger.LogInformation($"Getting bugs for project {projectId}");
@@ -32,10 +34,13 @@ public class BugsModel(
     }
 
     /// <summary>
-    /// Retrieves a list of bugs assigned to the current user within a specific project.
+    ///     Retrieves a list of bugs assigned to the current user within a specific project.
     /// </summary>
     /// <param name="projectId">The unique identifier of the project whose bugs are to be retrieved.</param>
-    /// <returns>A task representing the asynchronous operation. The task result contains a list of <see cref="Bugs"/> objects assigned to the current user for the specified project.</returns>
+    /// <returns>
+    ///     A task representing the asynchronous operation. The task result contains a list of <see cref="Bugs" /> objects
+    ///     assigned to the current user for the specified project.
+    /// </returns>
     public async Task<List<Bugs>> GetBugsAssignedToCurrentUser(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
@@ -131,7 +136,7 @@ public class BugsModel(
     }
 
     /// <summary>
-    /// Update Card when drag and drop in db for Bugs
+    ///     Update Card when drag and drop in db for Bugs
     /// </summary>
     /// <param name="args"></param>
     public async Task UpdateCardOnDragDrop(RadzenDropZoneItemEventArgs<Bugs> args)

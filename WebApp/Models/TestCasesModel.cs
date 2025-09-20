@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Components.Forms;
+﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 using WebApp.Api.Jira;
@@ -14,25 +13,25 @@ public class TestCasesModel(
     UserService userService,
     TestCasesFilesModel testCasesFilesModel)
 {
+    public string EstimatedTimeInput = string.Empty;
+
     /// <summary>
-    /// List of jira tickets to be displayed in the UI that  are fetched with the Jira API
+    ///     List of jira tickets to be displayed in the UI that  are fetched with the Jira API
     /// </summary>
     public List<JiraTask> JiraIntegrations = [];
 
     /// <summary>
-    /// List of selected Jira tickets to be associated with the test case
+    ///     List of selected Jira tickets to be associated with the test case
     /// </summary>
     public List<string> SelectedJiraTicketIds { get; set; } = [];
 
     public List<TestSteps> TestStepsList { get; set; } = [];
 
     /// <summary>
-    /// List of identifiers for the requirements that have been selected.
-    /// These IDs correspond to the linked requirements associated with a test case.
+    ///     List of identifiers for the requirements that have been selected.
+    ///     These IDs correspond to the linked requirements associated with a test case.
     /// </summary>
     public List<int> SelectedRequirementIds { get; set; } = [];
-
-    public string EstimatedTimeInput = string.Empty;
 
     public async Task<List<TestCases>> DisplayTestCasesIndexPage(int projectId)
     {
@@ -47,7 +46,7 @@ public class TestCasesModel(
     }
 
     /// <summary>
-    /// Value to be used in dropdowns
+    ///     Value to be used in dropdowns
     /// </summary>
     /// <param name="projectId"></param>
     /// <param name="workflowStatus"></param>
@@ -64,7 +63,6 @@ public class TestCasesModel(
 
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="testCaseId"></param>
     /// <returns>TestCase with TestSteps and Requirements</returns>
@@ -83,7 +81,6 @@ public class TestCasesModel(
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <returns>A list of associated requirements witht the TestCase</returns>
     /// <exception cref="Exception"></exception>
@@ -198,7 +195,7 @@ public class TestCasesModel(
 
 
     /// <summary>
-    /// only return active test cases
+    ///     only return active test cases
     /// </summary>
     /// <param name="testCaseId"></param>
     /// <returns></returns>
@@ -226,7 +223,7 @@ public class TestCasesModel(
 
 
     /// <summary>
-    /// TestCase Jira Tickets that accepts a TestCases object and stores the selected Jira tickets
+    ///     TestCase Jira Tickets that accepts a TestCases object and stores the selected Jira tickets
     /// </summary>
     /// <param name="testcase"></param>
     /// <param name="db"></param>
@@ -251,7 +248,7 @@ public class TestCasesModel(
 
 
     /// <summary>
-    /// Updates the Jira tickets associated with a TestCases object
+    ///     Updates the Jira tickets associated with a TestCases object
     /// </summary>
     /// <param name="testcase"></param>
     private async Task UpdateJiraTickets(TestCases testcase)
@@ -351,7 +348,7 @@ public class TestCasesModel(
     }
 
     /// <summary>
-    /// Update Card when drag and drop in db for TestCases
+    ///     Update Card when drag and drop in db for TestCases
     /// </summary>
     /// <param name="args"></param>
     public async Task UpdateCardOnDragDrop(RadzenDropZoneItemEventArgs<TestCases> args)

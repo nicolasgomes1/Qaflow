@@ -67,10 +67,10 @@ public class TestStepExecutionFileModel(IDbContextFactory<ApplicationDbContext> 
             Logger.LogError(@"Error uploading file: {msg}", ex.Message);
         }
     }
-    
-    
+
+
     /// <summary>
-    /// Returns a list of test steps execution files for the current project
+    ///     Returns a list of test steps execution files for the current project
     /// </summary>
     /// <returns></returns>
     public async Task<List<TestStepsExecutionFile>> GetTestStepsExecutionFiles(int projectId)

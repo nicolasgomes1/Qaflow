@@ -9,13 +9,6 @@ public class DataGridSettingsService(IJSRuntime jsRuntime)
     private string? _currentGridId; // Track the current grid ID in use
     private DataGridSettings? _settings; // Hold the current grid settings in memory
 
-    // Method to set the current grid's identifier (e.g., "requirements", "testcases")
-    public void SetCurrentGridId(string gridId)
-    {
-        _currentGridId = gridId;
-        _settings = null; // Reset settings to force reloading for the new grid
-    }
-
     // Property to get or set the current grid settings
     public DataGridSettings? Settings
     {
@@ -26,6 +19,13 @@ public class DataGridSettingsService(IJSRuntime jsRuntime)
             _settings = value;
             SaveSettingsAsync(_settings).ConfigureAwait(false); // Automatically save settings
         }
+    }
+
+    // Method to set the current grid's identifier (e.g., "requirements", "testcases")
+    public void SetCurrentGridId(string gridId)
+    {
+        _currentGridId = gridId;
+        _settings = null; // Reset settings to force reloading for the new grid
     }
 
     // Save DataGrid state for the current grid to local storage
@@ -57,9 +57,7 @@ public class DataGridSettingsService(IJSRuntime jsRuntime)
             var storageKey = GetStorageKey(_currentGridId);
             var savedSettings = await jsRuntime.InvokeAsync<string>("window.localStorage.getItem", storageKey);
             if (!string.IsNullOrEmpty(savedSettings))
-            {
                 _settings = JsonSerializer.Deserialize<DataGridSettings>(savedSettings);
-            }
 
             return _settings;
         }

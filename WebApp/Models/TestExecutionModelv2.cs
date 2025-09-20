@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 using WebApp.Data;
@@ -10,10 +9,10 @@ namespace WebApp.Models;
 
 public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbContextFactory, UserService userService)
 {
+    public string EstimatedTimeInput = string.Empty;
+
     //single selection
     public int SelectedTestPlan { get; set; } = -1;
-
-    public string EstimatedTimeInput = string.Empty;
 
     public async Task LoadTestPlanForTestExecution(int testExecution, int projectId)
     {
@@ -159,13 +158,13 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
     }
 
     /// <summary>
-    /// Creates a new Test Execution with the provided details and associates it with the given project.
+    ///     Creates a new Test Execution with the provided details and associates it with the given project.
     /// </summary>
     /// <param name="testExecution">The Test Execution object containing the necessary details for the new execution.</param>
     /// <param name="projectId">The ID of the project to associate with the new Test Execution.</param>
-    /// <returns>A new <see cref="TestExecution"/> object initialized with the specified details.</returns>
+    /// <returns>A new <see cref="TestExecution" /> object initialized with the specified details.</returns>
     /// <exception cref="InvalidOperationException">
-    /// Thrown when the associated Test Plan specified in the provided Test Execution cannot be found.
+    ///     Thrown when the associated Test Plan specified in the provided Test Execution cannot be found.
     /// </exception>
     public async Task<TestExecution?> CreateNewExecutionAsync(TestExecution testExecution, int projectId)
     {
@@ -233,13 +232,14 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
 
 
     /// <summary>
-    /// Duplicates an existing Test Execution by creating a new instance with updated details, associating it with the specified project.
+    ///     Duplicates an existing Test Execution by creating a new instance with updated details, associating it with the
+    ///     specified project.
     /// </summary>
     /// <param name="testExecutionId">The ID of the Test Execution to duplicate.</param>
     /// <param name="projectId">The ID of the project to associate with the duplicated Test Execution.</param>
-    /// <returns>A new <see cref="TestExecution"/> instance containing the duplicated details.</returns>
+    /// <returns>A new <see cref="TestExecution" /> instance containing the duplicated details.</returns>
     /// <exception cref="InvalidOperationException">
-    /// Thrown when the specified Test Execution to duplicate cannot be found.
+    ///     Thrown when the specified Test Execution to duplicate cannot be found.
     /// </exception>
     public async Task<TestExecution> DuplicateExecutionAsync(int testExecutionId, int projectId)
     {
@@ -283,7 +283,7 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
                 LinkedTestStepsExecution = new List<TestStepsExecution>()
             };
 
-            Debug.Assert(originalTce.LinkedTestStepsExecution != null, "originalTce.LinkedTestStepsExecution != null");
+            Debug.Assert(originalTce.LinkedTestStepsExecution != null);
             foreach (var originalStep in originalTce.LinkedTestStepsExecution)
             {
                 var newStep = new TestStepsExecution
@@ -325,7 +325,7 @@ public class TestExecutionModelv2(IDbContextFactory<ApplicationDbContext> dbCont
     }
 
     /// <summary>
-    /// Update Card when drag and drop in db for TestExecutions
+    ///     Update Card when drag and drop in db for TestExecutions
     /// </summary>
     /// <param name="args"></param>
     public async Task UpdateCardOnDragDrop(RadzenDropZoneItemEventArgs<TestExecution> args)

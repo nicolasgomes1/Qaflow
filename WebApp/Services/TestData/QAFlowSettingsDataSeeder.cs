@@ -22,7 +22,7 @@ public class QaFlowSettingsDataSeeder(IServiceProvider serviceProvider) : IHoste
     {
         return Task.CompletedTask; // Nothing to clean up for this case
     }
-    
+
     private static async Task SeedQAflowSettingsDataAsync(ApplicationDbContext dbContext)
     {
         await GetOrCreateQAflowSettingsAsync(dbContext);
@@ -30,7 +30,8 @@ public class QaFlowSettingsDataSeeder(IServiceProvider serviceProvider) : IHoste
 
     private static async Task GetOrCreateQAflowSettingsAsync(ApplicationDbContext dbContext)
     {
-        var settings = await dbContext.QAflowSettings.Where(p => p.QAflowOptionsSettings == QAflowOptionsSettings.ExternalIntegrations).FirstOrDefaultAsync();
+        var settings = await dbContext.QAflowSettings
+            .Where(p => p.QAflowOptionsSettings == QAflowOptionsSettings.ExternalIntegrations).FirstOrDefaultAsync();
         if (settings != null) return;
         settings = new QAflowSettings
         {
@@ -38,8 +39,9 @@ public class QaFlowSettingsDataSeeder(IServiceProvider serviceProvider) : IHoste
             QAflowOptionsSettings = QAflowOptionsSettings.ExternalIntegrations
         };
         await dbContext.QAflowSettings.AddAsync(settings);
-        
-        var settings1 = await dbContext.QAflowSettings.Where(p => p.QAflowOptionsSettings == QAflowOptionsSettings.OwnIntegrations).FirstOrDefaultAsync();
+
+        var settings1 = await dbContext.QAflowSettings
+            .Where(p => p.QAflowOptionsSettings == QAflowOptionsSettings.OwnIntegrations).FirstOrDefaultAsync();
         if (settings1 != null) return;
         settings1 = new QAflowSettings
         {

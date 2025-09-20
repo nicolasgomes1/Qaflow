@@ -7,6 +7,9 @@ namespace WebApp.Services;
 
 public class GenerateJwtToken
 {
+    private static DateTime TokenExpirationTime { get; set; }
+    private static DateTime CurrentTime { get; set; }
+
     public Task<string> GenerateJwtTokenmethod(string username)
     {
         var key = Encoding.UTF8.GetBytes("YourSuperSecretKeyThatIsAtLeast32CharsLong"); // Use same key from config
@@ -27,9 +30,6 @@ public class GenerateJwtToken
 
         return Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
     }
-
-    private static DateTime TokenExpirationTime { get; set; }
-    private static DateTime CurrentTime { get; set; }
 
     public static async Task<(DateTime TokenExpirationTime, DateTime CurrentTime)> CalculateExpirationTime()
     {

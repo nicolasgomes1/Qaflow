@@ -12,7 +12,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
     private static readonly ILogger Logger = LoggerFactory.CreateLogger(nameof(IntegrationsModel));
 
     /// <summary>
-    /// Creates a new integration and saves it to the database.
+    ///     Creates a new integration and saves it to the database.
     /// </summary>
     /// <param name="integration">The integration entity to be created.</param>
     /// <returns>Returns the created integration entity.</returns>
@@ -28,7 +28,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
     }
 
     /// <summary>
-    /// Updates an existing integration in the database.
+    ///     Updates an existing integration in the database.
     /// </summary>
     /// <param name="updatedIntegration">The integration entity to be updated.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
@@ -39,7 +39,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
 
         var integration = await db.Integrations.FindAsync(updatedIntegration.Id);
         if (integration is null) throw new Exception("Integration not found");
-    
+
         // Update the properties
         db.Entry(integration).CurrentValues.SetValues(updatedIntegration);
         await db.SaveChangesAsync();
@@ -47,9 +47,8 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
     }
 
 
-
     /// <summary>
-    /// Retrieves an integration by its ID.
+    ///     Retrieves an integration by its ID.
     /// </summary>
     /// <param name="integrationId">The ID of the integration to retrieve.</param>
     /// <returns>Returns the integration with the specified ID.</returns>
@@ -63,7 +62,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
 
 
     /// <summary>
-    /// Retrieves an integration by its unique key.
+    ///     Retrieves an integration by its unique key.
     /// </summary>
     /// <param name="uniqueKey">The unique key of the integration to retrieve.</param>
     /// <returns>Returns the integration with the specified unique key.</returns>
@@ -79,7 +78,7 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
     public async Task<List<Integrations>> GetListIntegrations()
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-        Logger.LogInformation($"Getting integrations");
+        Logger.LogInformation("Getting integrations");
         return await db.Integrations.ToListAsync();
     }
 
@@ -94,19 +93,20 @@ public class IntegrationsModel(IDbContextFactory<ApplicationDbContext> dbContext
         Logger.LogInformation("Removed integration with id:  {id}", integrationId);
         ;
     }
-    
+
     public async Task<bool> HasIntegrations(int projectId)
     {
-                await using var db = await dbContextFactory.CreateDbContextAsync();
-                
-                var existing = await db.Integrations.Where(p => p.IntegrationType == IntegrationType.Jira && p.ProjectsId == projectId).AnyAsync();
-                return existing;
+        await using var db = await dbContextFactory.CreateDbContextAsync();
+
+        var existing = await db.Integrations
+            .Where(p => p.IntegrationType == IntegrationType.Jira && p.ProjectsId == projectId).AnyAsync();
+        return existing;
     }
-    
+
     public async Task<Integrations?> GetIntegrationByProjectId(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-        var integration =  await db.Integrations.FirstOrDefaultAsync(x => x.ProjectsId == projectId);
+        var integration = await db.Integrations.FirstOrDefaultAsync(x => x.ProjectsId == projectId);
         return integration ?? null;
     }
 }

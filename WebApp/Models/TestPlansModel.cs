@@ -157,7 +157,7 @@ public class TestPlansModel(
     }
 
     /// <summary>
-    /// Update Card when drag and drop in db for TestPlan
+    ///     Update Card when drag and drop in db for TestPlan
     /// </summary>
     /// <param name="args"></param>
     public async Task UpdateCardOnDragDrop(RadzenDropZoneItemEventArgs<TestPlans> args)

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Data.enums;
 using WebApp.Services;
@@ -8,8 +7,8 @@ namespace WebApp.Models;
 
 public class TestExecutionModel
 {
-    private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
     private readonly ApplicationDbContext _dbContext;
+    private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
     private readonly UserService _userService;
 
     public TestExecutionModel(IDbContextFactory<ApplicationDbContext> dbContextFactory, UserService userService)
@@ -24,7 +23,7 @@ public class TestExecutionModel
 
 
     /// <summary>
-    /// Load the test execution, including related entities (TestCaseExecution and TestStepExecution)
+    ///     Load the test execution, including related entities (TestCaseExecution and TestStepExecution)
     /// </summary>
     /// <returns>The TestExecution object</returns>
     public async Task<TestExecution> GetTestExecutionData(int testExecutionId)
@@ -80,7 +79,7 @@ public class TestExecutionModel
 
 
     /// <summary>
-    /// Gets the test cases for the TestExecution
+    ///     Gets the test cases for the TestExecution
     /// </summary>
     /// <param name="testExecutionId"></param>
     /// <returns></returns>
@@ -153,7 +152,7 @@ public class TestExecutionModel
     }
 
     /// <summary>
-    /// Returns the TestExecution object by Id
+    ///     Returns the TestExecution object by Id
     /// </summary>
     /// <param name="testExecutionId"></param>
     /// <returns></returns>
@@ -168,7 +167,7 @@ public class TestExecutionModel
 
 
     /// <summary>
-    /// Returns a List of TestCaseExecution for a given TestExecution With TestSteps
+    ///     Returns a List of TestCaseExecution for a given TestExecution With TestSteps
     /// </summary>
     /// <param name="testExecutionId"></param>
     /// <returns></returns>
@@ -184,7 +183,7 @@ public class TestExecutionModel
     }
 
     /// <summary>
-    /// returns the list of TetsExecutions with the status of Completed and IsActive, so it was not yet executed
+    ///     returns the list of TetsExecutions with the status of Completed and IsActive, so it was not yet executed
     /// </summary>
     /// <returns></returns>
     public async Task<List<TestExecution>> GetActiveTestExecutionsAsync(int projectId)
@@ -217,7 +216,7 @@ public class TestExecutionModel
     }
 
     /// <summary>
-    /// Returns the count to Test Executions based on the priority
+    ///     Returns the count to Test Executions based on the priority
     /// </summary>
     /// <param name="priority"></param>
     /// <returns></returns>

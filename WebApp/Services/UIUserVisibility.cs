@@ -13,7 +13,7 @@ public class UiUserVisibility
 
 
     /// <summary>
-    /// Only admin and Manager are authorized
+    ///     Only admin and Manager are authorized
     /// </summary>
     /// <returns></returns>
     public bool IsAuthorized()
