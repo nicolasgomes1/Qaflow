@@ -105,6 +105,7 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<TestStepExecutionFileModel>();
         serviceCollection.AddScoped<QAflowSettingsModel>();
         serviceCollection.AddScoped<ManageCsvUpload>();
+        serviceCollection.AddScoped<NotificationService>();
 
 
         serviceCollection.AddSingleton<IEmailSender<ApplicationUser>, TestEmailSender>();
