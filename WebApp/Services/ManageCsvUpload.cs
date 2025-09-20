@@ -3,9 +3,8 @@ using Radzen;
 using WebApp.Data;
 using WebApp.Data.enums;
 using WebApp.Models;
-using WebApp.Services;
 
-namespace WebApp.Components.ReusableComponents.UploadCsv;
+namespace WebApp.Services;
 
 public class ManageCsvUpload
 {
