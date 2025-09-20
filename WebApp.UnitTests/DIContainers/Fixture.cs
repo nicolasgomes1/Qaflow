@@ -1,10 +1,13 @@
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using Radzen;
 using WebApp.Api.Jira;
 using WebApp.Data;
 using WebApp.Models;
@@ -53,12 +56,15 @@ public class TestFixture : IDisposable
 
         var testContext = new TestContext();
         serviceCollection.AddSingleton<IJSRuntime>(testContext.JSInterop.JSRuntime);
+        serviceCollection.AddSingleton<NavigationManager>(testContext.Services.GetRequiredService<NavigationManager>());
+
 
         // Add Data Protection services
         serviceCollection.AddDataProtection();
 
         // Register your services here
         serviceCollection.AddScoped<ProjectModel>();
+        serviceCollection.AddSingleton<DialogService>();
         serviceCollection.AddScoped<AuthenticationStateProvider, TestAuthenticationStateProvider>();
         serviceCollection.AddScoped<UserService>();
         serviceCollection.AddScoped<ProjectState>();
@@ -73,6 +79,7 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<RequirementsSpecificationModel>();
         serviceCollection.AddScoped<TestCasesModel>();
         serviceCollection.AddScoped<TestCasesFilesModel>();
+        serviceCollection.AddScoped<TestCasesReporting>();
         serviceCollection.AddScoped<TestCasesReporting>();
         serviceCollection.AddScoped<TestExecutionModelv2>();
         serviceCollection.AddScoped<TestExecutionModel>();
@@ -97,6 +104,7 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<TestStepsModel>();
         serviceCollection.AddScoped<TestStepExecutionFileModel>();
         serviceCollection.AddScoped<QAflowSettingsModel>();
+        serviceCollection.AddScoped<ManageCsvUpload>();
 
 
         serviceCollection.AddSingleton<IEmailSender<ApplicationUser>, TestEmailSender>();

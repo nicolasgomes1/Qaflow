@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Models;
+using WebApp.UnitTests.BaseTest;
 using WebApp.UnitTests.DIContainers;
 
 namespace WebApp.UnitTests.Models;
 
-public class BugsCommentsModelTests : IClassFixture<TestFixture>
+public class BugsCommentsModelTests : BaseComponentTest
 {
     private readonly BugsComments _comment = new()
     {
@@ -23,7 +24,7 @@ public class BugsCommentsModelTests : IClassFixture<TestFixture>
     private readonly BugsModel bm;
     private readonly ApplicationDbContext db;
 
-    public BugsCommentsModelTests(TestFixture fixture)
+    public BugsCommentsModelTests(TestFixture fixture) : base(fixture)
     {
         db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         bm = fixture.ServiceProvider.GetRequiredService<BugsModel>();

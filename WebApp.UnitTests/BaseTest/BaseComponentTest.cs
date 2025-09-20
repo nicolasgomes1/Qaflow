@@ -89,7 +89,9 @@ public abstract class BaseComponentTest : TestContext, IClassFixture<TestFixture
             typeof(CyclesModel),
             typeof(TestStepsModel),
             typeof(TestStepExecutionFileModel),
-            typeof(QAflowSettingsModel)
+            typeof(QAflowSettingsModel),
+            typeof(Radzen.DialogService),
+            typeof(ManageCsvUpload)
         };
 
         foreach (var serviceType in servicesToRegister)
