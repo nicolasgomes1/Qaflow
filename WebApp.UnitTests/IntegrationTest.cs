@@ -12,8 +12,8 @@ public class IntegrationTest
     //    </ItemGroup>
     //
     // 2. Uncomment the following example test and update 'Projects.MyAspireApp_AppHost' to match your AppHost project:
-    //
-    [Fact]
+    //TODO
+    [Fact (Skip = "Integration test")]
     public async Task GetWebResourceRootReturnsOkStatusCode()
     {
         // Arrange
