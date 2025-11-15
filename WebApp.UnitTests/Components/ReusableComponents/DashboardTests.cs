@@ -16,7 +16,7 @@ public class DashboardTests : BaseComponentTest
     public void HelloWorldComponentRendersCorrectly()
     {
         // Act
-        var cut = RenderComponent<Dashboard>(parameters => parameters
+        var cut = Render<Dashboard>(parameters => parameters
             .Add(p => p.ProjectId, 1)); // Dashboard requires ProjectId parameter
 
         // Assert

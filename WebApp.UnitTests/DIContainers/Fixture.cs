@@ -54,7 +54,7 @@ public class TestFixture : IDisposable
         });
 
 
-        var testContext = new TestContext();
+        var testContext = new BunitContext();
         serviceCollection.AddSingleton<IJSRuntime>(testContext.JSInterop.JSRuntime);
         serviceCollection.AddSingleton<NavigationManager>(testContext.Services.GetRequiredService<NavigationManager>());
 

@@ -10,7 +10,7 @@ using WebApp.UnitTests.DIContainers;
 
 namespace WebApp.UnitTests.BaseTest;
 
-public abstract class BaseComponentTest : TestContext, IClassFixture<TestFixture>
+public abstract class BaseComponentTest : BunitContext, IClassFixture<TestFixture>
 {
     private readonly TestFixture _fixture;
 
