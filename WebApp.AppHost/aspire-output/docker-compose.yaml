@@ -1,0 +1,67 @@
+services:
+  env-dashboard:
+    image: "mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest"
+    ports:
+      - "18888"
+    expose:
+      - "18889"
+      - "18890"
+    networks:
+      - "aspire"
+    restart: "always"
+  postgres:
+    image: "docker.io/library/postgres:17.6"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+      POSTGRES_USER: "${DATABASEUSER}"
+      POSTGRES_PASSWORD: "${DATABASEPASSWORD}"
+    expose:
+      - "5432"
+    volumes:
+      - type: "volume"
+        target: "/var/lib/postgresql/data"
+        source: "data"
+        read_only: false
+    networks:
+      - "aspire"
+  webapp:
+    image: "${WEBAPP_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${WEBAPP_PORT}"
+      ConnectionStrings__postgres: "Host=postgres;Port=5432;Username=${DATABASEUSER};Password=${DATABASEPASSWORD}"
+      POSTGRES_HOST: "postgres"
+      POSTGRES_PORT: "5432"
+      POSTGRES_USERNAME: "${DATABASEUSER}"
+      POSTGRES_PASSWORD: "${DATABASEPASSWORD}"
+      POSTGRES_URI: "postgresql://${DATABASEUSER}:${DATABASEPASSWORD}@postgres:5432"
+      POSTGRES_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432"
+      ConnectionStrings__postgresdb: "Host=postgres;Port=5432;Username=${DATABASEUSER};Password=${DATABASEPASSWORD};Database=postgresdb"
+      POSTGRESDB_HOST: "postgres"
+      POSTGRESDB_PORT: "5432"
+      POSTGRESDB_USERNAME: "${DATABASEUSER}"
+      POSTGRESDB_PASSWORD: "${DATABASEPASSWORD}"
+      POSTGRESDB_URI: "postgresql://${DATABASEUSER}:${DATABASEPASSWORD}@postgres:5432/postgresdb"
+      POSTGRESDB_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432/postgresdb"
+      POSTGRESDB_DATABASE: "postgresdb"
+      OpenApi_Key_Dev: "${OPENAIAPIKEY}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://env-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "webapp"
+    ports:
+      - "${WEBAPP_PORT}"
+    depends_on:
+      postgres:
+        condition: "service_started"
+    networks:
+      - "aspire"
+networks:
+  aspire:
+    driver: "bridge"
+volumes:
+  data:
+    driver: "local"

@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0"/>
+    <Sdk Name="Aspire.AppHost.Sdk" Version="13.1.0" />
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -11,13 +11,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Hosting.AppHost"/>
+        <PackageReference Include="Aspire.Hosting.AppHost" />
+        <PackageReference Include="Aspire.Hosting.Docker" />
         <PackageReference Include="Aspire.Hosting.JavaScript" />
-        <PackageReference Include="Aspire.Hosting.PostgreSQL"/>
-        <PackageReference Include="Aspire.Hosting.Testing"/>
+        <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+        <PackageReference Include="Aspire.Hosting.Testing" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\WebApp\WebApp.csproj"/>
+        <ProjectReference Include="..\WebApp\WebApp.csproj" />
     </ItemGroup>
 </Project>
