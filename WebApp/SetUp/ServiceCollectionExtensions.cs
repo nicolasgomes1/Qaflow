@@ -70,5 +70,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<BugsCommentsModel>();
         services.AddScoped<TestStepExecutionFileModel>();
         services.AddScoped<QAflowSettingsModel>();
+        services.AddScoped<AuditTrailModel>();
     }
 }

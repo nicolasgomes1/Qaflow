@@ -33,6 +33,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<BugsComments> BugsComments { get; set; }
     
     public DbSet<QAflowSettings> QAflowSettings { get; set; }
+    
+    //Add Logs for full traceability
+    public DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
