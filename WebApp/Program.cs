@@ -95,7 +95,6 @@ builder.Services.AddAuthentication(options =>
 
 
 if (builder.Environment.IsDevelopment())
-    // Add seeding services to the container.
     builder.Services.AddSeedingServices();
 
 if (builder.Environment.IsProduction())
