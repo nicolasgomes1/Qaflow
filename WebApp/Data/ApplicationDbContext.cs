@@ -271,7 +271,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         var now = DateTime.UtcNow;
         var user = (await userService.GetCurrentUserInfoAsync()).UserName;
-
+        if(user is null) throw new ArgumentNullException(nameof(user));
         // single atomic transaction (now allowed because it's inside the execution strategy)
         await using var tx = await Database.BeginTransactionAsync(cancellationToken);
 
@@ -298,7 +298,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         {
             entry.Entity.ModifiedAt = now;
             entry.Entity.ModifiedBy = user;
-
+            if(user is null) throw new ArgumentNullException(nameof(user));
             auditLogs.Add(new AuditLog
             {
                 EntityName = entry.Entity.GetType().Name,

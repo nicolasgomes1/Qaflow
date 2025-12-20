@@ -46,13 +46,21 @@ public static class ApiServiceExtensions
         {
             var allTestCases = await fetchApiData.Api_GetListTestCases();
             return Results.Ok(allTestCases);
-        }).WithOpenApi();
+        }).AddOpenApiOperationTransformer((operation, context, ct) =>
+        {
+            operation.Summary     = "Gets the List of test cases.";
+            return Task.CompletedTask;
+        });
 
         app.MapGet("/api/testcases/view/{id}", async (FetchApiData fetchApiData, int id) =>
         {
             var testCase = await fetchApiData.Api_GetTestCases(id);
             return Results.Ok(testCase);
-        }).WithOpenApi();
+        }).AddOpenApiOperationTransformer((operation, context, ct) =>
+        {
+            operation.Summary     = "Gets the test case based on Id.";
+            return Task.CompletedTask;
+        });
 
 
         app.MapGet("/api/requirements", async (ApplicationDbContext dbContext) =>
@@ -67,7 +75,11 @@ public static class ApiServiceExtensions
                     ProjectId = r.ProjectsId
                 }).ToListAsync();
             return Results.Ok(allRequirements);
-        }).WithOpenApi();
+        }).AddOpenApiOperationTransformer((operation, context, ct) =>
+        {
+            operation.Summary     = "Gets the List of requirements.";
+            return Task.CompletedTask;
+        });
 
 
         app.MapGet("/api/requirements/view/{id}", async (ApplicationDbContext dbContext, int id) =>
@@ -83,7 +95,11 @@ public static class ApiServiceExtensions
                     ProjectId = r.ProjectsId
                 }).FirstOrDefaultAsync();
             return requirement != null ? Results.Ok(requirement) : Results.NotFound();
-        }).WithOpenApi();
+        }).AddOpenApiOperationTransformer((operation, context, ct) =>
+        {
+            operation.Summary     = "Gets the requirement by id.";
+            return Task.CompletedTask;
+        });
 
         app.MapDelete("/api/requirements/delete/{id}",
             async (ApplicationDbContext dbContext, int id) =>
@@ -93,7 +109,12 @@ public static class ApiServiceExtensions
                 dbContext.Requirements.Remove(requirement);
                 await dbContext.SaveChangesAsync();
                 return Results.Ok($"Requirement {id} deleted");
-            }).WithOpenApi().RequireAuthorization(new AuthorizeAttribute
+            }).AddOpenApiOperationTransformer((operation, context, ct) =>
+            {
+                operation.Summary     = "Delete the requirement by id.";
+                return Task.CompletedTask;
+            })
+            .RequireAuthorization(new AuthorizeAttribute
             { AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme });
 
         // Endpoint to create a new requirement
@@ -112,7 +133,11 @@ public static class ApiServiceExtensions
             await dbContext.SaveChangesAsync();
 
             return Results.Created($"/api/requirements/{newRequirement.Id}", newRequirement);
-        }).WithOpenApi();
+        }).AddOpenApiOperationTransformer((operation, context, ct) =>
+        {
+            operation.Summary     = "creates a new requirement.";
+            return Task.CompletedTask;
+        });
 
         app.MapPost("/api/projects", async (ApplicationDbContext dbContext, ProjectsDto dto) =>
         {
@@ -127,7 +152,11 @@ public static class ApiServiceExtensions
             await dbContext.SaveChangesAsync();
 
             return Results.Created($"/api/projects/{newProject.Id}", newProject);
-        }).WithOpenApi();
+        }).AddOpenApiOperationTransformer((operation, context, ct) =>
+        {
+            operation.Summary     = "adds new project.";
+            return Task.CompletedTask;
+        });
 
         app.MapGet("/api/projects", async (ApplicationDbContext dbContext) =>
         {
@@ -139,7 +168,11 @@ public static class ApiServiceExtensions
                     ArchivedStatus = p.ArchivedStatus
                 }).ToListAsync();
             return Results.Ok(allProjects);
-        }).WithOpenApi();
+        }).AddOpenApiOperationTransformer((operation, context, ct) =>
+        {
+            operation.Summary     = "Gets the List of projects.";
+            return Task.CompletedTask;
+        });;
 
         app.MapGet("/api/projects/view/{id}", async (ApplicationDbContext dbContext, int id) =>
         {
@@ -152,7 +185,11 @@ public static class ApiServiceExtensions
                     ArchivedStatus = p.ArchivedStatus
                 }).FirstOrDefaultAsync();
             return project != null ? Results.Ok(project) : Results.NotFound("No project found");
-        }).WithOpenApi();
+        }).AddOpenApiOperationTransformer((operation, context, ct) =>
+        {
+            operation.Summary     = "view project by id.";
+            return Task.CompletedTask;
+        });
 
         app.MapDelete("/api/projects/delete/{id}", async (ApplicationDbContext dbContext, int id) =>
         {
@@ -168,7 +205,11 @@ public static class ApiServiceExtensions
             {
                 return Results.Conflict($"Cannot delete project {id} due to related data. Error: {ex.Message}");
             }
-        }).WithOpenApi();
+        }).AddOpenApiOperationTransformer((operation, context, ct) =>
+        {
+            operation.Summary     = "delete project by id.";
+            return Task.CompletedTask;
+        });
 
 
         app.MapGet("/api/bugs", async (ApplicationDbContext dbContext) =>
@@ -185,7 +226,11 @@ public static class ApiServiceExtensions
                     ProjectId = b.ProjectsId
                 }).ToListAsync();
             return Results.Ok(allBugs);
-        }).WithOpenApi();
+        }).AddOpenApiOperationTransformer((operation, context, ct) =>
+        {
+            operation.Summary     = "Gets the List of bugs.";
+            return Task.CompletedTask;
+        });
     }
 
 

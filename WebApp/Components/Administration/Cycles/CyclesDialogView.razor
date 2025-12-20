@@ -7,7 +7,7 @@
               ButtonStyle="ButtonStyle.Light" Click="@ViewInlineDialog" Style="color: blue;"/>
 
 @code {
-    private Cycles _cycles = new();
+    private Cycles? _cycles = new();
 
 
     [Parameter] public bool IsDisabled { get; set; } = false;
@@ -17,7 +17,6 @@
     async Task ViewInlineDialog()
     {
         _cycles = await CyclesModel.GetCycleById(Id);
-
         await DialogService.OpenAsync($"View {nameof(Cycles)}", ds =>
                         @<div>
                             <p>ID: @_cycles.Id</p>
