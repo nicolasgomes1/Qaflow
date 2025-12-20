@@ -43,6 +43,10 @@ public class TestFixture : IDisposable
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionsBuilder.UseInMemoryDatabase("TestDb");
+                
+            // Add this line to suppress the transaction warning
+            optionsBuilder.ConfigureWarnings(x => x.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.InMemoryEventId.TransactionIgnoredWarning));
+                
             return optionsBuilder.Options;
         });
 
