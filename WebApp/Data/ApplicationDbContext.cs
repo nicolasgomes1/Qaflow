@@ -1,5 +1,7 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using WebApp.Services;
 
 namespace WebApp.Data;
@@ -215,29 +217,157 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public Task<int> SaveChangesAsync(UserService userService, CancellationToken cancellationToken = default)
+
+
+    private static string? GetPrimaryKeyString(EntityEntry entry)
     {
-        var now = DateTime.UtcNow;
-        var user = userService.GetCurrentUserInfoAsync().Result.UserName;
+        var pk = entry.Metadata.FindPrimaryKey();
+        if (pk == null) return null;
 
-        foreach (var e in ChangeTracker.Entries<BaseEntity>())
-        {
-            switch (e.State)
+        var parts = pk.Properties
+            .Select(p =>
             {
-                case EntityState.Added:
-                    e.Entity.CreatedAt = now;
-                    e.Entity.CreatedBy = user;
-                    e.Entity.ModifiedAt = now;
-                    e.Entity.ModifiedBy = user;
-                    break;
+                var prop = entry.Property(p.Name);
+                var val = prop.CurrentValue ?? prop.OriginalValue;
+                return $"{p.Name}={val}";
+            })
+            .ToArray();
 
-                case EntityState.Modified:
-                    e.Entity.ModifiedAt = now;
-                    e.Entity.ModifiedBy = user;
-                    break;
-            }
+        if (parts.Length == 0) return null;
+        if (parts.Length == 1) return parts[0].Split('=')[1]; // just value
+        return string.Join(";", parts); // composite key: "A=1;B=2"
+    }
+
+// Heuristic: stub entities often have only key set + defaults for everything else.
+    private static bool LooksLikeStub(object obj)
+    {
+        if (obj == null) return true;
+
+        var props = obj.GetType().GetProperties();
+        int meaningful = 0;
+
+        foreach (var p in props)
+        {
+            var v = p.GetValue(obj);
+            if (v == null) continue;
+            if (v is string s && string.IsNullOrWhiteSpace(s)) continue;
+            if (v is Guid g && g == Guid.Empty) continue;
+            if (v is int i && i == 0) continue;
+            if (v is long l && l == 0) continue;
+            if (v is DateTime dt && dt == default) continue;
+
+            meaningful++;
+            if (meaningful >= 2) return false;
         }
 
-        return base.SaveChangesAsync(cancellationToken);
+        return true;
     }
+    
+    public async Task<int> SaveChangesAsync(UserService userService, CancellationToken cancellationToken = default)
+{
+    var strategy = Database.CreateExecutionStrategy();
+
+    return await strategy.ExecuteAsync(async () =>
+    {
+        var now = DateTime.UtcNow;
+        var user = (await userService.GetCurrentUserInfoAsync()).UserName;
+
+        // single atomic transaction (now allowed because it's inside the execution strategy)
+        await using var tx = await Database.BeginTransactionAsync(cancellationToken);
+
+        var auditLogs = new List<AuditLog>();
+        var addedEntries = new List<EntityEntry<BaseEntity>>();
+
+        // Track only BaseEntity, and avoid auditing AuditLog itself if it inherits BaseEntity
+        var entries = ChangeTracker.Entries<BaseEntity>().ToList();
+
+
+        // ADDED
+        foreach (var entry in entries.Where(e => e.State == EntityState.Added))
+        {
+            entry.Entity.CreatedAt = now;
+            entry.Entity.CreatedBy = user;
+            entry.Entity.ModifiedAt = now;
+            entry.Entity.ModifiedBy = user;
+
+            addedEntries.Add(entry); // log after save (to get DB-generated keys)
+        }
+
+        // MODIFIED
+        foreach (var entry in entries.Where(e => e.State == EntityState.Modified))
+        {
+            entry.Entity.ModifiedAt = now;
+            entry.Entity.ModifiedBy = user;
+
+            auditLogs.Add(new AuditLog
+            {
+                EntityName = entry.Entity.GetType().Name,
+                EntityId = GetPrimaryKeyString(entry),
+                UserName = user,
+                Action = "Modified",
+                BeforeData = JsonSerializer.Serialize(entry.OriginalValues.ToObject()),
+                AfterData = JsonSerializer.Serialize(entry.CurrentValues.ToObject()),
+                Timestamp = now
+            });
+        }
+
+        // DELETED (hard delete)
+        foreach (var entry in entries.Where(e => e.State == EntityState.Deleted))
+        {
+            // If entity is detached/stub, OriginalValues may be empty/defaults.
+            // GetDatabaseValuesAsync gives you the actual row before deletion.
+            object? beforeObject = null;
+
+            var originalObj = entry.OriginalValues.ToObject();
+            if (!LooksLikeStub(originalObj))
+            {
+                beforeObject = originalObj;
+            }
+            else
+            {
+                var dbValues = await entry.GetDatabaseValuesAsync(cancellationToken);
+                beforeObject = dbValues?.ToObject();
+            }
+
+            auditLogs.Add(new AuditLog
+            {
+                EntityName = entry.Entity.GetType().Name,
+                EntityId = GetPrimaryKeyString(entry),
+                UserName = user,
+                Action = "Deleted",
+                BeforeData = beforeObject == null ? null : JsonSerializer.Serialize(beforeObject),
+                AfterData = null,
+                Timestamp = now
+            });
+        }
+
+        // Save main changes
+        var result = await base.SaveChangesAsync(cancellationToken);
+
+        // Log ADDED after save (now IDs exist)
+        foreach (var entry in addedEntries)
+        {
+            auditLogs.Add(new AuditLog
+            {
+                EntityName = entry.Entity.GetType().Name,
+                EntityId = GetPrimaryKeyString(entry),
+                UserName = user,
+                Action = "Added",
+                BeforeData = null,
+                AfterData = JsonSerializer.Serialize(entry.CurrentValues.ToObject()),
+                Timestamp = now
+            });
+        }
+
+        // Save audit logs
+        if (auditLogs.Count > 0)
+        {
+            Set<AuditLog>().AddRange(auditLogs);
+            await base.SaveChangesAsync(cancellationToken);
+        }
+
+        await tx.CommitAsync(cancellationToken);
+        return result;
+    });
+}
 }

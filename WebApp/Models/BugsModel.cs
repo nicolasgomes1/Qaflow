@@ -126,7 +126,7 @@ public class BugsModel(
         bug.ModifiedAt = DateTime.UtcNow;
         db.Bugs.Update(bug);
 
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(userService);
 
         // If there are files, attempt to save them
         if (files is { Count: > 0 })
@@ -152,6 +152,6 @@ public class BugsModel(
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
         db.Bugs.Remove(bug);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(userService);
     }
 }
