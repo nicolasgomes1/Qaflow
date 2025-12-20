@@ -3,8 +3,11 @@ using Projects;
 var builder = DistributedApplication.CreateBuilder(args);
 
 
-var tests = builder.AddNpmApp("webapp-e2e-tests", "../WebApp.Tests");
-
+var tests = builder.AddJavaScriptApp(
+    name: "webapp-e2e-tests",
+    appDirectory: "../WebApp.Tests",
+    runScriptName: "test" // or "e2e", "playwright", etc. (whatever exists in package.json scripts)
+);
 //postgres user is postgres
 var dbPassword = builder.AddParameter("DatabasePassword");
 var user = builder.AddParameter("DatabaseUser");
