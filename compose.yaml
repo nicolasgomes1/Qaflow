@@ -1,0 +1,46 @@
+﻿
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-postgresdb}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432" # optional: remove if you don't want external access
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  webapp:
+    image: webapp
+    build:
+      context: .
+      dockerfile: WebApp/Dockerfile
+    container_name: webapp
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+
+      # Match the connection string name your app expects.
+      # If your code expects "ConnectionStrings:postgresdb", this is correct:
+      ConnectionStrings__postgresdb: Host=postgres;Port=5432;Database=${POSTGRES_DB:-postgresdb};Username=${DATABASE_USER:-postgres};Password=${DATABASE_PASSWORD}
+
+      # Keep the same env var name you used in AppHost so you don't have to change code:
+      OpenApi_Key_Dev: ${OPENAI_API_KEY}
+    ports:
+      - "8080:8080"
+
+
+volumes:
+  postgres-data:

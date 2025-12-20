@@ -98,6 +98,8 @@ if (builder.Environment.IsDevelopment())
     // Add seeding services to the container.
     builder.Services.AddSeedingServices();
 
+if (builder.Environment.IsProduction())
+    builder.Services.AddSeedingServicesProd();
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>();
 
@@ -177,6 +179,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     await app.ConfigureDatabaseAsync();
 }
+else if (app.Environment.IsProduction())
+{
+    await app.ConfigureDatabaseAsync();
+}
+
 else
 {
     app.UseExceptionHandler("/Error", true);

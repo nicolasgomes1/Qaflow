@@ -41,6 +41,11 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<ProjectDataSeeder>();
         services.AddHostedService<IntegrationDataSeeder>();
     }
+    
+    public static void AddSeedingServicesProd(this IServiceCollection services)
+    {
+        services.AddHostedService<RoleSeeder>();
+    }
 
     /// <summary>
     ///     Entity Models

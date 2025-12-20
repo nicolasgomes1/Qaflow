@@ -15,8 +15,12 @@ public static class WebApplicationExtentions
 
         await EnsureDatabaseAsync(dbContext);
         await RunMigrationsAsync(dbContext);
-        var cleanupService = scope.ServiceProvider.GetRequiredService<ICleanUpPlaywrightTestsData>();
-        await cleanupService.DeleteAllPlaywrightProjectData();
+        if (app.Environment.IsDevelopment())
+        {
+            var cleanupService = scope.ServiceProvider.GetRequiredService<ICleanUpPlaywrightTestsData>();
+            await cleanupService.DeleteAllPlaywrightProjectData();   
+        }
+
     }
 
 
