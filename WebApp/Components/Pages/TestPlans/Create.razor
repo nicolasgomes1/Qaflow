@@ -58,7 +58,8 @@
                                         ValueProperty="Id"
                                         Multiple="true"
                                         class="input-style"
-                                        Name="Test Cases"/>
+                                        Name="testcases"/>
+                        <RadzenRequiredValidator Component="testcases" Text="Test Case(s) is required"/>
                     </div>
 
                     <div class="form-group mb-4">
@@ -131,6 +132,7 @@
         _usersList = await UserService.GetUsersList();
         _cyclesList = await CyclesModel.GetCyclesByProjectId(ProjectId);
         TestPlansModel.SelectedCycleId = -1; // important!
+        TestPlansModel.SelectedTestCasesIds = [];
 
         // await TestCasesModel.GetTestCasesWithWorkflowStatus(WorkflowStatus.Completed);
         _testCaseslist = await TestCasesModel.GetTestCasesWithWorkflowStatus(ProjectId, WorkflowStatus.Completed);
