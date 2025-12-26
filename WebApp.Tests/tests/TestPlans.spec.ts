@@ -53,35 +53,7 @@ test.describe('Test Plan Suite', () => {
     });
 
 
-    async function select_dropdown_option_multi(
-        page: Page,
-        testId: string,
-        options: string[]
-    ) {
-        const trigger = page.getByTestId(testId);
-        await expect(trigger).toBeVisible();
 
-        // Open
-        await trigger.click();
-
-        // Popup is portal'ed to body
-        const popup = page.locator("#popup-testcases");
-        await expect(popup).toBeVisible({ timeout: 5000 });
-
-        for (const option of options) {
-            // Find the row by visible text inside the popup
-            const row = popup.locator("li.rz-multiselect-item").filter({ hasText: option }).first();
-            await expect(row).toBeVisible({ timeout: 5000 });
-            await row.scrollIntoViewIfNeeded();
-
-            // Click the checkbox box (most reliable toggle)
-            await row.locator(".rz-chkbox-box").click();
-        }
-
-        // Close / blur
-        await page.keyboard.press("Escape");
-        await page.keyboard.press("Tab");
-    }
 
     test('Create New Test Plan With Files', async ({ page })=> {
         test.slow();
