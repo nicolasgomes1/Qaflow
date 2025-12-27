@@ -31,7 +31,13 @@ test.describe('Test Plan Suite', () => {
 
         await actions.select_dropdown_option(page, 'testplan_priority', 'Medium');
 
-        await select_dropdown_option_multi(page, "testplan_testcases", ["Test Case 2", "Test Case 5"]);
+        await page.getByTestId("testplan_testcases").click();
+        await page.getByText('Test Case 1', {exact: true}).click();
+        await page.getByText('Test Case 2', {exact: true}).click();
+
+        await page.keyboard.press('Backspace');
+        
+      //  await select_dropdown_option_multi(page, "testplan_testcases", ["Test Case 2", "Test Case 5"]);
 
 
         await actions.select_dropdown_option(page, 'testplan_cycles', 'Cycle 1');
@@ -72,7 +78,13 @@ test.describe('Test Plan Suite', () => {
 
         await actions.select_dropdown_option(page, 'testplan_priority', 'Medium');
 
-        await select_dropdown_option_multi(page, "testplan_testcases", ["Test Case 1", "Test Case 2"]);
+        await page.getByTestId("testplan_testcases").click();
+
+        await page.getByText('Test Case 1', {exact: true}).click();
+        await page.getByText('Test Case 2', {exact: true}).click();
+        
+        await page.keyboard.press('Backspace');
+     //   await select_dropdown_option_multi(page, "testplan_testcases", ["Test Case 1", "Test Case 2"]);
 
         await actions.select_dropdown_option(page, 'testplan_cycles', 'Cycle 1');
 
