@@ -185,10 +185,10 @@
 
         var menuItems = new List<ContextMenuItem>();
         menuItems.Add(new ContextMenuItem { Text = "View Test Execution", Icon = "visibility", Value = "view" });
-        menuItems.Add(new ContextMenuItem { Text = "Edit Test Execution", Icon = "edit", Value = "edit" });
 
         if (testExecution.WorkflowStatus != WorkflowStatus.Completed)
         {
+            menuItems.Add(new ContextMenuItem { Text = "Edit Test Execution", Icon = "edit", Value = "edit" });
             menuItems.Add(new ContextMenuItem { Text = "Delete Test Execution", Icon = "delete", Value = "delete" });
         }
 

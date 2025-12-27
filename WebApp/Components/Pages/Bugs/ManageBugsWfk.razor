@@ -101,6 +101,8 @@
     {
         if (args.FromZone != args.ToZone)
         {
+            args.Item.WorkflowStatus = (WorkflowStatus)args.ToZone.Value;
+        
             args.Item.ArchivedStatus = args.Item.WorkflowStatus switch
             {
                 WorkflowStatus.Completed => ArchivedStatus.Archived,
@@ -171,10 +173,10 @@
 
         var menuItems = new List<ContextMenuItem>();
         menuItems.Add(new ContextMenuItem { Text = "View Bug", Icon = "visibility", Value = "view" });
-        menuItems.Add(new ContextMenuItem { Text = "Edit Bug", Icon = "edit", Value = "edit" });
 
         if (testPlans.WorkflowStatus != WorkflowStatus.Completed)
         {
+            menuItems.Add(new ContextMenuItem { Text = "Edit Bug", Icon = "edit", Value = "edit" });
             menuItems.Add(new ContextMenuItem { Text = "Delete Bug", Icon = "delete", Value = "delete" });
         }
 

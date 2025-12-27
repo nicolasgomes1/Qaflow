@@ -235,10 +235,10 @@
 
         var menuItems = new List<ContextMenuItem>();
         menuItems.Add(new ContextMenuItem { Text = "View Requirement", Icon = "visibility", Value = "view" });
-        menuItems.Add(new ContextMenuItem { Text = "Edit Requirement", Icon = "edit", Value = "edit" });
 
         if (requirement.WorkflowStatus != WorkflowStatus.Completed)
         {
+            menuItems.Add(new ContextMenuItem { Text = "Edit Requirement", Icon = "edit", Value = "edit" });
             menuItems.Add(new ContextMenuItem { Text = "Delete Requirement", Icon = "delete", Value = "delete" });
         }
 

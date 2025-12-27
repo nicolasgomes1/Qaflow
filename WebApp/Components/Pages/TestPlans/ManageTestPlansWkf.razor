@@ -181,10 +181,10 @@
 
         var menuItems = new List<ContextMenuItem>();
         menuItems.Add(new ContextMenuItem { Text = "View Test Plan", Icon = "visibility", Value = "view" });
-        menuItems.Add(new ContextMenuItem { Text = "Edit Test Plan", Icon = "edit", Value = "edit" });
 
         if (testPlans.WorkflowStatus != WorkflowStatus.Completed)
         {
+            menuItems.Add(new ContextMenuItem { Text = "Edit Test Plan", Icon = "edit", Value = "edit" });
             menuItems.Add(new ContextMenuItem { Text = "Delete Test Plan", Icon = "delete", Value = "delete" });
         }
 

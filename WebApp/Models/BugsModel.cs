@@ -142,10 +142,8 @@ public class BugsModel(
     public async Task UpdateCardOnDragDrop(RadzenDropZoneItemEventArgs<Bugs> args)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-        args.Item.ModifiedBy = userService.GetCurrentUserNameAsync().Result;
-        args.Item.ModifiedAt = DateTime.UtcNow;
         db.Bugs.Update(args.Item);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(userService);
     }
 
     public async Task DeleteBug(Bugs bug)
