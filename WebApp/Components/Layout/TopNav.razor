@@ -51,12 +51,20 @@
                                         Path="/Account/Manage"/>
                         <RadzenMenuItem Text="Manage Users" data-testid="manage_users" Icon="account_circle"
                                         Path="/Users/Index"/>
-                        <RadzenMenuItem Text="Cycles" data-testid="manage_cycles" Icon="cycle" Path="@path"
+                        <RadzenMenuItem Text="Cycles" data-testid="manage_cycles" Icon="cycle" Path="@path_cycle"
                                         Disabled="HasNotProjectSet()"/>
 
 
                         <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
-                        <RadzenMenuItem Icon="settings" data-testid="manage_settings" Text="QAFlow Settings" Path="/settings"></RadzenMenuItem>
+                        <RadzenMenuItem Icon="settings" data-testid="manage_settings" Disabled="HasNotProjectSet()" Text="QAFlow Settings" Path="@path_settings"></RadzenMenuItem>
+                        
+                        @code{
+                            string path_cycle => $"/project/{ProjectId}/Cycles";
+                            string path_settings => $"/project/{ProjectId}/Settings";
+
+                            
+
+                        }
 
                         @if (HasOwnIntegrationsEnabled)
                         {
@@ -128,13 +136,16 @@
 
     private List<QAflowSettings> _qAflowSettingsList = [];
 
-    string path => $"/project/{ProjectId}/Cycles";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
+            if (ProjectId != 0)
+            {
+                _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync(ProjectId);
+            }
             StateHasChanged(); // Ensure UI updates
         }
     }
@@ -148,7 +159,6 @@
     {
         await UpdateAuthenticationState();
         StateHasChanged(); // Ensure UI updates
-        _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync();
         NavigationManager.LocationChanged += OnLocationChanged;
     }
 

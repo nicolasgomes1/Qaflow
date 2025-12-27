@@ -34,6 +34,31 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
     private static async Task SeedDataAsync(ApplicationDbContext dbContext)
     {
+        // Ensure all projects have both QAflowSettings
+        var allProjects = await dbContext.Projects.Include(p => p.QAflowSettings).ToListAsync();
+        foreach (var p in allProjects)
+        {
+            if (!p.QAflowSettings.Any(s => s.QAflowOptionsSettings == QAflowOptionsSettings.ExternalIntegrations))
+            {
+                p.QAflowSettings.Add(new QAflowSettings
+                {
+                    QAflowOptionsSettings = QAflowOptionsSettings.ExternalIntegrations,
+                    IsIntegrationEnabled = false,
+                    CreatedBy = ADMIN
+                });
+            }
+            if (!p.QAflowSettings.Any(s => s.QAflowOptionsSettings == QAflowOptionsSettings.OwnIntegrations))
+            {
+                p.QAflowSettings.Add(new QAflowSettings
+                {
+                    QAflowOptionsSettings = QAflowOptionsSettings.OwnIntegrations,
+                    IsIntegrationEnabled = false,
+                    CreatedBy = ADMIN
+                });
+            }
+        }
+        await dbContext.SaveChangesAsync();
+
         /// create list of test steps
         var testSteps = new List<TestSteps>
         {
@@ -125,7 +150,24 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
                           Name = projectName,
                           Description = "Project A Description",
                           CreatedBy = USER,
-                          ArchivedStatus = ArchivedStatus.Active
+                          ArchivedStatus = ArchivedStatus.Active,
+                          QAflowSettings = new List<QAflowSettings>
+                          {
+                              new()
+                              {
+                                  QAflowOptionsSettings = QAflowOptionsSettings.ExternalIntegrations,
+                                  IsIntegrationEnabled = false,
+                                  CreatedBy = USER,
+                                  ModifiedBy = USER
+                              },
+                              new()
+                              {
+                                  QAflowOptionsSettings = QAflowOptionsSettings.OwnIntegrations,
+                                  IsIntegrationEnabled = false,
+                                  CreatedBy = USER,
+                                  ModifiedBy = USER
+                              }
+                          }
                       };
 
         if (project.Id != 0)

@@ -5,10 +5,10 @@ namespace WebApp.Models;
 
 public class QAflowSettingsModel(IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
-    public async Task<List<QAflowSettings>> GetApplicationSettingsAsync()
+    public async Task<List<QAflowSettings>> GetApplicationSettingsAsync(int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
-        var settings = await db.QAflowSettings.ToListAsync();
+        var settings = await db.QAflowSettings.Where(p => p.ProjectsId == projectId).ToListAsync();
         return settings;
     }
 

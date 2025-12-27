@@ -160,8 +160,11 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync();
-
+        if (firstRender)
+        {
+            _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync(ProjectId);
+            StateHasChanged();
+        }
     }
 
 

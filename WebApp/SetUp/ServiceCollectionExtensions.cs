@@ -37,7 +37,6 @@ public static class ServiceCollectionExtensions
     public static void AddSeedingServices(this IServiceCollection services)
     {
         services.AddHostedService<RoleSeeder>();
-        services.AddHostedService<QaFlowSettingsDataSeeder>();
         services.AddHostedService<ProjectDataSeeder>();
         services.AddHostedService<IntegrationDataSeeder>();
     }

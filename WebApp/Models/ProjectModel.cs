@@ -2,6 +2,8 @@
 using WebApp.Data;
 using WebApp.Services;
 
+using WebApp.Data.enums;
+
 namespace WebApp.Models;
 
 public class ProjectModel(
@@ -29,22 +31,60 @@ public class ProjectModel(
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        db.Projects.Add(project);
         project.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         project.CreatedAt = DateTime.UtcNow;
+
+        project.QAflowSettings = new List<QAflowSettings>
+        {
+            new()
+            {
+                QAflowOptionsSettings = QAflowOptionsSettings.ExternalIntegrations,
+                IsIntegrationEnabled = false,
+                CreatedBy = project.CreatedBy,
+                CreatedAt = project.CreatedAt
+            },
+            new()
+            {
+                QAflowOptionsSettings = QAflowOptionsSettings.OwnIntegrations,
+                IsIntegrationEnabled = false,
+                CreatedBy = project.CreatedBy,
+                CreatedAt = project.CreatedAt
+            }
+        };
+
+        db.Projects.Add(project);
         await db.SaveChangesAsync();
-        Logger.LogInformation($"Project {project.Name} added");
+        Logger.LogInformation($"Project {project.Name} added with default QAflowSettings");
     }
 
     public async Task AddProjectFromCsv(Projects project)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
 
-        db.Projects.Add(project);
         project.CreatedBy = userService.GetCurrentUserInfoAsync().Result.UserName;
         project.CreatedAt = DateTime.UtcNow;
+
+        project.QAflowSettings = new List<QAflowSettings>
+        {
+            new()
+            {
+                QAflowOptionsSettings = QAflowOptionsSettings.ExternalIntegrations,
+                IsIntegrationEnabled = false,
+                CreatedBy = project.CreatedBy,
+                CreatedAt = project.CreatedAt
+            },
+            new()
+            {
+                QAflowOptionsSettings = QAflowOptionsSettings.OwnIntegrations,
+                IsIntegrationEnabled = false,
+                CreatedBy = project.CreatedBy,
+                CreatedAt = project.CreatedAt
+            }
+        };
+
+        db.Projects.Add(project);
         await db.SaveChangesAsync();
-        Logger.LogInformation($"Project {project.Name} added");
+        Logger.LogInformation($"Project {project.Name} added from CSV with default QAflowSettings");
     }
 
     /// <summary>

@@ -21,7 +21,7 @@ public class QaflowSettingsModelTests : IClassFixture<TestFixture>
     [Fact]
     public async Task QaflowSettingsModel_GetSettings()
     {
-        var settings = await qaflowSettingsModel.GetApplicationSettingsAsync();
+        var settings = await qaflowSettingsModel.GetApplicationSettingsAsync(1);
         Assert.NotNull(settings);
         Assert.Contains(settings, x => x.QAflowOptionsSettings == QAflowOptionsSettings.ExternalIntegrations);
         Assert.Contains(settings, x => x.QAflowOptionsSettings == QAflowOptionsSettings.OwnIntegrations);
@@ -31,7 +31,7 @@ public class QaflowSettingsModelTests : IClassFixture<TestFixture>
     [Fact]
     public async Task QaflowSettingsModel_UpdateSettings()
     {
-        var settings = await qaflowSettingsModel.GetApplicationSettingsAsync();
+        var settings = await qaflowSettingsModel.GetApplicationSettingsAsync(1);
         Assert.NotNull(settings);
 
         var selectedSetting =
@@ -43,7 +43,7 @@ public class QaflowSettingsModelTests : IClassFixture<TestFixture>
         selectedSetting.IsIntegrationEnabled = true;
         var updated = await qaflowSettingsModel.UpdateApplicationSettingsAsync(selectedSetting);
 
-        var newSettings = await qaflowSettingsModel.GetApplicationSettingsAsync();
+        var newSettings = await qaflowSettingsModel.GetApplicationSettingsAsync(1);
         var updatedfromdb =
             newSettings.FirstOrDefault(x => x.QAflowOptionsSettings == QAflowOptionsSettings.ExternalIntegrations);
         Assert.True(updatedfromdb is { IsIntegrationEnabled: true });

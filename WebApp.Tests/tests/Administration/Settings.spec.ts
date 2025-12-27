@@ -49,6 +49,9 @@ test.afterEach('Logout User', async ({ page }) => {
 test('Enable Own Integration if needed', async ({ page }) => {
     await page.waitForLoadState('networkidle');
 
+    await actions.LaunchProject(page, 'Demo Project With Data' );
+
+
     await actions.click_element(page, 'admin_menu');
     await actions.click_element(page, 'manage_settings');
 
@@ -67,6 +70,8 @@ test('Enable Own Integration if needed', async ({ page }) => {
 
 test('Disable Own Integration if needed', async ({ page }) => {
     await page.waitForLoadState('networkidle');
+
+    await actions.LaunchProject(page, 'Demo Project With Data' );
 
     await actions.click_element(page, 'admin_menu');
     await actions.click_element(page, 'manage_settings');

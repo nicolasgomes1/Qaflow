@@ -10,6 +10,8 @@ public class Projects : BaseEntity
     [MaxLength(50)] [Required] public string Name { get; set; } = string.Empty;
 
     [MaxLength(100)] [Required] public string Description { get; set; } = string.Empty;
+    
+    public ICollection<QAflowSettings> QAflowSettings { get; set; } = [];
 
 
     public ICollection<Requirements> Requirements { get; init; } = [];

@@ -45,6 +45,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         //Project Relationships
         modelBuilder.Entity<Projects>()
+            .HasMany(p => p.QAflowSettings)
+            .WithOne(r => r.Projects)
+            .HasForeignKey(r => r.ProjectsId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Projects>()
             .HasMany(p => p.Bugs)
             .WithOne(r => r.Projects)
             .OnDelete(DeleteBehavior.Restrict);

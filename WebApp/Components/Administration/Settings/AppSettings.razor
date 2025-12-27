@@ -1,4 +1,4 @@
-@page "/settings"
+@page "/project/{ProjectId:int}/Settings"
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "Admin")]
 @inject ILogger<AppSettings> Logger
@@ -58,11 +58,13 @@
     RadzenDataGrid<QAflowSettings> _grid = null!;
     List<QAflowSettings> _qAflowSettingsList = [];
     
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
+
+
     protected override async Task OnInitializedAsync()
     {
-        _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync();
+        _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync(ProjectId);
     }
-
 
 
     async Task SaveRow(QAflowSettings setting)
