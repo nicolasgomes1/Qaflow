@@ -42,7 +42,7 @@ public class TestFixture : IDisposable
         serviceCollection.AddSingleton<DbContextOptions<ApplicationDbContext>>(provider =>
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseInMemoryDatabase("TestDb");
+            optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
 
             // Add this line to suppress the transaction warning
             optionsBuilder.ConfigureWarnings(x =>
@@ -83,7 +83,6 @@ public class TestFixture : IDisposable
         serviceCollection.AddScoped<RequirementsSpecificationModel>();
         serviceCollection.AddScoped<TestCasesModel>();
         serviceCollection.AddScoped<TestCasesFilesModel>();
-        serviceCollection.AddScoped<TestCasesReporting>();
         serviceCollection.AddScoped<TestCasesReporting>();
         serviceCollection.AddScoped<TestExecutionModelv2>();
         serviceCollection.AddScoped<TestExecutionModel>();
