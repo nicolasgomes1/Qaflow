@@ -1,0 +1,6 @@
+<Solution>
+    <Project Path="WebApp.AppHost/WebApp.AppHost.csproj"/>
+    <Project Path="WebApp.ServiceDefaults/WebApp.ServiceDefaults.csproj"/>
+    <Project Path="WebApp.UnitTests/WebApp.UnitTests.csproj"/>
+    <Project Path="WebApp/WebApp.csproj"/>
+</Solution>
