@@ -12,8 +12,8 @@ using WebApp.Data;
 namespace WebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251227150653_FixSettings")]
-    partial class FixSettings
+    [Migration("20260323202118_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -554,6 +554,12 @@ namespace WebApp.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<int?>("JiraIntegrationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("JiraProjectId")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -567,6 +573,8 @@ namespace WebApp.Data.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("JiraIntegrationId");
 
                     b.ToTable("Projects");
                 });
@@ -1444,6 +1452,16 @@ namespace WebApp.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Projects");
+                });
+
+            modelBuilder.Entity("WebApp.Data.Projects", b =>
+                {
+                    b.HasOne("WebApp.Data.Integrations", "JiraIntegration")
+                        .WithMany()
+                        .HasForeignKey("JiraIntegrationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("JiraIntegration");
                 });
 
             modelBuilder.Entity("WebApp.Data.QAflowSettings", b =>

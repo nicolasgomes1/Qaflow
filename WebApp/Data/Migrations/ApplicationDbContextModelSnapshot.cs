@@ -17,7 +17,7 @@ namespace WebApp.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "10.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -248,6 +248,43 @@ namespace WebApp.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("WebApp.Data.AuditLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AfterData")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BeforeData")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EntityId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditLogs");
+                });
+
             modelBuilder.Entity("WebApp.Data.Bugs", b =>
                 {
                     b.Property<int>("Id")
@@ -466,6 +503,14 @@ namespace WebApp.Data.Migrations
                     b.Property<int>("IntegrationType")
                         .HasColumnType("integer");
 
+                    b.Property<string>("JiraProjectKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("ProjectsId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("UniqueKey")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -477,6 +522,8 @@ namespace WebApp.Data.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectsId");
 
                     b.ToTable("Integrations");
                 });
@@ -527,6 +574,44 @@ namespace WebApp.Data.Migrations
                     b.HasIndex("JiraIntegrationId");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("WebApp.Data.QAflowSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<bool>("IsIntegrationEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("ProjectsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("QAflowOptionsSettings")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectsId");
+
+                    b.ToTable("QAflowSettings");
                 });
 
             modelBuilder.Entity("WebApp.Data.Requirements", b =>
@@ -1355,6 +1440,17 @@ namespace WebApp.Data.Migrations
                     b.Navigation("Projects");
                 });
 
+            modelBuilder.Entity("WebApp.Data.Integrations", b =>
+                {
+                    b.HasOne("WebApp.Data.Projects", "Projects")
+                        .WithMany()
+                        .HasForeignKey("ProjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Projects");
+                });
+
             modelBuilder.Entity("WebApp.Data.Projects", b =>
                 {
                     b.HasOne("WebApp.Data.Integrations", "JiraIntegration")
@@ -1363,6 +1459,17 @@ namespace WebApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("JiraIntegration");
+                });
+
+            modelBuilder.Entity("WebApp.Data.QAflowSettings", b =>
+                {
+                    b.HasOne("WebApp.Data.Projects", "Projects")
+                        .WithMany("QAflowSettings")
+                        .HasForeignKey("ProjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Projects");
                 });
 
             modelBuilder.Entity("WebApp.Data.Requirements", b =>
@@ -1614,6 +1721,8 @@ namespace WebApp.Data.Migrations
                     b.Navigation("Bugs");
 
                     b.Navigation("BugsFile");
+
+                    b.Navigation("QAflowSettings");
 
                     b.Navigation("Requirements");
 

@@ -60,7 +60,8 @@
 
 
 @code {
-    [Parameter] public int ProjectId { get; set; }
+
+    [EditorRequired] [Parameter] public int ProjectId { get; set; }
 
 
     IEnumerable<Integrations>? _integrations;
@@ -73,12 +74,12 @@
 
     private void CreateIntegration()
     {
-        NavigationManager.NavigateTo("/integrations/create");
+        NavigationManager.NavigateTo($"project/{ProjectId}/integrations/create");
     }
 
     private void ViewIntegration(int integrationId)
     {
-        NavigationManager.NavigateTo($"/integrations/view/{integrationId}");
+        NavigationManager.NavigateTo($"project/{ProjectId}/integrations/view/{integrationId}");
     }
 
     private async Task DeleteData(int integrationId)
@@ -91,12 +92,12 @@
 
         _integrations = await IntegrationsModel.GetListIntegrations();
 
-        NavigationManager.NavigateTo("/integrations");
+        NavigationManager.NavigateTo($"project/{ProjectId}/integrations");
     }
 
     private void EditIntegration(int integrationId)
     {
-        NavigationManager.NavigateTo($"/integrations/edit/{integrationId}");
+        NavigationManager.NavigateTo($"project/{ProjectId}/integrations/edit/{integrationId}");
     }
 
 }

@@ -72,9 +72,16 @@
                                             data-testid="manage_api"></RadzenMenuItem>
                         }
 
+                        @code{
+
+                            string path_integration => $"/project/{ProjectId}/integrations";
+
+
+                        }
+                        
                         @if (HasExternalIntegrationsEnabled)
                         {
-                            <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"
+                            <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path=@path_integration
                                             data-testid="manage_integrations"/>
                         }
                         <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
