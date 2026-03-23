@@ -89,6 +89,8 @@
             await IntegrationsModel.RemoveIntegrationAsync(integrationId);
         }
 
+        _integrations = await IntegrationsModel.GetListIntegrations();
+
         NavigationManager.NavigateTo("/integrations");
     }
 

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test --project=\"Google Chrome\" --headed && npx playwright show-report",
+    "test": "playwright test --project=\"Google Chrome\" && npx playwright show-report",
     "test:chromium": "playwright test --project=\"Google Chrome\" --headed",
     "test:headless": "playwright test --project=\"Google Chrome\" && npx playwright show-report",
     "posttest:requirements": "playwright test ./tests/Requirements.spec.ts --retries=0 --headed --project=\"Google Chrome\"",
@@ -15,6 +15,7 @@
     "posttest:dashboard": "playwright test ./tests/CanAccessAllDasboardLinks.spec.ts --project=\"Google Chrome\" --retries=0 --headed",
     "posttest:bug": "playwright test ./tests/Bugs.spec.ts --retries=0 --headed --project=\"Google Chrome\" && npx playwright show-report",
     "posttest:projects": "playwright test ./tests/Projects.spec.ts --project=\"Google Chrome\" --headed",
+    "posttest:settings": "playwright test ./tests/Administration/Settings.spec.ts --project=\"Google Chrome\" --headed",
     "posttest:Login": "playwright test ./tests/Login.spec.ts --project=\"Google Chrome\"",
     "start": "playwright test --project=\"Google Chrome\" && npx playwright show-report"
   },
@@ -23,7 +24,7 @@
   "license": "ISC", 
   "description": "",
   "devDependencies": {
-    "@playwright/test": "^1.54.2",
-    "@types/node": "^24.3.0"
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.3"
   }
 }

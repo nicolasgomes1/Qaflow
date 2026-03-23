@@ -13,7 +13,7 @@ public class FormNotificationService(NotificationService notificationService)
                 Severity = NotificationSeverity.Success,
                 Summary = "Success",
                 Detail = message,
-                Duration = 4000,
+                Duration = 4000
             });
         });
     }

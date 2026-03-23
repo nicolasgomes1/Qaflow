@@ -6,7 +6,7 @@ public class TestStepsExecutionTimerService
     private Timer? _testStepTimer;
     private bool _timerIsRunning;
 
-    public event Action<int, TimeSpan>? OnTestStepDurationUpdated;  // Event to notify duration updates
+    public event Action<int, TimeSpan>? OnTestStepDurationUpdated; // Event to notify duration updates
 
     public async Task StartTestStepExecution(int testStepId)
     {
@@ -17,10 +17,11 @@ public class TestStepsExecutionTimerService
             // Start the UI update timer if it's not running
             if (!_timerIsRunning)
             {
-                _testStepTimer = new Timer(UpdateTestStepDurations, null, 0, 1000);  // Update every second
+                _testStepTimer = new Timer(UpdateTestStepDurations, null, 0, 1000); // Update every second
                 _timerIsRunning = true;
             }
         }
+
         await Task.CompletedTask;
     }
 
@@ -44,23 +45,22 @@ public class TestStepsExecutionTimerService
                 _timerIsRunning = false;
             }
         }
-        await Task.CompletedTask;
 
+        await Task.CompletedTask;
     }
-    
+
     private void DisposeTimer()
     {
         if (_testStepTimer == null) return;
         _testStepTimer.Dispose();
         _testStepTimer = null;
     }
-    
+
     public void Dispose()
     {
         DisposeTimer();
     }
-    
-    
+
 
     private void UpdateTestStepDurations(object? state)
     {

@@ -1,5 +1,4 @@
 using JetBrains.Annotations;
-using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Models;
@@ -8,12 +7,12 @@ using WebApp.UnitTests.DIContainers;
 namespace WebApp.UnitTests.Models;
 
 [TestSubject(typeof(RequirementsSpecificationModel))]
-public class RequirementsSpecificationModelTest : IClassFixture<TestFixture>
+public class RequirementsSpecificationModelTests : IClassFixture<TestFixture>
 {
     private readonly ApplicationDbContext _db;
     private readonly RequirementsSpecificationModel _rm;
 
-    public RequirementsSpecificationModelTest(TestFixture fixture)
+    public RequirementsSpecificationModelTests(TestFixture fixture)
     {
         // Resolve services via ServiceProvider
         _db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();

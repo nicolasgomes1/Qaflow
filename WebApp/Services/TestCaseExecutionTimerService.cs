@@ -2,37 +2,36 @@
 
 public class TestCaseExecutionTimerService
 {
-    private readonly Dictionary<int, DateTime> _testCaseStartTimes = new();
-    private readonly Dictionary<int, TimeSpan> _testCaseElapsedTimes = new(); // Track elapsed time for each test case
     private readonly HashSet<int> _pausedTestCases = new(); // Track paused test cases
+    private readonly Dictionary<int, TimeSpan> _testCaseElapsedTimes = new(); // Track elapsed time for each test case
+    private readonly Dictionary<int, DateTime> _testCaseStartTimes = new();
+
+
+    // Dictionary to hold test case ID and their paused state
+    private readonly Dictionary<int, bool> testCasePausedStates = new();
+    private readonly Dictionary<int, bool> testCasesRunningStates = new();
     private Timer? _testCaseTimer;
     private bool _timerIsRunning;
-
-   
-    
-    // Dictionary to hold test case ID and their paused state
-    private Dictionary<int, bool> testCasePausedStates = new();
-    private Dictionary<int, bool> testCasesRunningStates = new();
     private Dictionary<int, bool> testCasesStartedStates = new();
-    
-  
-    
+
+
     public bool IsTestCaseRunning(int testCaseId)
     {
         // Return the running state if it exists; otherwise, return false
-        return testCasesRunningStates.TryGetValue(testCaseId, out bool isRunning) && isRunning;
+        return testCasesRunningStates.TryGetValue(testCaseId, out var isRunning) && isRunning;
     }
-    
+
     public void SetTestCaseRunning(int testCaseId, bool isRunning)
     {
         // Update the running state in the dictionary
         testCasesRunningStates[testCaseId] = isRunning;
     }
+
     // Method to check if a test case is paused
     public bool IsTestCasePaused(int testCaseId)
     {
         // Return the paused state if it exists; otherwise, return false
-        return testCasePausedStates.TryGetValue(testCaseId, out bool isPaused) && isPaused;
+        return testCasePausedStates.TryGetValue(testCaseId, out var isPaused) && isPaused;
     }
 
     // Method to set the paused state of a test case
@@ -41,9 +40,8 @@ public class TestCaseExecutionTimerService
         // Update the paused state in the dictionary
         testCasePausedStates[testCaseId] = isPaused;
     }
-    
-    
-    
+
+
     public event Action<int, TimeSpan>? OnTestCaseDurationUpdated;
 
     public async Task StartTestCaseExecution(int testCaseId)
@@ -55,10 +53,10 @@ public class TestCaseExecutionTimerService
 
         if (!_timerIsRunning)
         {
-            _testCaseTimer = new Timer(UpdateTestCaseDurations, null, 0, 1000);  // Update every second
+            _testCaseTimer = new Timer(UpdateTestCaseDurations, null, 0, 1000); // Update every second
             _timerIsRunning = true;
         }
-        
+
         SetTestCaseRunning(testCaseId, true);
 
 
@@ -110,7 +108,7 @@ public class TestCaseExecutionTimerService
             _testCaseTimer = null;
             _timerIsRunning = false;
         }
-        
+
         SetTestCaseRunning(testCaseId, false);
         await Task.CompletedTask;
     }

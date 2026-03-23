@@ -3,9 +3,10 @@ using MartinCostello.OpenApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Radzen;
+using Scalar.AspNetCore;
+using WebApp.Api;
 using WebApp.Api.Jira;
 using WebApp.Components;
 using WebApp.Components.Account;
@@ -13,9 +14,6 @@ using WebApp.Data;
 using WebApp.ServiceDefaults;
 using WebApp.Services.TestData;
 using WebApp.SetUp;
-using Scalar.AspNetCore;
-using WebApp.Api;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,9 +95,10 @@ builder.Services.AddAuthentication(options =>
 
 
 if (builder.Environment.IsDevelopment())
-    // Add seeding services to the container.
     builder.Services.AddSeedingServices();
 
+if (builder.Environment.IsProduction())
+    builder.Services.AddSeedingServicesProd();
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>();
 
@@ -179,6 +178,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     await app.ConfigureDatabaseAsync();
 }
+else if (app.Environment.IsProduction())
+{
+    await app.ConfigureDatabaseAsync();
+}
+
 else
 {
     app.UseExceptionHandler("/Error", true);

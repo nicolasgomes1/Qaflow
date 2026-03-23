@@ -11,6 +11,8 @@ public class Projects : BaseEntity
 
     [MaxLength(100)] [Required] public string Description { get; set; } = string.Empty;
 
+    public ICollection<QAflowSettings> QAflowSettings { get; set; } = [];
+
 
     public ICollection<Requirements> Requirements { get; init; } = [];
     public ICollection<RequirementsFile> RequirementsFile { get; init; } = [];

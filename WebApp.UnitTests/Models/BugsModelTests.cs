@@ -3,19 +3,17 @@ using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Data.enums;
 using WebApp.Models;
-using WebApp.UnitTests.BaseTest;
 using WebApp.UnitTests.DIContainers;
-using Xunit.Abstractions;
 
 namespace WebApp.UnitTests.Models;
 
 [TestSubject(typeof(BugsModel))]
-public class BugsModelTest : IClassFixture<TestFixture>
+public class BugsModelTests : IClassFixture<TestFixture>
 {
-    private readonly ApplicationDbContext db;
     private readonly BugsModel bm;
+    private readonly ApplicationDbContext db;
 
-    public BugsModelTest(TestFixture fixture)
+    public BugsModelTests(TestFixture fixture)
     {
         db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         bm = fixture.ServiceProvider.GetRequiredService<BugsModel>();
@@ -199,5 +197,16 @@ public class BugsModelTest : IClassFixture<TestFixture>
 
         // Check ArchivedStatus property based on workflow status
         Assert.Equal(ArchivedStatus.Archived, finalBug.ArchivedStatus);
+    }
+
+    [Fact]
+    public async Task BugModel_DeleteBug()
+    {
+        var intialCount = await db.Bugs.CountAsync();
+        var bug = await db.Bugs.Where(x => x.Name == "Bug 1").FirstOrDefaultAsync();
+        if (bug == null) throw new Exception("Bug not found");
+        await bm.DeleteBug(bug);
+        var finalCount = await db.Bugs.CountAsync();
+        Assert.Equal(intialCount - 1, finalCount);
     }
 }

@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
@@ -8,7 +7,6 @@ namespace WebApp.Models;
 
 public class TestCasesFilesModel(IDbContextFactory<ApplicationDbContext> dbContextFactory)
 {
-
     public async Task SaveFilesToDb(List<IBrowserFile>? files, int testCaseId, int projectId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
