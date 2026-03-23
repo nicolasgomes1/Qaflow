@@ -34,7 +34,6 @@ public class BugsCommentsModel(IDbContextFactory<ApplicationDbContext> dbContext
         await using var db = await dbContextFactory.CreateDbContextAsync();
         var bugCommentDb = await db.BugsComments.FindAsync(bugCommentId);
         if (bugCommentDb is null) throw new Exception("Bug Comment not found");
-
         bugCommentDb.Comment = bugsComment.Comment;
         db.BugsComments.Update(bugCommentDb);
         await db.SaveChangesAsync(userService);

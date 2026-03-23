@@ -31,6 +31,11 @@ public class RoleSeeder(IServiceProvider serviceProvider, ILogger<RoleSeeder> lo
             true);
     }
 
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+
     private async Task CreateUserAndAssignRole(UserManager<ApplicationUser> userManager, string email, string password,
         string role, bool emailConfirmed)
     {
@@ -57,10 +62,5 @@ public class RoleSeeder(IServiceProvider serviceProvider, ILogger<RoleSeeder> lo
                 logger.LogError("Error assigning role {role}: {Errors}", role,
                     string.Join(", ", addToRoleResult.Errors.Select(e => e.Description)));
         }
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
     }
 }

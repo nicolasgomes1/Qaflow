@@ -1,6 +1,4 @@
-﻿using System.Linq.Dynamic.Core;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 using WebApp.Data;
@@ -54,7 +52,7 @@ public class RequirementsModel(
 
 
     /// <summary>
-    /// Returns a list of requirements for the project with default workflow status completed
+    ///     Returns a list of requirements for the project with default workflow status completed
     /// </summary>
     /// <returns></returns>
     public async Task<List<Requirements>> GetRequirementsWithWorkflowStatus(WorkflowStatus workflowStatus,
@@ -69,8 +67,8 @@ public class RequirementsModel(
     }
 
     /// <summary>
-    /// Load Requirement by Id
-    /// With Test Cases and Linked RequirementsSpecifications
+    ///     Load Requirement by Id
+    ///     With Test Cases and Linked RequirementsSpecifications
     /// </summary>
     /// <param name="requirementId"></param>
     /// <returns>Requirements</returns>
@@ -189,7 +187,7 @@ public class RequirementsModel(
     }
 
     /// <summary>
-    /// Update Card when drag and drop in db for Requirements
+    ///     Update Card when drag and drop in db for Requirements
     /// </summary>
     /// <param name="args"></param>
     public async Task UpdateCardOnDragDrop(RadzenDropZoneItemEventArgs<Requirements> args)

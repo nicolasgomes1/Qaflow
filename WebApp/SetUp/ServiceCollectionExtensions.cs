@@ -1,5 +1,4 @@
 using WebApp.Api;
-using WebApp.Components.Pages.Requirements;
 using WebApp.Components.ReusableComponents.UploadCsv;
 using WebApp.Models;
 using WebApp.Services;
@@ -10,7 +9,7 @@ namespace WebApp.SetUp;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Include Services
+    ///     Include Services
     /// </summary>
     /// <param name="services"></param>
     public static void AddAppServices(this IServiceCollection services)
@@ -32,7 +31,7 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Data Seeding
+    ///     Data Seeding
     /// </summary>
     /// <param name="services"></param>
     public static void AddSeedingServices(this IServiceCollection services)
@@ -42,8 +41,13 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<IntegrationDataSeeder>();
     }
 
+    public static void AddSeedingServicesProd(this IServiceCollection services)
+    {
+        services.AddHostedService<RoleSeeder>();
+    }
+
     /// <summary>
-    /// Entity Models
+    ///     Entity Models
     /// </summary>
     /// <param name="services"></param>
     public static void AddModels(this IServiceCollection services)
@@ -69,5 +73,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<TestStepsModel>();
         services.AddScoped<BugsCommentsModel>();
         services.AddScoped<TestStepExecutionFileModel>();
+        services.AddScoped<QAflowSettingsModel>();
+        services.AddScoped<AuditTrailModel>();
     }
 }

@@ -3,9 +3,8 @@ using Radzen;
 using WebApp.Data;
 using WebApp.Data.enums;
 using WebApp.Models;
-using WebApp.Services;
 
-namespace WebApp.Components.ReusableComponents.UploadCsv;
+namespace WebApp.Services;
 
 public class ManageCsvUpload
 {
@@ -67,7 +66,7 @@ public class ManageCsvUpload
     }
 
 
-    public async Task ProcessProjectsCsvFile(EventCallback callback)
+    public async Task ProcessProjectsCsvFile(EventCallback onUploadCompleted)
     {
         var csvlines = _fileContent.Split('\n').Skip(1);
         _totalLines = csvlines.Count();
@@ -118,7 +117,7 @@ public class ManageCsvUpload
         }
 
         _dialogService.Close();
-        await callback.InvokeAsync();
+        await onUploadCompleted.InvokeAsync();
 
         if (_validLines == 0)
         {

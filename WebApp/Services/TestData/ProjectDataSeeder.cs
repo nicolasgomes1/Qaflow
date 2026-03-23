@@ -34,6 +34,33 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
     private static async Task SeedDataAsync(ApplicationDbContext dbContext)
     {
+        // Ensure all projects have both QAflowSettings
+        var allProjects = await dbContext.Projects.Include(p => p.QAflowSettings).ToListAsync();
+        foreach (var p in allProjects)
+        {
+            if (!p.QAflowSettings.Any(s => s.QAflowOptionsSettings == QAflowOptionsSettings.ExternalIntegrations))
+            {
+                p.QAflowSettings.Add(new QAflowSettings
+                {
+                    QAflowOptionsSettings = QAflowOptionsSettings.ExternalIntegrations,
+                    IsIntegrationEnabled = false,
+                    CreatedBy = ADMIN
+                });
+            }
+
+            if (!p.QAflowSettings.Any(s => s.QAflowOptionsSettings == QAflowOptionsSettings.OwnIntegrations))
+            {
+                p.QAflowSettings.Add(new QAflowSettings
+                {
+                    QAflowOptionsSettings = QAflowOptionsSettings.OwnIntegrations,
+                    IsIntegrationEnabled = false,
+                    CreatedBy = ADMIN
+                });
+            }
+        }
+
+        await dbContext.SaveChangesAsync();
+
         /// create list of test steps
         var testSteps = new List<TestSteps>
         {
@@ -99,8 +126,7 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
         // Create or get test plans associated with the test cases
         var testplan = await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Alpha", "Alpha", USER, testCase1,
-            cycle,
-            WorkflowStatus.Completed);
+            cycle);
         await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Alpha", "Beta", MANAGER, testCase2, cycle,
             WorkflowStatus.InReview);
         await GetOrCreateTestPlanAsync(dbContext, project, "Test Plan Beta", "no tests", USER, null, cycle,
@@ -112,10 +138,10 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
         await GetOrCreateBugsAsync(dbContext, project, "Bug 2", "Bug 2 Description", USER, BugStatus.Closed);
         await GetOrCreateBugsAsync(dbContext, project, "Bug 3", "Bug 3 Description", USER, BugStatus.InProgress);
         await GetOrCreateBugsAsync(dbContext, project, "Bug 4", "Bug 4 Description", MANAGER, BugStatus.InReview);
-        await GetOrCreateBugsAsync(dbContext, project, "Bug 5", "Bug 5 Description", MANAGER, BugStatus.Open);
+        await GetOrCreateBugsAsync(dbContext, project, "Bug 5", "Bug 5 Description", MANAGER);
     }
 
-    private static async Task<Projects> GetOrCreateProjectAsync(ApplicationDbContext dbContext, string projectName)
+    public static async Task<Projects> GetOrCreateProjectAsync(ApplicationDbContext dbContext, string projectName)
     {
         var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("Projects");
 
@@ -126,7 +152,24 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
                           Name = projectName,
                           Description = "Project A Description",
                           CreatedBy = USER,
-                          ArchivedStatus = ArchivedStatus.Active
+                          ArchivedStatus = ArchivedStatus.Active,
+                          QAflowSettings = new List<QAflowSettings>
+                          {
+                              new()
+                              {
+                                  QAflowOptionsSettings = QAflowOptionsSettings.ExternalIntegrations,
+                                  IsIntegrationEnabled = false,
+                                  CreatedBy = USER,
+                                  ModifiedBy = USER
+                              },
+                              new()
+                              {
+                                  QAflowOptionsSettings = QAflowOptionsSettings.OwnIntegrations,
+                                  IsIntegrationEnabled = false,
+                                  CreatedBy = USER,
+                                  ModifiedBy = USER
+                              }
+                          }
                       };
 
         if (project.Id != 0)
@@ -378,16 +421,14 @@ public class ProjectDataSeeder(IServiceProvider serviceProvider) : IHostedServic
 
                 return newTestPlan;
             }
-            else
-            {
-                if (testCase != null && !existingTestPlan.LinkedTestCases.Any(tc => tc.Id == testCase.Id))
-                {
-                    existingTestPlan.LinkedTestCases.Add(testCase);
-                    await dbContext.SaveChangesAsync();
-                }
 
-                return existingTestPlan;
+            if (testCase != null && !existingTestPlan.LinkedTestCases.Any(tc => tc.Id == testCase.Id))
+            {
+                existingTestPlan.LinkedTestCases.Add(testCase);
+                await dbContext.SaveChangesAsync();
             }
+
+            return existingTestPlan;
         }
 
         // No existing test plan, create a new one

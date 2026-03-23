@@ -4,21 +4,19 @@ using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Data.enums;
 using WebApp.Models;
-using WebApp.Services;
-using WebApp.UnitTests.BaseTest;
 using WebApp.UnitTests.DIContainers;
 
 namespace WebApp.UnitTests.Models;
 
 [TestSubject(typeof(RequirementsModel))]
-public class RequirementsModelTest : IClassFixture<TestFixture>
+public class RequirementsModelTests : IClassFixture<TestFixture>
 {
     private readonly ApplicationDbContext _db;
-    private readonly RequirementsModel _rm;
     private readonly ProjectModel _pm;
     private readonly RequirementsFilesModel _rfm;
+    private readonly RequirementsModel _rm;
 
-    public RequirementsModelTest(TestFixture fixture)
+    public RequirementsModelTests(TestFixture fixture)
     {
         // Resolve services via ServiceProvider
         _db = fixture.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -287,11 +285,12 @@ public class RequirementsModelTest : IClassFixture<TestFixture>
             Content = content;
         }
 
+        public byte[] Content { get; }
+
         public string Name { get; }
         public DateTimeOffset LastModified { get; }
         public string ContentType { get; }
         public long Size { get; }
-        public byte[] Content { get; }
 
         public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default)
         {

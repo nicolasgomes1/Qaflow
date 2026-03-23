@@ -18,7 +18,7 @@ public class AppTooltipService
         {
             Style =
                 "overflow: hidden; text-overflow: ellipsis; position: relative", // Prevent overflow
-            CloseTooltipOnDocumentClick = true,
+            CloseTooltipOnDocumentClick = true
         };
 
         _tooltipService.Open(elementReference, text, options);

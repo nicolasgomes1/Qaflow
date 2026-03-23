@@ -23,10 +23,7 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
             .Where(c => c.EndDate < now && c.ArchivedStatus != ArchivedStatus.Archived)
             .ToListAsync();
 
-        foreach (var cycle in expiredCycles)
-        {
-            cycle.ArchivedStatus = ArchivedStatus.Archived;
-        }
+        foreach (var cycle in expiredCycles) cycle.ArchivedStatus = ArchivedStatus.Archived;
 
         await db.SaveChangesAsync();
     }
@@ -55,11 +52,11 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
     }
 
 
-    public async Task<Cycles> GetCycleById(int cycleId)
+    public async Task<Cycles?> GetCycleById(int cycleId)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync();
         Logger.LogInformation($"Getting cycle {cycleId}");
-        return await db.Cycles.FindAsync(cycleId) ?? throw new Exception("Cycle not found");
+        return await db.Cycles.FindAsync(cycleId);
     }
 
     public async Task<List<Cycles>> GetCyclesByProjectId(int projectId)
@@ -77,10 +74,7 @@ public class CyclesModel(IDbContextFactory<ApplicationDbContext> dbContextFactor
         var hasTestPlans = await db.TestPlans
             .AnyAsync(tp => tp.CycleId == cycleId);
 
-        if (hasTestPlans)
-        {
-            return false; // Cannot delete due to associated test plans
-        }
+        if (hasTestPlans) return false; // Cannot delete due to associated test plans
 
         var cycle = await db.Cycles
             .FirstOrDefaultAsync(c => c.Id == cycleId);

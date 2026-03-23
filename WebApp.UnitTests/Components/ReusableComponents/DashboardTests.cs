@@ -7,17 +7,16 @@ namespace WebApp.UnitTests.Components.ReusableComponents;
 
 public class DashboardTests : BaseComponentTest
 {
-    
     public DashboardTests(TestFixture fixture) : base(fixture)
     {
     }
 
-    
+
     [Fact]
     public void HelloWorldComponentRendersCorrectly()
     {
         // Act
-        var cut = RenderComponent<Dashboard>(parameters => parameters
+        var cut = Render<Dashboard>(parameters => parameters
             .Add(p => p.ProjectId, 1)); // Dashboard requires ProjectId parameter
 
         // Assert
@@ -27,10 +26,3 @@ public class DashboardTests : BaseComponentTest
         Assert.NotNull(cut.Find("[data-testid='d_bugs']"));
     }
 }
-
-
-
-
-
-
-

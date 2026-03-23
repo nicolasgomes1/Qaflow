@@ -1,13 +1,12 @@
-namespace WebApp.Services;
-
 using Microsoft.JSInterop;
-using System.Threading.Tasks;
+
+namespace WebApp.Services;
 
 public class ProjectState
 {
+    private const string StorageKey = "CurrentProject"; // Key for local storage
     private readonly IJSRuntime _jsRuntime;
     private int? _currentProject; // Cached project ID
-    private const string StorageKey = "CurrentProject"; // Key for local storage
 
     public ProjectState(IJSRuntime jsRuntime)
     {

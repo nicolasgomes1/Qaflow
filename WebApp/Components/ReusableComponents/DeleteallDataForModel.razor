@@ -2,6 +2,7 @@
 
 <RadzenButton Icon="delete_forever"
               Click="@(DeleteAllModelData)"
+              Visible="@IsUserAdmin"
               Size="ButtonSize.Medium"
               data-testid="delete_all"
               ButtonStyle="ButtonStyle.Danger"
@@ -16,15 +17,39 @@
     [EditorRequired] [Parameter] public IEnumerable<object> EntityList { get; set; } = new List<object>();
 
     private int _projectId;
+    private bool _isUserAdmin;
+    private bool IsUserAdmin => _isUserAdmin;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             _projectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
+
+
             StateHasChanged(); // Ensure UI updates
         }
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentUser = await UserService.GetCurrentUserInfoAsync();
+        if (currentUser.UserId is null) return;
+        _isUserAdmin = await UserService.IsUserAdmin(currentUser.UserId);
+    }
+
+    async Task DeleteAllEntities(IEnumerable<object> entities)
+    {
+        await using var db = await DbContext.CreateDbContextAsync();
+
+        foreach (var entity in entities)
+        {
+            db.Remove(entity);
+        }
+
+        await db.SaveChangesAsync();
+    }
+
 
     private async Task DeleteAllModelData()
     {
@@ -41,14 +66,7 @@
         {
             try
             {
-                await using var db = await DbContext.CreateDbContextAsync();
-
-                foreach (var entity in EntityList)
-                {
-                    db.Remove(entity);
-                }
-
-                await db.SaveChangesAsync();
+                await DeleteAllEntities(EntityList);
 
 
                 switch (EntityName)
@@ -84,7 +102,7 @@
                     }
                 }
 
-                NavigationManager.NavigateTo($"/project/{project}/{EntityName}");
+                NavigationManager.NavigateTo($"/project/{project}/{EntityName}", true);
             }
             catch (Exception e)
             {

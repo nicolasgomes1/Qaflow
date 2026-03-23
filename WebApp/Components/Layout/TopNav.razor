@@ -51,13 +51,32 @@
                                         Path="/Account/Manage"/>
                         <RadzenMenuItem Text="Manage Users" data-testid="manage_users" Icon="account_circle"
                                         Path="/Users/Index"/>
-                        <RadzenMenuItem Text="Cycles" data-testid="manage_cycles" Icon="cycle" Path="@path"
+                        <RadzenMenuItem Text="Cycles" data-testid="manage_cycles" Icon="cycle" Path="@path_cycle"
                                         Disabled="HasNotProjectSet()"/>
 
 
                         <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
-                        <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank"></RadzenMenuItem>
-                        <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"/>
+                        <RadzenMenuItem Icon="settings" data-testid="manage_settings" Disabled="HasNotProjectSet()"
+                                        Text="QAFlow Settings" Path="@path_settings"></RadzenMenuItem>
+
+                        @code{
+                            string path_cycle => $"/project/{ProjectId}/Cycles";
+                            string path_settings => $"/project/{ProjectId}/Settings";
+
+
+                        }
+
+                        @if (HasOwnIntegrationsEnabled)
+                        {
+                            <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank"
+                                            data-testid="manage_api"></RadzenMenuItem>
+                        }
+
+                        @if (HasExternalIntegrationsEnabled)
+                        {
+                            <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"
+                                            data-testid="manage_integrations"/>
+                        }
                         <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
                         <Timeline/>
                     </RadzenMenuItem>
@@ -67,8 +86,6 @@
             {
                 <RadzenMenu>
                     <RadzenMenuItem Text="General" Icon="badge">
-                        <RadzenMenuItem Text="Grid Settings" Icon="display_settings" Path="/Gridsettings"/>
-                        <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
                         <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
                         <Timeline/>
                     </RadzenMenuItem>
@@ -78,8 +95,6 @@
             {
                 <RadzenMenu>
                     <RadzenMenuItem Text="General" Icon="badge">
-                        <RadzenMenuItem Text="Grid Settings" Icon="display_settings" Path="/Gridsettings"/>
-                        <div style="border-bottom: 1px solid #e0e0e0; margin: 5px 0;"></div>
                         <RadzenMenuItem Icon="api" Text="Api's" Path="/scalar/v1" Target="_blank"></RadzenMenuItem>
                         <RadzenMenuItem Icon="cloud_circle" Text="Integrations" Path="/integrations"/>
                         <RadzenMenuItem Icon="visibility" Text="@Loc["ViewProfile"]" Path="@UserProfileUri()"/>
@@ -121,17 +136,24 @@
     private bool _isManager; // Flag to check if the user is a Manager
     [Parameter] public int ProjectId { get; set; }
 
+    private List<QAflowSettings> _qAflowSettingsList = [];
 
-    string path => $"/project/{ProjectId}/Cycles";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             ProjectId = await ProjectState.GetCurrentProjectAsync(); // Load Project ID
+            if (ProjectId != 0)
+            {
+                _qAflowSettingsList = await QAflowSettingsModel.GetApplicationSettingsAsync(ProjectId);
+            }
             StateHasChanged(); // Ensure UI updates
         }
     }
+
+    private bool HasExternalIntegrationsEnabled => _qAflowSettingsList.Any(t => t is { QAflowOptionsSettings: QAflowOptionsSettings.ExternalIntegrations, IsIntegrationEnabled: true });
+    private bool HasOwnIntegrationsEnabled => _qAflowSettingsList.Any(t => t is { QAflowOptionsSettings: QAflowOptionsSettings.OwnIntegrations, IsIntegrationEnabled: true });
 
 
     protected override async Task OnInitializedAsync()

@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Radzen;
-using WebApp.Data;
+﻿using Radzen;
 using WebApp.Data.enums;
 
 namespace WebApp.Services;
@@ -20,13 +18,10 @@ public static class StylesService
     }
 
     // General method to apply style to a Radzen row
-    public static void ApplyRowStyle<T>(Radzen.RowRenderEventArgs<T> args, ExecutionStatus status)
+    public static void ApplyRowStyle<T>(RowRenderEventArgs<T> args, ExecutionStatus status)
     {
         var style = GetRowStyle(status);
-        if (!string.IsNullOrEmpty(style))
-        {
-            args.Attributes.Add("style", style);
-        }
+        if (!string.IsNullOrEmpty(style)) args.Attributes.Add("style", style);
     }
 
     public static BadgeStyle GetBadgeStyleExecution(ExecutionStatus executionStatus)
@@ -50,7 +45,7 @@ public static class StylesService
             _ => BadgeStyle.Secondary
         };
     }
-    
+
     public static BadgeStyle GetBadgeStyleWorkflowStatus(WorkflowStatus status)
     {
         return status switch
@@ -85,9 +80,9 @@ public static class StylesService
             _ => BadgeStyle.Secondary
         };
     }
-    
+
     /// <summary>
-    /// Sets the Badge style for the ArchivedStatus
+    ///     Sets the Badge style for the ArchivedStatus
     /// </summary>
     /// <param name="archivedStatus"></param>
     /// <returns></returns>

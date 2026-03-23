@@ -31,6 +31,15 @@ test.describe('Test Plan Suite', () => {
 
         await actions.select_dropdown_option(page, 'testplan_priority', 'Medium');
 
+        await page.getByTestId("testplan_testcases").click();
+        await page.getByText('Test Case 1', {exact: true}).click();
+        await page.getByText('Test Case 2', {exact: true}).click();
+
+        await page.keyboard.press('Backspace');
+        
+      //  await select_dropdown_option_multi(page, "testplan_testcases", ["Test Case 2", "Test Case 5"]);
+
+
         await actions.select_dropdown_option(page, 'testplan_cycles', 'Cycle 1');
 
         await actions.select_dropdown_option(page,'testplan_status', 'New');
@@ -49,6 +58,9 @@ test.describe('Test Plan Suite', () => {
         await expect(page.getByRole('table')).not.toContainText(name);
     });
 
+
+
+
     test('Create New Test Plan With Files', async ({ page })=> {
         test.slow();
         const Random = Math.floor(Math.random() * 1000000);
@@ -65,6 +77,15 @@ test.describe('Test Plan Suite', () => {
         await actions.fill_input(page, 'testplan_description', description);
 
         await actions.select_dropdown_option(page, 'testplan_priority', 'Medium');
+
+        await page.getByTestId("testplan_testcases").click();
+
+        await page.getByText('Test Case 1', {exact: true}).click();
+        await page.getByText('Test Case 2', {exact: true}).click();
+        
+        await page.keyboard.press('Backspace');
+     //   await select_dropdown_option_multi(page, "testplan_testcases", ["Test Case 1", "Test Case 2"]);
+
         await actions.select_dropdown_option(page, 'testplan_cycles', 'Cycle 1');
 
 
