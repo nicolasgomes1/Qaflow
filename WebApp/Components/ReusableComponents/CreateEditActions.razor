@@ -42,16 +42,12 @@
     {
         switch (EntityName)
         {
-            case "testcases" or "testplans" or "requirements" or "testexecution" or "bugs":
+            case "testcases" or "testplans" or "requirements" or "testexecution" or "bugs" or "integrations":
                 NavigationManager.NavigateTo($"project/{_projectId}/{EntityName}");
                 break;
 
             case "projects":
                 NavigationManager.NavigateTo("/");
-                break;
-
-            case "integrations":
-                NavigationManager.NavigateTo($"project/{_projectId}/integrations");
                 break;
 
             case "users":
