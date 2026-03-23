@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace WebApp.Migrations
+namespace WebApp.Data.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -66,25 +66,6 @@ namespace WebApp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Integrations", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Projects",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ArchivedStatus = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Projects", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -191,6 +172,33 @@ namespace WebApp.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Projects",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    JiraProjectId = table.Column<string>(type: "text", nullable: true),
+                    JiraIntegrationId = table.Column<int>(type: "integer", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    ArchivedStatus = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Projects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Projects_Integrations_JiraIntegrationId",
+                        column: x => x.JiraIntegrationId,
+                        principalTable: "Integrations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -872,6 +880,11 @@ namespace WebApp.Migrations
                 column: "TestPlansId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Projects_JiraIntegrationId",
+                table: "Projects",
+                column: "JiraIntegrationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Requirements_ProjectsId",
                 table: "Requirements",
                 column: "ProjectsId");
@@ -1080,9 +1093,6 @@ namespace WebApp.Migrations
                 name: "BugsFiles");
 
             migrationBuilder.DropTable(
-                name: "Integrations");
-
-            migrationBuilder.DropTable(
                 name: "RequirementsFiles");
 
             migrationBuilder.DropTable(
@@ -1123,6 +1133,9 @@ namespace WebApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "Projects");
+
+            migrationBuilder.DropTable(
+                name: "Integrations");
 
             migrationBuilder.DropTable(
                 name: "TestCaseExecution");

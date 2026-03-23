@@ -9,10 +9,10 @@ using WebApp.Data;
 
 #nullable disable
 
-namespace WebApp.Migrations
+namespace WebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250821194933_Initial")]
+    [Migration("20260323200705_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -507,6 +507,12 @@ namespace WebApp.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<int?>("JiraIntegrationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("JiraProjectId")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -520,6 +526,8 @@ namespace WebApp.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("JiraIntegrationId");
 
                     b.ToTable("Projects");
                 });
@@ -1348,6 +1356,16 @@ namespace WebApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Projects");
+                });
+
+            modelBuilder.Entity("WebApp.Data.Projects", b =>
+                {
+                    b.HasOne("WebApp.Data.Integrations", "JiraIntegration")
+                        .WithMany()
+                        .HasForeignKey("JiraIntegrationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("JiraIntegration");
                 });
 
             modelBuilder.Entity("WebApp.Data.Requirements", b =>
