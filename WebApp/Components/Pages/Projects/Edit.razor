@@ -24,6 +24,25 @@
                            Name="Description"/>
             <RadzenRequiredValidator Component="Description" Text="Description is required"/>
         </div>
+
+        <div class="form-group mb-4">
+            <RadzenLabel Text="Jira Project ID"/>
+            <RadzenTextBox @bind-Value="@_projects.JiraProjectId"
+                           class="input-style"
+                           Name="JiraProjectId"/>
+        </div>
+
+        <div class="form-group mb-4">
+            <RadzenLabel Text="Jira Integration"/>
+            <RadzenDropDown @bind-Value="@_projects.JiraIntegrationId"
+                            Data="@_integrations"
+                            TextProperty="UniqueKey"
+                            ValueProperty="Id"
+                            class="input-style"
+                            AllowClear="true"
+                            Placeholder="Select Integration"
+                            Name="JiraIntegrationId"/>
+        </div>
     </RadzenFieldset>
 
     <CreateEditActions EntityName="projects" CreateEdit="Update"/>
@@ -35,10 +54,12 @@
 
 
     Projects _projects = new();
+    List<Integrations> _integrations = [];
 
     protected override async Task OnInitializedAsync()
     {
         _projects = await ProjectModel.GetProjectById(Id);
+        _integrations = await IntegrationsModel.GetListIntegrations();
     }
 
     private async Task UpdateProject()

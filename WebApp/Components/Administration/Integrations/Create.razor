@@ -1,4 +1,4 @@
-@page "/integrations/create"
+@page "/project/{ProjectId:int}/integrations/create"
 @attribute [Authorize]
 @rendermode InteractiveServer
 @inject ILogger<Create> Logger
@@ -52,6 +52,9 @@
 
 
 @code {
+    [Parameter] public int ProjectId { get; set; }
+
+
     private readonly Integrations _integrations = new();
 
 

@@ -201,6 +201,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithOne(t => t.Bugs) // Specify the inverse navigation property
             .HasForeignKey("BugsId") // Specify the foreign key explicitly
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Projects>()
+            .HasOne(p => p.JiraIntegration)
+            .WithMany()
+            .HasForeignKey(p => p.JiraIntegrationId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     /// <summary>

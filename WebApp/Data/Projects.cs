@@ -27,4 +27,9 @@ public class Projects : BaseEntity
 
     public ICollection<Bugs> Bugs { get; init; } = [];
     public ICollection<BugsFiles> BugsFile { get; init; } = [];
+
+    // Jira Integration properties
+    public string? JiraProjectId { get; set; }
+    public int? JiraIntegrationId { get; set; }
+    public Integrations? JiraIntegration { get; set; }
 }

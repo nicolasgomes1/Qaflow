@@ -1,4 +1,4 @@
-@page "/integrations/view/{Id:int}"
+@page "/project/{ProjectId:int}/integrations/view/{Id:int}"
 
 @attribute [Authorize]
 @rendermode InteractiveServer
@@ -55,6 +55,9 @@
 
 
 @code {
+    [Parameter] public int ProjectId { get; set; }
+
+
     [Parameter] public int Id { get; set; }
 
     private Integrations Integrations { get; set; } = new();

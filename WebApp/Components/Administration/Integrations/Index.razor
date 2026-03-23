@@ -1,4 +1,4 @@
-@page "/integrations"
+@page "/project/{ProjectId:int}/integrations"
 
 @attribute [Authorize]
 @rendermode InteractiveServer
@@ -31,6 +31,9 @@
         <RadzenDataGridColumn Property="@nameof(Integrations.ApiKey)"
                               Title="Api Key"
                               Width="auto"/>
+        <RadzenDataGridColumn Property="@nameof(Projects.Id)"
+                              Title="Project Id"
+                              Width="auto"/>
 
         <RadzenDataGridColumn Title="Actions">
             <Template Context="item">
@@ -57,6 +60,9 @@
 
 
 @code {
+    [Parameter] public int ProjectId { get; set; }
+
+
     IEnumerable<Integrations>? _integrations;
 
     protected override async Task OnInitializedAsync()

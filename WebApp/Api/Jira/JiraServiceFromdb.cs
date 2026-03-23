@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -12,48 +13,79 @@ public class JiraServiceFromDb(HttpClient httpClient, IDbContextFactory<Applicat
     /// Retrieves Jira issues for a given project from Jira using the service configured from DB.
     /// </summary>
     /// <param name="uniqueKey">The unique key of the integration to retrieve from DB.</param>
-    /// <param name="projectId">The Jira project ID for which to fetch issues.</param>
+    /// <param name="jiraProjectId">The Jira project ID for which to fetch issues.</param>
     /// <returns>Returns a list of JiraTask objects representing the issues.</returns>
-    public async Task<List<JiraTask>> GetProjectIssuesFromDbAsync(string uniqueKey, string projectId)
+    public async Task<List<JiraTask>> GetProjectIssuesFromDbAsync(string uniqueKey, string jiraProjectId)
     {
-        // Retrieve integration configuration from DB
-        var integration = await GetIntegrationByUniqueKeyAsync(uniqueKey);
-
-        // Ensure that required values (BaseUrl, Username, ApiKey) are available
-        if (string.IsNullOrWhiteSpace(integration.BaseUrl) ||
-            string.IsNullOrWhiteSpace(integration.Username) ||
-            string.IsNullOrWhiteSpace(integration.ApiKey))
+        if (string.IsNullOrWhiteSpace(uniqueKey) || string.IsNullOrWhiteSpace(jiraProjectId))
         {
-            throw new ArgumentException("Jira API configuration values are missing or invalid.");
+            return [];
         }
 
-        // Configure the HttpClient with the database values
-        httpClient.BaseAddress = new Uri(integration.BaseUrl);
-        var authToken = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{integration.Username}:{integration.ApiKey}"));
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
+        try
+        {
+            // Retrieve integration configuration from DB
+            var integration = await GetIntegrationByUniqueKeyAsync(uniqueKey);
 
-        // Now call the API to get the Jira issues
-        return await GetProjectIssuesAsync(projectId);
+            if (integration == null)
+            {
+                return [];
+            }
+
+            // Ensure that required values (BaseUrl, Username, ApiKey) are available
+            if (string.IsNullOrWhiteSpace(integration.BaseUrl) ||
+                string.IsNullOrWhiteSpace(integration.Username) ||
+                string.IsNullOrWhiteSpace(integration.ApiKey))
+            {
+                return [];
+            }
+
+            // Configure the HttpClient with the database values
+            httpClient.BaseAddress = new Uri(integration.BaseUrl);
+            var authToken =
+                System.Convert.ToBase64String(Encoding.UTF8.GetBytes($"{integration.Username}:{integration.ApiKey}"));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
+
+            // Now call the API to get the Jira issues
+            return await GetProjectIssuesAsync(jiraProjectId);
+        }
+        catch (Exception)
+        {
+            // Don't crash the app if integration fails
+            return [];
+        }
+    }
+
+    /// <summary>
+    /// Retrieves Jira issues for a project by its internal project ID.
+    /// </summary>
+    /// <param name="internalProjectId">The internal ID of the project.</param>
+    /// <returns>Returns a list of JiraTask objects.</returns>
+    public async Task<List<JiraTask>> GetJiraIssuesByInternalProjectIdAsync(int internalProjectId)
+    {
+        using var dbContext = dbContextFactory.CreateDbContext();
+        var project = await dbContext.Projects
+            .Include(p => p.JiraIntegration)
+            .FirstOrDefaultAsync(p => p.Id == internalProjectId);
+
+        if (project == null || string.IsNullOrWhiteSpace(project.JiraProjectId) || project.JiraIntegration == null)
+        {
+            return [];
+        }
+
+        return await GetProjectIssuesFromDbAsync(project.JiraIntegration.UniqueKey, project.JiraProjectId);
     }
 
     /// <summary>
     /// Retrieves an integration by its unique key from the database.
     /// </summary>
     /// <param name="uniqueKey">The unique key of the integration to retrieve.</param>
-    /// <returns>Returns the integration with the specified unique key.</returns>
-    /// <exception cref="Exception">Thrown when the integration is not found.</exception>
-    private async Task<Integrations> GetIntegrationByUniqueKeyAsync(string uniqueKey)
+    /// <returns>Returns the integration with the specified unique key, or null if not found.</returns>
+    private async Task<Integrations?> GetIntegrationByUniqueKeyAsync(string uniqueKey)
     {
         using var dbContext = dbContextFactory.CreateDbContext();
-        var integration = await dbContext.Integrations
+        return await dbContext.Integrations
             .FirstOrDefaultAsync(x => x.UniqueKey == uniqueKey);
-
-        if (integration == null)
-        {
-            throw new Exception($"Integration with key '{uniqueKey}' not found.");
-        }
-
-        return integration;
     }
 
     /// <summary>

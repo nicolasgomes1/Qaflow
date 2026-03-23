@@ -154,8 +154,7 @@
         _usersList = await UserService.GetUsersList();
 
         _requirementsList = await RequirementsModel.GetRequirementsWithWorkflowStatus(WorkflowStatus.Completed, ProjectId);
-        // TestCasesModel.JiraIntegrations = await JiraService.GetProjectIssuesAsync("MFLP");
-        TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync("Jira-01", "MFLP");
+        TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetJiraIssuesByInternalProjectIdAsync(ProjectId);
     }
 
     private async Task CreateTestCase()

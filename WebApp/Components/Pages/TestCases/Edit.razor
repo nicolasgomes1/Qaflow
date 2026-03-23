@@ -161,8 +161,7 @@ else
 
         await TestCasesModel.GetAssociatedRequirements(_testCases);
         ExistingFiles = await TestCasesFilesModel.GetFilesByTestCaseId(Id);
-        //  TestCasesModel.JiraIntegrations = await JiraService.GetProjectIssuesAsync("MFLP");
-        TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetProjectIssuesFromDbAsync("Jira-01", "MFLP");
+        TestCasesModel.JiraIntegrations = await JiraServiceFromDb.GetJiraIssuesByInternalProjectIdAsync(ProjectId);
 
         _currentjiraIntegrations = await TestCasesJiraModel.GetSelectedJiraTickets(Id);
         TestCasesModel.SelectedJiraTicketIds = _currentjiraIntegrations.Select(j => j.JiraId.ToString()).ToList();
