@@ -303,7 +303,20 @@ async function closeModal(page: Page, dataTestId: string) {
     }, dataTestId); // Pass the parameter to page.evaluate
 }
 
-async function LaunchProject(page: Page, project: string) {
+async function LaunchProject(page: Page, project: string)
+{
+    await page.getByRole('button', { name: 'Name sort Toggle' }).getByLabel('Toggle').click();
+    await page.getByRole('textbox', { name: 'Name filter value' }).click();
+    await page.getByRole('textbox', { name: 'Name filter value' }).fill(project);
+    await page.getByRole('button', { name: 'Apply' }).click();
+    await expect(page.getByRole('cell', { name: project })).toBeVisible();
+    await page.getByTestId('launch').first().click();
+    await validate_button(page, 'd_requirements');
+
+}
+
+
+async function LaunchProject1(page: Page, project: string) {
 
     let InitialValue = 0;
     let Maxretries = 3;
