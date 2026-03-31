@@ -1,7 +1,7 @@
 import { expect, Page } from '@playwright/test';
 
 
-async function filterTableModel(page: Page, modelName: string) {
+async function filterTableModel1(page: Page, modelName: string) {
     // Wait for the column header to be visible before interacting
     const columnHeader = page.getByRole('columnheader', { name: 'Name sort filter_alt' });
     await columnHeader.waitFor({ state: 'visible' });
@@ -41,7 +41,13 @@ async function filterTableModel(page: Page, modelName: string) {
     await page.waitForLoadState('load');
 }
 
-
+async function filterTableModel(page: Page, modelName: string) {
+    await page.getByRole('button', { name: 'Name sort Toggle' }).getByLabel('Toggle').click();
+    await page.getByRole('textbox', { name: 'Name filter value' }).click();
+    await page.getByRole('textbox', { name: 'Name filter value' }).fill(modelName);
+    await page.getByRole('button', { name: 'Apply' }).click();
+    await expect(page.getByRole('cell', { name: modelName })).toBeVisible();
+}
 
 
 export {filterTableModel}
