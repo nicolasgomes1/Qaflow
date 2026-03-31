@@ -38,11 +38,14 @@ test('Create a new Cycle', async ({ page }) => {
 
     await filter.filterTableModel(page, cycle_name);
 
-    await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
-    
-    await actions.click_button(page, 'delete');
+    await page.getByRole('row', { name: cycle_name }).getByTestId('delete').click();
 
-    await expect(page.getByText('Delete Cycles')).toBeVisible();
+    // Ensure the dialog is visible
+    const dialog = page.locator('.rz-dialog');
+
+    // Check if the dialog is visible
+    await expect(dialog).toBeVisible();
+
     await page.getByRole('button', { name: 'Ok' }).first().click();
     await expect(page.getByRole('table')).not.toContainText(cycle_name);
 

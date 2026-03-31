@@ -33,13 +33,20 @@ test('Create New Requirement Specification', async ({ page })=> {
     
 
     await actions.closeModal(page, "submit_dialog");
+
     await actions.validate_button(page, 'requirements_specification_create');
 
     await filter.filterTableModel(page, name);
+    
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
+    
+
 
     await page.getByRole('row', { name: name }).getByTestId('delete').click();
-    await page.waitForTimeout(5);
-    await expect(page.getByText('Delete RequirementsSpecification')).toBeVisible();
+    await expect(page.getByText('Are you sure you want to')).toBeVisible();
+
 
     await page.getByRole('button', { name: 'Ok', exact: true }).click();
     await expect(page.getByRole('table')).not.toContainText(name);
@@ -64,6 +71,10 @@ test('Edit New Requirement Specification', async ({ page })=> {
     await actions.closeModal(page, "submit_dialog");
     await actions.validate_button(page, 'requirements_specification_create');
 
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
+    
     await filter.filterTableModel(page, name);
     
     await actions.click_button(page, 'edit');
@@ -75,6 +86,10 @@ test('Edit New Requirement Specification', async ({ page })=> {
     await actions.fill_input_and_validate(page, 'requirements_specification_name', editedName);
     await actions.closeModal(page, "submit_dialog");
 
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
+    
     await filter.filterTableModel(page, editedName);
     await expect(page.getByRole('table')).toContainText(editedName);
 
@@ -101,13 +116,15 @@ test('View New Requirement Specification', async ({ page })=> {
 
     await actions.validate_button(page, 'requirements_specification_create');
 
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
+    
     await filter.filterTableModel(page, name);
 
     await page.getByRole('row', { name: name }).getByTestId('view').click();
 
-
-    await actions.click_button(page, 'view');
-
+    
 // Ensure the dialog is visible
     const dialog = page.locator('.rz-dialog');
 
@@ -144,6 +161,10 @@ test('Delete Requirement Specification', async ({ page })=> {
 
     await actions.closeModal(page, "submit_dialog");
 
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
+    
     await actions.validate_button(page, 'requirements_specification_create');
 
     await filter.filterTableModel(page, name);
