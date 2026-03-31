@@ -75,7 +75,8 @@ test.describe('Bug Suite', () => {
         const name = 'Test Bug Playwright' + Random;
         await filter.filterTableModel(page, name);
 
-        await actions.click_button(page, 'delete');
+        await page.getByRole('row', { name: name }).getByTestId('delete').click();
+        
 
         await page.getByRole('button', { name: 'Ok' }).click();
         await expect(page.getByRole('table')).not.toContainText(name);
@@ -96,8 +97,8 @@ test.describe('Bug Suite', () => {
         const name = 'Test Bug Playwright' + Random;
         await filter.filterTableModel(page, name);
 
-        await actions.click_button(page, 'view');
-
+        await page.getByRole('row', { name: name }).getByTestId('view').click();
+        
 
         await page.getByTestId('bug_files').click(); // Click on the "Files" tab using data-testid attribute
         await actions.validate_page_has_text(page, 'testfile.png');
@@ -119,8 +120,8 @@ test.describe('Bug Suite', () => {
         const name = 'Test Bug Playwright' + Random;
         await filter.filterTableModel(page, name);
 
-        await actions.click_button(page, 'view');
-
+        await page.getByRole('row', { name: name }).getByTestId('view').click();
+        
         const description = 'Test Bug Playwright Description' + Random;
 
         expect(page.getByText(name)).toBeVisible();
@@ -144,8 +145,8 @@ test.describe('Bug Suite', () => {
 
         await filter.filterTableModel(page, name);
 
-        await actions.click_button(page, 'edit');
-
+        await page.getByRole('row', { name: name }).getByTestId('edit').click();
+        
         await actions.validate_input(page, 'bug_name', name);
         await actions.validate_input(page, 'bug_description', description);
 

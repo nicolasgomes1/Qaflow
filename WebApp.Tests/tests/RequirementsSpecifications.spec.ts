@@ -34,19 +34,15 @@ test('Create New Requirement Specification', async ({ page })=> {
 
     await actions.closeModal(page, "submit_dialog");
     await actions.validate_button(page, 'requirements_specification_create');
-    
-    await filter.filterTableModel(page, 'Test Requirement Playwright' + Random);
-    
-    await actions.click_button(page, 'delete');
 
-    // Ensure the dialog is visible
-    const dialog = page.locator('.rz-dialog');
+    await filter.filterTableModel(page, name);
 
-    // Check if the dialog is visible
-    await expect(dialog).toBeVisible();
+    await page.getByRole('row', { name: name }).getByTestId('delete').click();
+    await page.waitForTimeout(5);
+    await expect(page.getByText('Delete RequirementsSpecification')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Ok' }).first().click();
-    await expect(page.getByRole('table')).not.toContainText('Test Requirement Playwright' + Random);
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+    await expect(page.getByRole('table')).not.toContainText(name);
 });
 
 test('Edit New Requirement Specification', async ({ page })=> {
@@ -107,6 +103,9 @@ test('View New Requirement Specification', async ({ page })=> {
 
     await filter.filterTableModel(page, name);
 
+    await page.getByRole('row', { name: name }).getByTestId('view').click();
+
+
     await actions.click_button(page, 'view');
 
 // Ensure the dialog is visible
@@ -149,8 +148,8 @@ test('Delete Requirement Specification', async ({ page })=> {
 
     await filter.filterTableModel(page, name);
 
-    await actions.click_button(page, 'delete');
-
+    await page.getByRole('row', { name: name }).getByTestId('delete').click();
+    
     // Ensure the dialog is visible
     const dialog = page.locator('.rz-dialog');
 
@@ -175,8 +174,8 @@ test('Delete Requirement Specification is not possible with linked requirement',
 
     await filter.filterTableModel(page, name);
 
-    await actions.click_button(page, 'delete');
-
+    await page.getByRole('row', { name: name }).getByTestId('delete').click();
+    
     // Ensure the dialog is visible
     const dialog = page.locator('.rz-dialog');
 

@@ -17,6 +17,7 @@ test.afterEach('Logout User',async ({ page }) => {
 test('Create New Requirement', async ({ page })=> {
     test.slow();
     const Random = Math.floor(Math.random() * 1000000);
+    const requirement = 'Test Requirement Playwright' + Random;
 
     await actions.LaunchProject(page, 'Demo Project Without Data' );
 
@@ -24,7 +25,7 @@ test('Create New Requirement', async ({ page })=> {
     
     await actions.click_button(page, 'create_requirement');
 
-    await actions.fill_input(page, 'requirement_name', 'Test Requirement Playwright' + Random);
+    await actions.fill_input(page, 'requirement_name', requirement);
 
     await actions.fill_input(page, 'requirement_description', 'Test Requirement Playwright Description' + Random);
     
@@ -37,14 +38,18 @@ test('Create New Requirement', async ({ page })=> {
     
     await actions.submit_form(page);
 
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
+    
     await actions.validate_button(page, 'create_requirement');
     
-    await filter.filterTableModel(page, 'Test Requirement Playwright' + Random);
-    
-    await actions.click_button(page, 'delete');
+    await filter.filterTableModel(page, requirement);
+
+    await page.getByRole('row', { name: requirement }).getByTestId('delete').click();
 
     await page.getByRole('button', { name: 'Ok' }).click();
-    await expect(page.getByRole('table')).not.toContainText('Test Requirement Playwright' + Random);
+    await expect(page.getByRole('table')).not.toContainText(requirement);
 });
 
 
@@ -70,6 +75,9 @@ test('View New Requirement', async ({ page })=> {
     await actions.submit_form(page);
     await actions.validate_button(page, 'create_requirement');
 
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
 
     await filter.filterTableModel(page, name);
 
@@ -101,16 +109,20 @@ test('Edit New Requirement', async ({ page })=> {
     await actions.submit_form(page);
     await actions.validate_button(page, 'create_requirement');
 
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
 
     await filter.filterTableModel(page, name);
 
 
-    await actions.click_button(page, 'edit');
+    await page.getByRole('row', { name: name }).getByTestId('edit').click();
+
+
     await actions.validate_input(page, 'requirement_name', name);
     await actions.validate_input(page, 'requirement_description', description);
 
     await actions.submit_form(page);
-    await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()
 
 });
 
@@ -145,10 +157,15 @@ test('Create New Requirement with file', async ({ page })=> {
     
     await actions.submit_form(page);
 
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
+    
     await actions.validate_button(page, 'create_requirement');
 
     await filter.filterTableModel(page, name);
-    await actions.click_button(page, 'view');
+    await page.getByRole('row', { name: name }).getByTestId('view').click();
+
     await page.getByTestId('requirement_files').click(); // Click on the "Files" tab using data-testid attribute
     await actions.validate_page_has_text(page, 'testfile.png');
 

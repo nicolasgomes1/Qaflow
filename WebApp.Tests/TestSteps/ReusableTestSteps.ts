@@ -5,7 +5,7 @@ import { expect, Page } from '@playwright/test';
  * @param {string} id - data-testid to locate the element.
  */
 async function click_button(page: Page, id: string) {
-    const el = page.getByTestId(id).first();
+    const el = page.getByTestId(id);
     await el.waitFor({ state: 'visible' });
     await el.hover();
 

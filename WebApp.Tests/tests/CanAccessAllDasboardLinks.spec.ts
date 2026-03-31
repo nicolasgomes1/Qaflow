@@ -103,8 +103,8 @@ test('Access Test Execution When Execution is Ready Index', async ({ page })=> {
 
     await actions.validate_button(page, 'create-testexecutions');
     await actions.click_button(page, 'logo');
-    if (await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()) {
-        await page.locator('.rz-notification-item > div:nth-child(2)').click();
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
     }
     await actions.click_button(page, 'd_testexecutionsready');
     await actions.validate_page_has_text(page, 'Test Execution Ready!')

@@ -39,8 +39,10 @@ test('Create a new User', async ({page}) =>{
 
     await actions.click_button(page, 'users_delete');
 
-    await expect(page.locator('#rz-dialog-0-label')).toContainText('Delete ' + user_name );
+
+    await expect(page.getByText('Delete ' + user_name)).toBeVisible();
     await page.getByRole('button', { name: 'Ok' }).first().click();
+    
     await expect(page.getByRole('table')).not.toContainText(user_name);
     
 })

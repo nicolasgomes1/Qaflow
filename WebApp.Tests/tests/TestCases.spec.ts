@@ -38,13 +38,23 @@ test('Create New Test Case With Main Information', async ({ page })=> {
 
     await actions.submit_form(page);
 
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
+    
     await actions.validate_button(page, 'create_testcase');
 
     await filter.filterTableModel(page, testcase_name);
 
-    await actions.click_button(page, 'delete');
+    await page.getByRole('row', { name: testcase_name }).getByTestId('delete').click();
+
+
 
     await page.getByRole('button', { name: 'Ok' }).click();
+
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
     await expect(page.getByRole('table')).not.toContainText(testcase_name);
 });
 
@@ -77,10 +87,17 @@ test('Create New Test Case With Files', async ({ page })=> {
     
     await actions.submit_form(page);
 
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
+    
     await actions.validate_button(page, 'create_testcase');
 
     await filter.filterTableModel(page, testcase_name);
-    await actions.click_button(page, 'view');
+
+    await page.getByRole('row', { name: testcase_name }).getByTestId('view').click();
+
+
     await page.getByTestId('testcase_files').click(); // Click on the "Files" tab using data-testid attribute
     await actions.validate_page_has_text(page, 'testfile.png');
 

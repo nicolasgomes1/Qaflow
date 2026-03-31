@@ -31,9 +31,9 @@ test('Create a new Cycle', async ({ page }) => {
     await actions.closeModal(page, "submit_dialog");
 
     await actions.validate_button(page, 'cycles_create');
-
-    if (await page.locator('.rz-notification-item > div:nth-child(2)').isVisible()) {
-        await page.locator('.rz-notification-item > div:nth-child(2)').click();
+    
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
     }
 
     await filter.filterTableModel(page, cycle_name);
@@ -59,8 +59,9 @@ test('Cycle with linked entities cannot be deleted or edited', async ({ page }) 
     await filter.filterTableModel(page, cycle_name);
 
 
-    await page.waitForSelector('.rz-tooltip.rz-popup', { state: 'hidden', timeout: 5000 });
-
+    if (await page.locator('.rz-notification-item').isVisible()) {
+        await page.getByRole('button', { name: 'Close' }).click();
+    }
     await actions.validate_button_disabled(page, 'delete');
     await actions.validate_button_disabled(page, 'edit');
 });
